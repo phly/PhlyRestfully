@@ -77,7 +77,7 @@ class Resource implements ResourceInterface
         if (!is_object($data)) {
             throw new Exception\InvalidArgumentException(sprintf(
                 'Data provided to create must be either an array or object; received "%s"',
-                getttype($data)
+                gettype($data)
             ));
         }
 
@@ -114,7 +114,7 @@ class Resource implements ResourceInterface
         if (!is_object($data)) {
             throw new Exception\InvalidArgumentException(sprintf(
                 'Data provided to create must be either an array or object; received "%s"',
-                getttype($data)
+                gettype($data)
             ));
         }
 
@@ -152,7 +152,7 @@ class Resource implements ResourceInterface
         if (!is_object($data)) {
             throw new Exception\InvalidArgumentException(sprintf(
                 'Data provided to create must be either an array or object; received "%s"',
-                getttype($data)
+                gettype($data)
             ));
         }
 
