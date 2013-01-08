@@ -6,10 +6,28 @@ use Traversable;
 use Zend\EventManager\EventManager;
 use Zend\EventManager\EventManagerInterface;
 
+/**
+ * Base resource class
+ * 
+ * Essentially, simply marshalls arguments and triggers events; it is useless
+ * without listeners to do the actual work. 
+ */
 class Resource implements ResourceInterface
 {
+    /**
+     * @var EventManagerInterface
+     */
     protected $events;
 
+    /**
+     * Set event manager instance
+     *
+     * Sets the event manager identifiers to the current class, this class, and
+     * the resource interface.
+     * 
+     * @param  EventManagerInterface $events 
+     * @return Resource
+     */
     public function setEventManager(EventManagerInterface $events)
     {
         $events->setIdentifiers(array(
@@ -21,6 +39,13 @@ class Resource implements ResourceInterface
         return $this;
     }
 
+    /**
+     * Retrieve event manager
+     *
+     * Lazy-instantiates an EM instance if none provided.
+     * 
+     * @return EventManagerInterface
+     */
     public function getEventManager()
     {
         if (!$this->events) {
@@ -31,9 +56,18 @@ class Resource implements ResourceInterface
 
     /**
      * Create a record in the resource
+     *
+     * Expects either an array or object representing the item to create. If
+     * a non-array, non-object is provided, raises an exception.
+     *
+     * The value returned by the last listener to the "create" event will be
+     * returned as long as it is an array or object; otherwise, the original
+     * $data is returned. If you wish to indicate failure to create, raise an 
+     * exception from a listener.
      * 
      * @param  array|object $data 
      * @return array|object
+     * @throws Exception\InvalidArgumentException
      */
     public function create($data)
     {
@@ -57,11 +91,20 @@ class Resource implements ResourceInterface
     }
 
     /**
-     * Update (replace) an existing record
+     * Update (replace) an existing item
+     *
+     * Updates the item indicated by $id, replacing it with the information
+     * in $data. $data should be a full representation of the item, and should
+     * be an array or object; if otherwise, an exception will be raised.
+     *
+     * Like create(), the return value of the last executed listener will be
+     * returned, as long as it is an array or object; otherwise, $data is 
+     * returned. If you wish to indicate failure to update, raise an exception.
      * 
      * @param  string|int $id 
      * @param  array|object $data 
      * @return array|object
+     * @throws Exception\InvalidArgumentException
      */
     public function update($id, $data)
     {
@@ -85,11 +128,21 @@ class Resource implements ResourceInterface
     }
 
     /**
-     * Partial update of an existing record
+     * Partial update of an existing item
+     *
+     * Update the item indicated by $id, using the information from $data;
+     * $data should be merged with the existing item in order to provide a 
+     * partial update. Additionally, $data should be an array or object; any
+     * other value will raise an exception.
+     *
+     * Like create(), the return value of the last executed listener will be
+     * returned, as long as it is an array or object; otherwise, $data is 
+     * returned. If you wish to indicate failure to update, raise an exception.
      * 
      * @param  string|int $id 
      * @param  array|object $data 
      * @return array|object
+     * @throws Exception\InvalidArgumentException
      */
     public function patch($id, $data)
     {
@@ -113,7 +166,11 @@ class Resource implements ResourceInterface
     }
 
     /**
-     * Delete an existing record
+     * Delete an existing item
+     *
+     * Use to delete the item indicated by $id. The value returned by the last
+     * listener will be used, as long as it is a boolean; otherwise, a boolean
+     * false will be returned, indicating failure to delete.
      * 
      * @param  string|int $id 
      * @return bool
@@ -130,7 +187,12 @@ class Resource implements ResourceInterface
     }
 
     /**
-     * Fetch an existing record
+     * Fetch an existing item
+     *
+     * Retrieve an existing item indicated by $id. The value of the last 
+     * listener will be returned, as long as it is an array or object;
+     * otherwise, a boolean false value will be returned, indicating a
+     * lookup failure.
      * 
      * @param  string|int $id 
      * @return false|array|object
@@ -147,7 +209,15 @@ class Resource implements ResourceInterface
     }
 
     /**
-     * Fetch a collection of records
+     * Fetch a collection of items
+     *
+     * Use to retrieve a collection of items. The value of the last
+     * listener will be returned, as long as it is an array or Traversable;
+     * otherwise, an empty array will be returned.
+     *
+     * The recommendation is to return a \Zend\Paginator\Paginator instance,
+     * which will allow performing paginated sets, and thus allow the view
+     * layer to select the current page based on the query string or route.
      * 
      * @return array|Traversable
      */
