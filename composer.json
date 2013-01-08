@@ -1,0 +1,33 @@
+{
+    "name": "phly/phly-restfully",
+    "description": "ZF2 Module providing structure for RESTful resources",
+    "type": "library",
+    "keywords": [
+        "zf2",
+        "zend",
+        "module",
+        "rest"
+    ],
+    "homepage": "https://github.com/weierophinney/PhlyRestfully",
+    "authors": [
+        {
+            "name": "Matthew Weier O'Phinney",
+            "email": "matthew@weierophinney.net",
+            "homepage": "http://mwop.net/"
+        }
+    ],
+    "require": {
+        "php": ">=5.3.3",
+        "zendframework/zend-mvc": "2.*",
+        "zendframework/zend-view": "2.*",
+        "zendframework/zend-stdlib": "2.*"
+    },
+    "autoload": {
+        "psr-0": {
+            "PhlyRestfully\\": "src/"
+        },
+        "classmap": [
+            "./"
+        ]
+    }
+}
