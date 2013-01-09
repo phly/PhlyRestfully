@@ -54,18 +54,6 @@ class ResourceController extends AbstractRestfulController
     protected $pageSize = 30;
 
     /**
-     * Status titles for common problems
-     * 
-     * @var array
-     */
-    protected $problemStatusTitles = array(
-        404 => 'NotFound',
-        409 => 'Conflict',
-        422 => 'Unprocessable Entity',
-        500 => 'Internal Server Error',
-    );
-
-    /**
      * @var ResourceInterface
      */
     protected $resource;
@@ -230,7 +218,7 @@ class ResourceController extends AbstractRestfulController
         try {
             $item = $this->resource->create($data);
         } catch (Exception\CreateException $e) {
-            return $this->createProblemResult(
+            return $this->apiProblemResult(
                 500,
                 $e->getMessage()
             );
@@ -238,7 +226,7 @@ class ResourceController extends AbstractRestfulController
 
         $id = $this->getIdentifierFromItem($item);
         if (!$id) {
-            return $this->createProblemResult(
+            return $this->apiProblemResult(
                 422,
                 'No item identifier present following item creation.'
             );
@@ -268,7 +256,7 @@ class ResourceController extends AbstractRestfulController
     public function delete($id)
     {
         if (!$this->resource->delete($data)) {
-            return $this->createProblemResult(
+            return $this->apiProblemResult(
                 422,
                 'Unable to delete item.'
             );
@@ -289,7 +277,7 @@ class ResourceController extends AbstractRestfulController
     {
         $item = $this->resource->fetch($id);
         if (!$item) {
-            return $this->createProblemResult(
+            return $this->apiProblemResult(
                 404,
                 'Item not found.'
             );
@@ -367,7 +355,7 @@ class ResourceController extends AbstractRestfulController
         try {
             $item = $this->resource->patch($id, $data);
         } catch (Exception\PatchException $e) {
-            return $this->createProblemResult(
+            return $this->apiProblemResult(
                 500,
                 $e->getMessage()
             );
@@ -399,7 +387,7 @@ class ResourceController extends AbstractRestfulController
         try {
             $item = $this->resource->update($id, $data);
         } catch (Exception\UpdateException $e) {
-            return $this->createProblemResult(
+            return $this->apiProblemResult(
                 500,
                 $e->getMessage()
             );
@@ -483,31 +471,6 @@ class ResourceController extends AbstractRestfulController
     }
 
     /**
-     * Create a Problem API result
-     *
-     * @see    http://tools.ietf.org/html/draft-nottingham-http-problem-02
-     * @param  int $httpStatus
-     * @param  string $detail 
-     * @param  string $describedBy 
-     * @param  string $title
-     * @return array
-     */
-    protected function createProblemResult($httpStatus, $detail, $describedBy = 'http://www.w3.org/Protocols/rfc2616/rfc2616-sec10.html', $title = 'Unknown')
-    {
-        if ($title == 'Unknown'
-            && $describedBy == 'http://www.w3.org/Protocols/rfc2616/rfc2616-sec10.html' 
-            && array_key_exists($httpStatus, $this->problemStatusTitles)
-        ) {
-            $title = $this->problemStatusTitles[$httpStatus];
-        }
-
-        $response = $this->getResponse();
-        $response->setStatusCode($httpStatus);
-        $result = compact('describedBy', 'title', 'httpStatus', 'detail');
-        return $result;
-    }
-
-    /**
      * Create a response payload for a paginated collection
      * 
      * @param  Paginator $items 
@@ -519,7 +482,7 @@ class ResourceController extends AbstractRestfulController
         $count = count($items);
         $page  = (int) $this->params()->fromQuery('page', 1);
         if ($page < 1 || $page > $count) {
-            return $this->createProblemResult(409, 'Invalid page provided');
+            return $this->apiProblemResult(409, 'Invalid page provided');
         }
 
         $items->setCurrentPageNumber($page);

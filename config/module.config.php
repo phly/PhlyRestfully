@@ -6,4 +6,9 @@ return array(
             'PhlyRestfully\JsonRenderer' => 'Zend\View\Renderer\JsonRenderer',
         ),
     ),
+    'controller_plugins' => array(
+        'invokables' => array(
+            'apiProblemResult' => 'PhlyRestfully\Plugin\ApiProblemResult',
+        ),
+    ),
 );
