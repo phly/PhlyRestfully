@@ -10,6 +10,30 @@ use Zend\View\Helper\ServerUrl;
 abstract class AbstractController extends AbstractRestfulController
 {
     /**
+     * Criteria for the AcceptableViewModelSelector
+     * 
+     * @var array
+     */
+    protected $acceptCriteria = array(
+        'Zend\View\Model\JsonModel' => array(
+            'application/json',
+            'application/hal+json',
+        ),
+    );
+
+    /**
+     * Content types that will trigger marshalling data from the request body.
+     *
+     * @var array
+     */
+    protected $contentTypes = array(
+        self::CONTENT_TYPE_JSON => array(
+            'application/json',
+            'application/hal+json',
+        ),
+    );
+
+    /**
      * HTTP methods we allow; used by options()
      * @var array
      */
@@ -123,6 +147,10 @@ abstract class AbstractController extends AbstractRestfulController
      * - Raises an exception if no route is composed.
      * - Returns a 405 response if the current HTTP request method is not in 
      *   $options
+     *
+     * When the dispatch is complete, it will check to see if an array was
+     * returned; if so, it will cast it to a view model using the
+     * AcceptableViewModelSelector plugin, and the $acceptCriteria property.
      * 
      * @param  MvcEvent $e 
      * @return mixed
@@ -154,7 +182,15 @@ abstract class AbstractController extends AbstractRestfulController
             return $response;
         }
 
-        return parent::onDispatch($e);
+        $return = parent::onDispatch($e);
+        if (!is_array($return)) {
+            return $return;
+        }
+
+        $viewModel = $this->acceptableViewModelSelector($this->acceptCriteria);
+        $viewModel->setVariables($return);
+        $e->setResult($viewModel);
+        return $viewModel;
     }
 
     /**
