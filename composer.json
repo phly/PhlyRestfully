@@ -22,6 +22,7 @@
         "zendframework/zend-eventmanager": "2.1.*",
         "zendframework/zend-loader": "2.1.*",
         "zendframework/zend-mvc": "2.1.*",
+        "zendframework/zend-paginator": "2.1.*",
         "zendframework/zend-view": "2.1.*",
         "zendframework/zend-stdlib": "2.1.*"
     },
