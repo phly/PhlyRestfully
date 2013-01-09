@@ -7,7 +7,7 @@ use Zend\Mvc\MvcEvent;
 use Zend\Paginator\Paginator;
 use Zend\View\Helper\ServerUrl;
 
-abstract class AbstractController extends AbstractRestfulController
+class ResourceController extends AbstractRestfulController
 {
     /**
      * Criteria for the AcceptableViewModelSelector
