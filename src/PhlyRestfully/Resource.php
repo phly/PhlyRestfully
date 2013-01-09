@@ -62,8 +62,8 @@ class Resource implements ResourceInterface
      *
      * The value returned by the last listener to the "create" event will be
      * returned as long as it is an array or object; otherwise, the original
-     * $data is returned. If you wish to indicate failure to create, raise an 
-     * exception from a listener.
+     * $data is returned. If you wish to indicate failure to create, raise a
+     * PhlyRestfully\Exception\CreationException from a listener.
      * 
      * @param  array|object $data 
      * @return array|object
@@ -99,7 +99,8 @@ class Resource implements ResourceInterface
      *
      * Like create(), the return value of the last executed listener will be
      * returned, as long as it is an array or object; otherwise, $data is 
-     * returned. If you wish to indicate failure to update, raise an exception.
+     * returned. If you wish to indicate failure to update, raise a 
+     * PhlyRestfully\Exception\UpdateException.
      * 
      * @param  string|int $id 
      * @param  array|object $data 
@@ -137,7 +138,8 @@ class Resource implements ResourceInterface
      *
      * Like create(), the return value of the last executed listener will be
      * returned, as long as it is an array or object; otherwise, $data is 
-     * returned. If you wish to indicate failure to update, raise an exception.
+     * returned. If you wish to indicate failure to update, raise a
+     * PhlyRestfully\Exception\PatchException.
      * 
      * @param  string|int $id 
      * @param  array|object $data 
