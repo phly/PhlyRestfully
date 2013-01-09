@@ -5,7 +5,6 @@ namespace PhlyRestfully;
 use JsonSerializable;
 use Traversable;
 use Zend\Json\Json;
-use Zend\Stdlib\ArrayUtils;
 use Zend\Stdlib\Hydrator\HydratorInterface;
 use Zend\View\Model\JsonModel;
 
@@ -36,6 +35,16 @@ class RestfulJsonModel extends JsonModel
     public function setDefaultHydrator(HydratorInterface $hydrator)
     {
         $this->defaultHydrator = $hydrator;
+    }
+
+    /**
+     * Retrieve default hydrator, if any
+     * 
+     * @return null|HydratorInterface
+     */
+    public function getDefaultHydrator()
+    {
+        return $this->defaultHydrator;
     }
 
     /**
@@ -96,6 +105,10 @@ class RestfulJsonModel extends JsonModel
     public function isProblemApi()
     {
         $variables = $this->getVariables();
+        if ($variables instanceof Traversable) {
+            $variables = iterator_to_array($variables);
+        }
+
         $keys      = array_keys($variables);
         $expected  = array('describedBy', 'title');
         $test      = array_intersect($expected, $keys);
@@ -113,7 +126,11 @@ class RestfulJsonModel extends JsonModel
     public function isHal()
     {
         $variables = $this->getVariables();
-        $keys     = array_keys($variables);
+        if ($variables instanceof Traversable) {
+            $variables = iterator_to_array($variables);
+        }
+
+        $keys = array_keys($variables);
         if (in_array('_links', $keys)) {
             return true;
         }
@@ -142,10 +159,10 @@ class RestfulJsonModel extends JsonModel
 
         $variables = $this->getVariables();
         if ($variables instanceof Traversable) {
-            $variables = ArrayUtils::iteratorToArray($variables);
+            $variables = iterator_to_array($variables);
         }
 
-        if (isset($variables['item']) && !is_object($variables['item'])) {
+        if (isset($variables['item']) && is_object($variables['item'])) {
             $variables['item'] = $this->serializeItem($variables['item']);
         }
 
@@ -167,7 +184,7 @@ class RestfulJsonModel extends JsonModel
     {
         $variables = $this->getVariables();
         if ($variables instanceof Traversable) {
-            $variables = ArrayUtils::iteratorToArray($variables);
+            $variables = iterator_to_array($variables);
         }
 
         $base = array(
@@ -197,9 +214,9 @@ class RestfulJsonModel extends JsonModel
      * @param  object $item 
      * @return array
      */
-    protected function serializeItem($item)
+    public function serializeItem($item)
     {
-        if ($item instanceof JsonSerializable) {
+        if (interface_exists('JsonSerializable') && $item instanceof JsonSerializable) {
             return $item;
         }
 
@@ -224,10 +241,14 @@ class RestfulJsonModel extends JsonModel
      * @param  array|Traversable $items 
      * @return array[]
      */
-    protected function serializeItems($items)
+    public function serializeItems($items)
     {
         $array = array();
         foreach ($items as $item) {
+            if (!is_object($item)) {
+                $array[] = $item;
+                continue;
+            }
             $array[] = $this->serializeItem($item);
         }
         return $array;
