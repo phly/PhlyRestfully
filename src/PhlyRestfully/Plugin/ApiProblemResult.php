@@ -18,7 +18,7 @@ class ApiProblemResult extends AbstractPlugin
      * @var array
      */
     protected $problemStatusTitles = array(
-        404 => 'NotFound',
+        404 => 'Not Found',
         409 => 'Conflict',
         422 => 'Unprocessable Entity',
         500 => 'Internal Server Error',
