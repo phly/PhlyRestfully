@@ -26,6 +26,23 @@ class Module
         ));
     }
 
+    public function getControllerPluginConfig()
+    {
+        return array('factories' => array(
+            'links' => function ($plugins) {
+                $services        = $plugins->getServiceLocator();
+                $viewHelpers     = $services->get('ViewHelperManager');
+                $serverUrlHelper = $viewHelpers->get('serverurl');
+                $urlHelper       = $plugins->get('url');
+
+                $plugin = new Plugin\Links;
+                $plugin->setServerUrlHelper($serverUrlHelper);
+                $plugin->setUrlHelper($urlHelper);
+                return $plugin;
+            },
+        ));
+    }
+
     public function onBootstrap($e)
     {
         $app    = $e->getTarget();

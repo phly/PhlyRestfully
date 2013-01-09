@@ -232,14 +232,14 @@ class ResourceController extends AbstractRestfulController
             );
         }
 
-        $resourceLink = $this->createLink();
-        $selfLink = $this->createLink($id);
+        $resourceLink = $this->links->createLink($this->route);
+        $selfLink     = $this->links->createLink($this->route, $id);
 
         $response->setStatusCode(201);
         $response->getHeaders()->addHeaderLine('Location', $selfLink);
 
         return array(
-            '_links' => $this->generateHalLinkRelations(array(
+            '_links' => $this->links->generateHalLinkRelations(array(
                 'up'   => $resourceLink,
                 'self' => $selfLink,
             )),
@@ -283,11 +283,11 @@ class ResourceController extends AbstractRestfulController
             );
         }
 
-        $resourceLink = $this->createLink();
-        $selfLink = $this->createLink($id);
+        $resourceLink = $this->links->createLink($this->route);
+        $selfLink     = $this->links->createLink($this->route, $id);
 
         return array(
-            '_links' => $this->generateHalLinkRelations(array(
+            '_links' => $this->links->generateHalLinkRelations(array(
                 'up'   => $resourceLink,
                 'self' => $selfLink,
             )),
@@ -362,11 +362,11 @@ class ResourceController extends AbstractRestfulController
             );
         }
 
-        $resourceLink = $this->createLink();
-        $selfLink = $this->createLink($id);
+        $resourceLink = $this->links->createLink($this->route);
+        $selfLink     = $this->links->createLink($this->route, $id);
 
         return array(
-            '_links' => $this->generateHalLinkRelations(array(
+            '_links' => $this->links->generateHalLinkRelations(array(
                 'up'   => $resourceLink,
                 'self' => $selfLink,
             )),
@@ -394,11 +394,11 @@ class ResourceController extends AbstractRestfulController
             );
         }
 
-        $resourceLink = $this->createLink();
-        $selfLink = $this->createLink($id);
+        $resourceLink = $this->links->createLink($this->route);
+        $selfLink     = $this->links->createLink($this->route, $id);
 
         return array(
-            '_links' => $this->generateHalLinkRelations(array(
+            '_links' => $this->links->generateHalLinkRelations(array(
                 'up'   => $resourceLink,
                 'self' => $selfLink,
             )),
@@ -439,39 +439,6 @@ class ResourceController extends AbstractRestfulController
     }
 
     /**
-     * Create link
-     * 
-     * @param mixed $id 
-     * @return void
-     */
-    protected function createLink($id = null)
-    {
-        $params = array();
-        if (null !== $id) {
-            $params['id'] = $id;
-        }
-
-        $path   = $this->url()->fromRoute($this->route, $params);
-        $helper = $this->getServerUrlHelper();
-        return $helper($path);
-    }
-
-    /**
-     * Generate HAL link relation list
-     * 
-     * @param  array $links 
-     * @return array
-     */
-    protected function generateHalLinkRelations(array $links)
-    {
-        $halLinks = array();
-        foreach ($links as $rel => $link) {
-            $halLinks[$rel] = array('href' => $link);
-        }
-        return $halLinks;
-    }
-
-    /**
      * Create a response payload for a paginated collection
      * 
      * @param  Paginator $items 
@@ -487,23 +454,25 @@ class ResourceController extends AbstractRestfulController
         }
 
         $items->setCurrentPageNumber($page);
+
+        $base  = $this->links->createLink($this->route);
         $next  = ($page == $count) ? false : $page + 1;
         $prev  = ($page == 1) ? false : $page - 1;
         $last  = $count;
         $links = array(
-            'self'  => $this->createLink() . ((1 == $page) ? '' : '?page=' . $page),
-            'first' => $this->createLink(),
-            'last'  => $this->createLink() . '?page=' . $last,
+            'self'  => $base . ((1 == $page) ? '' : '?page=' . $page),
+            'first' => $base,
+            'last'  => $base . '?page=' . $last,
         );
         if ($prev) {
-            $links['prev'] = $this->createLink() . '?page=' . $prev;
+            $links['prev'] = $base . '?page=' . $prev;
         }
         if ($next) {
-            $links['next'] = $this->createLink() . '?page=' . $next;
+            $links['next'] = $base . '?page=' . $next;
         }
 
         return array(
-            '_links' => $this->generateHalLinkRelations($links),
+            '_links' => $this->links->generateHalLinkRelations($links),
             'items'  => $items,
         );
     }
@@ -518,8 +487,8 @@ class ResourceController extends AbstractRestfulController
     protected function createNonPaginatedResponse($items)
     {
         return array(
-            '_links' => $this->generateHalLinkRelations(array(
-                'self' => $this->createLink(),
+            '_links' => $this->links->generateHalLinkRelations(array(
+                'self' => $this->links->createLink($this->route),
             )),
             'items' => $items,
         );
