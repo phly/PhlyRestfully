@@ -52,9 +52,9 @@ class RestfulJsonStrategy extends JsonStrategy
 
         $model       = $e->getModel();
         $contentType = $this->contentType;
-        if ($model->isProblemApi) {
+        if ($model instanceof RestfulJsonModel && $model->isProblemApi()) {
             $contentType = 'application/api-problem+json';
-        } elseif ($model->isHal()) {
+        } elseif ($model instanceof RestfulJsonModel && $model->isHal()) {
             $contentType = 'application/hal+json';
         }
 
