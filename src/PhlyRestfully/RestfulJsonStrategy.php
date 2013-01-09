@@ -2,10 +2,10 @@
 
 namespace PhlyRestfully;
 
-use Zend\View\Strategy\JsonStrategy as BaseJsonStrategy;
+use Zend\View\Strategy\JsonStrategy;
 use Zend\View\ViewEvent;
 
-class JsonStrategy extends BaseJsonStrategy
+class RestfulJsonStrategy extends JsonStrategy
 {
     protected $contentType = 'application/json';
 
@@ -19,22 +19,9 @@ class JsonStrategy extends BaseJsonStrategy
     {
         $model = $e->getModel();
 
-        if (!$model instanceof JsonModel) {
-            // not our JsonModel; do nothing
+        if (!$model instanceof RestfulJsonModel) {
+            // unrecognized model; do nothing
             return;
-        }
-
-        $payload  = $model->getVariables();
-
-        // Problem API detection
-        $keys     = array_keys($payload);
-        if ($keys == array('describedBy', 'title', 'httpStatus', 'detail')) {
-            $this->contentType = 'application/api-problem+json';
-        }
-
-        // HAL detection
-        if (in_array('_links', $payload)) {
-            $this->contentType = 'application/hal+json';
         }
 
         // JsonModel found
@@ -63,10 +50,18 @@ class JsonStrategy extends BaseJsonStrategy
             return;
         }
 
+        $model       = $e->getModel();
+        $contentType = $this->contentType;
+        if ($model->isProblemApi) {
+            $contentType = 'application/api-problem+json';
+        } elseif ($model->isHal()) {
+            $contentType = 'application/hal+json';
+        }
+
         // Populate response
         $response = $e->getResponse();
         $response->setContent($result);
         $headers = $response->getHeaders();
-        $headers->addHeaderLine('content-type', $this->contentType);
+        $headers->addHeaderLine('content-type', $contentType);
     }
 }

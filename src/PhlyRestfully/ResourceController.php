@@ -15,7 +15,7 @@ class ResourceController extends AbstractRestfulController
      * @var array
      */
     protected $acceptCriteria = array(
-        'PhlyRestfully\JsonModel' => array(
+        'PhlyRestfully\RestfulJsonModel' => array(
             'application/json',
             'application/hal+json',
         ),
@@ -37,7 +37,7 @@ class ResourceController extends AbstractRestfulController
      * HTTP methods we allow; used by options()
      * @var array
      */
-    protected $options = array(
+    protected $httpOptions = array(
         'DELETE',
         'GET',
         'HEAD',
@@ -83,6 +83,26 @@ class ResourceController extends AbstractRestfulController
      * @var ServerUrl
      */
     protected $serverUrlHelper;
+
+    /**
+     * Set the Accept header criteria for use with the AcceptableViewModelSelector
+     * 
+     * @param  array $criteria 
+     */
+    public function setAcceptCriteria(array $criteria)
+    {
+        $this->acceptCriteria = $criteria;
+    }
+
+    /**
+     * Set the allowed HTTP OPTIONS
+     * 
+     * @param  array $options 
+     */
+    public function setHttpOptions(array $options)
+    {
+        $this->httpOptions = $options;
+    }
 
     /**
      * Set the default page size for paginated responses
@@ -172,13 +192,13 @@ class ResourceController extends AbstractRestfulController
             ));
         }
 
-        array_walk($this->options, 'strtoupper');
+        array_walk($this->httpOptions, 'strtoupper');
         $request = $e->getRequest();
         $method  = strtoupper($request->getMethod());
-        if (!in_array($method, $this->options)) {
+        if (!in_array($method, $this->httpOptions)) {
             $response = $e->getResponse();
             $response->setStatusCode(405);
-            $headers->addHeaderLine('Allow', implode(', ', $this->options));
+            $headers->addHeaderLine('Allow', implode(', ', $this->httpOptions));
             return $response;
         }
 
@@ -190,7 +210,7 @@ class ResourceController extends AbstractRestfulController
         $viewModel = $this->acceptableViewModelSelector($this->acceptCriteria);
         $viewModel->setVariables($return);
 
-        if ($viewModel instanceof JsonModel) {
+        if ($viewModel instanceof RestfulJsonModel) {
             $viewModel->setTerminal(true);
         }
 
@@ -329,7 +349,7 @@ class ResourceController extends AbstractRestfulController
     {
         $response = $this->getResponse();
         $headers  = $response->getHeaders();
-        $headers->addHeaderLine('Allow', implode(', ', $this->options));
+        $headers->addHeaderLine('Allow', implode(', ', $this->httpOptions));
         return $response;
     }
 
