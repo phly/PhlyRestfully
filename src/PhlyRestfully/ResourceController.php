@@ -5,7 +5,6 @@ namespace PhlyRestfully;
 use Zend\Mvc\Controller\AbstractRestfulController;
 use Zend\Mvc\MvcEvent;
 use Zend\Paginator\Paginator;
-use Zend\View\Helper\ServerUrl;
 
 class ResourceController extends AbstractRestfulController
 {
@@ -66,13 +65,6 @@ class ResourceController extends AbstractRestfulController
     protected $route;
 
     /**
-     * Helper for generating server URL
-     * 
-     * @var ServerUrl
-     */
-    protected $serverUrlHelper;
-
-    /**
      * Set the Accept header criteria for use with the AcceptableViewModelSelector
      * 
      * @param  array $criteria 
@@ -120,31 +112,6 @@ class ResourceController extends AbstractRestfulController
     public function setRoute($route)
     {
         $this->route = $route;
-    }
-
-    /**
-     * Set the helper used for generating the server URL
-     * 
-     * @param  ServerUrl $serverUrlHelper 
-     */
-    public function setServerUrlHelper(ServerUrl $serverUrlHelper)
-    {
-        $this->serverUrlHelper = $serverUrlHelper;
-    }
-
-    /**
-     * Get the helper used for generating the server URL
-     *
-     * Lazy-instantiates, if not present.
-     * 
-     * @return ServerUrl
-     */
-    public function getServerUrlHelper()
-    {
-        if (!$this->serverUrlHelper) {
-            $this->setServerUrlHelper(new ServerUrl);
-        }
-        return $this->serverUrlHelper;
     }
 
     /**
