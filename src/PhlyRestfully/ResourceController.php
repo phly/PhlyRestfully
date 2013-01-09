@@ -15,7 +15,7 @@ class ResourceController extends AbstractRestfulController
      * @var array
      */
     protected $acceptCriteria = array(
-        'Zend\View\Model\JsonModel' => array(
+        'PhlyRestfully\JsonModel' => array(
             'application/json',
             'application/hal+json',
         ),
@@ -189,6 +189,11 @@ class ResourceController extends AbstractRestfulController
 
         $viewModel = $this->acceptableViewModelSelector($this->acceptCriteria);
         $viewModel->setVariables($return);
+
+        if ($viewModel instanceof JsonModel) {
+            $viewModel->setTerminal(true);
+        }
+
         $e->setResult($viewModel);
         return $viewModel;
     }
