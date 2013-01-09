@@ -336,6 +336,7 @@ class ResourceController extends AbstractRestfulController
     public function options()
     {
         $response = $this->getResponse();
+        $response->setStatusCode(204);
         $headers  = $response->getHeaders();
         $headers->addHeaderLine('Allow', implode(', ', $this->httpOptions));
         return $response;
