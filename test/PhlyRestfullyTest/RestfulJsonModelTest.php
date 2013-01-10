@@ -187,21 +187,23 @@ class RestfulJsonModelTest extends TestCase
         $this->model->setDefaultHydrator(new Hydrator\ClassMethods());
         $this->model->addHydrator(__NAMESPACE__ . '\TestAsset\ArraySerializable', new Hydrator\ArraySerializable);
 
-        $jsonItem = new TestAsset\JsonSerializable();
         $items = array(
             array('item' => array('foo' => 'bar')),
             array('item' => (object) array('foo' => 'bar')),
-            array('item' => $jsonItem),
             array('item' => new TestAsset\ArraySerializable()),
             array('item' => new TestAsset\ClassMethods()),
         );
         $expected = array(
             array('item' => array('foo' => 'bar')),
             array('item' => array()),   // no class methods
-            array('item' => $jsonItem), // json serializable
             array('item' => array('foo' => 'bar')),
             array('item' => array('foo' => 'bar')),
         );
+        if (version_compare(PHP_VERSION, '5.4.0', 'gte')) {
+            $jsonItem   = new TestAsset\JsonSerializable();
+            $items[]    = array('item' => $jsonItem);
+            $expected[] = array('item' => $jsonItem);
+        }
         $test = $this->model->serializeItems($items);
         $this->assertEquals($expected, $test);
     }
@@ -227,13 +229,16 @@ class RestfulJsonModelTest extends TestCase
 
     public function itemToSerialize()
     {
-        return array(
+        $items = array(
             'array' => array(array('foo' => 'bar'), array('foo' => 'bar')),
             'bare-object' => array((object) array('foo' => 'bar'), array()),
-            'json-serializable' => array(new TestAsset\JsonSerializable, array('foo' => 'bar')),
             'with-hydrator' => array(new TestAsset\ArraySerializable(), array('foo' => 'bar')),
             'default-hydrator' => array(new TestAsset\ClassMethods(), array('foo' => 'bar')),
         );
+        if (version_compare(PHP_VERSION, '5.4.0', 'gte')) {
+            $items['json-serializable'] = array(new TestAsset\JsonSerializable, array('foo' => 'bar'));
+        }
+        return $items;
     }
 
     /**
@@ -253,21 +258,23 @@ class RestfulJsonModelTest extends TestCase
 
     public function itemsToSerialize()
     {
-        $jsonItem = new TestAsset\JsonSerializable();
         $items = array(
             array('item' => array('foo' => 'bar')),
             array('item' => (object) array('foo' => 'bar')),
-            array('item' => $jsonItem),
             array('item' => new TestAsset\ArraySerializable()),
             array('item' => new TestAsset\ClassMethods()),
         );
         $expected = array(
             array('item' => array('foo' => 'bar')),
             array('item' => array()),               // no class methods
-            array('item' => array('foo' => 'bar')), // json serializable
             array('item' => array('foo' => 'bar')),
             array('item' => array('foo' => 'bar')),
         );
+        if (version_compare(PHP_VERSION, '5.4.0', 'gte')) {
+            $jsonItem   = new TestAsset\JsonSerializable();
+            $items[]    = array('item' => $jsonItem);
+            $expected[] = array('item' => array('foo' => 'bar'));
+        }
         return array(
             'array' => array($items, $expected),
         );
