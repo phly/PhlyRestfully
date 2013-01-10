@@ -222,7 +222,7 @@ class ResourceController extends AbstractRestfulController
      */
     public function delete($id)
     {
-        if (!$this->resource->delete($data)) {
+        if (!$this->resource->delete($id)) {
             return $this->apiProblemResult(
                 422,
                 'Unable to delete item.'

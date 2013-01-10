@@ -52,6 +52,15 @@ class ResourceControllerTest extends TestCase
         $controller->setResource($resource);
     }
 
+    public function assertProblemApiResult($expectedHttpStatus, $expectedDetail, $result)
+    {
+        $this->assertInternalType('array', $result);
+        $this->assertArrayHasKey('httpStatus', $result);
+        $this->assertEquals($expectedHttpStatus, $result['httpStatus']);
+        $this->assertArrayHasKey('detail', $result);
+        $this->assertContains($expectedDetail, $result['detail']);
+    }
+
     public function testCreateReturnsProblemResultOnCreationException()
     {
         $this->resource->getEventManager()->attach('create', function ($e) {
@@ -59,11 +68,7 @@ class ResourceControllerTest extends TestCase
         });
 
         $result = $this->controller->create(array());
-        $this->assertInternalType('array', $result);
-        $this->assertArrayHasKey('httpStatus', $result);
-        $this->assertEquals(500, $result['httpStatus']);
-        $this->assertArrayHasKey('detail', $result);
-        $this->assertEquals('failed', $result['detail']);
+        $this->assertProblemApiResult(500, 'failed', $result);
     }
 
     public function testCreateReturnsProblemResultOnBadItemIdentifier()
@@ -73,11 +78,7 @@ class ResourceControllerTest extends TestCase
         });
 
         $result = $this->controller->create(array());
-        $this->assertInternalType('array', $result);
-        $this->assertArrayHasKey('httpStatus', $result);
-        $this->assertEquals(422, $result['httpStatus']);
-        $this->assertArrayHasKey('detail', $result);
-        $this->assertContains('item identifier', $result['detail']);
+        $this->assertProblemApiResult(422, 'item identifier', $result);
     }
 
     public function testCreateReturnsHalArrayOnSuccess()
@@ -97,4 +98,24 @@ class ResourceControllerTest extends TestCase
         $this->assertEquals($item, $result['item']);
     }
 
+    public function testFalseFromDeleteResourceReturnsProblemApiResult()
+    {
+        $this->resource->getEventManager()->attach('delete', function ($e) {
+            return false;
+        });
+
+        $result = $this->controller->delete('foo');
+        $this->assertProblemApiResult(422, 'delete', $result);
+    }
+
+    public function testTrueFromDeleteResourceReturnsResponseWithNoContent()
+    {
+        $this->resource->getEventManager()->attach('delete', function ($e) {
+            return true;
+        });
+
+        $result = $this->controller->delete('foo');
+        $this->assertInstanceOf('Zend\Http\Response', $result);
+        $this->assertEquals(204, $result->getStatusCode());
+    }
 }
