@@ -1,4 +1,10 @@
 <?php
+/**
+ * @link      https://github.com/weierophinney/PhlyRestfully for the canonical source repository
+ * @copyright Copyright (c) 2013 Matthew Weier O'Phinney
+ * @license   http://opensource.org/licenses/BSD-2-Clause BSD-2-Clause
+ * @package   PhlyRestfully
+ */
 
 namespace PhlyRestfully;
 
@@ -6,6 +12,27 @@ use Zend\Mvc\Controller\AbstractRestfulController;
 use Zend\Mvc\MvcEvent;
 use Zend\Paginator\Paginator;
 
+/**
+ * Controller for handling resources.
+ *
+ * Extends the base AbstractRestfulController in order to provide very specific 
+ * semantics for building a RESTful JSON service. All operations return either
+ *
+ * - a HAL-compliant response with appropriate hypermedia links
+ * - a Problem API-compliant response for reporting an error condition
+ *
+ * You may specify what specific HTTP method types you wish to respond to, and 
+ * OPTIONS will then report those; attempting any HTTP method falling outside 
+ * that list will result in a 405 (Method Not Allowed) response.
+ *
+ * I recommend using resource-specific factories when using this controller,
+ * to allow injecting the specific resource you wish to use (and its listeners),
+ * which will also allow you to have multiple instances of the controller when
+ * desired.
+ *
+ * @see http://tools.ietf.org/html/draft-kelly-json-hal-03
+ * @see http://tools.ietf.org/html/draft-nottingham-http-problem-02
+ */
 class ResourceController extends AbstractRestfulController
 {
     /**

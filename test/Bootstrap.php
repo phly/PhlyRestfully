@@ -1,4 +1,11 @@
 <?php
+/**
+ * @link      https://github.com/weierophinney/PhlyRestfully for the canonical source repository
+ * @copyright Copyright (c) 2013 Matthew Weier O'Phinney
+ * @license   http://opensource.org/licenses/BSD-2-Clause BSD-2-Clause
+ * @package   PhlyRestfully
+ */
+
 namespace PhlyRestfullyTest;
 
 use Zend\Loader\AutoloaderFactory;
@@ -7,6 +14,11 @@ use RuntimeException;
 error_reporting(E_ALL | E_STRICT);
 chdir(__DIR__);
 
+/**
+ * Test bootstrap, for setting up autoloading
+ *
+ * @subpackage UnitTest
+ */
 class Bootstrap
 {
     protected static $serviceManager;

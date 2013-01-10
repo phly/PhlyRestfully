@@ -1,4 +1,10 @@
 <?php
+/**
+ * @link      https://github.com/weierophinney/PhlyRestfully for the canonical source repository
+ * @copyright Copyright (c) 2013 Matthew Weier O'Phinney
+ * @license   http://opensource.org/licenses/BSD-2-Clause BSD-2-Clause
+ * @package   PhlyRestfully
+ */
 
 namespace PhlyRestfullyTest;
 
@@ -9,6 +15,9 @@ use Zend\Http\Response;
 use Zend\View\Renderer\JsonRenderer;
 use Zend\View\ViewEvent;
 
+/**
+ * @subpackage UnitTest
+ */
 class RestfulJsonStrategyTest extends TestCase
 {
     public function setUp()

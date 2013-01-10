@@ -2,6 +2,7 @@
     "name": "phly/phly-restfully",
     "description": "ZF2 Module providing structure for RESTful resources",
     "type": "library",
+    "license": "BSD-2-Clause",
     "keywords": [
         "zf2",
         "zend",
@@ -20,6 +21,7 @@
     "require": {
         "php": ">=5.3.3",
         "zendframework/zend-eventmanager": "2.1.*",
+        "zendframework/zend-json": "2.1.*",
         "zendframework/zend-loader": "2.1.*",
         "zendframework/zend-mvc": "2.1.*",
         "zendframework/zend-paginator": "2.1.*",

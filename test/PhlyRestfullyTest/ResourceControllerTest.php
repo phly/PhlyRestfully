@@ -1,4 +1,10 @@
 <?php
+/**
+ * @link      https://github.com/weierophinney/PhlyRestfully for the canonical source repository
+ * @copyright Copyright (c) 2013 Matthew Weier O'Phinney
+ * @license   http://opensource.org/licenses/BSD-2-Clause BSD-2-Clause
+ * @package   PhlyRestfully
+ */
 
 namespace PhlyRestfullyTest;
 
@@ -19,6 +25,9 @@ use Zend\Paginator\Paginator;
 use Zend\Stdlib\Parameters;
 use Zend\View\Helper\ServerUrl as ServerUrlHelper;
 
+/**
+ * @subpackage UnitTest
+ */
 class ResourceControllerTest extends TestCase
 {
     public function setUp()

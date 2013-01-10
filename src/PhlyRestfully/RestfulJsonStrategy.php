@@ -1,10 +1,27 @@
 <?php
+/**
+ * @link      https://github.com/weierophinney/PhlyRestfully for the canonical source repository
+ * @copyright Copyright (c) 2013 Matthew Weier O'Phinney
+ * @license   http://opensource.org/licenses/BSD-2-Clause BSD-2-Clause
+ * @package   PhlyRestfully
+ */
 
 namespace PhlyRestfully;
 
 use Zend\View\Strategy\JsonStrategy;
 use Zend\View\ViewEvent;
 
+/**
+ * Extension of the JSON strategy to handle the RestfulJsonModel and provide 
+ * a Content-Type header appropriate to the response it describes.
+ *
+ * This will give the following content types:
+ *
+ * - application/hal+json for a result that contains HAL-compliant links
+ * - application/api-problem+json for a result that contains a Problem 
+ *   API-formatted response
+ * - application/json for all other responses
+ */
 class RestfulJsonStrategy extends JsonStrategy
 {
     protected $contentType = 'application/json';
