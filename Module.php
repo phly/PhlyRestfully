@@ -15,7 +15,7 @@ class Module
 {
     /**
      * Retrieve autoloader configuration
-     * 
+     *
      * @return array
      */
     public function getAutoloaderConfig()
@@ -27,7 +27,7 @@ class Module
 
     /**
      * Retrieve module configuration
-     * 
+     *
      * @return array
      */
     public function getConfig()
@@ -39,7 +39,7 @@ class Module
      * Retrieve Service Manager configuration
      *
      * Defines PhlyRestfully\RestfulJsonStrategy service factory.
-     * 
+     *
      * @return array
      */
     public function getServiceConfig()
@@ -55,9 +55,9 @@ class Module
     /**
      * Retrieve controller plugin configuration
      *
-     * Defines "links" plugin factory, returning a PhlyRestfully\Plugin\Links 
+     * Defines "links" plugin factory, returning a PhlyRestfully\Plugin\Links
      * instance.
-     * 
+     *
      * @return array
      */
     public function getControllerPluginConfig()
@@ -81,8 +81,8 @@ class Module
      * Listener for bootstrap event
      *
      * Attaches a render event.
-     * 
-     * @param  \Zend\Mvc\MvcEvent $e 
+     *
+     * @param  \Zend\Mvc\MvcEvent $e
      */
     public function onBootstrap($e)
     {
@@ -95,8 +95,8 @@ class Module
      * Listener for the render event
      *
      * Attaches a rendering/response strategy to the View.
-     * 
-     * @param  \Zend\Mvc\MvcEvent $e 
+     *
+     * @param  \Zend\Mvc\MvcEvent $e
      */
     public function onRender($e)
     {
@@ -111,7 +111,7 @@ class Module
         $restfulJsonStrategy = $services->get('PhlyRestfully\RestfulJsonStrategy');
         $events              = $view->getEventManager();
 
-        // register at high priority, to "beat" normal json strategy registered 
+        // register at high priority, to "beat" normal json strategy registered
         // via view manager
         $events->attach($restfulJsonStrategy, 200);
     }
