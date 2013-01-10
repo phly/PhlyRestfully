@@ -21,22 +21,22 @@ class RestfulJsonModel extends JsonModel
 {
     /**
      * Default hydrator to use if none provided for item class
-     * 
+     *
      * @var HydratorInterface
      */
     protected $defaultHydrator;
 
     /**
      * Map of class/hydrator pairs
-     * 
+     *
      * @var HydratorInterface[]
      */
     protected $hydrators = array();
 
     /**
      * Set the default hydrator to use as a fallback
-     * 
-     * @param  HydratorInterface $hydrator 
+     *
+     * @param  HydratorInterface $hydrator
      */
     public function setDefaultHydrator(HydratorInterface $hydrator)
     {
@@ -45,7 +45,7 @@ class RestfulJsonModel extends JsonModel
 
     /**
      * Retrieve default hydrator, if any
-     * 
+     *
      * @return null|HydratorInterface
      */
     public function getDefaultHydrator()
@@ -55,9 +55,9 @@ class RestfulJsonModel extends JsonModel
 
     /**
      * Add a class (or interface) => hydrator mapping
-     * 
-     * @param  string $class 
-     * @param  HydratorInterface $hydrator 
+     *
+     * @param  string $class
+     * @param  HydratorInterface $hydrator
      */
     public function addHydrator($class, HydratorInterface $hydrator)
     {
@@ -66,8 +66,8 @@ class RestfulJsonModel extends JsonModel
 
     /**
      * Does a hydrator exist for the given class?
-     * 
-     * @param  object $item 
+     *
+     * @param  object $item
      * @return bool
      */
     public function hasHydrator($item)
@@ -86,8 +86,8 @@ class RestfulJsonModel extends JsonModel
 
     /**
      * Retrieve a hydrator mapped to a given item
-     * 
-     * @param  object $item 
+     *
+     * @param  object $item
      * @return HydratorInterface
      * @throws Exception\RuntimeException if not found
      */
@@ -105,7 +105,7 @@ class RestfulJsonModel extends JsonModel
 
     /**
      * Is this a problem api payload?
-     * 
+     *
      * @return bool
      */
     public function isProblemApi()
@@ -126,7 +126,7 @@ class RestfulJsonModel extends JsonModel
 
     /**
      * Does this describe a HAL response?
-     * 
+     *
      * @return bool
      */
     public function isHal()
@@ -148,11 +148,11 @@ class RestfulJsonModel extends JsonModel
      *
      * If the variables contain an object "item" key, the value is passed to
      * serializeItem().
-     * 
+     *
      * If the variables contain an iterable "items" key, the value is passed to
      * serializeItems().
      *
-     * Once all values have been filtered to serializeable form, the resulting 
+     * Once all values have been filtered to serializeable form, the resulting
      * variables are serialized as JSON.
      *
      * @return string
@@ -181,7 +181,7 @@ class RestfulJsonModel extends JsonModel
 
     /**
      * Serialize an API-Problem payload
-     * 
+     *
      * @return string
      */
     public function serializeProblemApi()
@@ -206,16 +206,16 @@ class RestfulJsonModel extends JsonModel
      *
      * If the item implements JsonSerializable, it is returned as-is.
      *
-     * If a hydrator has been mapped for the class of which $item is an 
-     * instance, that hydrator will be used to create and return an array 
+     * If a hydrator has been mapped for the class of which $item is an
+     * instance, that hydrator will be used to create and return an array
      * representation of the item.
      *
      * If a default hydrator exists, that hydrator will be used.
      *
      * Finally, if neither a class-specific or default hydrator is registered,
      * the item will simply be cast to an array.
-     * 
-     * @param  object $item 
+     *
+     * @param  object $item
      * @return array
      */
     public function serializeItem($item)
@@ -241,8 +241,8 @@ class RestfulJsonModel extends JsonModel
      *
      * Each item in $items is passed to serializeItem(), and appended
      * to a new array.
-     * 
-     * @param  array $items 
+     *
+     * @param  array $items
      * @return array[]
      */
     public function serializeItems(array $items)

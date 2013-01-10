@@ -15,14 +15,14 @@ use Zend\Paginator\Paginator;
 /**
  * Controller for handling resources.
  *
- * Extends the base AbstractRestfulController in order to provide very specific 
+ * Extends the base AbstractRestfulController in order to provide very specific
  * semantics for building a RESTful JSON service. All operations return either
  *
  * - a HAL-compliant response with appropriate hypermedia links
  * - a Problem API-compliant response for reporting an error condition
  *
- * You may specify what specific HTTP method types you wish to respond to, and 
- * OPTIONS will then report those; attempting any HTTP method falling outside 
+ * You may specify what specific HTTP method types you wish to respond to, and
+ * OPTIONS will then report those; attempting any HTTP method falling outside
  * that list will result in a 405 (Method Not Allowed) response.
  *
  * I recommend using resource-specific factories when using this controller,
@@ -37,7 +37,7 @@ class ResourceController extends AbstractRestfulController
 {
     /**
      * Criteria for the AcceptableViewModelSelector
-     * 
+     *
      * @var array
      */
     protected $acceptCriteria = array(
@@ -74,7 +74,7 @@ class ResourceController extends AbstractRestfulController
 
     /**
      * Number of items to return per page
-     * 
+     *
      * @var int
      */
     protected $pageSize = 30;
@@ -86,15 +86,15 @@ class ResourceController extends AbstractRestfulController
 
     /**
      * Route name that resolves to this resource; used to generate links.
-     * 
+     *
      * @var string
      */
     protected $route;
 
     /**
      * Set the Accept header criteria for use with the AcceptableViewModelSelector
-     * 
-     * @param  array $criteria 
+     *
+     * @param  array $criteria
      */
     public function setAcceptCriteria(array $criteria)
     {
@@ -103,8 +103,8 @@ class ResourceController extends AbstractRestfulController
 
     /**
      * Set the allowed HTTP OPTIONS
-     * 
-     * @param  array $options 
+     *
+     * @param  array $options
      */
     public function setHttpOptions(array $options)
     {
@@ -113,7 +113,7 @@ class ResourceController extends AbstractRestfulController
 
     /**
      * Set the default page size for paginated responses
-     * 
+     *
      * @param  int
      */
     public function setPageSize($count)
@@ -123,8 +123,8 @@ class ResourceController extends AbstractRestfulController
 
     /**
      * Inject the resource with which this controller will communicate.
-     * 
-     * @param  ResourceInterface $resource 
+     *
+     * @param  ResourceInterface $resource
      */
     public function setResource(ResourceInterface $resource)
     {
@@ -133,8 +133,8 @@ class ResourceController extends AbstractRestfulController
 
     /**
      * Inject the route name for this resource.
-     * 
-     * @param  string $route 
+     *
+     * @param  string $route
      */
     public function setRoute($route)
     {
@@ -147,14 +147,14 @@ class ResourceController extends AbstractRestfulController
      * Does several "pre-flight" checks:
      * - Raises an exception if no resource is composed.
      * - Raises an exception if no route is composed.
-     * - Returns a 405 response if the current HTTP request method is not in 
+     * - Returns a 405 response if the current HTTP request method is not in
      *   $options
      *
      * When the dispatch is complete, it will check to see if an array was
      * returned; if so, it will cast it to a view model using the
      * AcceptableViewModelSelector plugin, and the $acceptCriteria property.
-     * 
-     * @param  MvcEvent $e 
+     *
+     * @param  MvcEvent $e
      * @return mixed
      * @throws Exception\DomainException
      */
@@ -327,7 +327,7 @@ class ResourceController extends AbstractRestfulController
      * Respond to OPTIONS request
      *
      * Uses $options to set the Allow header line and return an empty response.
-     * 
+     *
      * @return \Zend\Http\Response
      */
     public function options()
@@ -405,8 +405,8 @@ class ResourceController extends AbstractRestfulController
 
     /**
      * Retrieve an identifier from an item
-     * 
-     * @param  array|object $item 
+     *
+     * @param  array|object $item
      * @return false|int|string
      */
     protected function getIdentifierFromItem($item)
@@ -437,8 +437,8 @@ class ResourceController extends AbstractRestfulController
 
     /**
      * Create a response payload for a paginated collection
-     * 
-     * @param  Paginator $items 
+     *
+     * @param  Paginator $items
      * @return array
      */
     protected function createPaginatedResponse(Paginator $items)
@@ -476,9 +476,9 @@ class ResourceController extends AbstractRestfulController
 
     /**
      * Create a response payload for a non-paginated collection
-     * 
+     *
      * @todo   Add metadata, such as count of items?
-     * @param  Paginator $items 
+     * @param  Paginator $items
      * @return array
      */
     protected function createNonPaginatedResponse($items)
@@ -493,8 +493,8 @@ class ResourceController extends AbstractRestfulController
 
     /**
      * Create array of HAL-formatted items
-     * 
-     * @param  array|Traversable $items 
+     *
+     * @param  array|Traversable $items
      * @return array
      */
     protected function createHalItems($items)
@@ -508,8 +508,8 @@ class ResourceController extends AbstractRestfulController
 
     /**
      * Create a HAL payload for an individual item
-     * 
-     * @param  mixed $item 
+     *
+     * @param  mixed $item
      * @return array
      */
     protected function createHalItem($item)

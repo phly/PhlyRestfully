@@ -14,9 +14,9 @@ use Zend\EventManager\EventManagerInterface;
 
 /**
  * Base resource class
- * 
+ *
  * Essentially, simply marshalls arguments and triggers events; it is useless
- * without listeners to do the actual work. 
+ * without listeners to do the actual work.
  */
 class Resource implements ResourceInterface
 {
@@ -30,8 +30,8 @@ class Resource implements ResourceInterface
      *
      * Sets the event manager identifiers to the current class, this class, and
      * the resource interface.
-     * 
-     * @param  EventManagerInterface $events 
+     *
+     * @param  EventManagerInterface $events
      * @return Resource
      */
     public function setEventManager(EventManagerInterface $events)
@@ -49,7 +49,7 @@ class Resource implements ResourceInterface
      * Retrieve event manager
      *
      * Lazy-instantiates an EM instance if none provided.
-     * 
+     *
      * @return EventManagerInterface
      */
     public function getEventManager()
@@ -70,8 +70,8 @@ class Resource implements ResourceInterface
      * returned as long as it is an array or object; otherwise, the original
      * $data is returned. If you wish to indicate failure to create, raise a
      * PhlyRestfully\Exception\CreationException from a listener.
-     * 
-     * @param  array|object $data 
+     *
+     * @param  array|object $data
      * @return array|object
      * @throws Exception\InvalidArgumentException
      */
@@ -104,12 +104,12 @@ class Resource implements ResourceInterface
      * be an array or object; if otherwise, an exception will be raised.
      *
      * Like create(), the return value of the last executed listener will be
-     * returned, as long as it is an array or object; otherwise, $data is 
-     * returned. If you wish to indicate failure to update, raise a 
+     * returned, as long as it is an array or object; otherwise, $data is
+     * returned. If you wish to indicate failure to update, raise a
      * PhlyRestfully\Exception\UpdateException.
-     * 
-     * @param  string|int $id 
-     * @param  array|object $data 
+     *
+     * @param  string|int $id
+     * @param  array|object $data
      * @return array|object
      * @throws Exception\InvalidArgumentException
      */
@@ -138,17 +138,17 @@ class Resource implements ResourceInterface
      * Partial update of an existing item
      *
      * Update the item indicated by $id, using the information from $data;
-     * $data should be merged with the existing item in order to provide a 
+     * $data should be merged with the existing item in order to provide a
      * partial update. Additionally, $data should be an array or object; any
      * other value will raise an exception.
      *
      * Like create(), the return value of the last executed listener will be
-     * returned, as long as it is an array or object; otherwise, $data is 
+     * returned, as long as it is an array or object; otherwise, $data is
      * returned. If you wish to indicate failure to update, raise a
      * PhlyRestfully\Exception\PatchException.
-     * 
-     * @param  string|int $id 
-     * @param  array|object $data 
+     *
+     * @param  string|int $id
+     * @param  array|object $data
      * @return array|object
      * @throws Exception\InvalidArgumentException
      */
@@ -179,8 +179,8 @@ class Resource implements ResourceInterface
      * Use to delete the item indicated by $id. The value returned by the last
      * listener will be used, as long as it is a boolean; otherwise, a boolean
      * false will be returned, indicating failure to delete.
-     * 
-     * @param  string|int $id 
+     *
+     * @param  string|int $id
      * @return bool
      */
     public function delete($id)
@@ -197,12 +197,12 @@ class Resource implements ResourceInterface
     /**
      * Fetch an existing item
      *
-     * Retrieve an existing item indicated by $id. The value of the last 
+     * Retrieve an existing item indicated by $id. The value of the last
      * listener will be returned, as long as it is an array or object;
      * otherwise, a boolean false value will be returned, indicating a
      * lookup failure.
-     * 
-     * @param  string|int $id 
+     *
+     * @param  string|int $id
      * @return false|array|object
      */
     public function fetch($id)
@@ -226,7 +226,7 @@ class Resource implements ResourceInterface
      * The recommendation is to return a \Zend\Paginator\Paginator instance,
      * which will allow performing paginated sets, and thus allow the view
      * layer to select the current page based on the query string or route.
-     * 
+     *
      * @return array|Traversable
      */
     public function fetchAll()

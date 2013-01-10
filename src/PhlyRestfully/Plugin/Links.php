@@ -13,7 +13,7 @@ use Zend\Mvc\Controller\Plugin\Url as UrlHelper;
 use Zend\View\Helper\ServerUrl as ServerUrlHelper;
 
 /**
- * Plugin for generating fully qualified links, and sets of HAL-compliant 
+ * Plugin for generating fully qualified links, and sets of HAL-compliant
  * link relations
  *
  * @see http://tools.ietf.org/html/draft-kelly-json-hal-03
@@ -31,7 +31,7 @@ class Links extends AbstractPlugin
     protected $urlHelper;
 
     /**
-     * @param ServerUrlHelper $helper 
+     * @param ServerUrlHelper $helper
      */
     public function setServerUrlHelper(ServerUrlHelper $helper)
     {
@@ -39,7 +39,7 @@ class Links extends AbstractPlugin
     }
 
     /**
-     * @param UrlHelper $helper 
+     * @param UrlHelper $helper
      */
     public function setUrlHelper(UrlHelper $helper)
     {
@@ -48,9 +48,9 @@ class Links extends AbstractPlugin
 
     /**
      * Create a fully qualified URI for a link
-     * 
-     * @param  string $route 
-     * @param  null|int|string $id 
+     *
+     * @param  string $route
+     * @param  null|int|string $id
      * @return string
      */
     public function createLink($route, $id = null)
@@ -66,8 +66,8 @@ class Links extends AbstractPlugin
 
     /**
      * Generate HAL link relation list
-     * 
-     * @param  array $links 
+     *
+     * @param  array $links
      * @return array
      */
     public function generateHalLinkRelations(array $links)

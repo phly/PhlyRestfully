@@ -12,13 +12,13 @@ use Zend\View\Strategy\JsonStrategy;
 use Zend\View\ViewEvent;
 
 /**
- * Extension of the JSON strategy to handle the RestfulJsonModel and provide 
+ * Extension of the JSON strategy to handle the RestfulJsonModel and provide
  * a Content-Type header appropriate to the response it describes.
  *
  * This will give the following content types:
  *
  * - application/hal+json for a result that contains HAL-compliant links
- * - application/api-problem+json for a result that contains a Problem 
+ * - application/api-problem+json for a result that contains a Problem
  *   API-formatted response
  * - application/json for all other responses
  */
@@ -50,8 +50,8 @@ class RestfulJsonStrategy extends JsonStrategy
      *
      * Injects the response with the rendered content, and sets the content
      * type based on the detection that occurred during renderer selection.
-     * 
-     * @param  ViewEvent $e 
+     *
+     * @param  ViewEvent $e
      */
     public function injectResponse(ViewEvent $e)
     {

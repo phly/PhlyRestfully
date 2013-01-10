@@ -9,7 +9,7 @@
 namespace PhlyRestfully\Exception;
 
 /**
- * Throw this exception from a "create" resource listener in order to indicate 
+ * Throw this exception from a "create" resource listener in order to indicate
  * an inability to create an item and automatically report it.
  */
 class CreationException extends DomainException

@@ -20,7 +20,7 @@ class ApiProblemResult extends AbstractPlugin
 {
     /**
      * Status titles for common problems
-     * 
+     *
      * @var array
      */
     protected $problemStatusTitles = array(
@@ -34,15 +34,15 @@ class ApiProblemResult extends AbstractPlugin
      * Create a Problem API result
      *
      * @param  int $httpStatus
-     * @param  string $detail 
-     * @param  string $describedBy 
+     * @param  string $detail
+     * @param  string $describedBy
      * @param  string $title
      * @return array
      */
     public function generate($httpStatus, $detail, $describedBy = 'http://www.w3.org/Protocols/rfc2616/rfc2616-sec10.html', $title = 'Unknown')
     {
         if ($title == 'Unknown'
-            && $describedBy == 'http://www.w3.org/Protocols/rfc2616/rfc2616-sec10.html' 
+            && $describedBy == 'http://www.w3.org/Protocols/rfc2616/rfc2616-sec10.html'
             && array_key_exists($httpStatus, $this->problemStatusTitles)
         ) {
             $title = $this->problemStatusTitles[$httpStatus];
@@ -58,10 +58,10 @@ class ApiProblemResult extends AbstractPlugin
 
     /**
      * Invokable form of class
-     * 
+     *
      * @param  int $httpStatus
-     * @param  string $detail 
-     * @param  string $describedBy 
+     * @param  string $detail
+     * @param  string $describedBy
      * @param  string $title
      * @return array
      */
