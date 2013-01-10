@@ -290,4 +290,30 @@ class ResourceControllerTest extends TestCase
         $this->assertEquals($item, $result['item']);
     }
 
+    public function testUpdateReturnsProblemResultOnUpdateException()
+    {
+        $this->resource->getEventManager()->attach('update', function ($e) {
+            throw new Exception\UpdateException('failed');
+        });
+
+        $result = $this->controller->update('foo', array());
+        $this->assertProblemApiResult(500, 'failed', $result);
+    }
+
+    public function testUpdateReturnsHalArrayOnSuccess()
+    {
+        $item = array('id' => 'foo', 'bar' => 'baz');
+        $this->resource->getEventManager()->attach('update', function ($e) use ($item) {
+            return $item;
+        });
+
+        $result = $this->controller->update('foo', $item);
+        $this->assertInternalType('array', $result);
+        $this->assertArrayHasKey('_links', $result);
+        $this->assertInternalType('array', $result['_links']);
+        $this->assertRegexp('#/resource$#', $result['_links']['up']['href']);
+        $this->assertRegexp('#/resource/foo$#', $result['_links']['self']['href']);
+        $this->assertArrayHasKey('item', $result);
+        $this->assertEquals($item, $result['item']);
+    }
 }
