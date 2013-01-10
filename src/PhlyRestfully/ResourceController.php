@@ -270,7 +270,7 @@ class ResourceController extends AbstractRestfulController
     public function getList()
     {
         $response = $this->getResponse();
-        $items    = $this->resource->fetch($id);
+        $items    = $this->resource->fetchAll();
 
         if ($items instanceof Paginator) {
             return $this->createPaginatedResponse($items);
@@ -432,7 +432,7 @@ class ResourceController extends AbstractRestfulController
             'last'  => $base . '?page=' . $last,
         );
         if ($prev) {
-            $links['prev'] = $base . '?page=' . $prev;
+            $links['prev'] = $base . ((1 == $prev) ? '' : '?page=' . $prev);
         }
         if ($next) {
             $links['next'] = $base . '?page=' . $next;
@@ -440,7 +440,7 @@ class ResourceController extends AbstractRestfulController
 
         return array(
             '_links' => $this->links()->generateHalLinkRelations($links),
-            'items'  => $items,
+            'items'  => $this->createHalItems($items),
         );
     }
 
@@ -457,7 +457,44 @@ class ResourceController extends AbstractRestfulController
             '_links' => $this->links()->generateHalLinkRelations(array(
                 'self' => $this->links()->createLink($this->route),
             )),
-            'items' => $items,
+            'items' => $this->createHalItems($items),
         );
+    }
+
+    /**
+     * Create array of HAL-formatted items
+     * 
+     * @param  array|Traversable $items 
+     * @return array
+     */
+    protected function createHalItems($items)
+    {
+        $halItems = array();
+        foreach ($items as $item) {
+            $halItems[] = $this->createHalItem($item);
+        }
+        return $halItems;
+    }
+
+    /**
+     * Create a HAL payload for an individual item
+     * 
+     * @param  mixed $item 
+     * @return array
+     */
+    protected function createHalItem($item)
+    {
+        $halItem = array('item' => $item);
+
+        $id = $this->getIdentifierFromItem($item);
+        if (!$id) {
+            return $halItem;
+        }
+
+        $halItem['_links'] = $this->links()->generateHalLinkRelations(array(
+            'self' => $this->links()->createLink($this->route, $id),
+        ));
+
+        return $halItem;
     }
 }

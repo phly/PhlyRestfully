@@ -12,6 +12,9 @@ use Zend\Mvc\Controller\Plugin\Url as UrlHelper;
 use Zend\Mvc\MvcEvent;
 use Zend\Mvc\Router\Http\Segment;
 use Zend\Mvc\Router\SimpleRouteStack;
+use Zend\Paginator\Adapter\ArrayAdapter as ArrayPaginator;
+use Zend\Paginator\Paginator;
+use Zend\Stdlib\Parameters;
 use Zend\View\Helper\ServerUrl as ServerUrlHelper;
 
 class ResourceControllerTest extends TestCase
@@ -144,5 +147,62 @@ class ResourceControllerTest extends TestCase
         $this->assertRegexp('#/resource/foo$#', $result['_links']['self']['href']);
         $this->assertArrayHasKey('item', $result);
         $this->assertEquals($item, $result['item']);
+    }
+
+    public function testReturnsHalResponseWithOnlySelfReferenceForNonPaginatedList()
+    {
+        $items = array(
+            array('id' => 'foo', 'bar' => 'baz')
+        );
+        $this->resource->getEventManager()->attach('fetchAll', function ($e) use ($items) {
+            return $items;
+        });
+
+        $result = $this->controller->getList();
+        $this->assertInternalType('array', $result);
+        $this->assertArrayHasKey('_links', $result);
+        $this->assertInternalType('array', $result['_links']);
+        $this->assertRegexp('#/resource$#', $result['_links']['self']['href']);
+        $this->assertArrayHasKey('items', $result);
+
+        $item = $items[0];
+        $test = $result['items'][0];
+        $this->assertEquals($item, $test['item']);
+        $this->assertRegexp('#/resource/foo$#', $test['_links']['self']['href']);
+    }
+
+    public function testReturnsHalResponseForPaginatedList()
+    {
+        $items = array(
+            array('id' => 'foo', 'bar' => 'baz'),
+            array('id' => 'bar', 'bar' => 'baz'),
+            array('id' => 'baz', 'bar' => 'baz'),
+        );
+        $adapter   = new ArrayPaginator($items);
+        $paginator = new Paginator($adapter);
+        $this->resource->getEventManager()->attach('fetchAll', function ($e) use ($paginator) {
+            return $paginator;
+        });
+
+        $this->controller->setPageSize(1);
+        $request = $this->controller->getRequest();
+        $request->setQuery(new Parameters(array('page' => 2)));
+
+        $result = $this->controller->getList();
+        $this->assertInternalType('array', $result);
+        $this->assertArrayHasKey('_links', $result);
+        $this->assertInternalType('array', $result['_links']);
+        $this->assertRegexp('#/resource\?page\=2$#', $result['_links']['self']['href']);
+        $this->assertRegexp('#/resource$#', $result['_links']['first']['href']);
+        $this->assertRegexp('#/resource\?page\=3$#', $result['_links']['last']['href']);
+        $this->assertRegexp('#/resource$#', $result['_links']['prev']['href']);
+        $this->assertRegexp('#/resource\?page\=3$#', $result['_links']['next']['href']);
+
+        $this->assertArrayHasKey('items', $result);
+        $item = $items[1];
+        $test = $result['items'][0];
+        $this->assertEquals($item, $test['item']);
+        $this->assertRegexp('#/resource/bar$#', $test['_links']['self']['href']);
+        $this->assertEquals($item, $test['item']);
     }
 }

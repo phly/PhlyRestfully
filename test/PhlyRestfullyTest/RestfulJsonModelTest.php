@@ -179,19 +179,19 @@ class RestfulJsonModelTest extends TestCase
         $this->model->addHydrator(__NAMESPACE__ . '\TestAsset\ArraySerializable', new Hydrator\ArraySerializable);
 
         $jsonItem = new TestAsset\JsonSerializable();
-        $items = new ArrayObject(array(
-            array('foo' => 'bar'),
-            (object) array('foo' => 'bar'),
-            $jsonItem,
-            new TestAsset\ArraySerializable(),
-            new TestAsset\ClassMethods(),
-        ));
+        $items = array(
+            array('item' => array('foo' => 'bar')),
+            array('item' => (object) array('foo' => 'bar')),
+            array('item' => $jsonItem),
+            array('item' => new TestAsset\ArraySerializable()),
+            array('item' => new TestAsset\ClassMethods()),
+        );
         $expected = array(
-            array('foo' => 'bar'),
-            array(),   // no class methods
-            $jsonItem, // json serializable
-            array('foo' => 'bar'),
-            array('foo' => 'bar'),
+            array('item' => array('foo' => 'bar')),
+            array('item' => array()),   // no class methods
+            array('item' => $jsonItem), // json serializable
+            array('item' => array('foo' => 'bar')),
+            array('item' => array('foo' => 'bar')),
         );
         $test = $this->model->serializeItems($items);
         $this->assertEquals($expected, $test);
@@ -246,22 +246,21 @@ class RestfulJsonModelTest extends TestCase
     {
         $jsonItem = new TestAsset\JsonSerializable();
         $items = array(
-            array('foo' => 'bar'),
-            (object) array('foo' => 'bar'),
-            $jsonItem,
-            new TestAsset\ArraySerializable(),
-            new TestAsset\ClassMethods(),
+            array('item' => array('foo' => 'bar')),
+            array('item' => (object) array('foo' => 'bar')),
+            array('item' => $jsonItem),
+            array('item' => new TestAsset\ArraySerializable()),
+            array('item' => new TestAsset\ClassMethods()),
         );
         $expected = array(
-            array('foo' => 'bar'),
-            array(),               // no class methods
-            array('foo' => 'bar'), // json serializable
-            array('foo' => 'bar'),
-            array('foo' => 'bar'),
+            array('item' => array('foo' => 'bar')),
+            array('item' => array()),               // no class methods
+            array('item' => array('foo' => 'bar')), // json serializable
+            array('item' => array('foo' => 'bar')),
+            array('item' => array('foo' => 'bar')),
         );
         return array(
             'array' => array($items, $expected),
-            'traversable' => array(new ArrayObject($items), $expected),
         );
     }
 

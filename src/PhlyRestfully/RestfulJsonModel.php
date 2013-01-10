@@ -166,9 +166,7 @@ class RestfulJsonModel extends JsonModel
             $variables['item'] = $this->serializeItem($variables['item']);
         }
 
-        if (isset($variables['items'])
-            && (is_array($variables['items']) || $variables['items'] instanceof Traversable)
-        ) {
+        if (isset($variables['items']) && is_array($variables['items'])) {
             $variables['items'] = $this->serializeItems($variables['items']);
         }
 
@@ -238,19 +236,23 @@ class RestfulJsonModel extends JsonModel
      * Each item in $items is passed to serializeItem(), and appended
      * to a new array.
      * 
-     * @param  array|Traversable $items 
+     * @param  array $items 
      * @return array[]
      */
-    public function serializeItems($items)
+    public function serializeItems(array $items)
     {
-        $array = array();
-        foreach ($items as $item) {
-            if (!is_object($item)) {
-                $array[] = $item;
+        foreach ($items as $index => $info) {
+            if (!is_array($info)) {
                 continue;
             }
-            $array[] = $this->serializeItem($item);
+            if (!isset($info['item'])) {
+                continue;
+            }
+            if (!is_object($info['item'])) {
+                continue;
+            }
+            $items[$index]['item'] = $this->serializeItem($info['item']);
         }
-        return $array;
+        return $items;
     }
 }
