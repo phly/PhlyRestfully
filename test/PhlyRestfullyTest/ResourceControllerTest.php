@@ -118,4 +118,31 @@ class ResourceControllerTest extends TestCase
         $this->assertInstanceOf('Zend\Http\Response', $result);
         $this->assertEquals(204, $result->getStatusCode());
     }
+
+    public function testReturningEmptyResultFromGetReturnsProblemApiResult()
+    {
+        $this->resource->getEventManager()->attach('fetch', function ($e) {
+            return false;
+        });
+
+        $result = $this->controller->get('foo');
+        $this->assertProblemApiResult(404, 'not found', $result);
+    }
+
+    public function testReturningItemFromGetReturnsExpectedHalResult()
+    {
+        $item = array('id' => 'foo', 'bar' => 'baz');
+        $this->resource->getEventManager()->attach('fetch', function ($e) use ($item) {
+            return $item;
+        });
+
+        $result = $this->controller->get('foo');
+        $this->assertInternalType('array', $result);
+        $this->assertArrayHasKey('_links', $result);
+        $this->assertInternalType('array', $result['_links']);
+        $this->assertRegexp('#/resource$#', $result['_links']['up']['href']);
+        $this->assertRegexp('#/resource/foo$#', $result['_links']['self']['href']);
+        $this->assertArrayHasKey('item', $result);
+        $this->assertEquals($item, $result['item']);
+    }
 }
