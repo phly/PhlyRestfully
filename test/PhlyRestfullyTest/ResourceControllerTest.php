@@ -12,6 +12,7 @@ use Zend\Mvc\Controller\PluginManager;
 use Zend\Mvc\Controller\Plugin\Url as UrlHelper;
 use Zend\Mvc\MvcEvent;
 use Zend\Mvc\Router\Http\Segment;
+use Zend\Mvc\Router\RouteMatch;
 use Zend\Mvc\Router\SimpleRouteStack;
 use Zend\Paginator\Adapter\ArrayAdapter as ArrayPaginator;
 use Zend\Paginator\Paginator;
@@ -29,6 +30,7 @@ class ResourceControllerTest extends TestCase
         $router->addRoute('resource', $route);
         $this->event = $event = new MvcEvent();
         $event->setRouter($router);
+        $event->setRouteMatch(new RouteMatch(array()));
         $controller->setEvent($event);
         $controller->setRoute('resource');
 
@@ -315,5 +317,74 @@ class ResourceControllerTest extends TestCase
         $this->assertRegexp('#/resource/foo$#', $result['_links']['self']['href']);
         $this->assertArrayHasKey('item', $result);
         $this->assertEquals($item, $result['item']);
+    }
+
+    public function testOnDispatchRaisesDomainExceptionOnMissingResource()
+    {
+        $controller = new ResourceController();
+        $this->setExpectedException('PhlyRestfully\Exception\DomainException', 'ResourceInterface');
+        $controller->onDispatch($this->event);
+    }
+
+    public function testOnDispatchRaisesDomainExceptionOnMissingRoute()
+    {
+        $controller = new ResourceController();
+        $controller->setResource($this->resource);
+        $this->setExpectedException('PhlyRestfully\Exception\DomainException', 'route');
+        $controller->onDispatch($this->event);
+    }
+
+    public function testOnDispatchReturns405ResponseForInvalidMethod()
+    {
+        $this->controller->setHttpOptions(array('GET'));
+        $request = $this->controller->getRequest();
+        $request->setMethod('POST');
+        $this->event->setRequest($request);
+        $this->event->setResponse($this->controller->getResponse());
+
+        $result = $this->controller->onDispatch($this->event);
+        $this->assertInstanceOf('Zend\Http\Response', $result);
+        $this->assertEquals(405, $result->getStatusCode());
+        $headers = $result->getHeaders();
+        $this->assertTrue($headers->has('allow'));
+        $allow = $headers->get('allow');
+        $this->assertEquals('GET', $allow->getFieldValue());
+    }
+
+    public function testValidMethodReturningArrayCastsReturnToViewModel()
+    {
+        $item = array('id' => 'foo', 'bar' => 'baz');
+        $this->resource->getEventManager()->attach('fetch', function ($e) use ($item) {
+            return $item;
+        });
+
+        $this->controller->setHttpOptions(array('GET'));
+
+        $request = $this->controller->getRequest();
+        $request->setMethod('GET');
+        $this->event->setRequest($request);
+        $this->event->getRouteMatch()->setParam('id', 'foo');
+
+        $result = $this->controller->onDispatch($this->event);
+        $this->assertInstanceof('Zend\View\Model\ModelInterface', $result);
+    }
+
+    public function testValidMethodReturningArrayCastsReturnToRestfulJsonModelWhenAcceptHeaderIsJson()
+    {
+        $item = array('id' => 'foo', 'bar' => 'baz');
+        $this->resource->getEventManager()->attach('fetch', function ($e) use ($item) {
+            return $item;
+        });
+
+        $this->controller->setHttpOptions(array('GET'));
+
+        $request = $this->controller->getRequest();
+        $request->setMethod('GET');
+        $request->getHeaders()->addHeaderLine('Accept', 'application/json');
+        $this->event->setRequest($request);
+        $this->event->getRouteMatch()->setParam('id', 'foo');
+
+        $result = $this->controller->onDispatch($this->event);
+        $this->assertInstanceof('PhlyRestfully\RestfulJsonModel', $result);
     }
 }

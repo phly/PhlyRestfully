@@ -147,12 +147,15 @@ class ResourceController extends AbstractRestfulController
             ));
         }
 
-        array_walk($this->httpOptions, 'strtoupper');
+        array_walk($this->httpOptions, function (&$item) {
+            $item = strtoupper($item);
+        });
         $request = $e->getRequest();
         $method  = strtoupper($request->getMethod());
         if (!in_array($method, $this->httpOptions)) {
             $response = $e->getResponse();
             $response->setStatusCode(405);
+            $headers = $response->getHeaders();
             $headers->addHeaderLine('Allow', implode(', ', $this->httpOptions));
             return $response;
         }
