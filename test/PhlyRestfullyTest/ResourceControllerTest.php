@@ -205,4 +205,40 @@ class ResourceControllerTest extends TestCase
         $this->assertRegexp('#/resource/bar$#', $test['_links']['self']['href']);
         $this->assertEquals($item, $test['item']);
     }
+
+    public function testHeadReturnsListResponseWhenNoIdProvided()
+    {
+        $items = array(
+            array('id' => 'foo', 'bar' => 'baz'),
+            array('id' => 'bar', 'bar' => 'baz'),
+            array('id' => 'baz', 'bar' => 'baz'),
+        );
+        $adapter   = new ArrayPaginator($items);
+        $paginator = new Paginator($adapter);
+        $this->resource->getEventManager()->attach('fetchAll', function ($e) use ($paginator) {
+            return $paginator;
+        });
+
+        $this->controller->setPageSize(1);
+        $request = $this->controller->getRequest();
+        $request->setQuery(new Parameters(array('page' => 2)));
+
+        $result = $this->controller->head();
+        $this->assertInternalType('array', $result);
+        $this->assertArrayHasKey('_links', $result);
+        $this->assertArrayHasKey('items', $result);
+    }
+
+    public function testHeadReturnsItemResponseWhenIdProvided()
+    {
+        $item = array('id' => 'foo', 'bar' => 'baz');
+        $this->resource->getEventManager()->attach('fetch', function ($e) use ($item) {
+            return $item;
+        });
+
+        $result = $this->controller->head('foo');
+        $this->assertInternalType('array', $result);
+        $this->assertArrayHasKey('_links', $result);
+        $this->assertArrayHasKey('item', $result);
+    }
 }
