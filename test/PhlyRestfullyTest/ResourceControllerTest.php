@@ -7,6 +7,7 @@ use PhlyRestfully\Plugin;
 use PhlyRestfully\Resource;
 use PhlyRestfully\ResourceController;
 use PHPUnit_Framework_TestCase as TestCase;
+use ReflectionObject;
 use Zend\Mvc\Controller\PluginManager;
 use Zend\Mvc\Controller\Plugin\Url as UrlHelper;
 use Zend\Mvc\MvcEvent;
@@ -240,5 +241,25 @@ class ResourceControllerTest extends TestCase
         $this->assertInternalType('array', $result);
         $this->assertArrayHasKey('_links', $result);
         $this->assertArrayHasKey('item', $result);
+    }
+
+    public function testOptionsReturnsEmptyResponseWithAllowHeaderPopulated()
+    {
+        $r = new ReflectionObject($this->controller);
+        $httpOptionsProp = $r->getProperty('httpOptions');
+        $httpOptionsProp->setAccessible(true);
+        $httpOptions = $httpOptionsProp->getValue($this->controller);
+        sort($httpOptions);
+
+        $result = $this->controller->options();
+        $this->assertInstanceOf('Zend\Http\Response', $result);
+        $this->assertEquals(204, $result->getStatusCode());
+        $headers = $result->getHeaders();
+        $this->assertTrue($headers->has('allow'));
+        $allow = $headers->get('allow');
+        $test  = $allow->getFieldValue();
+        $test  = explode(', ', $test);
+        sort($test);
+        $this->assertEquals($httpOptions, $test);
     }
 }
