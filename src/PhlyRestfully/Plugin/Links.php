@@ -60,7 +60,7 @@ class Links extends AbstractPlugin
             $params['id'] = $id;
         }
 
-        $path = $this->urlHelper->fromRoute($route, $params);
+        $path = $this->urlHelper->fromRoute($route, $params, true);
         return $this->serverUrlHelper->__invoke($path);
     }
 
