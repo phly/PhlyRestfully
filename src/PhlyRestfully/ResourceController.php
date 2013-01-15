@@ -73,13 +73,6 @@ class ResourceController extends AbstractRestfulController
     );
 
     /**
-     * Route name that resolves to an item of this resource; used to generate links.
-     *
-     * @var string
-     */
-    protected $itemRoute;
-
-    /**
      * Number of items to return per page
      *
      * @var int
@@ -96,7 +89,7 @@ class ResourceController extends AbstractRestfulController
      *
      * @var string
      */
-    protected $resourceRoute;
+    protected $route;
 
     /**
      * Set the Accept header criteria for use with the AcceptableViewModelSelector
@@ -116,16 +109,6 @@ class ResourceController extends AbstractRestfulController
     public function setHttpOptions(array $options)
     {
         $this->httpOptions = $options;
-    }
-
-    /**
-     * Inject the route name for items of this resource.
-     *
-     * @param  string $route
-     */
-    public function setItemRoute($route)
-    {
-        $this->itemRoute = $route;
     }
 
     /**
@@ -151,16 +134,11 @@ class ResourceController extends AbstractRestfulController
     /**
      * Inject the route name for this resource.
      *
-     * If the item route is not set, sets the item route to this route.
-     *
      * @param  string $route
      */
-    public function setResourceRoute($route)
+    public function setRoute($route)
     {
-        $this->resourceRoute = $route;
-        if (!$this->itemRoute) {
-            $this->itemRoute = $route;
-        }
+        $this->route = $route;
     }
 
     /**
@@ -251,8 +229,8 @@ class ResourceController extends AbstractRestfulController
             );
         }
 
-        $resourceLink = $this->links()->createLink($this->resourceRoute);
-        $selfLink     = $this->links()->createLink($this->itemRoute, $id, $item);
+        $resourceLink = $this->links()->createLink($this->route);
+        $selfLink     = $this->links()->createLink($this->route, $id, $item);
 
         $response->setStatusCode(201);
         $response->getHeaders()->addHeaderLine('Location', $selfLink);
@@ -302,8 +280,8 @@ class ResourceController extends AbstractRestfulController
             );
         }
 
-        $resourceLink = $this->links()->createLink($this->resourceRoute);
-        $selfLink     = $this->links()->createLink($this->itemRoute, $id, $item);
+        $resourceLink = $this->links()->createLink($this->route);
+        $selfLink     = $this->links()->createLink($this->route, $id, $item);
 
         return array(
             '_links' => $this->links()->generateHalLinkRelations(array(
@@ -381,8 +359,8 @@ class ResourceController extends AbstractRestfulController
             );
         }
 
-        $resourceLink = $this->links()->createLink($this->resourceRoute);
-        $selfLink     = $this->links()->createLink($this->itemRoute, $id, $item);
+        $resourceLink = $this->links()->createLink($this->route);
+        $selfLink     = $this->links()->createLink($this->route, $id, $item);
 
         return array(
             '_links' => $this->links()->generateHalLinkRelations(array(
@@ -413,8 +391,8 @@ class ResourceController extends AbstractRestfulController
             );
         }
 
-        $resourceLink = $this->links()->createLink($this->resourceRoute);
-        $selfLink     = $this->links()->createLink($this->itemRoute, $id, $item);
+        $resourceLink = $this->links()->createLink($this->route);
+        $selfLink     = $this->links()->createLink($this->route, $id, $item);
 
         return array(
             '_links' => $this->links()->generateHalLinkRelations(array(
@@ -474,7 +452,7 @@ class ResourceController extends AbstractRestfulController
 
         $items->setCurrentPageNumber($page);
 
-        $base  = $this->links()->createLink($this->resourceRoute);
+        $base  = $this->links()->createLink($this->route);
         $next  = ($page == $count) ? false : $page + 1;
         $prev  = ($page == 1) ? false : $page - 1;
         $last  = $count;
@@ -507,7 +485,7 @@ class ResourceController extends AbstractRestfulController
     {
         return array(
             '_links' => $this->links()->generateHalLinkRelations(array(
-                'self' => $this->links()->createLink($this->resourceRoute),
+                'self' => $this->links()->createLink($this->route),
             )),
             'items' => $this->createHalItems($items),
         );
@@ -544,7 +522,7 @@ class ResourceController extends AbstractRestfulController
         }
 
         $halItem['_links'] = $this->links()->generateHalLinkRelations(array(
-            'self' => $this->links()->createLink($this->itemRoute, $id, $item),
+            'self' => $this->links()->createLink($this->route, $id, $item),
         ));
 
         return $halItem;
