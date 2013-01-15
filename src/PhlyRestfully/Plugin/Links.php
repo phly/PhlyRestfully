@@ -8,6 +8,10 @@
 
 namespace PhlyRestfully\Plugin;
 
+use ArrayObject;
+use Zend\EventManager\EventManager;
+use Zend\EventManager\EventManagerAwareInterface;
+use Zend\EventManager\EventManagerInterface;
 use Zend\Mvc\Controller\Plugin\AbstractPlugin;
 use Zend\Mvc\Controller\Plugin\Url as UrlHelper;
 use Zend\View\Helper\ServerUrl as ServerUrlHelper;
@@ -18,14 +22,12 @@ use Zend\View\Helper\ServerUrl as ServerUrlHelper;
  *
  * @see http://tools.ietf.org/html/draft-kelly-json-hal-03
  */
-class Links extends AbstractPlugin
+class Links extends AbstractPlugin implements EventManagerAwareInterface
 {
     /**
-     * Additional parameters to use when generating a URL
-     * 
-     * @var array
+     * @var EventManagerInterface
      */
-    protected $routeParams = array();
+    protected $events;
 
     /**
      * @var ServerUrlHelper
@@ -38,15 +40,32 @@ class Links extends AbstractPlugin
     protected $urlHelper;
 
     /**
-     * Set additional parameters to use when generating a URL
+     * Retrieve the event manager instance
      *
-     * Pass an empty array to clear any previously set params.
-     * 
-     * @param  array $params 
+     * Lazy-initializes one if none present.
+     *
+     * @return EventManagerInterface
      */
-    protected function setRouteParams(array $params)
+    public function getEventManager()
     {
-        $this->routeParams = $params;
+        if (!$this->events) {
+            $this->setEventManager(new EventManager());
+        }
+        return $this->events;
+    }
+
+    /**
+     * Set the event manager instance
+     *
+     * @param  EventManagerInterface $events
+     */
+    public function setEventManager(EventManagerInterface $events)
+    {
+        $events->setIdentifiers(array(
+            __CLASS__,
+            get_class($this),
+        ));
+        $this->events = $events;
     }
 
     /**
@@ -68,18 +87,32 @@ class Links extends AbstractPlugin
     /**
      * Create a fully qualified URI for a link
      *
+     * Triggers the "createLink" event with the route, id, item, and a set of
+     * params that will be passed to the route; listeners can alter any of the
+     * arguments, which will then be used by the method to generate the url.
+     *
      * @param  string $route
      * @param  null|int|string $id
+     * @param  null|mixed $item
      * @return string
      */
-    public function createLink($route, $id = null)
+    public function createLink($route, $id = null, $item = null)
     {
-        $params = $this->routeParams;
+        $params = new ArrayObject();
         if (null !== $id) {
             $params['id'] = $id;
         }
+        $events      = $this->getEventManager();
+        $eventParams = $events->prepareArgs(array(
+            'route'  => $route,
+            'id'     => $id,
+            'item'   => $item,
+            'params' => $params,
+        ));
+        $events->trigger(__FUNCTION__, $this, $eventParams);
+        $route = $eventParams['route'];
 
-        $path = $this->urlHelper->fromRoute($route, $params, true);
+        $path = $this->urlHelper->fromRoute($route, $params->getArrayCopy(), true);
         return $this->serverUrlHelper->__invoke($path);
     }
 
