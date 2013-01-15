@@ -21,6 +21,13 @@ use Zend\View\Helper\ServerUrl as ServerUrlHelper;
 class Links extends AbstractPlugin
 {
     /**
+     * Additional parameters to use when generating a URL
+     * 
+     * @var array
+     */
+    protected $routeParams = array();
+
+    /**
      * @var ServerUrlHelper
      */
     protected $serverUrlHelper;
@@ -29,6 +36,18 @@ class Links extends AbstractPlugin
      * @var UrlHelper
      */
     protected $urlHelper;
+
+    /**
+     * Set additional parameters to use when generating a URL
+     *
+     * Pass an empty array to clear any previously set params.
+     * 
+     * @param  array $params 
+     */
+    protected function setRouteParams(array $params)
+    {
+        $this->routeParams = $params;
+    }
 
     /**
      * @param ServerUrlHelper $helper
@@ -55,7 +74,7 @@ class Links extends AbstractPlugin
      */
     public function createLink($route, $id = null)
     {
-        $params = array();
+        $params = $this->routeParams;
         if (null !== $id) {
             $params['id'] = $id;
         }
