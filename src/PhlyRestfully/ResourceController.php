@@ -460,6 +460,16 @@ class ResourceController extends AbstractRestfulController
     {
         $items->setItemCountPerPage($this->pageSize);
         $count = count($items);
+
+        if (!$count) {
+            return array(
+                '_links' => $this->links()->generateHalLinkRelations(array(
+                    'self' => $this->links()->createLink($this->route),
+                )),
+                'items'  => array(),
+            );
+        }
+
         $page  = (int) $this->params()->fromQuery('page', 1);
         if ($page < 1 || $page > $count) {
             return $this->apiProblemResult(409, 'Invalid page provided');
