@@ -252,7 +252,7 @@ class ResourceController extends AbstractRestfulController
         }
 
         $resourceLink = $this->links()->createLink($this->resourceRoute);
-        $selfLink     = $this->links()->createLink($this->itemRoute, $id);
+        $selfLink     = $this->links()->createLink($this->itemRoute, $id, $item);
 
         $response->setStatusCode(201);
         $response->getHeaders()->addHeaderLine('Location', $selfLink);
@@ -303,7 +303,7 @@ class ResourceController extends AbstractRestfulController
         }
 
         $resourceLink = $this->links()->createLink($this->resourceRoute);
-        $selfLink     = $this->links()->createLink($this->itemRoute, $id);
+        $selfLink     = $this->links()->createLink($this->itemRoute, $id, $item);
 
         return array(
             '_links' => $this->links()->generateHalLinkRelations(array(
@@ -382,7 +382,7 @@ class ResourceController extends AbstractRestfulController
         }
 
         $resourceLink = $this->links()->createLink($this->resourceRoute);
-        $selfLink     = $this->links()->createLink($this->itemRoute, $id);
+        $selfLink     = $this->links()->createLink($this->itemRoute, $id, $item);
 
         return array(
             '_links' => $this->links()->generateHalLinkRelations(array(
@@ -414,7 +414,7 @@ class ResourceController extends AbstractRestfulController
         }
 
         $resourceLink = $this->links()->createLink($this->resourceRoute);
-        $selfLink     = $this->links()->createLink($this->itemRoute, $id);
+        $selfLink     = $this->links()->createLink($this->itemRoute, $id, $item);
 
         return array(
             '_links' => $this->links()->generateHalLinkRelations(array(
@@ -544,7 +544,7 @@ class ResourceController extends AbstractRestfulController
         }
 
         $halItem['_links'] = $this->links()->generateHalLinkRelations(array(
-            'self' => $this->links()->createLink($this->itemRoute, $id),
+            'self' => $this->links()->createLink($this->itemRoute, $id, $item),
         ));
 
         return $halItem;
