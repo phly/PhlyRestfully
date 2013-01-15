@@ -230,10 +230,7 @@ class ResourceController extends AbstractRestfulController
         try {
             $item = $this->resource->create($data);
         } catch (Exception\CreationException $e) {
-            return $this->apiProblemResult(
-                500,
-                $e->getMessage()
-            );
+            return $this->apiProblemResult(500, $e);
         }
 
         $id = $this->getIdentifierFromItem($item);
@@ -368,10 +365,7 @@ class ResourceController extends AbstractRestfulController
         try {
             $item = $this->resource->patch($id, $data);
         } catch (Exception\PatchException $e) {
-            return $this->apiProblemResult(
-                500,
-                $e->getMessage()
-            );
+            return $this->apiProblemResult(500, $e);
         }
 
         $resourceLink = $this->links()->createLink($this->route);
@@ -400,10 +394,7 @@ class ResourceController extends AbstractRestfulController
         try {
             $item = $this->resource->update($id, $data);
         } catch (Exception\UpdateException $e) {
-            return $this->apiProblemResult(
-                500,
-                $e->getMessage()
-            );
+            return $this->apiProblemResult(500, $e);
         }
 
         $resourceLink = $this->links()->createLink($this->route);

@@ -191,13 +191,20 @@ class RestfulJsonModel extends JsonModel
             $variables = iterator_to_array($variables);
         }
 
-        $base = array(
+
+        $values = array(
             'describedBy' => '',
             'title'       => '',
             'httpStatus'  => 500,
             'detail'      => '',
         );
-        $values = array_intersect_assoc($base, $variables);
+        foreach (array_keys($values) as $key) {
+            if (isset($variables[$key])) {
+                $values[$key] = $variables[$key];
+                continue;
+            }
+            unset($values[$key]);
+        }
         return Json::encode($values);
     }
 

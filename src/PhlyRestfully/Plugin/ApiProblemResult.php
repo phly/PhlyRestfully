@@ -19,6 +19,14 @@ use Zend\Mvc\Controller\Plugin\AbstractPlugin;
 class ApiProblemResult extends AbstractPlugin
 {
     /**
+     * Indicate whether or not the detail should include a stack trace, if
+     * an exception was provided.
+     * 
+     * @var bool
+     */
+    protected $detailIncludesStackTrace = false;
+
+    /**
      * Status titles for common problems
      *
      * @var array
@@ -29,6 +37,17 @@ class ApiProblemResult extends AbstractPlugin
         422 => 'Unprocessable Entity',
         500 => 'Internal Server Error',
     );
+
+    /**
+     * Indicate whether the detail should include a stack trace, if an
+     * exception was provided as the detail.
+     * 
+     * @param  bool $flag 
+     */
+    public function setDetailIncludesStackTrace($flag)
+    {
+        $this->detailIncludesStackTrace = (bool) $flag;
+    }
 
     /**
      * Create a Problem API result
@@ -46,6 +65,14 @@ class ApiProblemResult extends AbstractPlugin
             && array_key_exists($httpStatus, $this->problemStatusTitles)
         ) {
             $title = $this->problemStatusTitles[$httpStatus];
+        }
+
+        if ($detail instanceof \Exception) {
+            $message = $detail->getMessage();
+            if ($this->detailIncludesStackTrace) {
+                $message .= "\n" . $detail->getTraceAsString();
+            }
+            $detail = $message;
         }
 
         $controller = $this->getController();
