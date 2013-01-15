@@ -471,12 +471,15 @@ class ResourceController extends AbstractRestfulController
         $base  = $this->links()->createLink($this->route);
         $next  = ($page == $count) ? false : $page + 1;
         $prev  = ($page == 1) ? false : $page - 1;
-        $last  = $count;
         $links = array(
             'self'  => $base . ((1 == $page) ? '' : '?page=' . $page),
-            'first' => $base,
-            'last'  => $base . '?page=' . $last,
         );
+        if ($page != 1) {
+            $links['first'] = $base;
+        }
+        if ($count != 1) {
+            $links['last'] = $base . '?page=' . $count;
+        }
         if ($prev) {
             $links['prev'] = $base . ((1 == $prev) ? '' : '?page=' . $prev);
         }

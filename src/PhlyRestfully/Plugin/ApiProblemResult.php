@@ -68,11 +68,7 @@ class ApiProblemResult extends AbstractPlugin
         }
 
         if ($detail instanceof \Exception) {
-            $message = $detail->getMessage();
-            if ($this->detailIncludesStackTrace) {
-                $message .= "\n" . $detail->getTraceAsString();
-            }
-            $detail = $message;
+            $detail = $this->createDetailFromException($detail);
         }
 
         $controller = $this->getController();
@@ -95,5 +91,19 @@ class ApiProblemResult extends AbstractPlugin
     public function __invoke($httpStatus, $detail, $describedBy = 'http://www.w3.org/Protocols/rfc2616/rfc2616-sec10.html', $title = 'Unknown')
     {
         return $this->generate($httpStatus, $detail, $describedBy, $title);
+    }
+
+    protected function createDetailFromException(\Exception $e)
+    {
+        if (!$this->detailIncludesStackTrace) {
+            return $e->getMessage();
+        }
+        $message = '';
+        do {
+            $message .= $e->getMessage() . "\n";
+            $message .= $e->getTraceAsString() . "\n";
+            $e = $e->getPrevious();
+        } while ($e instanceof \Exception);
+        return trim($message);
     }
 }
