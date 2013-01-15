@@ -96,8 +96,8 @@ class ResourceController extends AbstractRestfulController
      *
      * Allows you to set the event identifier, which can be useful to allow multiple
      * instances of this controller to react to different sets of shared events.
-     * 
-     * @param  null|string $eventIdentifer 
+     *
+     * @param  null|string $eventIdentifer
      */
     public function __construct($eventIdentifer = null)
     {
