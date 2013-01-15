@@ -92,6 +92,21 @@ class ResourceController extends AbstractRestfulController
     protected $route;
 
     /**
+     * Constructor
+     *
+     * Allows you to set the event identifier, which can be useful to allow multiple
+     * instances of this controller to react to different sets of shared events.
+     * 
+     * @param  null|string $eventIdentifer 
+     */
+    public function __construct($eventIdentifer = null)
+    {
+        if (null !== $eventIdentifer) {
+            $this->eventIdentifer = $eventIdentifer;
+        }
+    }
+
+    /**
      * Set the Accept header criteria for use with the AcceptableViewModelSelector
      *
      * @param  array $criteria
