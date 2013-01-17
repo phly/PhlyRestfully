@@ -30,7 +30,7 @@ class ApiProblemListener implements ListenerAggregateInterface
     protected $listeners = array();
 
     /**
-     * @param EventManagerInterface $events 
+     * @param EventManagerInterface $events
      */
     public function attach(EventManagerInterface $events)
     {
@@ -38,7 +38,7 @@ class ApiProblemListener implements ListenerAggregateInterface
     }
 
     /**
-     * @param EventManagerInterface $events 
+     * @param EventManagerInterface $events
      */
     public function detach(EventManagerInterface $events)
     {
@@ -51,8 +51,8 @@ class ApiProblemListener implements ListenerAggregateInterface
 
     /**
      * Listen to the render event
-     * 
-     * @param MvcEvent $e 
+     *
+     * @param MvcEvent $e
      */
     public static function onRender(MvcEvent $e)
     {
@@ -74,7 +74,7 @@ class ApiProblemListener implements ListenerAggregateInterface
             return;
         }
 
-        // Next, do we have a view model in the result? 
+        // Next, do we have a view model in the result?
         // If not, nothing more to do.
         $model = $e->getResult();
         if (!$model instanceof ModelInterface) {
