@@ -292,7 +292,7 @@ class ResourceController extends AbstractRestfulController
             );
         }
 
-        $resourceLink = $this->links()->createLink($this->route);
+        $resourceLink = $this->links()->createLink($this->route, false);
         $selfLink     = $this->links()->createLink($this->route, $id, $item);
 
         return array(
@@ -368,7 +368,7 @@ class ResourceController extends AbstractRestfulController
             return $this->apiProblemResult(500, $e);
         }
 
-        $resourceLink = $this->links()->createLink($this->route);
+        $resourceLink = $this->links()->createLink($this->route, false);
         $selfLink     = $this->links()->createLink($this->route, $id, $item);
 
         return array(
@@ -397,7 +397,7 @@ class ResourceController extends AbstractRestfulController
             return $this->apiProblemResult(500, $e);
         }
 
-        $resourceLink = $this->links()->createLink($this->route);
+        $resourceLink = $this->links()->createLink($this->route, false);
         $selfLink     = $this->links()->createLink($this->route, $id, $item);
 
         return array(

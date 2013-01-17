@@ -98,10 +98,15 @@ class Links extends AbstractPlugin implements EventManagerAwareInterface
      */
     public function createLink($route, $id = null, $item = null)
     {
-        $params = new ArrayObject();
-        if (null !== $id) {
+        $params             = new ArrayObject();
+        $reUseMatchedParams = true;
+
+        if (false === $id) {
+            $reUseMatchedParams = false;
+        } elseif (null !== $id) {
             $params['id'] = $id;
         }
+
         $events      = $this->getEventManager();
         $eventParams = $events->prepareArgs(array(
             'route'  => $route,
@@ -112,7 +117,7 @@ class Links extends AbstractPlugin implements EventManagerAwareInterface
         $events->trigger(__FUNCTION__, $this, $eventParams);
         $route = $eventParams['route'];
 
-        $path = $this->urlHelper->fromRoute($route, $params->getArrayCopy(), true);
+        $path = $this->urlHelper->fromRoute($route, $params->getArrayCopy(), $reUseMatchedParams);
         return $this->serverUrlHelper->__invoke($path);
     }
 
