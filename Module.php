@@ -86,9 +86,11 @@ class Module
      */
     public function onBootstrap($e)
     {
-        $app    = $e->getTarget();
-        $events = $app->getEventManager();
+        $app      = $e->getTarget();
+        $services = $app->getServiceManager();
+        $events   = $app->getEventManager();
         $events->attach('render', array($this, 'onRender'), 100);
+        $events->attach($services->get('PhlyRestfully\ApiProblemListener'));
     }
 
     /**

@@ -11,6 +11,8 @@ return array(
         'invokables' => array(
             // Forces a distinct instance of the JsonRenderer for the RestfulJsonStrategy
             'PhlyRestfully\JsonRenderer' => 'Zend\View\Renderer\JsonRenderer',
+            // API-Problem render listener
+            'PhlyRestfully\ApiProblemListener' => 'PhlyRestfully\Listener\ApiProblemListener'
         ),
     ),
     'controller_plugins' => array(
