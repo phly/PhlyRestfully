@@ -21,7 +21,7 @@ class ApiProblemResult extends AbstractPlugin
     /**
      * Indicate whether or not the detail should include a stack trace, if
      * an exception was provided.
-     * 
+     *
      * @var bool
      */
     protected $detailIncludesStackTrace = false;
@@ -41,8 +41,8 @@ class ApiProblemResult extends AbstractPlugin
     /**
      * Indicate whether the detail should include a stack trace, if an
      * exception was provided as the detail.
-     * 
-     * @param  bool $flag 
+     *
+     * @param  bool $flag
      */
     public function setDetailIncludesStackTrace($flag)
     {
