@@ -71,9 +71,14 @@ class ApiProblemResult extends AbstractPlugin
             $detail = $this->createDetailFromException($detail);
         }
 
+        // Set response status code, if we can
         $controller = $this->getController();
-        $response   = $controller->getResponse();
-        $response->setStatusCode($httpStatus);
+        if ($controller) {
+            $response   = $controller->getResponse();
+            if ($response) {
+                $response->setStatusCode($httpStatus);
+            }
+        }
 
         $result = compact('describedBy', 'title', 'httpStatus', 'detail');
         return $result;
