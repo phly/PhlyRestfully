@@ -254,10 +254,10 @@ class ResourceControllerTest extends TestCase
         $this->assertArrayHasKey('item', $result);
     }
 
-    public function testOptionsReturnsEmptyResponseWithAllowHeaderPopulated()
+    public function testOptionsReturnsEmptyResponseWithAllowHeaderPopulatedForResource()
     {
         $r = new ReflectionObject($this->controller);
-        $httpOptionsProp = $r->getProperty('httpOptions');
+        $httpOptionsProp = $r->getProperty('resourceHttpOptions');
         $httpOptionsProp->setAccessible(true);
         $httpOptions = $httpOptionsProp->getValue($this->controller);
         sort($httpOptions);
@@ -273,6 +273,29 @@ class ResourceControllerTest extends TestCase
         sort($test);
         $this->assertEquals($httpOptions, $test);
     }
+
+    public function testOptionsReturnsEmptyResponseWithAllowHeaderPopulatedForItem()
+    {
+        $r = new ReflectionObject($this->controller);
+        $httpOptionsProp = $r->getProperty('itemHttpOptions');
+        $httpOptionsProp->setAccessible(true);
+        $httpOptions = $httpOptionsProp->getValue($this->controller);
+        sort($httpOptions);
+
+        $this->event->getRouteMatch()->setParam('id', 'foo');
+
+        $result = $this->controller->options();
+        $this->assertInstanceOf('Zend\Http\Response', $result);
+        $this->assertEquals(204, $result->getStatusCode());
+        $headers = $result->getHeaders();
+        $this->assertTrue($headers->has('allow'));
+        $allow = $headers->get('allow');
+        $test  = $allow->getFieldValue();
+        $test  = explode(', ', $test);
+        sort($test);
+        $this->assertEquals($httpOptions, $test);
+    }
+
 
     public function testPatchReturnsProblemResultOnPatchException()
     {
@@ -343,13 +366,31 @@ class ResourceControllerTest extends TestCase
         $controller->onDispatch($this->event);
     }
 
-    public function testOnDispatchReturns405ResponseForInvalidMethod()
+    public function testOnDispatchReturns405ResponseForInvalidResourceMethod()
     {
-        $this->controller->setHttpOptions(array('GET'));
+        $this->controller->setResourceHttpOptions(array('GET'));
         $request = $this->controller->getRequest();
         $request->setMethod('POST');
         $this->event->setRequest($request);
         $this->event->setResponse($this->controller->getResponse());
+
+        $result = $this->controller->onDispatch($this->event);
+        $this->assertInstanceOf('Zend\Http\Response', $result);
+        $this->assertEquals(405, $result->getStatusCode());
+        $headers = $result->getHeaders();
+        $this->assertTrue($headers->has('allow'));
+        $allow = $headers->get('allow');
+        $this->assertEquals('GET', $allow->getFieldValue());
+    }
+
+    public function testOnDispatchReturns405ResponseForInvalidItemMethod()
+    {
+        $this->controller->setItemHttpOptions(array('GET'));
+        $request = $this->controller->getRequest();
+        $request->setMethod('PUT');
+        $this->event->setRequest($request);
+        $this->event->setResponse($this->controller->getResponse());
+        $this->event->getRouteMatch()->setParam('id', 'foo');
 
         $result = $this->controller->onDispatch($this->event);
         $this->assertInstanceOf('Zend\Http\Response', $result);
@@ -367,7 +408,7 @@ class ResourceControllerTest extends TestCase
             return $item;
         });
 
-        $this->controller->setHttpOptions(array('GET'));
+        $this->controller->setItemHttpOptions(array('GET'));
 
         $request = $this->controller->getRequest();
         $request->setMethod('GET');
@@ -385,7 +426,7 @@ class ResourceControllerTest extends TestCase
             return $item;
         });
 
-        $this->controller->setHttpOptions(array('GET'));
+        $this->controller->setItemHttpOptions(array('GET'));
 
         $request = $this->controller->getRequest();
         $request->setMethod('GET');

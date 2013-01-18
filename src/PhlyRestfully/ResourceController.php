@@ -60,16 +60,17 @@ class ResourceController extends AbstractRestfulController
     );
 
     /**
-     * HTTP methods we allow; used by options()
+     * HTTP methods we allow for individual items; used by options()
+     *
+     * HEAD and OPTIONS are always available.
+     *
      * @var array
      */
-    protected $httpOptions = array(
+    protected $itemHttpOptions = array(
         'DELETE',
         'GET',
-        'HEAD',
         'PATCH',
         'POST',
-        'PUT',
     );
 
     /**
@@ -83,6 +84,18 @@ class ResourceController extends AbstractRestfulController
      * @var ResourceInterface
      */
     protected $resource;
+
+    /**
+     * HTTP methods we allow for the resource (collection); used by options()
+     *
+     * HEAD and OPTIONS are always available.
+     *
+     * @var array
+     */
+    protected $resourceHttpOptions = array(
+        'GET',
+        'POST',
+    );
 
     /**
      * Route name that resolves to this resource; used to generate links.
@@ -117,13 +130,13 @@ class ResourceController extends AbstractRestfulController
     }
 
     /**
-     * Set the allowed HTTP OPTIONS
+     * Set the allowed HTTP OPTIONS for an item
      *
      * @param  array $options
      */
-    public function setHttpOptions(array $options)
+    public function setItemHttpOptions(array $options)
     {
-        $this->httpOptions = $options;
+        $this->itemHttpOptions = $options;
     }
 
     /**
@@ -144,6 +157,16 @@ class ResourceController extends AbstractRestfulController
     public function setResource(ResourceInterface $resource)
     {
         $this->resource = $resource;
+    }
+
+    /**
+     * Set the allowed HTTP OPTIONS for the resource (collection)
+     *
+     * @param  array $options
+     */
+    public function setResourceHttpOptions(array $options)
+    {
+        $this->resourceHttpOptions = $options;
     }
 
     /**
@@ -189,20 +212,6 @@ class ResourceController extends AbstractRestfulController
             ));
         }
 
-        array_walk($this->httpOptions, function (&$item) {
-            $item = strtoupper($item);
-        });
-        $options = array_merge($this->httpOptions, array('OPTIONS', 'HEAD'));
-        $request = $e->getRequest();
-        $method  = strtoupper($request->getMethod());
-        if (!in_array($method, $options)) {
-            $response = $e->getResponse();
-            $response->setStatusCode(405);
-            $headers = $response->getHeaders();
-            $headers->addHeaderLine('Allow', implode(', ', $this->httpOptions));
-            return $response;
-        }
-
         $return = parent::onDispatch($e);
         if (!is_array($return)) {
             return $return;
@@ -227,6 +236,10 @@ class ResourceController extends AbstractRestfulController
      */
     public function create($data)
     {
+        if (!$this->isMethodAllowedForResource()) {
+            return $this->createMethodNotAllowedResponse($this->resourceHttpOptions);
+        }
+
         $response = $this->getResponse();
         try {
             $item = $this->resource->create($data);
@@ -265,6 +278,12 @@ class ResourceController extends AbstractRestfulController
      */
     public function delete($id)
     {
+        if ($id && !$this->isMethodAllowedForItem()) {
+            return $this->createMethodNotAllowedResponse($this->itemHttpOptions);
+        } elseif (!$id && !$this->isMethodAllowedForResource()) {
+            return $this->createMethodNotAllowedResponse($this->resourceHttpOptions);
+        }
+
         if (!$this->resource->delete($id)) {
             return $this->apiProblemResult(
                 422,
@@ -285,6 +304,10 @@ class ResourceController extends AbstractRestfulController
      */
     public function get($id)
     {
+        if (!$this->isMethodAllowedForItem()) {
+            return $this->createMethodNotAllowedResponse($this->itemHttpOptions);
+        }
+
         $item = $this->resource->fetch($id);
         if (!$item) {
             return $this->apiProblemResult(
@@ -312,6 +335,10 @@ class ResourceController extends AbstractRestfulController
      */
     public function getList()
     {
+        if (!$this->isMethodAllowedForResource()) {
+            return $this->createMethodNotAllowedResponse($this->resourceHttpOptions);
+        }
+
         $response = $this->getResponse();
         $items    = $this->resource->fetchAll();
 
@@ -345,10 +372,24 @@ class ResourceController extends AbstractRestfulController
      */
     public function options()
     {
+        if (null === $id = $this->params()->fromRoute('id')) {
+            $id = $this->params()->fromQuery('id');
+        }
+
+        if ($id) {
+            $options = $this->itemHttpOptions;
+        } else {
+            $options = $this->resourceHttpOptions;
+        }
+
+        array_walk($options, function (&$method) {
+            $method = strtoupper($method);
+        });
+
         $response = $this->getResponse();
         $response->setStatusCode(204);
         $headers  = $response->getHeaders();
-        $headers->addHeaderLine('Allow', implode(', ', $this->httpOptions));
+        $headers->addHeaderLine('Allow', implode(', ', $options));
         return $response;
     }
 
@@ -361,6 +402,9 @@ class ResourceController extends AbstractRestfulController
      */
     public function patch($id, $data)
     {
+        if (!$this->isMethodAllowedForItem()) {
+            return $this->createMethodNotAllowedResponse($this->itemHttpOptions);
+        }
         $response = $this->getResponse();
 
         try {
@@ -390,6 +434,12 @@ class ResourceController extends AbstractRestfulController
      */
     public function update($id, $data)
     {
+        if ($id && !$this->isMethodAllowedForItem()) {
+            return $this->createMethodNotAllowedResponse($this->itemHttpOptions);
+        } elseif (!$id && !$this->isMethodAllowedForResource()) {
+            return $this->createMethodNotAllowedResponse($this->resourceHttpOptions);
+        }
+
         $response = $this->getResponse();
 
         try {
@@ -546,5 +596,58 @@ class ResourceController extends AbstractRestfulController
         ));
 
         return $halItem;
+    }
+
+    /**
+     * Is the current HTTP method allowed for an item?
+     *
+     * @return bool
+     */
+    protected function isMethodAllowedForItem()
+    {
+        array_walk($this->itemHttpOptions, function (&$method) {
+            $method = strtoupper($method);
+        });
+        $options = array_merge($this->itemHttpOptions, array('OPTIONS', 'HEAD'));
+        $request = $this->getRequest();
+        $method  = strtoupper($request->getMethod());
+        if (!in_array($method, $options)) {
+            return false;
+        }
+        return true;
+    }
+
+    /**
+     * Is the current HTTP method allowed for the resource (collection)?
+     *
+     * @return bool
+     */
+    protected function isMethodAllowedForResource()
+    {
+        array_walk($this->resourceHttpOptions, function (&$method) {
+            $method = strtoupper($method);
+        });
+        $options = array_merge($this->resourceHttpOptions, array('OPTIONS', 'HEAD'));
+        $request = $this->getRequest();
+        $method  = strtoupper($request->getMethod());
+        if (!in_array($method, $options)) {
+            return false;
+        }
+        return true;
+    }
+
+    /**
+     * Creates a "405 Method Not Allowed" response detailing the available options
+     *
+     * @param  array $options
+     * @return \Zend\Http\Response
+     */
+    protected function createMethodNotAllowedResponse(array $options)
+    {
+        $response = $this->getResponse();
+        $response->setStatusCode(405);
+        $headers = $response->getHeaders();
+        $headers->addHeaderLine('Allow', implode(', ', $options));
+        return $response;
     }
 }
