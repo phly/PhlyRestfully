@@ -192,9 +192,10 @@ class ResourceController extends AbstractRestfulController
         array_walk($this->httpOptions, function (&$item) {
             $item = strtoupper($item);
         });
+        $options = array_merge($this->httpOptions, array('OPTIONS', 'HEAD'));
         $request = $e->getRequest();
         $method  = strtoupper($request->getMethod());
-        if (!in_array($method, $this->httpOptions)) {
+        if (!in_array($method, $options)) {
             $response = $e->getResponse();
             $response->setStatusCode(405);
             $headers = $response->getHeaders();
