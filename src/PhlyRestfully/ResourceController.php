@@ -70,7 +70,7 @@ class ResourceController extends AbstractRestfulController
         'DELETE',
         'GET',
         'PATCH',
-        'POST',
+        'PUT',
     );
 
     /**
