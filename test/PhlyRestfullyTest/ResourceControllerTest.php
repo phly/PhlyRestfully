@@ -14,6 +14,9 @@ use PhlyRestfully\Resource;
 use PhlyRestfully\ResourceController;
 use PHPUnit_Framework_TestCase as TestCase;
 use ReflectionObject;
+use stdClass;
+use Zend\EventManager\EventManager;
+use Zend\EventManager\SharedEventManager;
 use Zend\Mvc\Controller\PluginManager;
 use Zend\Mvc\Controller\Plugin\Url as UrlHelper;
 use Zend\Mvc\MvcEvent;
@@ -436,5 +439,23 @@ class ResourceControllerTest extends TestCase
 
         $result = $this->controller->onDispatch($this->event);
         $this->assertInstanceof('PhlyRestfully\RestfulJsonModel', $result);
+    }
+
+    public function testPassingIdentifierToConstructorAllowsListeningOnThatIdentifier()
+    {
+        $controller   = new ResourceController('MyNamespace\Controller\Foo');
+        $events       = new EventManager();
+        $sharedEvents = new SharedEventManager();
+        $events->setSharedManager($sharedEvents);
+        $controller->setEventManager($events);
+
+        $test = new stdClass;
+        $test->flag = false;
+        $sharedEvents->attach('MyNamespace\Controller\Foo', 'test', function ($e) use ($test) {
+            $test->flag = true;
+        });
+
+        $events->trigger('test', $controller, array());
+        $this->assertTrue($test->flag);
     }
 }
