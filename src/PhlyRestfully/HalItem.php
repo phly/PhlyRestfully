@@ -37,6 +37,12 @@ class HalItem
         $this->routeParams = $routeParams;
     }
 
+    /**
+     * Retrieve properties
+     * 
+     * @param  string $name 
+     * @return mixed
+     */
     public function __get($name)
     {
         $names = array(

@@ -83,6 +83,33 @@ class ApiProblem
     }
 
     /**
+     * Retrieve properties
+     * 
+     * @param  string $name 
+     * @return mixed
+     */
+    public function __get($name)
+    {
+        $names = array(
+            'describedby'  => 'describedBy',
+            'described_by' => 'describedBy',
+            'httpstatus'   => 'httpStatus',
+            'http_status'  => 'httpStatus',
+            'title'        => 'title',
+            'detail'       => 'detail',
+        );
+        $name = strtolower($name);
+        if (!in_array($name, array_keys($names))) {
+            throw new Exception\InvalidArgumentException(sprintf(
+                'Invalid property name "%s"',
+                $name
+            ));
+        }
+        $prop = $names[$name];
+        return $this->{$prop};
+    }
+
+    /**
      * Cast to an array
      * 
      * @return array
