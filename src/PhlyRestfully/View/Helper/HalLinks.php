@@ -35,4 +35,12 @@ class HalLinks extends AbstractHelper
             'self' => call_user_func($this->serverUrlHelper, $path),
         );
     }
+
+    public function forCollection($route, array $routeParams = array())
+    {
+        $path = call_user_func($this->urlHelper, $route, $routeParams);
+        return array(
+            'self' => call_user_func($this->serverUrlHelper, $path),
+        );
+    }
 }

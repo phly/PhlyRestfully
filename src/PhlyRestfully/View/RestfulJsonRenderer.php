@@ -8,6 +8,9 @@
 
 namespace PhlyRestfully\View;
 
+use PhlyRestfully\ApiProblem;
+use PhlyRestfully\HalCollection;
+use PhlyRestfully\HalItem;
 use Zend\Stdlib\Hydrator\HydratorInterface;
 use Zend\View\HelperPluginManager;
 use Zend\View\Renderer\JsonRenderer;
@@ -52,23 +55,27 @@ class RestfulJsonRenderer extends JsonRenderer
         }
 
         if ($nameOrModel->isApiProblem()) {
-            return $this->renderApiProblem($nameOrModel);
+            return $this->renderApiProblem($nameOrModel->getPayload());
         }
 
         if ($nameOrModel->isHalItem()) {
-            return $this->renderHalItem($nameOrModel);
+            return $this->renderHalItem($nameOrModel->getPayload());
         }
+
+        if ($nameOrModel->isHalCollection()) {
+            return $this->renderHalCollection($nameOrModel->getPayload());
+        }
+
+        return parent::render($nameOrModel, $values);
     }
 
-    protected function renderApiProblem(RestfulJsonModel $model)
+    protected function renderApiProblem(ApiProblem $apiProblem)
     {
-        $apiProblem = $model->getPayload();
         return parent::render($apiProblem->toArray());
     }
 
-    protected function renderHalItem(RestfulJsonModel $model)
+    protected function renderHalItem(HalItem $halItem)
     {
-        $halItem = $model->getPayload();
         $item    = $halItem->item;
         $id      = $halItem->id;
         $route   = $halItem->route;
@@ -83,6 +90,15 @@ class RestfulJsonRenderer extends JsonRenderer
 
         $item['_links'] = $links;
         return parent::render($item);
+    }
+
+    protected function renderHalCollection(HalCollection $halCollection)
+    {
+        if ($halCollection->collection instanceof Paginator) {
+            return $this->renderPaginatedCollection($halCollection);
+        }
+
+        return $this->renderNonPaginatedCollection($halCollection);
     }
 
     protected function convertItemToArray($item)
@@ -106,6 +122,43 @@ class RestfulJsonRenderer extends JsonRenderer
             return $this->defaultHydrator;
         }
 
+        return false;
+    }
+
+    protected function renderNonPaginatedCollection(HalCollection $halCollection)
+    {
+        $collection = $halCollection->collection;
+
+        $helper  = $this->helpers->get('HalLinks');
+        $payload = array(
+            '_links'     => $helper->forCollection($halCollection->collectionRoute),
+            'collection' => array(),
+        );
+
+        $itemRoute = $halCollection->itemRoute;
+        foreach ($collection as $item) {
+            if (!is_array($item)) {
+                $item = $this->convertItemToArray($item);
+            }
+
+            $id = $this->getIdFromItem($item);
+            if (!$id) {
+                // Cannot handle items without an identifier
+                continue;
+            }
+
+            $item['_links']          = $helper->forItem($id, $itemRoute);
+            $payload['collection'][] = $item;
+        }
+
+        return parent::render($payload);
+    }
+
+    protected function getIdFromItem(array $item)
+    {
+        if (array_key_exists('id', $item)) {
+            return $item['id'];
+        }
         return false;
     }
 }

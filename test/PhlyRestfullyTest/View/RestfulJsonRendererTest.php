@@ -176,4 +176,48 @@ class RestfulJsonRendererTest extends TestCase
         $this->assertObjectHasAttribute('foo', $test);
         $this->assertEquals('bar', $test->foo);
     }
+
+    public function testCanRenderNonPaginatedHalCollection()
+    {
+        $this->setUpHelpers();
+
+        $prototype = array('foo' => 'bar');
+        $items = array();
+        foreach (range(1, 100) as $id) {
+            $item       = $prototype;
+            $item['id'] = $id;
+            $items[]    = $item;
+
+        }
+
+        $collection = new HalCollection($items, 'resource', 'resource');
+        $model      = new RestfulJsonModel(array('payload' => $collection));
+        $test       = $this->renderer->render($model);
+        $test       = json_decode($test);
+
+        $this->assertInstanceof('stdClass', $test, var_export($test, 1));
+        $this->assertObjectHasAttribute('_links', $test);
+        $links = $test->_links;
+        $this->assertInstanceof('stdClass', $links, var_export($links, 1));
+        $this->assertObjectHasAttribute('self', $links);
+        $this->assertEquals('http://localhost.localdomain/resource', $links->self);
+
+        $this->assertObjectHasAttribute('collection', $test);
+        $this->assertInternalType('array', $test->collection);
+        $this->assertEquals(100, count($test->collection));
+
+        foreach ($test->collection as $key => $item) {
+            $id = $key + 1;
+
+            $this->assertObjectHasAttribute('_links', $item);
+            $links = $item->_links;
+            $this->assertInstanceof('stdClass', $links, var_export($links, 1));
+            $this->assertObjectHasAttribute('self', $links);
+            $this->assertEquals('http://localhost.localdomain/resource/' . $id, $links->self);
+            $this->assertObjectHasAttribute('id', $item, var_export($item, 1));
+            $this->assertEquals($id, $item->id);
+            $this->assertObjectHasAttribute('foo', $item);
+            $this->assertEquals('bar', $item->foo);
+        }
+    }
 }
