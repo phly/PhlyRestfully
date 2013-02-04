@@ -16,8 +16,11 @@ use PhlyRestfully\View\RestfulJsonModel;
 use PhlyRestfully\View\RestfulJsonRenderer;
 use PhlyRestfullyTest\TestAsset;
 use PHPUnit_Framework_TestCase as TestCase;
+use ReflectionObject;
 use Zend\Mvc\Router\Http\Segment;
 use Zend\Mvc\Router\SimpleRouteStack;
+use Zend\Paginator\Adapter\ArrayAdapter;
+use Zend\Paginator\Paginator;
 use Zend\Stdlib\Hydrator;
 use Zend\View\HelperPluginManager;
 use Zend\View\Model\JsonModel;
@@ -104,7 +107,8 @@ class RestfulJsonRendererTest extends TestCase
         $links = $test->_links;
         $this->assertInstanceof('stdClass', $links, var_export($links, 1));
         $this->assertObjectHasAttribute('self', $links);
-        $this->assertEquals('http://localhost.localdomain/resource/identifier', $links->self);
+        $this->assertObjectHasAttribute('href', $links->self);
+        $this->assertEquals('http://localhost.localdomain/resource/identifier', $links->self->href);
         $this->assertObjectHasAttribute('foo', $test);
         $this->assertEquals('bar', $test->foo);
     }
@@ -127,7 +131,8 @@ class RestfulJsonRendererTest extends TestCase
         $links = $test->_links;
         $this->assertInstanceof('stdClass', $links, var_export($links, 1));
         $this->assertObjectHasAttribute('self', $links);
-        $this->assertEquals('http://localhost.localdomain/resource/identifier', $links->self);
+        $this->assertObjectHasAttribute('href', $links->self);
+        $this->assertEquals('http://localhost.localdomain/resource/identifier', $links->self->href);
         $this->assertObjectHasAttribute('foo', $test);
         $this->assertEquals('bar', $test->foo);
     }
@@ -150,7 +155,8 @@ class RestfulJsonRendererTest extends TestCase
         $links = $test->_links;
         $this->assertInstanceof('stdClass', $links, var_export($links, 1));
         $this->assertObjectHasAttribute('self', $links);
-        $this->assertEquals('http://localhost.localdomain/resource/identifier', $links->self);
+        $this->assertObjectHasAttribute('href', $links->self);
+        $this->assertEquals('http://localhost.localdomain/resource/identifier', $links->self->href);
         $this->assertObjectHasAttribute('foo', $test);
         $this->assertEquals('bar', $test->foo);
     }
@@ -172,7 +178,8 @@ class RestfulJsonRendererTest extends TestCase
         $links = $test->_links;
         $this->assertInstanceof('stdClass', $links, var_export($links, 1));
         $this->assertObjectHasAttribute('self', $links);
-        $this->assertEquals('http://localhost.localdomain/resource/identifier', $links->self);
+        $this->assertObjectHasAttribute('href', $links->self);
+        $this->assertEquals('http://localhost.localdomain/resource/identifier', $links->self->href);
         $this->assertObjectHasAttribute('foo', $test);
         $this->assertEquals('bar', $test->foo);
     }
@@ -200,7 +207,8 @@ class RestfulJsonRendererTest extends TestCase
         $links = $test->_links;
         $this->assertInstanceof('stdClass', $links, var_export($links, 1));
         $this->assertObjectHasAttribute('self', $links);
-        $this->assertEquals('http://localhost.localdomain/resource', $links->self);
+        $this->assertObjectHasAttribute('href', $links->self);
+        $this->assertEquals('http://localhost.localdomain/resource', $links->self->href);
 
         $this->assertObjectHasAttribute('collection', $test);
         $this->assertInternalType('array', $test->collection);
@@ -213,11 +221,120 @@ class RestfulJsonRendererTest extends TestCase
             $links = $item->_links;
             $this->assertInstanceof('stdClass', $links, var_export($links, 1));
             $this->assertObjectHasAttribute('self', $links);
-            $this->assertEquals('http://localhost.localdomain/resource/' . $id, $links->self);
+            $this->assertObjectHasAttribute('href', $links->self);
+            $this->assertEquals('http://localhost.localdomain/resource/' . $id, $links->self->href);
             $this->assertObjectHasAttribute('id', $item, var_export($item, 1));
             $this->assertEquals($id, $item->id);
             $this->assertObjectHasAttribute('foo', $item);
             $this->assertEquals('bar', $item->foo);
         }
+    }
+
+    public function testCanRenderPaginatedHalCollection()
+    {
+        $this->setUpHelpers();
+
+        $prototype = array('foo' => 'bar');
+        $items = array();
+        foreach (range(1, 100) as $id) {
+            $item       = $prototype;
+            $item['id'] = $id;
+            $items[]    = $item;
+
+        }
+        $adapter   = new ArrayAdapter($items);
+        $paginator = new Paginator($adapter);
+
+        $collection = new HalCollection($paginator, 'resource', 'resource');
+        $collection->setPageSize(5);
+        $collection->setPage(3);
+
+        $model      = new RestfulJsonModel(array('payload' => $collection));
+        $test       = $this->renderer->render($model);
+        $test       = json_decode($test);
+
+        $this->assertInstanceof('stdClass', $test, var_export($test, 1));
+        $this->assertObjectHasAttribute('_links', $test);
+        $links = $test->_links;
+        $this->assertInstanceof('stdClass', $links, var_export($links, 1));
+        $this->assertObjectHasAttribute('self', $links);
+        $this->assertObjectHasAttribute('href', $links->self);
+        $this->assertEquals('http://localhost.localdomain/resource?page=3', $links->self->href);
+        $this->assertObjectHasAttribute('first', $links);
+        $this->assertObjectHasAttribute('href', $links->first);
+        $this->assertEquals('http://localhost.localdomain/resource', $links->first->href);
+        $this->assertObjectHasAttribute('last', $links);
+        $this->assertObjectHasAttribute('href', $links->last);
+        $this->assertEquals('http://localhost.localdomain/resource?page=20', $links->last->href);
+        $this->assertObjectHasAttribute('prev', $links);
+        $this->assertObjectHasAttribute('href', $links->prev);
+        $this->assertEquals('http://localhost.localdomain/resource?page=2', $links->prev->href);
+        $this->assertObjectHasAttribute('next', $links);
+        $this->assertObjectHasAttribute('href', $links->next);
+        $this->assertEquals('http://localhost.localdomain/resource?page=4', $links->next->href);
+
+        $this->assertObjectHasAttribute('collection', $test);
+        $this->assertInternalType('array', $test->collection);
+        $this->assertEquals(5, count($test->collection));
+
+        foreach ($test->collection as $key => $item) {
+            $id = $key + 11;
+
+            $this->assertObjectHasAttribute('_links', $item);
+            $links = $item->_links;
+            $this->assertInstanceof('stdClass', $links, var_export($links, 1));
+            $this->assertObjectHasAttribute('self', $links);
+            $this->assertObjectHasAttribute('href', $links->self);
+            $this->assertEquals('http://localhost.localdomain/resource/' . $id, $links->self->href);
+            $this->assertObjectHasAttribute('id', $item, var_export($item, 1));
+            $this->assertEquals($id, $item->id);
+            $this->assertObjectHasAttribute('foo', $item);
+            $this->assertEquals('bar', $item->foo);
+        }
+    }
+
+    public function invalidPages()
+    {
+        return array(
+            '-1'   => array(-1),
+            '1000' => array(1000),
+        );
+    }
+
+    /**
+     * @dataProvider invalidPages
+     */
+    public function testRenderingPaginatedCollectionCanReturnApiProblemIfPageIsTooHighOrTooLow($page)
+    {
+        $this->setUpHelpers();
+
+        $prototype = array('foo' => 'bar');
+        $items = array();
+        foreach (range(1, 100) as $id) {
+            $item       = $prototype;
+            $item['id'] = $id;
+            $items[]    = $item;
+
+        }
+        $adapter   = new ArrayAdapter($items);
+        $paginator = new Paginator($adapter);
+
+        $collection = new HalCollection($paginator, 'resource', 'resource');
+        $collection->setPageSize(5);
+
+        // Using reflection object so we can force a negative page number if desired
+        $r = new ReflectionObject($collection);
+        $p = $r->getProperty('page');
+        $p->setAccessible(true);
+        $p->setValue($collection, $page);
+
+        $model      = new RestfulJsonModel(array('payload' => $collection));
+        $test       = $this->renderer->render($model);
+        $test       = json_decode($test);
+
+        $this->assertObjectHasAttribute('httpStatus', $test, var_export($test, 1));
+        $this->assertEquals(409, $test->httpStatus);
+        $this->assertObjectHasAttribute('detail', $test);
+        $this->assertEquals('Invalid page provided', $test->detail);
     }
 }

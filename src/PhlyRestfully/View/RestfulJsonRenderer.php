@@ -11,6 +11,7 @@ namespace PhlyRestfully\View;
 use PhlyRestfully\ApiProblem;
 use PhlyRestfully\HalCollection;
 use PhlyRestfully\HalItem;
+use Zend\Paginator\Paginator;
 use Zend\Stdlib\Hydrator\HydratorInterface;
 use Zend\View\HelperPluginManager;
 use Zend\View\Renderer\JsonRenderer;
@@ -132,6 +133,40 @@ class RestfulJsonRenderer extends JsonRenderer
         $helper  = $this->helpers->get('HalLinks');
         $payload = array(
             '_links'     => $helper->forCollection($halCollection->collectionRoute),
+            'collection' => array(),
+        );
+
+        $itemRoute = $halCollection->itemRoute;
+        foreach ($collection as $item) {
+            if (!is_array($item)) {
+                $item = $this->convertItemToArray($item);
+            }
+
+            $id = $this->getIdFromItem($item);
+            if (!$id) {
+                // Cannot handle items without an identifier
+                continue;
+            }
+
+            $item['_links']          = $helper->forItem($id, $itemRoute);
+            $payload['collection'][] = $item;
+        }
+
+        return parent::render($payload);
+    }
+
+    protected function renderPaginatedCollection(HalCollection $halCollection)
+    {
+        $collection = $halCollection->collection;
+
+        $helper  = $this->helpers->get('HalLinks');
+        $links   = $helper->forPaginatedCollection($halCollection);
+        if ($links instanceof ApiProblem) {
+            return $this->renderApiProblem($links);
+        }
+
+        $payload = array(
+            '_links'     => $links,
             'collection' => array(),
         );
 
