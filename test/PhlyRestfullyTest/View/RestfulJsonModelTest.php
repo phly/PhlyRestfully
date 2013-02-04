@@ -63,17 +63,17 @@ class RestfulJsonModelTest extends TestCase
     /**
      * @dataProvider invalidApiProblemPayloads
      */
-    public function testIsProblemApiReturnsFalseForInvalidValues($payload)
+    public function testIsApiProblemReturnsFalseForInvalidValues($payload)
     {
         $this->model->setPayload($payload);
-        $this->assertFalse($this->model->isProblemApi());
+        $this->assertFalse($this->model->isApiProblem());
     }
 
     public function testIsApiProblemReturnsTrueForApiProblemPayload()
     {
         $problem = new ApiProblem(401, 'Unauthorized');
         $this->model->setPayload($problem);
-        $this->assertTrue($this->model->isProblemApi());
+        $this->assertTrue($this->model->isApiProblem());
     }
 
     public function invalidHalCollectionPayloads()

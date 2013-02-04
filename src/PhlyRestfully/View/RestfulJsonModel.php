@@ -24,7 +24,7 @@ class RestfulJsonModel extends JsonModel
      * 
      * @return bool
      */
-    public function isProblemApi()
+    public function isApiProblem()
     {
         $payload = $this->getPayload();
         return ($payload instanceof ApiProblem);
