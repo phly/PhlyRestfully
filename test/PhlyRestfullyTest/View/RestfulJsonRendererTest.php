@@ -14,9 +14,11 @@ use PhlyRestfully\HalItem;
 use PhlyRestfully\View\Helper\HalLinks;
 use PhlyRestfully\View\RestfulJsonModel;
 use PhlyRestfully\View\RestfulJsonRenderer;
+use PhlyRestfullyTest\TestAsset;
 use PHPUnit_Framework_TestCase as TestCase;
 use Zend\Mvc\Router\Http\Segment;
 use Zend\Mvc\Router\SimpleRouteStack;
+use Zend\Stdlib\Hydrator;
 use Zend\View\HelperPluginManager;
 use Zend\View\Model\JsonModel;
 use Zend\View\Model\ViewModel;
@@ -64,15 +66,15 @@ class RestfulJsonRendererTest extends TestCase
         $this->assertEquals($expected, json_decode($test, true));
     }
 
-    public function testRendersHalItemWithAssociatedLinks()
+    public function setUpHelpers()
     {
         // need to setup routes
         // need to get a url and serverurl helper that have appropriate injections
-        $router = $router = new SimpleRouteStack();
-        $route = new Segment('/resource[/[:id]]');
-        $router->addRoute('resource', $route);
+        $this->router = $router = new SimpleRouteStack();
+        $this->itemRoute = new Segment('/resource[/[:id]]');
+        $this->router->addRoute('resource', $this->itemRoute);
 
-        $helpers   = new HelperPluginManager();
+        $this->helpers = $helpers  = new HelperPluginManager();
         $serverUrl = $helpers->get('ServerUrl');
         $url       = $helpers->get('url');
         $url->setRouter($router);
@@ -84,6 +86,11 @@ class RestfulJsonRendererTest extends TestCase
         $helpers->setService('HalLinks', $halLinks);
 
         $this->renderer->setHelperPluginManager($helpers);
+    }
+
+    public function testRendersHalItemWithAssociatedLinks()
+    {
+        $this->setUpHelpers();
 
         $item = new HalItem(array(
             'foo' => 'bar',
@@ -91,7 +98,74 @@ class RestfulJsonRendererTest extends TestCase
         ), 'identifier', 'resource');
         $model = new RestfulJsonModel(array('payload' => $item));
         $test  = $this->renderer->render($model);
+        $test  = json_decode($test);
 
+        $this->assertObjectHasAttribute('_links', $test);
+        $links = $test->_links;
+        $this->assertInstanceof('stdClass', $links, var_export($links, 1));
+        $this->assertObjectHasAttribute('self', $links);
+        $this->assertEquals('http://localhost.localdomain/resource/identifier', $links->self);
+        $this->assertObjectHasAttribute('foo', $test);
+        $this->assertEquals('bar', $test->foo);
+    }
+
+    public function testCanRenderStdclassHalItem()
+    {
+        $this->setUpHelpers();
+
+        $item = (object) array(
+            'foo' => 'bar',
+            'id'  => 'identifier',
+        );
+
+        $item  = new HalItem($item, 'identifier', 'resource');
+        $model = new RestfulJsonModel(array('payload' => $item));
+        $test  = $this->renderer->render($model);
+        $test  = json_decode($test);
+
+        $this->assertObjectHasAttribute('_links', $test);
+        $links = $test->_links;
+        $this->assertInstanceof('stdClass', $links, var_export($links, 1));
+        $this->assertObjectHasAttribute('self', $links);
+        $this->assertEquals('http://localhost.localdomain/resource/identifier', $links->self);
+        $this->assertObjectHasAttribute('foo', $test);
+        $this->assertEquals('bar', $test->foo);
+    }
+
+    public function testCanSerializeHydratableHalItem()
+    {
+        $this->setUpHelpers();
+        $this->renderer->addHydrator(
+            'PhlyRestfullyTest\TestAsset\ArraySerializable', 
+            new Hydrator\ArraySerializable()
+        );
+
+        $item  = new TestAsset\ArraySerializable();
+        $item  = new HalItem(new TestAsset\ArraySerializable(), 'identifier', 'resource');
+        $model = new RestfulJsonModel(array('payload' => $item));
+        $test  = $this->renderer->render($model);
+        $test  = json_decode($test);
+
+        $this->assertObjectHasAttribute('_links', $test);
+        $links = $test->_links;
+        $this->assertInstanceof('stdClass', $links, var_export($links, 1));
+        $this->assertObjectHasAttribute('self', $links);
+        $this->assertEquals('http://localhost.localdomain/resource/identifier', $links->self);
+        $this->assertObjectHasAttribute('foo', $test);
+        $this->assertEquals('bar', $test->foo);
+    }
+
+    public function testUsesDefaultHydratorIfAvailable()
+    {
+        $this->setUpHelpers();
+        $this->renderer->setDefaultHydrator(
+            new Hydrator\ArraySerializable()
+        );
+
+        $item  = new TestAsset\ArraySerializable();
+        $item  = new HalItem(new TestAsset\ArraySerializable(), 'identifier', 'resource');
+        $model = new RestfulJsonModel(array('payload' => $item));
+        $test  = $this->renderer->render($model);
         $test  = json_decode($test);
 
         $this->assertObjectHasAttribute('_links', $test);

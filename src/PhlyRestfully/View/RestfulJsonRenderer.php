@@ -8,12 +8,17 @@
 
 namespace PhlyRestfully\View;
 
+use Zend\Stdlib\Hydrator\HydratorInterface;
 use Zend\View\HelperPluginManager;
 use Zend\View\Renderer\JsonRenderer;
 
 class RestfulJsonRenderer extends JsonRenderer
 {
+    protected $defaultHydrator;
+
     protected $helpers;
+
+    protected $hydrators = array();
 
     public function setHelperPluginManager(HelperPluginManager $helpers)
     {
@@ -26,6 +31,18 @@ class RestfulJsonRenderer extends JsonRenderer
             $this->setHelperPluginManager(new HelperPluginManager());
         }
         return $this->helpers;
+    }
+
+    public function addHydrator($class, HydratorInterface $hydrator)
+    {
+        $this->hydrators[strtolower($class)] = $hydrator;
+        return $this;
+    }
+
+    public function setDefaultHydrator(HydratorInterface $hydrator)
+    {
+        $this->defaultHydrator = $hydrator;
+        return $this;
     }
 
     public function render($nameOrModel, $values = null)
@@ -61,10 +78,34 @@ class RestfulJsonRenderer extends JsonRenderer
         $links   = $helper->forItem($id, $route, $params);
 
         if (!is_array($item)) {
-            // @todo hydrator integration
+            $item = $this->convertItemToArray($item);
         }
 
         $item['_links'] = $links;
         return parent::render($item);
+    }
+
+    protected function convertItemToArray($item)
+    {
+        $hydrator = $this->getHydratorForItem($item);
+        if (!$hydrator) {
+            return (array) $item;
+        }
+
+        return $hydrator->extract($item);
+    }
+
+    protected function getHydratorForItem($item)
+    {
+        $class = strtolower(get_class($item));
+        if (isset($this->hydrators[$class])) {
+            return $this->hydrators[$class];
+        }
+
+        if ($this->defaultHydrator instanceof HydratorInterface) {
+            return $this->defaultHydrator;
+        }
+
+        return false;
     }
 }
