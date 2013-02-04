@@ -336,5 +336,11 @@ class RestfulJsonRendererTest extends TestCase
         $this->assertEquals(409, $test->httpStatus);
         $this->assertObjectHasAttribute('detail', $test);
         $this->assertEquals('Invalid page provided', $test->detail);
+
+        $this->assertTrue($this->renderer->isApiProblem());
+        $problem = $this->renderer->getApiProblem();
+        $this->assertInstanceof('PhlyRestfully\ApiProblem', $problem);
+        $problem = $problem->toArray();
+        $this->assertEquals(409, $problem['httpStatus']);
     }
 }
