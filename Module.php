@@ -47,33 +47,27 @@ class Module
         return array('factories' => array(
             'PhlyRestfully\RestfulJsonStrategy' => function ($services) {
                 $renderer = $services->get('PhlyRestfully\JsonRenderer');
-                return new RestfulJsonStrategy($renderer);
+                return new View\RestfulJsonStrategy($renderer);
             },
         ));
     }
 
     /**
-     * Retrieve controller plugin configuration
-     *
-     * Defines "links" plugin factory, returning a PhlyRestfully\Plugin\Links
-     * instance.
-     *
+     * Defines the "HalLinks" view helper
+     * 
      * @return array
      */
-    public function getControllerPluginConfig()
+    public function getViewHelperConfig()
     {
         return array('factories' => array(
-            'links' => function ($plugins) {
-                $services        = $plugins->getServiceLocator();
-                $viewHelpers     = $services->get('ViewHelperManager');
-                $serverUrlHelper = $viewHelpers->get('serverurl');
-                $urlHelper       = $plugins->get('url');
-
-                $plugin = new Plugin\Links;
-                $plugin->setServerUrlHelper($serverUrlHelper);
-                $plugin->setUrlHelper($urlHelper);
-                return $plugin;
-            },
+            'HalLinks' => function ($helpers) {
+                $serverUrlHelper = $helpers->get('ServerUrl');
+                $urlHelper       = $helpers->get('Url');
+                $helper          = new View\Helper\HalLinks();
+                $helper->setServerUrlHelper($serverUrlHelper);
+                $helper->setUrlHelper($urlHelper);
+                return $helper;
+            }
         ));
     }
 

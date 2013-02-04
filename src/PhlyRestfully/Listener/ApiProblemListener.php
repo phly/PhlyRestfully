@@ -8,7 +8,8 @@
 
 namespace PhlyRestfully\Listener;
 
-use PhlyRestfully\RestfulJsonModel;
+use PhlyRestfully\ApiProblem;
+use PhlyRestfully\View\RestfulJsonModel;
 use Zend\EventManager\EventManagerInterface;
 use Zend\EventManager\ListenerAggregateInterface;
 use Zend\Mvc\MvcEvent;
@@ -83,20 +84,17 @@ class ApiProblemListener implements ListenerAggregateInterface
 
         // Marshall the information we need for the API-Problem response
         $httpStatus       = $e->getResponse()->getStatusCode();
-        $app              = $e->getApplication();
-        $services         = $app->getServiceManager();
-        $plugins          = $services->get('ControllerPluginManager');
-        $apiProblemPlugin = $plugins->get('apiproblemresult');
         $exception        = $model->getVariable('exception');
+
         if ($exception instanceof \Exception) {
-            $variables = $apiProblemPlugin($httpStatus, $exception);
+            $apiProblem = new ApiProblem($httpStatus, $exception);
         } else {
-            $variables = $apiProblemPlugin($httpStatus, $model->getVariable('message'));;
+            $apiProblem = new ApiProblem($httpStatus, $model->getVariable('message'));
         }
 
         // Create a new model with the API-Problem payload, and reset
         // the result and view model in the event using it.
-        $model = new RestfulJsonModel($variables);
+        $model = new RestfulJsonModel(array('payload' => $apiProblem));
         $model->setTerminal(true);
         $e->setResult($model);
         $e->setViewModel($model);
