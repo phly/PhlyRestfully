@@ -8,18 +8,18 @@
 
 namespace PhlyRestfullyTest\Plugin;
 
-use PhlyRestfully\Plugin\Links;
+use PhlyRestfully\Plugin\HalLinks;
 use PHPUnit_Framework_TestCase as TestCase;
-use Zend\Mvc\Controller\Plugin\Url as UrlHelper;
 use Zend\Mvc\Router\SimpleRouteStack;
 use Zend\Mvc\Router\Http\Segment;
 use Zend\Mvc\MvcEvent;
+use Zend\View\Helper\Url as UrlHelper;
 use Zend\View\Helper\ServerUrl as ServerUrlHelper;
 
 /**
  * @subpackage UnitTest
  */
-class LinksTest extends TestCase
+class HalLinksTest extends TestCase
 {
     public function setUp()
     {
@@ -35,13 +35,13 @@ class LinksTest extends TestCase
             ->will($this->returnValue($event));
 
         $this->urlHelper = $urlHelper = new UrlHelper();
-        $urlHelper->setController($controller);
+        $urlHelper->setRouter($router);
 
         $this->serverUrlHelper = $serverUrlHelper = new ServerUrlHelper();
         $serverUrlHelper->setScheme('http');
         $serverUrlHelper->setHost('localhost.localdomain');
 
-        $this->plugin = $plugin = new Links();
+        $this->plugin = $plugin = new HalLinks();
         $plugin->setController($controller);
         $plugin->setUrlHelper($urlHelper);
         $plugin->setServerUrlHelper($serverUrlHelper);
@@ -57,23 +57,5 @@ class LinksTest extends TestCase
     {
         $url = $this->plugin->createLink('resource', 123);
         $this->assertEquals('http://localhost.localdomain/resource/123', $url);
-    }
-
-    public function testCanGenerateHalLinkRelationsFromSimpleAssociativeArray()
-    {
-        $input = array(
-            'self' => 'self',
-            'up'   => 'up',
-            'prev' => 'prev',
-            'next' => 'next',
-        );
-        $expected = array(
-            'self' => array('href' => 'self'),
-            'up'   => array('href' => 'up'),
-            'prev' => array('href' => 'prev'),
-            'next' => array('href' => 'next'),
-        );
-        $links = $this->plugin->generateHalLinkRelations($input);
-        $this->assertEquals($expected, $links);
     }
 }
