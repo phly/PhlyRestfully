@@ -11,7 +11,7 @@ namespace PhlyRestfullyTest\View;
 use PhlyRestfully\ApiProblem;
 use PhlyRestfully\HalCollection;
 use PhlyRestfully\HalItem;
-use PhlyRestfully\View\Helper\HalLinks;
+use PhlyRestfully\Plugin\HalLinks;
 use PhlyRestfully\View\RestfulJsonModel;
 use PhlyRestfully\View\RestfulJsonRenderer;
 use PhlyRestfullyTest\TestAsset;

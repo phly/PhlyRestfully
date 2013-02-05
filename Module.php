@@ -81,7 +81,7 @@ class Module
             'HalLinks' => function ($helpers) {
                 $serverUrlHelper = $helpers->get('ServerUrl');
                 $urlHelper       = $helpers->get('Url');
-                $helper          = new View\Helper\HalLinks();
+                $helper          = new Plugin\HalLinks();
                 $helper->setServerUrlHelper($serverUrlHelper);
                 $helper->setUrlHelper($urlHelper);
                 return $helper;
