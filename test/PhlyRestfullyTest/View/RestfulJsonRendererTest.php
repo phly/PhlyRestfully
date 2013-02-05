@@ -141,7 +141,7 @@ class RestfulJsonRendererTest extends TestCase
     {
         $this->setUpHelpers();
         $this->renderer->addHydrator(
-            'PhlyRestfullyTest\TestAsset\ArraySerializable', 
+            'PhlyRestfullyTest\TestAsset\ArraySerializable',
             new Hydrator\ArraySerializable()
         );
 

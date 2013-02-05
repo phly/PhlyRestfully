@@ -48,7 +48,7 @@ class HalLinks extends AbstractHelper implements ControllerPluginInterface
     protected $urlHelper;
 
     /**
-     * @param DispatchableInterface $controller 
+     * @param DispatchableInterface $controller
      */
     public function setController(DispatchableInterface $controller)
     {
@@ -93,7 +93,7 @@ class HalLinks extends AbstractHelper implements ControllerPluginInterface
     }
 
     /**
-     * @param ServerUrl $helper 
+     * @param ServerUrl $helper
      */
     public function setServerUrlHelper(ServerUrl $helper)
     {
@@ -101,7 +101,7 @@ class HalLinks extends AbstractHelper implements ControllerPluginInterface
     }
 
     /**
-     * @param Url $helper 
+     * @param Url $helper
      */
     public function setUrlHelper(Url $helper)
     {
@@ -149,10 +149,10 @@ class HalLinks extends AbstractHelper implements ControllerPluginInterface
      * Generate HAL links for a given item
      *
      * Generates a "self" link
-     * 
-     * @param  string $route 
-     * @param  null|false|mixed $id 
-     * @param  array|object $item 
+     *
+     * @param  string $route
+     * @param  null|false|mixed $id
+     * @param  array|object $item
      * @return array
      */
     public function forItem($route, $id = null, $item = null)
@@ -163,8 +163,8 @@ class HalLinks extends AbstractHelper implements ControllerPluginInterface
 
     /**
      * Generate a self link for a collection
-     * 
-     * @param  string $route 
+     *
+     * @param  string $route
      * @param  null|false $reUseMatchedParams
      * @return array
      */
@@ -176,8 +176,8 @@ class HalLinks extends AbstractHelper implements ControllerPluginInterface
 
     /**
      * Generate HAL links for a paginated collection
-     * 
-     * @param  HalCollection $halCollection 
+     *
+     * @param  HalCollection $halCollection
      * @return array
      */
     public function forPaginatedCollection(HalCollection $halCollection)

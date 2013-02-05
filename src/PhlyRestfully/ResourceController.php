@@ -279,7 +279,7 @@ class ResourceController extends AbstractRestfulController
     {
         if ($id && !$this->isMethodAllowedForItem()) {
             return $this->createMethodNotAllowedResponse($this->itemHttpOptions);
-        } 
+        }
         if (!$id && !$this->isMethodAllowedForResource()) {
             return $this->createMethodNotAllowedResponse($this->resourceHttpOptions);
         }
@@ -411,7 +411,7 @@ class ResourceController extends AbstractRestfulController
     {
         if ($id && !$this->isMethodAllowedForItem()) {
             return $this->createMethodNotAllowedResponse($this->itemHttpOptions);
-        } 
+        }
         if (!$id && !$this->isMethodAllowedForResource()) {
             return $this->createMethodNotAllowedResponse($this->resourceHttpOptions);
         }

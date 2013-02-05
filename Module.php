@@ -56,7 +56,7 @@ class Module
      * Define factories for controller plugins
      *
      * Defines the "HalLinks" plugin.
-     * 
+     *
      * @return array
      */
     public function getControllerPluginConfig()
@@ -72,7 +72,7 @@ class Module
 
     /**
      * Defines the "HalLinks" view helper
-     * 
+     *
      * @return array
      */
     public function getViewHelperConfig()

@@ -19,10 +19,10 @@ class HalItem
     protected $routeParams;
 
     /**
-     * @param  object|array $item 
-     * @param  mixed $id 
-     * @param  string $route 
-     * @param  array $routeParams 
+     * @param  object|array $item
+     * @param  mixed $id
+     * @param  string $route
+     * @param  array $routeParams
      * @throws Exception\InvalidItemException if item is not an object or array
      */
     public function __construct($item, $id, $route, array $routeParams = array())
@@ -39,8 +39,8 @@ class HalItem
 
     /**
      * Retrieve properties
-     * 
-     * @param  string $name 
+     *
+     * @param  string $name
      * @return mixed
      */
     public function __get($name)

@@ -32,22 +32,22 @@ class HalCollection
 
     /**
      * Current page
-     * 
+     *
      * @var int
      */
     protected $page = 1;
 
     /**
      * Number of items per page
-     * 
+     *
      * @var int
      */
     protected $pageSize = 30;
 
     /**
-     * @param  array|Traversable|\Zend\Paginator\Paginator $collection 
-     * @param  string $collectionRoute 
-     * @param  string $itemRoute 
+     * @param  array|Traversable|\Zend\Paginator\Paginator $collection
+     * @param  string $collectionRoute
+     * @param  string $itemRoute
      * @throws Exception\InvalidCollectionException
      */
     public function __construct($collection, $collectionRoute, $itemRoute)
@@ -63,8 +63,8 @@ class HalCollection
 
     /**
      * Proxy to properties to allow read access
-     * 
-     * @param  string $name 
+     *
+     * @param  string $name
      * @return mixed
      */
     public function __get($name)
@@ -92,8 +92,8 @@ class HalCollection
 
     /**
      * Set current page
-     * 
-     * @param  int $page 
+     *
+     * @param  int $page
      * @return HalCollection
      * @throws Exception\InvalidArgumentException for non-positive and/or non-integer values
      */
@@ -120,8 +120,8 @@ class HalCollection
 
     /**
      * Set page size
-     * 
-     * @param  int $size 
+     *
+     * @param  int $size
      * @return HalCollection
      * @throws Exception\InvalidArgumentException for non-positive and/or non-integer values
      */

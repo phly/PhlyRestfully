@@ -32,7 +32,7 @@ class RestfulJsonRenderer extends JsonRenderer
 
     /**
      * Default hydrator to use if no hydrator found for a specific item class.
-     * 
+     *
      * @var HydratorInterface
      */
     protected $defaultHydrator;
@@ -44,7 +44,7 @@ class RestfulJsonRenderer extends JsonRenderer
 
     /**
      * Map of item classes => hydrators
-     * 
+     *
      * @var HydratorInterface[]
      */
     protected $hydrators = array();
@@ -54,7 +54,7 @@ class RestfulJsonRenderer extends JsonRenderer
      *
      * Also ensures that the 'HalLinks' helper is present.
      *
-     * @param  HelperPluginManager $helpers 
+     * @param  HelperPluginManager $helpers
      */
     public function setHelperPluginManager(HelperPluginManager $helpers)
     {
@@ -79,9 +79,9 @@ class RestfulJsonRenderer extends JsonRenderer
 
     /**
      * Map an item class to a specific hydrator instance
-     * 
-     * @param  string $class 
-     * @param  HydratorInterface $hydrator 
+     *
+     * @param  string $class
+     * @param  HydratorInterface $hydrator
      * @return RestfulJsonRenderer
      */
     public function addHydrator($class, HydratorInterface $hydrator)
@@ -92,8 +92,8 @@ class RestfulJsonRenderer extends JsonRenderer
 
     /**
      * Set the default hydrator to use if none specified for a class.
-     * 
-     * @param  HydratorInterface $hydrator 
+     *
+     * @param  HydratorInterface $hydrator
      * @return RestfulJsonRenderer
      */
     public function setDefaultHydrator(HydratorInterface $hydrator)
@@ -104,7 +104,7 @@ class RestfulJsonRenderer extends JsonRenderer
 
     /**
      * Whether or not what was rendered represents an API problem
-     * 
+     *
      * @return bool
      */
     public function isApiProblem()
@@ -126,11 +126,11 @@ class RestfulJsonRenderer extends JsonRenderer
      * If the view model is a RestfulJsonRenderer, determines if it represents
      * an ApiProblem, HalCollection, or HalItem, and, if so, creates a custom
      * representation appropriate to the type.
-     * 
+     *
      * If not, it passes control to the parent to render.
-     * 
-     * @param  mixed $nameOrModel 
-     * @param  mixed $values 
+     *
+     * @param  mixed $nameOrModel
+     * @param  mixed $values
      * @return string
      */
     public function render($nameOrModel, $values = null)
@@ -160,8 +160,8 @@ class RestfulJsonRenderer extends JsonRenderer
      * Render an API Problem representation
      *
      * Also sets the $apiProblem member to the passed object.
-     * 
-     * @param  ApiProblem $apiProblem 
+     *
+     * @param  ApiProblem $apiProblem
      * @return string
      */
     protected function renderApiProblem(ApiProblem $apiProblem)
@@ -174,8 +174,8 @@ class RestfulJsonRenderer extends JsonRenderer
      * Render an individual HAL item
      *
      * Creates the hyperlinks necessary, and serializes the item to JSON.
-     * 
-     * @param  HalItem $halItem 
+     *
+     * @param  HalItem $halItem
      * @return string
      */
     protected function renderHalItem(HalItem $halItem)
@@ -202,8 +202,8 @@ class RestfulJsonRenderer extends JsonRenderer
      * set, and delegates to the appropriate method in order to generate
      * a HAL response. All items are serialized in a "collection" member
      * of the response.
-     * 
-     * @param  HalCollection $halCollection 
+     *
+     * @param  HalCollection $halCollection
      * @return string
      */
     protected function renderHalCollection(HalCollection $halCollection)
@@ -217,8 +217,8 @@ class RestfulJsonRenderer extends JsonRenderer
 
     /**
      * Convert an individual item to an array
-     * 
-     * @param  object $item 
+     *
+     * @param  object $item
      * @return array
      */
     protected function convertItemToArray($item)
@@ -235,10 +235,10 @@ class RestfulJsonRenderer extends JsonRenderer
      * Retrieve a hydrator for a given item
      *
      * If the item has a mapped hydrator, returns that hydrator. If not, and
-     * a default hydrator is present, the default hydrator is returned. 
+     * a default hydrator is present, the default hydrator is returned.
      * Otherwise, a boolean false is returned.
-     * 
-     * @param  object $item 
+     *
+     * @param  object $item
      * @return HydratorInterface|false
      */
     protected function getHydratorForItem($item)
@@ -260,8 +260,8 @@ class RestfulJsonRenderer extends JsonRenderer
      *
      * Creates a HAL response with only a "self" link, with all composed
      * items rendered.
-     * 
-     * @param  HalCollection $halCollection 
+     *
+     * @param  HalCollection $halCollection
      * @return string
      */
     protected function renderNonPaginatedCollection(HalCollection $halCollection)
@@ -300,8 +300,8 @@ class RestfulJsonRenderer extends JsonRenderer
      * If the page is out of bounds, an ApiProblem will be returned. Otherwise,
      * creates a HAL response, with links for each of first, last, prev, next,
      * and self, as necessitated by the collection.
-     * 
-     * @param  HalCollection $halCollection 
+     *
+     * @param  HalCollection $halCollection
      * @return string|ApiProblem
      */
     protected function renderPaginatedCollection(HalCollection $halCollection)
@@ -345,10 +345,10 @@ class RestfulJsonRenderer extends JsonRenderer
      * Retrieve the identifier from an item
      *
      * Expects an "id" member to exist; if not, a boolean false is returned.
-     * 
+     *
      * @todo   Potentially allow registering a callback to run, before using
      *         the default routine here.
-     * @param  array $item 
+     * @param  array $item
      * @return mixed|false
      */
     protected function getIdFromItem(array $item)
@@ -361,8 +361,8 @@ class RestfulJsonRenderer extends JsonRenderer
 
     /**
      * Inject the helper manager with the HalLinks helper
-     * 
-     * @param  HelperPluginManager $helpers 
+     *
+     * @param  HelperPluginManager $helpers
      */
     protected function injectHalLinksHelper(HelperPluginManager $helpers)
     {

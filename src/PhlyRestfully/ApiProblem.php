@@ -26,16 +26,16 @@ class ApiProblem
     protected $detail = '';
 
     /**
-     * Whether or not to include a stack trace and previous 
+     * Whether or not to include a stack trace and previous
      * exceptions when an exception is provided for the detail.
-     * 
+     *
      * @var bool
      */
     protected $detailIncludesStackTrace = false;
 
     /**
      * HTTP status for the error.
-     * 
+     *
      * @var int
      */
     protected $httpStatus;
@@ -54,7 +54,7 @@ class ApiProblem
 
     /**
      * Title of the error.
-     * 
+     *
      * @var string
      */
     protected $title;
@@ -66,11 +66,11 @@ class ApiProblem
      * provided for the describedBy field, the class default will be used;
      * if the httpStatus matches any known, the title field will be selected
      * from $problemStatusTitles as a result.
-     * 
-     * @param  int $httpStatus 
-     * @param  string $detail 
-     * @param  string $describedBy 
-     * @param  string $title 
+     *
+     * @param  int $httpStatus
+     * @param  string $detail
+     * @param  string $describedBy
+     * @param  string $title
      */
     public function __construct($httpStatus, $detail, $describedBy = null, $title = null)
     {
@@ -84,8 +84,8 @@ class ApiProblem
 
     /**
      * Retrieve properties
-     * 
-     * @param  string $name 
+     *
+     * @param  string $name
      * @return mixed
      */
     public function __get($name)
@@ -111,7 +111,7 @@ class ApiProblem
 
     /**
      * Cast to an array
-     * 
+     *
      * @return array
      */
     public function toArray()
@@ -127,8 +127,8 @@ class ApiProblem
     /**
      * Set the flag indicating whether an exception detail should include a
      * stack trace and previous exception information.
-     * 
-     * @param  bool $flag 
+     *
+     * @param  bool $flag
      * @return ApiProblem
      */
     public function setDetailIncludesStackTrace($flag)
@@ -142,7 +142,7 @@ class ApiProblem
      *
      * If an exception was provided, creates the detail message from it;
      * otherwise, detail as provided is used.
-     * 
+     *
      * @return string
      */
     protected function getDetail()
@@ -156,14 +156,14 @@ class ApiProblem
     /**
      * Retrieve the title
      *
-     * If the default $describedBy is used, and the $httpStatus is found in 
+     * If the default $describedBy is used, and the $httpStatus is found in
      * $problemStatusTitles, then use the matching title.
      *
      * If no title was provided, and the above conditions are not met, use the
      * string 'Unknown'.
      *
      * Otherwise, use the title provided.
-     * 
+     *
      * @return string
      */
     protected function getTitle()
@@ -184,7 +184,7 @@ class ApiProblem
 
     /**
      * Create detail message from an exception.
-     * 
+     *
      * @return string
      */
     protected function createDetailFromException()
