@@ -6,7 +6,7 @@
  * @package   PhlyRestfully
  */
 
-namespace PhlyRestfully\View\Helper;
+namespace PhlyRestfully\Plugin;
 
 use ArrayObject;
 use PhlyRestfully\ApiProblem;

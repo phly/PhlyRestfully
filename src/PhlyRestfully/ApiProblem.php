@@ -75,11 +75,11 @@ class ApiProblem
     public function __construct($httpStatus, $detail, $describedBy = null, $title = null)
     {
         $this->httpStatus = $httpStatus;
-        $this->detail = $detail;
+        $this->detail     = $detail;
+        $this->title      = $title;
         if (null !== $describedBy) {
             $this->describedBy = $describedBy;
         }
-        $this->title = $title;
     }
 
     /**
