@@ -183,10 +183,9 @@ class RestfulJsonRenderer extends JsonRenderer
         $item    = $halItem->item;
         $id      = $halItem->id;
         $route   = $halItem->route;
-        $params  = $halItem->routeParams;
 
         $helper  = $this->helpers->get('HalLinks');
-        $links   = $helper->forItem($id, $route, $params);
+        $links   = $helper->forItem($route, $id, $item);
 
         if (!is_array($item)) {
             $item = $this->convertItemToArray($item);
@@ -277,6 +276,7 @@ class RestfulJsonRenderer extends JsonRenderer
 
         $itemRoute = $halCollection->itemRoute;
         foreach ($collection as $item) {
+            $origItem = $item;
             if (!is_array($item)) {
                 $item = $this->convertItemToArray($item);
             }
@@ -287,7 +287,7 @@ class RestfulJsonRenderer extends JsonRenderer
                 continue;
             }
 
-            $item['_links']          = $helper->forItem($id, $itemRoute);
+            $item['_links']          = $helper->forItem($itemRoute, $id, $origItem);
             $payload['collection'][] = $item;
         }
 
@@ -321,6 +321,7 @@ class RestfulJsonRenderer extends JsonRenderer
 
         $itemRoute = $halCollection->itemRoute;
         foreach ($collection as $item) {
+            $origItem = $item;
             if (!is_array($item)) {
                 $item = $this->convertItemToArray($item);
             }
@@ -333,7 +334,7 @@ class RestfulJsonRenderer extends JsonRenderer
                 continue;
             }
 
-            $item['_links']          = $helper->forItem($id, $itemRoute);
+            $item['_links']          = $helper->forItem($itemRoute, $id, $origItem);
             $payload['collection'][] = $item;
         }
 

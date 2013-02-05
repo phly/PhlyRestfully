@@ -53,6 +53,24 @@ class Module
     }
 
     /**
+     * Define factories for controller plugins
+     *
+     * Defines the "HalLinks" plugin.
+     * 
+     * @return array
+     */
+    public function getControllerPluginConfig()
+    {
+        return array('factories' => array(
+            'HalLinks' => function ($plugins) {
+                $services = $plugins->getServiceLocator();
+                $helpers  = $services->get('ViewHelperManager');
+                return $helpers->get('HalLinks');
+            },
+        ));
+    }
+
+    /**
      * Defines the "HalLinks" view helper
      * 
      * @return array
