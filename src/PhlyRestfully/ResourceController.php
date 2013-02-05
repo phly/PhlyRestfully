@@ -95,6 +95,7 @@ class ResourceController extends AbstractRestfulController
     protected $resourceHttpOptions = array(
         'GET',
         'POST',
+        'PUT',
     );
 
     /**
@@ -461,6 +462,34 @@ class ResourceController extends AbstractRestfulController
             )),
             'item' => $item,
         );
+    }
+
+    /**
+     * Update an existing collection of items
+     *
+     * @param array $data
+     * @return array
+     */
+    public function replaceList($data)
+    {
+        if (!$this->isMethodAllowedForResource()) {
+            return $this->createMethodNotAllowedResponse($this->resourceHttpOptions);
+        }
+
+        $response = $this->getResponse();
+
+        try {
+            $items = $this->resource->replaceList($data);
+        } catch (Exception\UpdateException $e) {
+            $code = $e->getCode() ?: 500;
+            return $this->apiProblemResult($code, $e);
+        }
+
+        if ($items instanceof Paginator) {
+            return $this->createPaginatedResponse($items);
+        }
+
+        return $this->createNonPaginatedResponse($items);
     }
 
     /**
