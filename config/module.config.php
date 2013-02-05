@@ -15,9 +15,4 @@ return array(
             'PhlyRestfully\ApiProblemListener' => 'PhlyRestfully\Listener\ApiProblemListener'
         ),
     ),
-    'controller_plugins' => array(
-        'invokables' => array(
-            'apiProblemResult' => 'PhlyRestfully\Plugin\ApiProblemResult',
-        ),
-    ),
 );
