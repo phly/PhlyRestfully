@@ -152,23 +152,22 @@ class Resource implements ResourceInterface
      */
     public function replaceList($data)
     {
-        if (is_array($data)) {
-            $data = json_decode(json_encode($data));
-        } else {
+        if (!is_array($data)) {
             throw new Exception\InvalidArgumentException(sprintf(
-                'Data provided to create must be either a multidimensional array or array of objects; received "%s"',
+                'Data provided to replaceList must be either a multidimensional array or array of objects; received "%s"',
                 gettype($data)
             ));
         }
-        while ($element = current($data) ) {
-            if (!is_object($element)) {
+        array_walk($data, function($val,$key) use(&$data) {
+            if (is_array($val)) {
+                $data[$key] = (object) $val;
+            } else if (!is_object($val)) {
                 throw new Exception\InvalidArgumentException(sprintf(
-                    'Data provided to create must contain an array or array of objects; received "%s"',
-                    gettype($element)
+                    'Data provided to replaceList must contain only arrays or objects; received "%s"',
+                    gettype($val)
                 ));
             }
-            next($data);
-        }
+        });
         $events  = $this->getEventManager();
         $results = $events->trigger(__FUNCTION__, $this, array('data' => $data));
         $last    = $results->last();
