@@ -354,6 +354,33 @@ class ResourceControllerTest extends TestCase
         $this->assertEquals($item, $result['item']);
     }
 
+    public function testReplaceListReturnsProblemResultOnUpdateException()
+    {
+        $this->resource->getEventManager()->attach('replaceList', function ($e) {
+            throw new Exception\UpdateException('failed');
+        });
+
+        $result = $this->controller->replaceList(array());
+        $this->assertProblemApiResult(500, 'failed', $result);
+    }
+
+    public function testReplaceListReturnsHalArrayOnSuccess()
+    {
+        $items = array(array('id' => 'foo1', 'bar' => 'baz1'), array('id' => 'foo2', 'bar' => 'baz2'));
+        $this->resource->getEventManager()->attach('replaceList', function ($e) use ($items) {
+            return $items;
+        });
+
+        $result = $this->controller->replaceList($items);
+        $this->assertInternalType('array', $result);
+        $this->assertArrayHasKey('_links', $result);
+        $this->assertInternalType('array', $result['_links']);
+        $this->assertArrayHasKey('items', $result);
+        foreach ($items as $key => $item) {
+            $this->assertEquals($item, $result['items'][$key]['item']);
+        }
+    }
+
     public function testOnDispatchRaisesDomainExceptionOnMissingResource()
     {
         $controller = new ResourceController();

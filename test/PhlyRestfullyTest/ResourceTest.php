@@ -123,6 +123,35 @@ class ResourceTest extends TestCase
         $this->assertSame($data, $test);
     }
 
+    public function testReplaceListReturnsResultOfLastListener()
+    {
+        $this->events->attach('replaceList', function ($e) {
+            return;
+        });
+        $object = array(new stdClass);
+        $this->events->attach('replaceList', function ($e) use ($object) {
+            return $object;
+        });
+
+        $test = $this->resource->replaceList(array(array()));
+        $this->assertSame($object, $test);
+    }
+
+    public function testReplaceListReturnsDataIfLastListenerDoesNotReturnItem()
+    {
+        $data = array(new stdClass);
+        $object = new stdClass;
+        $this->events->attach('replaceList', function ($e) use ($object) {
+            return $object;
+        });
+        $this->events->attach('replaceList', function ($e) {
+            return;
+        });
+
+        $test = $this->resource->replaceList($data);
+        $this->assertSame($data, $test);
+    }
+
     /**
      * @dataProvider badData
      */
