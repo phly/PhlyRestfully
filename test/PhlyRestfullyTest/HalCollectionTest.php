@@ -1,0 +1,74 @@
+<?php
+/**
+ * @link      https://github.com/weierophinney/PhlyRestfully for the canonical source repository
+ * @copyright Copyright (c) 2013 Matthew Weier O'Phinney
+ * @license   http://opensource.org/licenses/BSD-2-Clause BSD-2-Clause
+ * @package   PhlyRestfully
+ */
+
+namespace PhlyRestfullyTest;
+
+use PhlyRestfully\HalCollection;
+use PHPUnit_Framework_TestCase as TestCase;
+use stdClass;
+
+class HalCollectionTest extends TestCase
+{
+    public function invalidCollections()
+    {
+        return array(
+            'null'       => array(null),
+            'true'       => array(true),
+            'false'      => array(false),
+            'zero-int'   => array(0),
+            'int'        => array(1),
+            'zero-float' => array(0.0),
+            'float'      => array(1.1),
+            'string'     => array('string'),
+            'stdclass'   => array(new stdClass),
+        );
+    }
+
+    /**
+     * @dataProvider invalidCollections
+     */
+    public function testConstructorRaisesExceptionForNonTraversableCollection($collection)
+    {
+        $this->setExpectedException('PhlyRestfully\Exception\InvalidCollectionException');
+        $hal = new HalCollection($collection, 'collection/route', 'item/route');
+    }
+
+    public function testPropertiesAreAccessibleFollowingConstruction()
+    {
+        $hal = new HalCollection(array(), 'collection/route', 'item/route');
+        $this->assertEquals(array(), $hal->collection);
+        $this->assertEquals('collection/route', $hal->collectionRoute);
+        $this->assertEquals('item/route', $hal->itemRoute);
+    }
+
+    public function testDefaultPageIsOne()
+    {
+        $hal = new HalCollection(array(), 'collection/route', 'item/route');
+        $this->assertEquals(1, $hal->page);
+    }
+
+    public function testPageIsMutable()
+    {
+        $hal = new HalCollection(array(), 'collection/route', 'item/route');
+        $hal->setPage(5);
+        $this->assertEquals(5, $hal->page);
+    }
+
+    public function testDefaultPageSizeIsThirty()
+    {
+        $hal = new HalCollection(array(), 'collection/route', 'item/route');
+        $this->assertEquals(30, $hal->pageSize);
+    }
+
+    public function testPageSizeIsMutable()
+    {
+        $hal = new HalCollection(array(), 'collection/route', 'item/route');
+        $hal->setPageSize(3);
+        $this->assertEquals(3, $hal->pageSize);
+    }
+}

@@ -8,6 +8,7 @@
 
 namespace PhlyRestfully;
 
+use Zend\Http\Response;
 use Zend\Mvc\Controller\AbstractRestfulController;
 use Zend\Mvc\MvcEvent;
 use Zend\Paginator\Paginator;
@@ -41,9 +42,8 @@ class ResourceController extends AbstractRestfulController
      * @var array
      */
     protected $acceptCriteria = array(
-        'PhlyRestfully\RestfulJsonModel' => array(
-            'application/json',
-            'application/hal+json',
+        'PhlyRestfully\View\RestfulJsonModel' => array(
+            '*/json',
         ),
     );
 
@@ -214,12 +214,16 @@ class ResourceController extends AbstractRestfulController
         }
 
         $return = parent::onDispatch($e);
-        if (!is_array($return)) {
+
+        if (!$return instanceof ApiProblem
+            && !$return instanceof HalItem
+            && !$return instanceof HalCollection
+        ) {
             return $return;
         }
 
         $viewModel = $this->acceptableViewModelSelector($this->acceptCriteria);
-        $viewModel->setVariables($return);
+        $viewModel->setVariables(array('payload' => $return));
 
         if ($viewModel instanceof RestfulJsonModel) {
             $viewModel->setTerminal(true);
@@ -233,7 +237,7 @@ class ResourceController extends AbstractRestfulController
      * Create a new item
      *
      * @param  array $data
-     * @return array
+     * @return Response|ApiProblem|HalItem
      */
     public function create($data)
     {
@@ -246,51 +250,43 @@ class ResourceController extends AbstractRestfulController
             $item = $this->resource->create($data);
         } catch (Exception\CreationException $e) {
             $code = $e->getCode() ?: 500;
-            return $this->apiProblemResult($code, $e);
+            return new ApiProblem($code, $e);
         }
 
         $id = $this->getIdentifierFromItem($item);
         if (!$id) {
-            return $this->apiProblemResult(
+            return new ApiProblem(
                 422,
                 'No item identifier present following item creation.'
             );
         }
 
-        $resourceLink = $this->links()->createLink($this->route);
-        $selfLink     = $this->links()->createLink($this->route, $id, $item);
-
         $response->setStatusCode(201);
-        $response->getHeaders()->addHeaderLine('Location', $selfLink);
-
-        return array(
-            '_links' => $this->links()->generateHalLinkRelations(array(
-                'up'   => $resourceLink,
-                'self' => $selfLink,
-            )),
-            'item' => $item,
+        $response->getHeaders()->addHeaderLine(
+            'Location',
+            $this->halLinks()->createLink($this->route, $id, $item)
         );
+
+        return new HalItem($item, $id, $this->route);
     }
 
     /**
      * Delete an existing item
      *
      * @param  int|string $id
-     * @return array|\Zend\Http\Response
+     * @return Response|ApiProblem
      */
     public function delete($id)
     {
         if ($id && !$this->isMethodAllowedForItem()) {
             return $this->createMethodNotAllowedResponse($this->itemHttpOptions);
-        } elseif (!$id && !$this->isMethodAllowedForResource()) {
+        }
+        if (!$id && !$this->isMethodAllowedForResource()) {
             return $this->createMethodNotAllowedResponse($this->resourceHttpOptions);
         }
 
         if (!$this->resource->delete($id)) {
-            return $this->apiProblemResult(
-                422,
-                'Unable to delete item.'
-            );
+            return new ApiProblem(422, 'Unable to delete item.');
         }
 
         $response = $this->getResponse();
@@ -302,7 +298,7 @@ class ResourceController extends AbstractRestfulController
      * Return single item
      *
      * @param  int|string $id
-     * @return array
+     * @return Response|ApiProblem|HalItem
      */
     public function get($id)
     {
@@ -312,28 +308,16 @@ class ResourceController extends AbstractRestfulController
 
         $item = $this->resource->fetch($id);
         if (!$item) {
-            return $this->apiProblemResult(
-                404,
-                'Item not found.'
-            );
+            return new ApiProblem(404, 'Item not found.');
         }
 
-        $resourceLink = $this->links()->createLink($this->route, false);
-        $selfLink     = $this->links()->createLink($this->route, $id, $item);
-
-        return array(
-            '_links' => $this->links()->generateHalLinkRelations(array(
-                'up'   => $resourceLink,
-                'self' => $selfLink,
-            )),
-            'item' => $item,
-        );
+        return new HalItem($item, $id, $this->route);
     }
 
     /**
      * Return list of items
      *
-     * @return array
+     * @return Response|HalCollection
      */
     public function getList()
     {
@@ -344,18 +328,17 @@ class ResourceController extends AbstractRestfulController
         $response = $this->getResponse();
         $items    = $this->resource->fetchAll();
 
-        if ($items instanceof Paginator) {
-            return $this->createPaginatedResponse($items);
-        }
-
-        return $this->createNonPaginatedResponse($items);
+        $collection = new HalCollection($items, $this->route, $this->route);
+        $collection->setPage($this->getRequest()->getQuery('page', 1));
+        $collection->setPageSize($this->pageSize);
+        return $collection;
     }
 
     /**
      * Retrieve HEAD metadata for the resource and/or item
      *
      * @param  null|mixed $id
-     * @return mixed
+     * @return Response|ApiProblem|HalItem|HalCollection
      */
     public function head($id = null)
     {
@@ -370,7 +353,7 @@ class ResourceController extends AbstractRestfulController
      *
      * Uses $options to set the Allow header line and return an empty response.
      *
-     * @return \Zend\Http\Response
+     * @return Response
      */
     public function options()
     {
@@ -400,32 +383,22 @@ class ResourceController extends AbstractRestfulController
      *
      * @param  int|string $id
      * @param  array $data
-     * @return array
+     * @return Response|ApiProblem|HalItem
      */
     public function patch($id, $data)
     {
         if (!$this->isMethodAllowedForItem()) {
             return $this->createMethodNotAllowedResponse($this->itemHttpOptions);
         }
-        $response = $this->getResponse();
 
         try {
             $item = $this->resource->patch($id, $data);
         } catch (Exception\PatchException $e) {
             $code = $e->getCode() ?: 500;
-            return $this->apiProblemResult($code, $e);
+            return new ApiProblem($code, $e);
         }
 
-        $resourceLink = $this->links()->createLink($this->route, false);
-        $selfLink     = $this->links()->createLink($this->route, $id, $item);
-
-        return array(
-            '_links' => $this->links()->generateHalLinkRelations(array(
-                'up'   => $resourceLink,
-                'self' => $selfLink,
-            )),
-            'item' => $item,
-        );
+        return new HalItem($item, $id, $this->route);
     }
 
     /**
@@ -433,35 +406,25 @@ class ResourceController extends AbstractRestfulController
      *
      * @param  int|string $id
      * @param  array $data
-     * @return array
+     * @return Response|ApiProblem|HalItem
      */
     public function update($id, $data)
     {
         if ($id && !$this->isMethodAllowedForItem()) {
             return $this->createMethodNotAllowedResponse($this->itemHttpOptions);
-        } elseif (!$id && !$this->isMethodAllowedForResource()) {
+        }
+        if (!$id && !$this->isMethodAllowedForResource()) {
             return $this->createMethodNotAllowedResponse($this->resourceHttpOptions);
         }
-
-        $response = $this->getResponse();
 
         try {
             $item = $this->resource->update($id, $data);
         } catch (Exception\UpdateException $e) {
             $code = $e->getCode() ?: 500;
-            return $this->apiProblemResult($code, $e);
+            return new ApiProblem($code, $e);
         }
 
-        $resourceLink = $this->links()->createLink($this->route, false);
-        $selfLink     = $this->links()->createLink($this->route, $id, $item);
-
-        return array(
-            '_links' => $this->links()->generateHalLinkRelations(array(
-                'up'   => $resourceLink,
-                'self' => $selfLink,
-            )),
-            'item' => $item,
-        );
+        return new HalItem($item, $id, $this->route);
     }
 
     /**
@@ -525,112 +488,6 @@ class ResourceController extends AbstractRestfulController
     }
 
     /**
-     * Create a response payload for a paginated collection
-     *
-     * @param  Paginator $items
-     * @return array
-     */
-    protected function createPaginatedResponse(Paginator $items)
-    {
-        $items->setItemCountPerPage($this->pageSize);
-        $count = count($items);
-
-        if (!$count) {
-            return array(
-                '_links' => $this->links()->generateHalLinkRelations(array(
-                    'self' => $this->links()->createLink($this->route),
-                )),
-                'items'  => array(),
-            );
-        }
-
-        $page  = (int) $this->params()->fromQuery('page', 1);
-        if ($page < 1 || $page > $count) {
-            return $this->apiProblemResult(409, 'Invalid page provided');
-        }
-
-        $items->setCurrentPageNumber($page);
-
-        $base  = $this->links()->createLink($this->route);
-        $next  = ($page == $count) ? false : $page + 1;
-        $prev  = ($page == 1) ? false : $page - 1;
-        $links = array(
-            'self'  => $base . ((1 == $page) ? '' : '?page=' . $page),
-        );
-        if ($page != 1) {
-            $links['first'] = $base;
-        }
-        if ($count != 1) {
-            $links['last'] = $base . '?page=' . $count;
-        }
-        if ($prev) {
-            $links['prev'] = $base . ((1 == $prev) ? '' : '?page=' . $prev);
-        }
-        if ($next) {
-            $links['next'] = $base . '?page=' . $next;
-        }
-
-        return array(
-            '_links' => $this->links()->generateHalLinkRelations($links),
-            'items'  => $this->createHalItems($items),
-        );
-    }
-
-    /**
-     * Create a response payload for a non-paginated collection
-     *
-     * @todo   Add metadata, such as count of items?
-     * @param  Paginator $items
-     * @return array
-     */
-    protected function createNonPaginatedResponse($items)
-    {
-        return array(
-            '_links' => $this->links()->generateHalLinkRelations(array(
-                'self' => $this->links()->createLink($this->route),
-            )),
-            'items' => $this->createHalItems($items),
-        );
-    }
-
-    /**
-     * Create array of HAL-formatted items
-     *
-     * @param  array|Traversable $items
-     * @return array
-     */
-    protected function createHalItems($items)
-    {
-        $halItems = array();
-        foreach ($items as $item) {
-            $halItems[] = $this->createHalItem($item);
-        }
-        return $halItems;
-    }
-
-    /**
-     * Create a HAL payload for an individual item
-     *
-     * @param  mixed $item
-     * @return array
-     */
-    protected function createHalItem($item)
-    {
-        $halItem = array('item' => $item);
-
-        $id = $this->getIdentifierFromItem($item);
-        if (!$id) {
-            return $halItem;
-        }
-
-        $halItem['_links'] = $this->links()->generateHalLinkRelations(array(
-            'self' => $this->links()->createLink($this->route, $id, $item),
-        ));
-
-        return $halItem;
-    }
-
-    /**
      * Is the current HTTP method allowed for an item?
      *
      * @return bool
@@ -672,7 +529,7 @@ class ResourceController extends AbstractRestfulController
      * Creates a "405 Method Not Allowed" response detailing the available options
      *
      * @param  array $options
-     * @return \Zend\Http\Response
+     * @return Response
      */
     protected function createMethodNotAllowedResponse(array $options)
     {

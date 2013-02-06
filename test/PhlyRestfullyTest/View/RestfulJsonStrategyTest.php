@@ -6,10 +6,14 @@
  * @package   PhlyRestfully
  */
 
-namespace PhlyRestfullyTest;
+namespace PhlyRestfullyTest\View;
 
-use PhlyRestfully\RestfulJsonModel;
-use PhlyRestfully\RestfulJsonStrategy;
+use PhlyRestfully\ApiProblem;
+use PhlyRestfully\HalCollection;
+use PhlyRestfully\HalItem;
+use PhlyRestfully\View\RestfulJsonModel;
+use PhlyRestfully\View\RestfulJsonRenderer;
+use PhlyRestfully\View\RestfulJsonStrategy;
 use PHPUnit_Framework_TestCase as TestCase;
 use Zend\Http\Response;
 use Zend\View\Renderer\JsonRenderer;
@@ -26,7 +30,7 @@ class RestfulJsonStrategyTest extends TestCase
         $this->event    = new ViewEvent;
         $this->event->setResponse($this->response);
 
-        $this->renderer = new JsonRenderer;
+        $this->renderer = new RestfulJsonRenderer;
         $this->strategy = new RestfulJsonStrategy($this->renderer);
     }
 
@@ -71,10 +75,8 @@ class RestfulJsonStrategyTest extends TestCase
 
     public function testInjectResponseSetsContentTypeHeaderToApiProblemForApiProblemModel()
     {
-        $model = new RestfulJsonModel(array(
-            'describedBy' => 'foo',
-            'title' => 'bar',
-        ));
+        $problem = new ApiProblem(500, 'whatever', 'foo', 'bar');
+        $model   = new RestfulJsonModel(array('payload' => $problem));
         $this->event->setModel($model);
         $this->event->setRenderer($this->renderer);
         $this->event->setResult('{"foo":"bar"}');
@@ -85,11 +87,26 @@ class RestfulJsonStrategyTest extends TestCase
         $this->assertEquals('application/api-problem+json', $header->getFieldValue());
     }
 
-    public function testInjectResponseSetsContentTypeHeaderToHalForHalModel()
+    public function halObjects()
     {
-        $model = new RestfulJsonModel(array(
-            '_links' => array('foo' => 'bar'),
-        ));
+        $item = new HalItem(array(
+            'foo' => 'bar',
+        ), 'identifier', 'route');
+        $collection = new HalCollection(array($item), 'collection/route', 'item/route');
+
+        return array(
+            'item'       => array($item),
+            'collection' => array($collection),
+        );
+    }
+
+    /**
+     * @dataProvider halObjects
+     */
+    public function testInjectResponseSetsContentTypeHeaderToHalForHalModel($hal)
+    {
+        $model = new RestfulJsonModel(array('payload' => $hal));
+
         $this->event->setModel($model);
         $this->event->setRenderer($this->renderer);
         $this->event->setResult('{"foo":"bar"}');

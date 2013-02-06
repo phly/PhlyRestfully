@@ -18,7 +18,6 @@ use stdClass;
 use Zend\EventManager\EventManager;
 use Zend\EventManager\SharedEventManager;
 use Zend\Mvc\Controller\PluginManager;
-use Zend\Mvc\Controller\Plugin\Url as UrlHelper;
 use Zend\Mvc\MvcEvent;
 use Zend\Mvc\Router\Http\Segment;
 use Zend\Mvc\Router\RouteMatch;
@@ -27,6 +26,7 @@ use Zend\Paginator\Adapter\ArrayAdapter as ArrayPaginator;
 use Zend\Paginator\Paginator;
 use Zend\Stdlib\Parameters;
 use Zend\View\Helper\ServerUrl as ServerUrlHelper;
+use Zend\View\Helper\Url as UrlHelper;
 
 /**
  * @subpackage UnitTest
@@ -48,23 +48,20 @@ class ResourceControllerTest extends TestCase
 
         $pluginManager = new PluginManager();
         $controller->setPluginManager($pluginManager);
+
         $urlHelper = new UrlHelper();
-        $urlHelper->setController($controller);
-        $pluginManager->setService('url', $urlHelper);
+        $urlHelper->setRouter($this->router);
 
         $serverUrlHelper = new ServerUrlHelper();
         $serverUrlHelper->setScheme('http');
         $serverUrlHelper->setHost('localhost.localdomain');
 
-        $linksHelper = new Plugin\Links();
+        $linksHelper = new Plugin\HalLinks();
         $linksHelper->setUrlHelper($urlHelper);
         $linksHelper->setServerUrlHelper($serverUrlHelper);
-        $pluginManager->setService('links', $linksHelper);
-        $linksHelper->setController($controller);
 
-        $apiProblemHelper = new Plugin\ApiProblemResult();
-        $pluginManager->setService('apiproblemresult', $apiProblemHelper);
-        $apiProblemHelper->setController($controller);
+        $pluginManager->setService('HalLinks', $linksHelper);
+        $linksHelper->setController($controller);
 
         $this->resource = $resource = new Resource();
         $controller->setResource($resource);
@@ -72,11 +69,10 @@ class ResourceControllerTest extends TestCase
 
     public function assertProblemApiResult($expectedHttpStatus, $expectedDetail, $result)
     {
-        $this->assertInternalType('array', $result);
-        $this->assertArrayHasKey('httpStatus', $result);
-        $this->assertEquals($expectedHttpStatus, $result['httpStatus']);
-        $this->assertArrayHasKey('detail', $result);
-        $this->assertContains($expectedDetail, $result['detail']);
+        $this->assertInstanceOf('PhlyRestfully\ApiProblem', $result);
+        $problem = $result->toArray();
+        $this->assertEquals($expectedHttpStatus, $problem['httpStatus']);
+        $this->assertContains($expectedDetail, $problem['detail']);
     }
 
     public function testCreateReturnsProblemResultOnCreationException()
@@ -99,7 +95,7 @@ class ResourceControllerTest extends TestCase
         $this->assertProblemApiResult(422, 'item identifier', $result);
     }
 
-    public function testCreateReturnsHalArrayOnSuccess()
+    public function testCreateReturnsHalItemOnSuccess()
     {
         $item = array('id' => 'foo', 'bar' => 'baz');
         $this->resource->getEventManager()->attach('create', function ($e) use ($item) {
@@ -107,13 +103,8 @@ class ResourceControllerTest extends TestCase
         });
 
         $result = $this->controller->create(array());
-        $this->assertInternalType('array', $result);
-        $this->assertArrayHasKey('_links', $result);
-        $this->assertInternalType('array', $result['_links']);
-        $this->assertRegexp('#/resource$#', $result['_links']['up']['href']);
-        $this->assertRegexp('#/resource/foo$#', $result['_links']['self']['href']);
-        $this->assertArrayHasKey('item', $result);
-        $this->assertEquals($item, $result['item']);
+        $this->assertInstanceOf('PhlyRestfully\HalItem', $result);
+        $this->assertEquals($item, $result->item);
     }
 
     public function testFalseFromDeleteResourceReturnsProblemApiResult()
@@ -147,7 +138,7 @@ class ResourceControllerTest extends TestCase
         $this->assertProblemApiResult(404, 'not found', $result);
     }
 
-    public function testReturningItemFromGetReturnsExpectedHalResult()
+    public function testReturningItemFromGetReturnsExpectedHalItem()
     {
         $item = array('id' => 'foo', 'bar' => 'baz');
         $this->resource->getEventManager()->attach('fetch', function ($e) use ($item) {
@@ -155,16 +146,11 @@ class ResourceControllerTest extends TestCase
         });
 
         $result = $this->controller->get('foo');
-        $this->assertInternalType('array', $result);
-        $this->assertArrayHasKey('_links', $result);
-        $this->assertInternalType('array', $result['_links']);
-        $this->assertRegexp('#/resource$#', $result['_links']['up']['href']);
-        $this->assertRegexp('#/resource/foo$#', $result['_links']['self']['href']);
-        $this->assertArrayHasKey('item', $result);
-        $this->assertEquals($item, $result['item']);
+        $this->assertInstanceOf('PhlyRestfully\HalItem', $result);
+        $this->assertEquals($item, $result->item);
     }
 
-    public function testReturnsHalResponseWithOnlySelfReferenceForNonPaginatedList()
+    public function testReturnsHalCollectionForNonPaginatedList()
     {
         $items = array(
             array('id' => 'foo', 'bar' => 'baz')
@@ -174,19 +160,11 @@ class ResourceControllerTest extends TestCase
         });
 
         $result = $this->controller->getList();
-        $this->assertInternalType('array', $result);
-        $this->assertArrayHasKey('_links', $result);
-        $this->assertInternalType('array', $result['_links']);
-        $this->assertRegexp('#/resource$#', $result['_links']['self']['href']);
-        $this->assertArrayHasKey('items', $result);
-
-        $item = $items[0];
-        $test = $result['items'][0];
-        $this->assertEquals($item, $test['item']);
-        $this->assertRegexp('#/resource/foo$#', $test['_links']['self']['href']);
+        $this->assertInstanceOf('PhlyRestfully\HalCollection', $result);
+        $this->assertEquals($items, $result->collection);
     }
 
-    public function testReturnsHalResponseForPaginatedList()
+    public function testReturnsHalCollectionForPaginatedList()
     {
         $items = array(
             array('id' => 'foo', 'bar' => 'baz'),
@@ -204,21 +182,10 @@ class ResourceControllerTest extends TestCase
         $request->setQuery(new Parameters(array('page' => 2)));
 
         $result = $this->controller->getList();
-        $this->assertInternalType('array', $result);
-        $this->assertArrayHasKey('_links', $result);
-        $this->assertInternalType('array', $result['_links']);
-        $this->assertRegexp('#/resource\?page\=2$#', $result['_links']['self']['href']);
-        $this->assertRegexp('#/resource$#', $result['_links']['first']['href']);
-        $this->assertRegexp('#/resource\?page\=3$#', $result['_links']['last']['href']);
-        $this->assertRegexp('#/resource$#', $result['_links']['prev']['href']);
-        $this->assertRegexp('#/resource\?page\=3$#', $result['_links']['next']['href']);
-
-        $this->assertArrayHasKey('items', $result);
-        $item = $items[1];
-        $test = $result['items'][0];
-        $this->assertEquals($item, $test['item']);
-        $this->assertRegexp('#/resource/bar$#', $test['_links']['self']['href']);
-        $this->assertEquals($item, $test['item']);
+        $this->assertInstanceOf('PhlyRestfully\HalCollection', $result);
+        $this->assertSame($paginator, $result->collection);
+        $this->assertEquals(2, $result->page);
+        $this->assertEquals(1, $result->pageSize);
     }
 
     public function testHeadReturnsListResponseWhenNoIdProvided()
@@ -239,9 +206,8 @@ class ResourceControllerTest extends TestCase
         $request->setQuery(new Parameters(array('page' => 2)));
 
         $result = $this->controller->head();
-        $this->assertInternalType('array', $result);
-        $this->assertArrayHasKey('_links', $result);
-        $this->assertArrayHasKey('items', $result);
+        $this->assertInstanceOf('PhlyRestfully\HalCollection', $result);
+        $this->assertSame($paginator, $result->collection);
     }
 
     public function testHeadReturnsItemResponseWhenIdProvided()
@@ -252,9 +218,8 @@ class ResourceControllerTest extends TestCase
         });
 
         $result = $this->controller->head('foo');
-        $this->assertInternalType('array', $result);
-        $this->assertArrayHasKey('_links', $result);
-        $this->assertArrayHasKey('item', $result);
+        $this->assertInstanceOf('PhlyRestfully\HalItem', $result);
+        $this->assertEquals($item, $result->item);
     }
 
     public function testOptionsReturnsEmptyResponseWithAllowHeaderPopulatedForResource()
@@ -310,7 +275,7 @@ class ResourceControllerTest extends TestCase
         $this->assertProblemApiResult(500, 'failed', $result);
     }
 
-    public function testPatchReturnsHalArrayOnSuccess()
+    public function testPatchReturnsHalItemOnSuccess()
     {
         $item = array('id' => 'foo', 'bar' => 'baz');
         $this->resource->getEventManager()->attach('patch', function ($e) use ($item) {
@@ -318,13 +283,8 @@ class ResourceControllerTest extends TestCase
         });
 
         $result = $this->controller->patch('foo', $item);
-        $this->assertInternalType('array', $result);
-        $this->assertArrayHasKey('_links', $result);
-        $this->assertInternalType('array', $result['_links']);
-        $this->assertRegexp('#/resource$#', $result['_links']['up']['href']);
-        $this->assertRegexp('#/resource/foo$#', $result['_links']['self']['href']);
-        $this->assertArrayHasKey('item', $result);
-        $this->assertEquals($item, $result['item']);
+        $this->assertInstanceOf('PhlyRestfully\HalItem', $result);
+        $this->assertEquals($item, $result->item);
     }
 
     public function testUpdateReturnsProblemResultOnUpdateException()
@@ -337,7 +297,7 @@ class ResourceControllerTest extends TestCase
         $this->assertProblemApiResult(500, 'failed', $result);
     }
 
-    public function testUpdateReturnsHalArrayOnSuccess()
+    public function testUpdateReturnsHalItemOnSuccess()
     {
         $item = array('id' => 'foo', 'bar' => 'baz');
         $this->resource->getEventManager()->attach('update', function ($e) use ($item) {
@@ -345,13 +305,8 @@ class ResourceControllerTest extends TestCase
         });
 
         $result = $this->controller->update('foo', $item);
-        $this->assertInternalType('array', $result);
-        $this->assertArrayHasKey('_links', $result);
-        $this->assertInternalType('array', $result['_links']);
-        $this->assertRegexp('#/resource$#', $result['_links']['up']['href']);
-        $this->assertRegexp('#/resource/foo$#', $result['_links']['self']['href']);
-        $this->assertArrayHasKey('item', $result);
-        $this->assertEquals($item, $result['item']);
+        $this->assertInstanceOf('PhlyRestfully\HalItem', $result);
+        $this->assertEquals($item, $result->item);
     }
 
     public function testReplaceListReturnsProblemResultOnUpdateException()
@@ -431,7 +386,7 @@ class ResourceControllerTest extends TestCase
         $this->assertEquals('GET', $allow->getFieldValue());
     }
 
-    public function testValidMethodReturningArrayCastsReturnToViewModel()
+    public function testValidMethodReturningHalOrApiValueIsCastToViewModel()
     {
         $item = array('id' => 'foo', 'bar' => 'baz');
         $this->resource->getEventManager()->attach('fetch', function ($e) use ($item) {
@@ -449,7 +404,7 @@ class ResourceControllerTest extends TestCase
         $this->assertInstanceof('Zend\View\Model\ModelInterface', $result);
     }
 
-    public function testValidMethodReturningArrayCastsReturnToRestfulJsonModelWhenAcceptHeaderIsJson()
+    public function testValidMethodReturningHalOrApiValueCastsReturnToRestfulJsonModelWhenAcceptHeaderIsJson()
     {
         $item = array('id' => 'foo', 'bar' => 'baz');
         $this->resource->getEventManager()->attach('fetch', function ($e) use ($item) {
@@ -465,7 +420,7 @@ class ResourceControllerTest extends TestCase
         $this->event->getRouteMatch()->setParam('id', 'foo');
 
         $result = $this->controller->onDispatch($this->event);
-        $this->assertInstanceof('PhlyRestfully\RestfulJsonModel', $result);
+        $this->assertInstanceof('PhlyRestfully\View\RestfulJsonModel', $result);
     }
 
     public function testPassingIdentifierToConstructorAllowsListeningOnThatIdentifier()

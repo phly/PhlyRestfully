@@ -6,7 +6,7 @@
  * @package   PhlyRestfully
  */
 
-namespace PhlyRestfully;
+namespace PhlyRestfully\View;
 
 use Zend\View\Strategy\JsonStrategy;
 use Zend\View\ViewEvent;
@@ -26,11 +26,16 @@ class RestfulJsonStrategy extends JsonStrategy
 {
     protected $contentType = 'application/json';
 
+    public function __construct(RestfulJsonRenderer $renderer)
+    {
+        $this->renderer = $renderer;
+    }
+
     /**
-     * Detect if we should use the JsonRenderer based on model type.
+     * Detect if we should use the RestfulJsonRenderer based on model type.
      *
      * @param  ViewEvent $e
-     * @return null|\Zend\View\Renderer\JsonRenderer
+     * @return null|RestfulJsonRenderer
      */
     public function selectRenderer(ViewEvent $e)
     {
@@ -69,14 +74,21 @@ class RestfulJsonStrategy extends JsonStrategy
 
         $model       = $e->getModel();
         $contentType = $this->contentType;
-        if ($model instanceof RestfulJsonModel && $model->isProblemApi()) {
+        $response    = $e->getResponse();
+
+        if ($this->renderer->isApiProblem()) {
             $contentType = 'application/api-problem+json';
-        } elseif ($model instanceof RestfulJsonModel && $model->isHal()) {
+            $response->setStatusCode($this->renderer->getApiProblem()->httpStatus);
+        } elseif ($model instanceof RestfulJsonModel && $model->isApiProblem()) {
+            $contentType = 'application/api-problem+json';
+            $response->setStatusCode($model->getPayload()->httpStatus);
+        } elseif ($model instanceof RestfulJsonModel
+            && ($model->isHalCollection() || $model->isHalItem())
+        ) {
             $contentType = 'application/hal+json';
         }
 
         // Populate response
-        $response = $e->getResponse();
         $response->setContent($result);
         $headers = $response->getHeaders();
         $headers->addHeaderLine('content-type', $contentType);
