@@ -445,14 +445,13 @@ class ResourceController extends AbstractRestfulController
             $items = $this->resource->replaceList($data);
         } catch (Exception\UpdateException $e) {
             $code = $e->getCode() ?: 500;
-            return $this->apiProblemResult($code, $e);
+            return new ApiProblem($code, $e);
         }
 
-        if ($items instanceof Paginator) {
-            return $this->createPaginatedResponse($items);
-        }
-
-        return $this->createNonPaginatedResponse($items);
+        $collection = new HalCollection($items, $this->route, $this->route);
+        $collection->setPage($this->getRequest()->getQuery('page', 1));
+        $collection->setPageSize($this->pageSize);
+        return $collection;
     }
 
     /**

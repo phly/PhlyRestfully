@@ -319,21 +319,17 @@ class ResourceControllerTest extends TestCase
         $this->assertProblemApiResult(500, 'failed', $result);
     }
 
-    public function testReplaceListReturnsHalArrayOnSuccess()
+    public function testReplaceListReturnsHalCollectionOnSuccess()
     {
-        $items = array(array('id' => 'foo1', 'bar' => 'baz1'), array('id' => 'foo2', 'bar' => 'baz2'));
+        $items = array(
+            array('id' => 'foo', 'bar' => 'baz'),
+            array('id' => 'bar', 'bar' => 'baz'));
         $this->resource->getEventManager()->attach('replaceList', function ($e) use ($items) {
             return $items;
         });
 
         $result = $this->controller->replaceList($items);
-        $this->assertInternalType('array', $result);
-        $this->assertArrayHasKey('_links', $result);
-        $this->assertInternalType('array', $result['_links']);
-        $this->assertArrayHasKey('items', $result);
-        foreach ($items as $key => $item) {
-            $this->assertEquals($item, $result['items'][$key]['item']);
-        }
+        $this->assertInstanceOf('PhlyRestfully\HalCollection', $result);
     }
 
     public function testOnDispatchRaisesDomainExceptionOnMissingResource()
