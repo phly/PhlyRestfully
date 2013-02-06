@@ -161,7 +161,7 @@ class Resource implements ResourceInterface
         array_walk($data, function($val,$key) use(&$data) {
             if (is_array($val)) {
                 $data[$key] = (object) $val;
-            } else if (!is_object($val)) {
+            } elseif (!is_object($val)) {
                 throw new Exception\InvalidArgumentException(sprintf(
                     'Data provided to replaceList must contain only arrays or objects; received "%s"',
                     gettype($val)
