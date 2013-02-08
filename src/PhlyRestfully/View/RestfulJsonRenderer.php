@@ -38,6 +38,13 @@ class RestfulJsonRenderer extends JsonRenderer
     protected $defaultHydrator;
 
     /**
+     * Whether or not to render exception stack traces in API-Problem payloads
+     * 
+     * @var bool
+     */
+    protected $displayExceptions = false;
+
+    /**
      * @var HelperPluginManager
      */
     protected $helpers;
@@ -99,6 +106,18 @@ class RestfulJsonRenderer extends JsonRenderer
     public function setDefaultHydrator(HydratorInterface $hydrator)
     {
         $this->defaultHydrator = $hydrator;
+        return $this;
+    }
+
+    /**
+     * Set display_exceptions flag
+     * 
+     * @param  bool $flag 
+     * @return RestfulJsonRenderer
+     */
+    public function setDisplayExceptions($flag)
+    {
+        $this->displayExceptions = (bool) $flag;
         return $this;
     }
 
@@ -167,6 +186,9 @@ class RestfulJsonRenderer extends JsonRenderer
     protected function renderApiProblem(ApiProblem $apiProblem)
     {
         $this->apiProblem   = $apiProblem;
+        if ($this->displayExceptions) {
+            $apiProblem->setDetailIncludesStackTrace(true);
+        }
         return parent::render($apiProblem->toArray());
     }
 

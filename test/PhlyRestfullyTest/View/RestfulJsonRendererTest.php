@@ -343,4 +343,16 @@ class RestfulJsonRendererTest extends TestCase
         $problem = $problem->toArray();
         $this->assertEquals(409, $problem['httpStatus']);
     }
+
+    public function testCanHintToApiProblemToRenderStackTrace()
+    {
+        $exception  = new \Exception('exception message', 500);
+        $apiProblem = new ApiProblem(500, $exception);
+        $model      = new RestfulJsonModel();
+        $model->setPayload($apiProblem);
+        $this->renderer->setDisplayExceptions(true);
+        $test = $this->renderer->render($model);
+        $test = json_decode($test, true);
+        $this->assertContains($exception->getMessage() . "\n" . $exception->getTraceAsString(), $test['detail']);
+    }
 }
