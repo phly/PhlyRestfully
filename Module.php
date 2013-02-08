@@ -45,6 +45,12 @@ class Module
     public function getServiceConfig()
     {
         return array('factories' => array(
+            'PhlyRestfully\JsonRenderer' => function ($services) {
+                $helpers  = $services->get('ViewHelperManager');
+                $renderer = new View\RestfulJsonStrategy();
+                $renderer->setHelperPluginManager($helpers);
+                return $renderer;
+            },
             'PhlyRestfully\RestfulJsonStrategy' => function ($services) {
                 $renderer = $services->get('PhlyRestfully\JsonRenderer');
                 return new View\RestfulJsonStrategy($renderer);

@@ -9,8 +9,6 @@
 return array(
     'service_manager' => array(
         'invokables' => array(
-            // Forces a distinct instance of the JsonRenderer for the RestfulJsonStrategy
-            'PhlyRestfully\JsonRenderer' => 'PhlyRestfully\View\RestfulJsonRenderer',
             // API-Problem render listener
             'PhlyRestfully\ApiProblemListener' => 'PhlyRestfully\Listener\ApiProblemListener'
         ),
