@@ -115,7 +115,7 @@ class Module
     public function onRender($e)
     {
         $result = $e->getResult();
-        if (!$result instanceof RestfulJsonModel) {
+        if (!$result instanceof View\RestfulJsonModel) {
             return;
         }
 
