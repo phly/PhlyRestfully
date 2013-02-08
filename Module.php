@@ -47,7 +47,7 @@ class Module
         return array('factories' => array(
             'PhlyRestfully\JsonRenderer' => function ($services) {
                 $helpers  = $services->get('ViewHelperManager');
-                $renderer = new View\RestfulJsonStrategy();
+                $renderer = new View\RestfulJsonRenderer();
                 $renderer->setHelperPluginManager($helpers);
                 return $renderer;
             },
