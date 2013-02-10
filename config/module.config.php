@@ -14,7 +14,7 @@ return array(
         ),
     ),
     'view_manager' => array(
-        // Enable this in your application configuration in order to get full 
+        // Enable this in your application configuration in order to get full
         // exception stack traces in your API-Problem responses.
         'display_exceptions' => false,
     ),

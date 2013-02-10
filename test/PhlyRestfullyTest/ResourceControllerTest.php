@@ -128,6 +128,27 @@ class ResourceControllerTest extends TestCase
         $this->assertEquals(204, $result->getStatusCode());
     }
 
+    public function testFalseFromDeleteResourceCollectionReturnsProblemApiResult()
+    {
+        $this->resource->getEventManager()->attach('deleteList', function ($e) {
+            return false;
+        });
+
+        $result = $this->controller->deleteList();
+        $this->assertProblemApiResult(422, 'delete collection', $result);
+    }
+
+    public function testTrueFromDeleteResourceCollectionReturnsResponseWithNoContent()
+    {
+        $this->resource->getEventManager()->attach('deleteList', function ($e) {
+            return true;
+        });
+
+        $result = $this->controller->deleteList();
+        $this->assertInstanceOf('Zend\Http\Response', $result);
+        $this->assertEquals(204, $result->getStatusCode());
+    }
+
     public function testReturningEmptyResultFromGetReturnsProblemApiResult()
     {
         $this->resource->getEventManager()->attach('fetch', function ($e) {
@@ -307,6 +328,29 @@ class ResourceControllerTest extends TestCase
         $result = $this->controller->update('foo', $item);
         $this->assertInstanceOf('PhlyRestfully\HalItem', $result);
         $this->assertEquals($item, $result->item);
+    }
+
+    public function testReplaceListReturnsProblemResultOnUpdateException()
+    {
+        $this->resource->getEventManager()->attach('replaceList', function ($e) {
+            throw new Exception\UpdateException('failed');
+        });
+
+        $result = $this->controller->replaceList(array());
+        $this->assertProblemApiResult(500, 'failed', $result);
+    }
+
+    public function testReplaceListReturnsHalCollectionOnSuccess()
+    {
+        $items = array(
+            array('id' => 'foo', 'bar' => 'baz'),
+            array('id' => 'bar', 'bar' => 'baz'));
+        $this->resource->getEventManager()->attach('replaceList', function ($e) use ($items) {
+            return $items;
+        });
+
+        $result = $this->controller->replaceList($items);
+        $this->assertInstanceOf('PhlyRestfully\HalCollection', $result);
     }
 
     public function testOnDispatchRaisesDomainExceptionOnMissingResource()
