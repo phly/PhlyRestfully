@@ -225,6 +225,52 @@ class ResourceTest extends TestCase
         $this->assertFalse($test);
     }
 
+    public function badDeleteCollections()
+    {
+        return array(
+            'true'     => array(true),
+            'int'      => array(1),
+            'float'    => array(1.1),
+            'string'   => array('string'),
+            'stdClass' => array(new stdClass),
+        );
+    }
+
+    /**
+     * @dataProvider badDeleteCollections
+     */
+    public function testDeleteListRaisesInvalidArgumentExceptionForInvalidData($data)
+    {
+        $this->setExpectedException('PhlyRestfully\Exception\InvalidArgumentException', '::deleteList');
+        $this->resource->deleteList($data);
+    }
+
+    public function testDeleteListReturnsResultOfLastListenerIfBoolean()
+    {
+        $this->events->attach('deleteList', function ($e) {
+            return new stdClass;
+        });
+        $this->events->attach('deleteList', function ($e) {
+            return true;
+        });
+
+        $test = $this->resource->deleteList(array());
+        $this->assertTrue($test);
+    }
+
+    public function testDeleteListReturnsFalseIfLastListenerDoesNotReturnBoolean()
+    {
+        $this->events->attach('deleteList', function ($e) {
+            return true;
+        });
+        $this->events->attach('deleteList', function ($e) {
+            return new stdClass;
+        });
+
+        $test = $this->resource->deleteList(array());
+        $this->assertFalse($test);
+    }
+
     public function testFetchReturnsResultOfLastListener()
     {
         $this->events->attach('fetch', function ($e) {

@@ -137,11 +137,11 @@ class Resource implements ResourceInterface
     /**
      * Update (replace) an existing collection of items
      *
-     * Updates the items collection  indicated by $id, replacing it with the information
-     * in $data. $data should be a full representation of the item, and should
-     * be a multidimensional array or array of objects; if otherwise, an exception will be raised.
+     * Replaces the collection with  the items contained in $data.
+     * $data should be a multidimensional array or array of objects; if
+     * otherwise, an exception will be raised.
      *
-     * Like create(), the return value of the last executed listener will be
+     * Like update(), the return value of the last executed listener will be
      * returned, as long as it is an array or object; otherwise, $data is
      * returned. If you wish to indicate failure to update, raise a
      * PhlyRestfully\Exception\UpdateException.
@@ -158,13 +158,16 @@ class Resource implements ResourceInterface
                 gettype($data)
             ));
         }
-        array_walk($data, function($val,$key) use(&$data) {
-            if (is_array($val)) {
-                $data[$key] = (object) $val;
-            } elseif (!is_object($val)) {
+        array_walk($data, function($value, $key) use(&$data) {
+            if (is_array($value)) {
+                $data[$key] = (object) $value;
+                return;
+            }
+
+            if (!is_object($value)) {
                 throw new Exception\InvalidArgumentException(sprintf(
                     'Data provided to replaceList must contain only arrays or objects; received "%s"',
-                    gettype($val)
+                    gettype($value)
                 ));
             }
         });
@@ -230,6 +233,32 @@ class Resource implements ResourceInterface
     {
         $events  = $this->getEventManager();
         $results = $events->trigger(__FUNCTION__, $this, array('id' => $id));
+        $last    = $results->last();
+        if (!is_bool($last)) {
+            return false;
+        }
+        return $last;
+    }
+
+    /**
+     * Delete an existing collection of records
+     *
+     * @param  array $data
+     * @return bool
+     */
+    public function deleteList($data)
+    {
+        if ($data
+            && (!is_array($data) && !$data instanceof Traversable)
+        ) {
+            throw new Exception\InvalidArgumentException(sprintf(
+                '%s expects a null argument, or an array/Traversable of items and/or ids; received %s',
+                __METHOD__,
+                gettype($data)
+            ));
+        }
+        $events  = $this->getEventManager();
+        $results = $events->trigger(__FUNCTION__, $this, array('data' => $data));
         $last    = $results->last();
         if (!is_bool($last)) {
             return false;
