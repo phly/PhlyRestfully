@@ -47,8 +47,18 @@ class Module
         return array('factories' => array(
             'PhlyRestfully\JsonRenderer' => function ($services) {
                 $helpers  = $services->get('ViewHelperManager');
+                $config   = $services->get('Config');
+
+                $displayExceptions = false;
+                if (isset($config['view_manager'])
+                    && isset($config['view_manager']['display_exceptions'])
+                ) {
+                    $displayExceptions = (bool) $config['view_manager']['display_exceptions'];
+                }
+
                 $renderer = new View\RestfulJsonRenderer();
                 $renderer->setHelperPluginManager($helpers);
+                $renderer->setDisplayExceptions($displayExceptions);
                 return $renderer;
             },
             'PhlyRestfully\RestfulJsonStrategy' => function ($services) {

@@ -33,6 +33,14 @@ interface ResourceInterface extends EventManagerAwareInterface
     public function update($id, $data);
 
     /**
+     * Update (replace) an existing collection of records
+     *
+     * @param  array $data
+     * @return array|object
+     */
+    public function replaceList($data);
+
+    /**
      * Partial update of an existing record
      *
      * @param  string|int $id
@@ -48,6 +56,14 @@ interface ResourceInterface extends EventManagerAwareInterface
      * @return bool
      */
     public function delete($id);
+
+    /**
+     * Delete an existing collection of records
+     * 
+     * @param  null|array $data 
+     * @return bool
+     */
+    public function deleteList($data = null);
 
     /**
      * Fetch an existing record

@@ -18,8 +18,10 @@ A generic Resource class is provided, which provides the following operations:
 
 - `create($data)`
 - `update($id, $data)`
+- `replaceList($data)`
 - `patch($id, $data)`
 - `delete($id)`
+- `deleteList($data = null)`
 - `fetch($id)`
 - `fetchAll()`
 
@@ -30,8 +32,8 @@ Each method:
 - Triggers an event with the incoming data
 - Pulls the last event listener result, and ensures it is well-formed for the
   operation (typically, returns an `array` or `object`; in the case of
-  `delete`, looks for a `boolean`; in the case of `fetchAll`, looks for an
-  `array` or `Traversable`)
+  `delete` and `deleteList`, looks for a `boolean`; in the case of `fetchAll`,
+  looks for an `array` or `Traversable`)
 
 As such, your job is primarily to create a `ListenerAggregate` for the Resource
 which performs the actual persistence operations.
@@ -54,10 +56,16 @@ The controller expects you to inject the following:
 
 - Resource
 - Route name that resolves to the resource
-- HTTP OPTIONS the service is allowed to respond to (optional; by default,
-  allows delete, get, head, patch, post, and put requests)
+- Event identifier for allowing attachment via the shared event manager; this
+  is passed via the constructor (optional; by default, listens to
+  `PhlyRestfully\ResourceController`)
+- "Accept" criteria for use with the `AcceptableViewModelSelector` (optional;
+  by default, assigns any `*/json` requests to the `RestfulJsonModel`)
+- HTTP OPTIONS the service is allowed to respond to, for both collections and
+  individual items (optional; head and options are always allowed; by default,
+  allows get and post requests on collections, and delete, get, patch, and put
+  requests on items)
 - Page size (optional; for paginated results. Defaults to 30.)
-- `ServerUrl` view helper (optional; will lazy-instantiate if not found.)
 
 Tying it Together
 -----------------
@@ -83,10 +91,12 @@ As a quick example:
     $controller = new PhlyRestfully\ResourceController();
     $controller->setResource($resource);
     $controller->setRoute('paste/api');
-    $controller->setHttpOptions(array(
+    $controller->setResourceHttpOptions(array(
         'GET',
-        'HEAD',
         'POST',
+    ));
+    $controller->setItemHttpOptions(array(
+        'GET',
     ));
     return $controller;
 }
@@ -108,6 +118,48 @@ following:
 ```
 
 This single route will then be used for all operations.
+
+If you want to use a route with more segments, and ensure that all captured
+segments are present when generating the URL, you will need to hook into the
+`HalLinks` plugin. As an example, let's consider the following route:
+
+```
+/api/status/:user[/:id]
+```
+
+The "user" segment is required, and should always be part of the URL. However,
+by default, the `ResourceController` and the `RestfulJsonRenderer` will not have
+knowledge of matched route segments, and will not tell the `url()` helper to
+re-use matched parameters.
+
+`HalLinks`, however, allows you to attach to its `createLink` event, which gives
+you the opportunity to provide route parameters. As an example, consider the
+following listeners:
+
+```php
+$sharedEvents->attach('SomeControllerIdentifier', 'dispatch', function ($e) {
+    $matches = $e->getRouteMatch();
+    $user    = $matches->getParam('user');
+    if (!$user) {
+        return;
+    }
+
+    $controller = $e->getTarget();
+    $halLinks   = $controller->halLinks();
+    $halLinks->getEventManager()->attach('createLink', function ($e) use ($user) {
+        $params = $e->getParam('params');
+        $params['user'] = $user;
+    });
+}, 100);
+```
+
+The above attaches a "dispatch" listener to a specific `ResourceController`
+instance as identified by 'SomeControllerIdentifier', at high priority, to 
+ensure that it's present before we ever call on `createLink()`. It checks the
+route matches for a "user" parameter. If found, it retrieves the `HalLinks` 
+plugin, and attaches to its `createLink` event; the listener simply assigns
+the user to the parameters -- which are then passed to the `url()` helper
+when creating a link.
 
 LICENSE
 =======

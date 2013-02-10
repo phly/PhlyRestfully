@@ -126,6 +126,44 @@ class ResourceTest extends TestCase
     /**
      * @dataProvider badData
      */
+    public function testReplaceListRaisesExceptionWithInvalidData($data)
+    {
+        $this->setExpectedException('PhlyRestfully\Exception\InvalidArgumentException');
+        $this->resource->replaceList($data);
+    }
+
+    public function testReplaceListReturnsResultOfLastListener()
+    {
+        $this->events->attach('replaceList', function ($e) {
+            return;
+        });
+        $object = array(new stdClass);
+        $this->events->attach('replaceList', function ($e) use ($object) {
+            return $object;
+        });
+
+        $test = $this->resource->replaceList(array(array()));
+        $this->assertSame($object, $test);
+    }
+
+    public function testReplaceListReturnsDataIfLastListenerDoesNotReturnItem()
+    {
+        $data = array(new stdClass);
+        $object = new stdClass;
+        $this->events->attach('replaceList', function ($e) use ($object) {
+            return $object;
+        });
+        $this->events->attach('replaceList', function ($e) {
+            return;
+        });
+
+        $test = $this->resource->replaceList($data);
+        $this->assertSame($data, $test);
+    }
+
+    /**
+     * @dataProvider badData
+     */
     public function testPatchRaisesExceptionWithInvalidData($data)
     {
         $this->setExpectedException('PhlyRestfully\Exception\InvalidArgumentException');
@@ -184,6 +222,52 @@ class ResourceTest extends TestCase
         });
 
         $test = $this->resource->delete('foo');
+        $this->assertFalse($test);
+    }
+
+    public function badDeleteCollections()
+    {
+        return array(
+            'true'     => array(true),
+            'int'      => array(1),
+            'float'    => array(1.1),
+            'string'   => array('string'),
+            'stdClass' => array(new stdClass),
+        );
+    }
+
+    /**
+     * @dataProvider badDeleteCollections
+     */
+    public function testDeleteListRaisesInvalidArgumentExceptionForInvalidData($data)
+    {
+        $this->setExpectedException('PhlyRestfully\Exception\InvalidArgumentException', '::deleteList');
+        $this->resource->deleteList($data);
+    }
+
+    public function testDeleteListReturnsResultOfLastListenerIfBoolean()
+    {
+        $this->events->attach('deleteList', function ($e) {
+            return new stdClass;
+        });
+        $this->events->attach('deleteList', function ($e) {
+            return true;
+        });
+
+        $test = $this->resource->deleteList(array());
+        $this->assertTrue($test);
+    }
+
+    public function testDeleteListReturnsFalseIfLastListenerDoesNotReturnBoolean()
+    {
+        $this->events->attach('deleteList', function ($e) {
+            return true;
+        });
+        $this->events->attach('deleteList', function ($e) {
+            return new stdClass;
+        });
+
+        $test = $this->resource->deleteList(array());
         $this->assertFalse($test);
     }
 
