@@ -18,6 +18,7 @@ A generic Resource class is provided, which provides the following operations:
 
 - `create($data)`
 - `update($id, $data)`
+- `replaceList($data)`
 - `patch($id, $data)`
 - `delete($id)`
 - `fetch($id)`

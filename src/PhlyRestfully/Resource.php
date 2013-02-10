@@ -120,13 +120,56 @@ class Resource implements ResourceInterface
         }
         if (!is_object($data)) {
             throw new Exception\InvalidArgumentException(sprintf(
-                'Data provided to create must be either an array or object; received "%s"',
+                'Data provided to update must be either an array or object; received "%s"',
                 gettype($data)
             ));
         }
 
         $events  = $this->getEventManager();
         $results = $events->trigger(__FUNCTION__, $this, array('id' => $id, 'data' => $data));
+        $last    = $results->last();
+        if (!is_array($last) && !is_object($last)) {
+            return $data;
+        }
+        return $last;
+    }
+
+    /**
+     * Update (replace) an existing collection of items
+     *
+     * Updates the items collection  indicated by $id, replacing it with the information
+     * in $data. $data should be a full representation of the item, and should
+     * be a multidimensional array or array of objects; if otherwise, an exception will be raised.
+     *
+     * Like create(), the return value of the last executed listener will be
+     * returned, as long as it is an array or object; otherwise, $data is
+     * returned. If you wish to indicate failure to update, raise a
+     * PhlyRestfully\Exception\UpdateException.
+     *
+     * @param  array $data
+     * @return array|object
+     * @throws Exception\InvalidArgumentException
+     */
+    public function replaceList($data)
+    {
+        if (!is_array($data)) {
+            throw new Exception\InvalidArgumentException(sprintf(
+                'Data provided to replaceList must be either a multidimensional array or array of objects; received "%s"',
+                gettype($data)
+            ));
+        }
+        array_walk($data, function($val,$key) use(&$data) {
+            if (is_array($val)) {
+                $data[$key] = (object) $val;
+            } elseif (!is_object($val)) {
+                throw new Exception\InvalidArgumentException(sprintf(
+                    'Data provided to replaceList must contain only arrays or objects; received "%s"',
+                    gettype($val)
+                ));
+            }
+        });
+        $events  = $this->getEventManager();
+        $results = $events->trigger(__FUNCTION__, $this, array('data' => $data));
         $last    = $results->last();
         if (!is_array($last) && !is_object($last)) {
             return $data;

@@ -33,6 +33,14 @@ interface ResourceInterface extends EventManagerAwareInterface
     public function update($id, $data);
 
     /**
+     * Update (replace) an existing collection of record
+     *
+     * @param  array $data
+     * @return array|object
+     */
+    public function replaceList($data);
+
+    /**
      * Partial update of an existing record
      *
      * @param  string|int $id

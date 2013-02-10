@@ -95,6 +95,7 @@ class ResourceController extends AbstractRestfulController
     protected $resourceHttpOptions = array(
         'GET',
         'POST',
+        'PUT',
     );
 
     /**
@@ -424,6 +425,33 @@ class ResourceController extends AbstractRestfulController
         }
 
         return new HalItem($item, $id, $this->route);
+    }
+
+    /**
+     * Update an existing collection of items
+     *
+     * @param array $data
+     * @return array
+     */
+    public function replaceList($data)
+    {
+        if (!$this->isMethodAllowedForResource()) {
+            return $this->createMethodNotAllowedResponse($this->resourceHttpOptions);
+        }
+
+        $response = $this->getResponse();
+
+        try {
+            $items = $this->resource->replaceList($data);
+        } catch (Exception\UpdateException $e) {
+            $code = $e->getCode() ?: 500;
+            return new ApiProblem($code, $e);
+        }
+
+        $collection = new HalCollection($items, $this->route, $this->route);
+        $collection->setPage($this->getRequest()->getQuery('page', 1));
+        $collection->setPageSize($this->pageSize);
+        return $collection;
     }
 
     /**
