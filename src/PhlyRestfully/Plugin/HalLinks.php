@@ -206,9 +206,7 @@ class HalLinks extends AbstractHelper implements ControllerPluginInterface
             return new ApiProblem(409, 'Invalid page provided');
         }
 
-        $path = call_user_func($this->urlHelper, $route);
-        $base = call_user_func($this->serverUrlHelper, $path);
-
+        $base  = $this->createLink($route);
         $next  = ($page == $count) ? false : $page + 1;
         $prev  = ($page == 1) ? false : $page - 1;
         $links = array(
