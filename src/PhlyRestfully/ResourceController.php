@@ -294,6 +294,21 @@ class ResourceController extends AbstractRestfulController
         return $response;
     }
 
+    public function deleteList()
+    {
+        if (!$this->isMethodAllowedForResource()) {
+            return $this->createMethodNotAllowedResponse($this->resourceHttpOptions);
+        }
+
+        if (!$this->resource->deleteList()) {
+            return new ApiProblem(422, 'Unable to delete collection.');
+        }
+
+        $response = $this->getResponse();
+        $response->setStatusCode(204);
+        return $response;
+    }
+
     /**
      * Return single item
      *
@@ -438,8 +453,6 @@ class ResourceController extends AbstractRestfulController
         if (!$this->isMethodAllowedForResource()) {
             return $this->createMethodNotAllowedResponse($this->resourceHttpOptions);
         }
-
-        $response = $this->getResponse();
 
         try {
             $items = $this->resource->replaceList($data);

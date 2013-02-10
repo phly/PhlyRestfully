@@ -128,6 +128,27 @@ class ResourceControllerTest extends TestCase
         $this->assertEquals(204, $result->getStatusCode());
     }
 
+    public function testFalseFromDeleteResourceCollectionReturnsProblemApiResult()
+    {
+        $this->resource->getEventManager()->attach('deleteList', function ($e) {
+            return false;
+        });
+
+        $result = $this->controller->deleteList();
+        $this->assertProblemApiResult(422, 'delete collection', $result);
+    }
+
+    public function testTrueFromDeleteResourceCollectionReturnsResponseWithNoContent()
+    {
+        $this->resource->getEventManager()->attach('deleteList', function ($e) {
+            return true;
+        });
+
+        $result = $this->controller->deleteList();
+        $this->assertInstanceOf('Zend\Http\Response', $result);
+        $this->assertEquals(204, $result->getStatusCode());
+    }
+
     public function testReturningEmptyResultFromGetReturnsProblemApiResult()
     {
         $this->resource->getEventManager()->attach('fetch', function ($e) {

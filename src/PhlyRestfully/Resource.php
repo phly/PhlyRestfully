@@ -243,10 +243,10 @@ class Resource implements ResourceInterface
     /**
      * Delete an existing collection of records
      *
-     * @param  array $data
+     * @param  null|array $data
      * @return bool
      */
-    public function deleteList($data)
+    public function deleteList($data = null)
     {
         if ($data
             && (!is_array($data) && !$data instanceof Traversable)

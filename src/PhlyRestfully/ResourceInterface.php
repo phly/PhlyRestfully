@@ -60,10 +60,10 @@ interface ResourceInterface extends EventManagerAwareInterface
     /**
      * Delete an existing collection of records
      * 
-     * @param  array $data 
+     * @param  null|array $data 
      * @return bool
      */
-    public function deleteList($data);
+    public function deleteList($data = null);
 
     /**
      * Fetch an existing record
