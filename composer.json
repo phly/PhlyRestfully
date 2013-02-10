@@ -17,21 +17,16 @@
             "homepage": "http://mwop.net/"
         }
     ],
-    "repositories": [
-        {
-            "type": "composer",
-            "url": "https://packages.zendframework.com/"
-        }
-    ],
+    "minimum-stability": "dev",
     "require": {
         "php": ">=5.3.3",
-        "zendframework/zend-eventmanager": "2.1.*",
-        "zendframework/zend-json": "2.1.*",
-        "zendframework/zend-loader": "2.1.*",
-        "zendframework/zend-mvc": "2.1.*",
-        "zendframework/zend-paginator": "2.1.*",
-        "zendframework/zend-view": "2.1.*",
-        "zendframework/zend-stdlib": "2.1.*@dev"
+        "zendframework/zend-eventmanager": "dev-master",
+        "zendframework/zend-json": "dev-master",
+        "zendframework/zend-loader": "dev-master",
+        "zendframework/zend-mvc": "dev-master",
+        "zendframework/zend-paginator": "dev-master",
+        "zendframework/zend-view": "dev-master",
+        "zendframework/zend-stdlib": "dev-master"
     },
     "autoload": {
         "psr-0": {
