@@ -21,6 +21,7 @@ A generic Resource class is provided, which provides the following operations:
 - `replaceList($data)`
 - `patch($id, $data)`
 - `delete($id)`
+- `deleteList($data = null)`
 - `fetch($id)`
 - `fetchAll()`
 
@@ -31,8 +32,8 @@ Each method:
 - Triggers an event with the incoming data
 - Pulls the last event listener result, and ensures it is well-formed for the
   operation (typically, returns an `array` or `object`; in the case of
-  `delete`, looks for a `boolean`; in the case of `fetchAll`, looks for an
-  `array` or `Traversable`)
+  `delete` and `deleteList`, looks for a `boolean`; in the case of `fetchAll`,
+  looks for an `array` or `Traversable`)
 
 As such, your job is primarily to create a `ListenerAggregate` for the Resource
 which performs the actual persistence operations.
@@ -55,10 +56,16 @@ The controller expects you to inject the following:
 
 - Resource
 - Route name that resolves to the resource
-- HTTP OPTIONS the service is allowed to respond to (optional; by default,
-  allows delete, get, head, patch, post, and put requests)
+- Event identifier for allowing attachment via the shared event manager; this
+  is passed via the constructor (optional; by default, listens to
+  `PhlyRestfully\ResourceController`)
+- "Accept" criteria for use with the `AcceptableViewModelSelector` (optional;
+  by default, assigns any `*/json` requests to the `RestfulJsonModel`)
+- HTTP OPTIONS the service is allowed to respond to, for both collections and
+  individual items (optional; head and options are always allowed; by default,
+  allows get and post requests on collections, and delete, get, patch, and put
+  requests on items)
 - Page size (optional; for paginated results. Defaults to 30.)
-- `ServerUrl` view helper (optional; will lazy-instantiate if not found.)
 
 Tying it Together
 -----------------
@@ -84,10 +91,12 @@ As a quick example:
     $controller = new PhlyRestfully\ResourceController();
     $controller->setResource($resource);
     $controller->setRoute('paste/api');
-    $controller->setHttpOptions(array(
+    $controller->setResourceHttpOptions(array(
         'GET',
-        'HEAD',
         'POST',
+    ));
+    $controller->setItemHttpOptions(array(
+        'GET',
     ));
     return $controller;
 }

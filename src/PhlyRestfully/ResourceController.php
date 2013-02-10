@@ -95,7 +95,6 @@ class ResourceController extends AbstractRestfulController
     protected $resourceHttpOptions = array(
         'GET',
         'POST',
-        'PUT',
     );
 
     /**
