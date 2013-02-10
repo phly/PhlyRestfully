@@ -137,29 +137,21 @@ you the opportunity to provide route parameters. As an example, consider the
 following listeners:
 
 ```php
-$sharedEvents->attach('SomeControllerIdentifier', 'dispatch', function ($e) {
-    $matches = $e->getRouteMatch();
-    $user    = $matches->getParam('user');
-    if (!$user) {
-        return;
-    }
-
-    $controller = $e->getTarget();
-    $halLinks   = $controller->halLinks();
-    $halLinks->getEventManager()->attach('createLink', function ($e) use ($user) {
-        $params = $e->getParam('params');
-        $params['user'] = $user;
-    });
-}, 100);
+$user    = $matches->getParam('user');
+$helpers = $services->get('ViewHelperManager');
+$links   = $helpers->get('HalLinks');
+$links->getEventManager()->attach('createLink', function ($e) use ($user) {
+    $params = $e->getParam('params');
+    $params['user'] = $user;
+});
 ```
 
-The above attaches a "dispatch" listener to a specific `ResourceController`
-instance as identified by 'SomeControllerIdentifier', at high priority, to 
-ensure that it's present before we ever call on `createLink()`. It checks the
-route matches for a "user" parameter. If found, it retrieves the `HalLinks` 
-plugin, and attaches to its `createLink` event; the listener simply assigns
-the user to the parameters -- which are then passed to the `url()` helper
-when creating a link.
+The above would likely happen in a post-routing listener, where we know we
+routed to a specific controller, and can have access to the route matches.
+It retrieves the "user" parameter from the route first. Then it retrieves the
+`HalLinks` plugin from the view helpers, and attaches to its `createLink`
+event; the listener simply assigns the user to the parameters -- which are then
+passed to the `url()` helper when creating a link.
 
 LICENSE
 =======
