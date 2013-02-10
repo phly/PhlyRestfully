@@ -119,6 +119,48 @@ following:
 
 This single route will then be used for all operations.
 
+If you want to use a route with more segments, and ensure that all captured
+segments are present when generating the URL, you will need to hook into the
+`HalLinks` plugin. As an example, let's consider the following route:
+
+```
+/api/status/:user[/:id]
+```
+
+The "user" segment is required, and should always be part of the URL. However,
+by default, the `ResourceController` and the `RestfulJsonRenderer` will not have
+knowledge of matched route segments, and will not tell the `url()` helper to
+re-use matched parameters.
+
+`HalLinks`, however, allows you to attach to its `createLink` event, which gives
+you the opportunity to provide route parameters. As an example, consider the
+following listeners:
+
+```php
+$sharedEvents->attach('SomeControllerIdentifier', 'dispatch', function ($e) {
+    $matches = $e->getRouteMatch();
+    $user    = $matches->getParam('user');
+    if (!$user) {
+        return;
+    }
+
+    $controller = $e->getTarget();
+    $halLinks   = $controller->halLinks();
+    $halLinks->getEventManager()->attach('createLink', function ($e) use ($user) {
+        $params = $e->getParam('params');
+        $params['user'] = $user;
+    });
+}, 100);
+```
+
+The above attaches a "dispatch" listener to a specific `ResourceController`
+instance as identified by 'SomeControllerIdentifier', at high priority, to 
+ensure that it's present before we ever call on `createLink()`. It checks the
+route matches for a "user" parameter. If found, it retrieves the `HalLinks` 
+plugin, and attaches to its `createLink` event; the listener simply assigns
+the user to the parameters -- which are then passed to the `url()` helper
+when creating a link.
+
 LICENSE
 =======
 
