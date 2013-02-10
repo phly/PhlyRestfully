@@ -39,7 +39,7 @@ class RestfulJsonRenderer extends JsonRenderer
 
     /**
      * Whether or not to render exception stack traces in API-Problem payloads
-     * 
+     *
      * @var bool
      */
     protected $displayExceptions = false;
@@ -111,8 +111,8 @@ class RestfulJsonRenderer extends JsonRenderer
 
     /**
      * Set display_exceptions flag
-     * 
-     * @param  bool $flag 
+     *
+     * @param  bool $flag
      * @return RestfulJsonRenderer
      */
     public function setDisplayExceptions($flag)
