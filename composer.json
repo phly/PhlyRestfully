@@ -31,7 +31,7 @@
         "zendframework/zend-mvc": "2.1.*",
         "zendframework/zend-paginator": "2.1.*",
         "zendframework/zend-view": "2.1.*",
-        "zendframework/zend-stdlib": "2.1.*"
+        "zendframework/zend-stdlib": "2.1.*@dev"
     },
     "autoload": {
         "psr-0": {
