@@ -8,13 +8,13 @@
 
 namespace PhlyRestfullyTest;
 
-use PhlyRestfully\HalItem;
+use PhlyRestfully\HalResource;
 use PHPUnit_Framework_TestCase as TestCase;
 use stdClass;
 
-class HalItemTest extends TestCase
+class HalResourceTest extends TestCase
 {
-    public function invalidItems()
+    public function invalidResources()
     {
         return array(
             'null'       => array(null),
@@ -29,19 +29,19 @@ class HalItemTest extends TestCase
     }
 
     /**
-     * @dataProvider invalidItems
+     * @dataProvider invalidResources
      */
-    public function testConstructorRaisesExceptionForNonObjectNonArrayItem($item)
+    public function testConstructorRaisesExceptionForNonObjectNonArrayResource($resource)
     {
-        $this->setExpectedException('PhlyRestfully\Exception\InvalidItemException');
-        $hal = new HalItem($item, 'id', 'route');
+        $this->setExpectedException('PhlyRestfully\Exception\InvalidResourceException');
+        $hal = new HalResource($resource, 'id', 'route');
     }
 
     public function testPropertiesAreAccessibleAfterConstruction()
     {
-        $item = new stdClass;
-        $hal  = new HalItem($item, 'id', 'route', array('foo' => 'bar'));
-        $this->assertSame($item, $hal->item);
+        $resource = new stdClass;
+        $hal  = new HalResource($resource, 'id', 'route', array('foo' => 'bar'));
+        $this->assertSame($resource, $hal->resource);
         $this->assertEquals('id', $hal->id);
         $this->assertEquals('route', $hal->route);
         $this->assertEquals(array('foo' => 'bar'), $hal->routeParams);

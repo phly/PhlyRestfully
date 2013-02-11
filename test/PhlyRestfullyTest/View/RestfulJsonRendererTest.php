@@ -10,7 +10,7 @@ namespace PhlyRestfullyTest\View;
 
 use PhlyRestfully\ApiProblem;
 use PhlyRestfully\HalCollection;
-use PhlyRestfully\HalItem;
+use PhlyRestfully\HalResource;
 use PhlyRestfully\Plugin\HalLinks;
 use PhlyRestfully\View\RestfulJsonModel;
 use PhlyRestfully\View\RestfulJsonRenderer;
@@ -74,8 +74,8 @@ class RestfulJsonRendererTest extends TestCase
         // need to setup routes
         // need to get a url and serverurl helper that have appropriate injections
         $this->router = $router = new SimpleRouteStack();
-        $this->itemRoute = new Segment('/resource[/[:id]]');
-        $this->router->addRoute('resource', $this->itemRoute);
+        $this->resourceRoute = new Segment('/resource[/[:id]]');
+        $this->router->addRoute('resource', $this->resourceRoute);
 
         $this->helpers = $helpers  = new HelperPluginManager();
         $serverUrl = $helpers->get('ServerUrl');
@@ -91,11 +91,11 @@ class RestfulJsonRendererTest extends TestCase
         $this->renderer->setHelperPluginManager($helpers);
     }
 
-    public function testRendersHalItemWithAssociatedLinks()
+    public function testRendersHalResourceWithAssociatedLinks()
     {
         $this->setUpHelpers();
 
-        $item = new HalItem(array(
+        $item = new HalResource(array(
             'foo' => 'bar',
             'id'  => 'identifier',
         ), 'identifier', 'resource');
@@ -113,7 +113,7 @@ class RestfulJsonRendererTest extends TestCase
         $this->assertEquals('bar', $test->foo);
     }
 
-    public function testCanRenderStdclassHalItem()
+    public function testCanRenderStdclassHalResource()
     {
         $this->setUpHelpers();
 
@@ -122,7 +122,7 @@ class RestfulJsonRendererTest extends TestCase
             'id'  => 'identifier',
         );
 
-        $item  = new HalItem($item, 'identifier', 'resource');
+        $item  = new HalResource($item, 'identifier', 'resource');
         $model = new RestfulJsonModel(array('payload' => $item));
         $test  = $this->renderer->render($model);
         $test  = json_decode($test);
@@ -137,7 +137,7 @@ class RestfulJsonRendererTest extends TestCase
         $this->assertEquals('bar', $test->foo);
     }
 
-    public function testCanSerializeHydratableHalItem()
+    public function testCanSerializeHydratableHalResource()
     {
         $this->setUpHelpers();
         $this->renderer->addHydrator(
@@ -146,7 +146,7 @@ class RestfulJsonRendererTest extends TestCase
         );
 
         $item  = new TestAsset\ArraySerializable();
-        $item  = new HalItem(new TestAsset\ArraySerializable(), 'identifier', 'resource');
+        $item  = new HalResource(new TestAsset\ArraySerializable(), 'identifier', 'resource');
         $model = new RestfulJsonModel(array('payload' => $item));
         $test  = $this->renderer->render($model);
         $test  = json_decode($test);
@@ -169,7 +169,7 @@ class RestfulJsonRendererTest extends TestCase
         );
 
         $item  = new TestAsset\ArraySerializable();
-        $item  = new HalItem(new TestAsset\ArraySerializable(), 'identifier', 'resource');
+        $item  = new HalResource(new TestAsset\ArraySerializable(), 'identifier', 'resource');
         $model = new RestfulJsonModel(array('payload' => $item));
         $test  = $this->renderer->render($model);
         $test  = json_decode($test);
@@ -428,18 +428,18 @@ class RestfulJsonRendererTest extends TestCase
         $this->assertEquals('foo', $test->type);
     }
 
-    public function testCanRenderNestedHalItemsAsEmbeddedItems()
+    public function testCanRenderNestedHalResourcesAsEmbeddedResources()
     {
         $this->setUpHelpers();
         $this->router->addRoute('user', new Segment('/user[/:id]'));
 
-        $child = new HalItem(array(
+        $child = new HalResource(array(
             'id'     => 'matthew',
             'name'   => 'matthew',
             'github' => 'weierophinney',
         ), 'matthew', 'user');
 
-        $item = new HalItem(array(
+        $item = new HalResource(array(
             'foo'  => 'bar',
             'id'   => 'identifier',
             'user' => $child,
@@ -454,7 +454,7 @@ class RestfulJsonRendererTest extends TestCase
         $embedded = $test->_embedded;
         $this->assertObjectHasAttribute('user', $embedded);
         $user = (array) $embedded->user;
-        foreach ($child->item as $key => $value) {
+        foreach ($child->resource as $key => $value) {
             $this->assertArrayHasKey($key, $user);
             $this->assertEquals($value, $user[$key]);
         }
@@ -466,12 +466,12 @@ class RestfulJsonRendererTest extends TestCase
         $this->assertContains('/user/matthew', $links->self->href);
     }
 
-    public function testRendersEmbeddedItemsOfIndividualNonPaginatedCollectionItems()
+    public function testRendersEmbeddedResourcesOfIndividualNonPaginatedCollectionResources()
     {
         $this->setUpHelpers();
         $this->router->addRoute('user', new Segment('/user[/:id]'));
 
-        $child = new HalItem(array(
+        $child = new HalResource(array(
             'id'     => 'matthew',
             'name'   => 'matthew',
             'github' => 'weierophinney',
@@ -499,7 +499,7 @@ class RestfulJsonRendererTest extends TestCase
             $embedded = $item->_embedded;
             $this->assertObjectHasAttribute('user', $embedded);
             $user = (array) $embedded->user;
-            foreach ($child->item as $key => $value) {
+            foreach ($child->resource as $key => $value) {
                 $this->assertArrayHasKey($key, $user);
                 $this->assertEquals($value, $user[$key]);
             }
@@ -512,12 +512,12 @@ class RestfulJsonRendererTest extends TestCase
         }
     }
 
-    public function testRendersEmbeddedItemsOfIndividualPaginatedCollectionItems()
+    public function testRendersEmbeddedResourcesOfIndividualPaginatedCollectionResources()
     {
         $this->setUpHelpers();
         $this->router->addRoute('user', new Segment('/user[/:id]'));
 
-        $child = new HalItem(array(
+        $child = new HalResource(array(
             'id'     => 'matthew',
             'name'   => 'matthew',
             'github' => 'weierophinney',
@@ -549,7 +549,7 @@ class RestfulJsonRendererTest extends TestCase
             $embedded = $item->_embedded;
             $this->assertObjectHasAttribute('user', $embedded);
             $user = (array) $embedded->user;
-            foreach ($child->item as $key => $value) {
+            foreach ($child->resource as $key => $value) {
                 $this->assertArrayHasKey($key, $user);
                 $this->assertEquals($value, $user[$key]);
             }

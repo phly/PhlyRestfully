@@ -48,6 +48,18 @@ class ResourceController extends AbstractRestfulController
     );
 
     /**
+     * HTTP methods we allow for the resource (collection); used by options()
+     *
+     * HEAD and OPTIONS are always available.
+     *
+     * @var array
+     */
+    protected $collectionHttpOptions = array(
+        'GET',
+        'POST',
+    );
+
+    /**
      * Name of the collections entry in a HalCollection
      *
      * @var string
@@ -67,21 +79,7 @@ class ResourceController extends AbstractRestfulController
     );
 
     /**
-     * HTTP methods we allow for individual items; used by options()
-     *
-     * HEAD and OPTIONS are always available.
-     *
-     * @var array
-     */
-    protected $itemHttpOptions = array(
-        'DELETE',
-        'GET',
-        'PATCH',
-        'PUT',
-    );
-
-    /**
-     * Number of items to return per page
+     * Number of resources to return per page
      *
      * @var int
      */
@@ -93,15 +91,17 @@ class ResourceController extends AbstractRestfulController
     protected $resource;
 
     /**
-     * HTTP methods we allow for the resource (collection); used by options()
+     * HTTP methods we allow for individual resources; used by options()
      *
      * HEAD and OPTIONS are always available.
      *
      * @var array
      */
     protected $resourceHttpOptions = array(
+        'DELETE',
         'GET',
-        'POST',
+        'PATCH',
+        'PUT',
     );
 
     /**
@@ -137,6 +137,16 @@ class ResourceController extends AbstractRestfulController
     }
 
     /**
+     * Set the allowed HTTP OPTIONS for the resource (collection)
+     *
+     * @param  array $options
+     */
+    public function setCollectionHttpOptions(array $options)
+    {
+        $this->collectionHttpOptions = $options;
+    }
+
+    /**
      * Set the name to which to assign a collection in a HalCollection
      *
      * @param  string $name
@@ -144,16 +154,6 @@ class ResourceController extends AbstractRestfulController
     public function setCollectionName($name)
     {
         $this->collectionName = (string) $name;
-    }
-
-    /**
-     * Set the allowed HTTP OPTIONS for an item
-     *
-     * @param  array $options
-     */
-    public function setItemHttpOptions(array $options)
-    {
-        $this->itemHttpOptions = $options;
     }
 
     /**
@@ -177,7 +177,7 @@ class ResourceController extends AbstractRestfulController
     }
 
     /**
-     * Set the allowed HTTP OPTIONS for the resource (collection)
+     * Set the allowed HTTP OPTIONS for a resource
      *
      * @param  array $options
      */
@@ -232,7 +232,7 @@ class ResourceController extends AbstractRestfulController
         $return = parent::onDispatch($e);
 
         if (!$return instanceof ApiProblem
-            && !$return instanceof HalItem
+            && !$return instanceof HalResource
             && !$return instanceof HalCollection
         ) {
             return $return;
@@ -250,59 +250,59 @@ class ResourceController extends AbstractRestfulController
     }
 
     /**
-     * Create a new item
+     * Create a new resource
      *
      * @param  array $data
-     * @return Response|ApiProblem|HalItem
+     * @return Response|ApiProblem|HalResource
      */
     public function create($data)
     {
-        if (!$this->isMethodAllowedForResource()) {
-            return $this->createMethodNotAllowedResponse($this->resourceHttpOptions);
+        if (!$this->isMethodAllowedForCollection()) {
+            return $this->createMethodNotAllowedResponse($this->collectionHttpOptions);
         }
 
         $response = $this->getResponse();
         try {
-            $item = $this->resource->create($data);
+            $resource = $this->resource->create($data);
         } catch (Exception\CreationException $e) {
             $code = $e->getCode() ?: 500;
             return new ApiProblem($code, $e);
         }
 
-        $id = $this->getIdentifierFromItem($item);
+        $id = $this->getIdentifierFromResource($resource);
         if (!$id) {
             return new ApiProblem(
                 422,
-                'No item identifier present following item creation.'
+                'No resource identifier present following resource creation.'
             );
         }
 
         $response->setStatusCode(201);
         $response->getHeaders()->addHeaderLine(
             'Location',
-            $this->halLinks()->createLink($this->route, $id, $item)
+            $this->halLinks()->createLink($this->route, $id, $resource)
         );
 
-        return new HalItem($item, $id, $this->route);
+        return new HalResource($resource, $id, $this->route);
     }
 
     /**
-     * Delete an existing item
+     * Delete an existing resource
      *
      * @param  int|string $id
      * @return Response|ApiProblem
      */
     public function delete($id)
     {
-        if ($id && !$this->isMethodAllowedForItem()) {
-            return $this->createMethodNotAllowedResponse($this->itemHttpOptions);
-        }
-        if (!$id && !$this->isMethodAllowedForResource()) {
+        if ($id && !$this->isMethodAllowedForResource()) {
             return $this->createMethodNotAllowedResponse($this->resourceHttpOptions);
+        }
+        if (!$id && !$this->isMethodAllowedForCollection()) {
+            return $this->createMethodNotAllowedResponse($this->collectionHttpOptions);
         }
 
         if (!$this->resource->delete($id)) {
-            return new ApiProblem(422, 'Unable to delete item.');
+            return new ApiProblem(422, 'Unable to delete resource.');
         }
 
         $response = $this->getResponse();
@@ -312,8 +312,8 @@ class ResourceController extends AbstractRestfulController
 
     public function deleteList()
     {
-        if (!$this->isMethodAllowedForResource()) {
-            return $this->createMethodNotAllowedResponse($this->resourceHttpOptions);
+        if (!$this->isMethodAllowedForCollection()) {
+            return $this->createMethodNotAllowedResponse($this->collectionHttpOptions);
         }
 
         if (!$this->resource->deleteList()) {
@@ -326,34 +326,34 @@ class ResourceController extends AbstractRestfulController
     }
 
     /**
-     * Return single item
+     * Return single resource
      *
      * @param  int|string $id
-     * @return Response|ApiProblem|HalItem
+     * @return Response|ApiProblem|HalResource
      */
     public function get($id)
     {
-        if (!$this->isMethodAllowedForItem()) {
-            return $this->createMethodNotAllowedResponse($this->itemHttpOptions);
+        if (!$this->isMethodAllowedForResource()) {
+            return $this->createMethodNotAllowedResponse($this->resourceHttpOptions);
         }
 
-        $item = $this->resource->fetch($id);
-        if (!$item) {
-            return new ApiProblem(404, 'Item not found.');
+        $resource = $this->resource->fetch($id);
+        if (!$resource) {
+            return new ApiProblem(404, 'Resource not found.');
         }
 
-        return new HalItem($item, $id, $this->route);
+        return new HalResource($resource, $id, $this->route);
     }
 
     /**
-     * Return list of items
+     * Return collection of resources
      *
      * @return Response|HalCollection
      */
     public function getList()
     {
-        if (!$this->isMethodAllowedForResource()) {
-            return $this->createMethodNotAllowedResponse($this->resourceHttpOptions);
+        if (!$this->isMethodAllowedForCollection()) {
+            return $this->createMethodNotAllowedResponse($this->collectionHttpOptions);
         }
 
         $response = $this->getResponse();
@@ -367,10 +367,10 @@ class ResourceController extends AbstractRestfulController
     }
 
     /**
-     * Retrieve HEAD metadata for the resource and/or item
+     * Retrieve HEAD metadata for the resource and/or collection
      *
      * @param  null|mixed $id
-     * @return Response|ApiProblem|HalItem|HalCollection
+     * @return Response|ApiProblem|HalResource|HalCollection
      */
     public function head($id = null)
     {
@@ -394,9 +394,9 @@ class ResourceController extends AbstractRestfulController
         }
 
         if ($id) {
-            $options = $this->itemHttpOptions;
-        } else {
             $options = $this->resourceHttpOptions;
+        } else {
+            $options = $this->collectionHttpOptions;
         }
 
         array_walk($options, function (&$method) {
@@ -411,64 +411,64 @@ class ResourceController extends AbstractRestfulController
     }
 
     /**
-     * Respond to the PATCH method (partial update of existing item)
+     * Respond to the PATCH method (partial update of existing resource)
      *
      * @param  int|string $id
      * @param  array $data
-     * @return Response|ApiProblem|HalItem
+     * @return Response|ApiProblem|HalResource
      */
     public function patch($id, $data)
     {
-        if (!$this->isMethodAllowedForItem()) {
-            return $this->createMethodNotAllowedResponse($this->itemHttpOptions);
+        if (!$this->isMethodAllowedForResource()) {
+            return $this->createMethodNotAllowedResponse($this->resourceHttpOptions);
         }
 
         try {
-            $item = $this->resource->patch($id, $data);
+            $resource = $this->resource->patch($id, $data);
         } catch (Exception\PatchException $e) {
             $code = $e->getCode() ?: 500;
             return new ApiProblem($code, $e);
         }
 
-        return new HalItem($item, $id, $this->route);
+        return new HalResource($resource, $id, $this->route);
     }
 
     /**
-     * Update an existing item
+     * Update an existing resource
      *
      * @param  int|string $id
      * @param  array $data
-     * @return Response|ApiProblem|HalItem
+     * @return Response|ApiProblem|HalResource
      */
     public function update($id, $data)
     {
-        if ($id && !$this->isMethodAllowedForItem()) {
-            return $this->createMethodNotAllowedResponse($this->itemHttpOptions);
-        }
-        if (!$id && !$this->isMethodAllowedForResource()) {
+        if ($id && !$this->isMethodAllowedForResource()) {
             return $this->createMethodNotAllowedResponse($this->resourceHttpOptions);
+        }
+        if (!$id && !$this->isMethodAllowedForCollection()) {
+            return $this->createMethodNotAllowedResponse($this->collectionHttpOptions);
         }
 
         try {
-            $item = $this->resource->update($id, $data);
+            $resource = $this->resource->update($id, $data);
         } catch (Exception\UpdateException $e) {
             $code = $e->getCode() ?: 500;
             return new ApiProblem($code, $e);
         }
 
-        return new HalItem($item, $id, $this->route);
+        return new HalResource($resource, $id, $this->route);
     }
 
     /**
-     * Update an existing collection of items
+     * Update an existing collection of resources
      *
      * @param array $data
      * @return array
      */
     public function replaceList($data)
     {
-        if (!$this->isMethodAllowedForResource()) {
-            return $this->createMethodNotAllowedResponse($this->resourceHttpOptions);
+        if (!$this->isMethodAllowedForCollection()) {
+            return $this->createMethodNotAllowedResponse($this->collectionHttpOptions);
         }
 
         try {
@@ -486,31 +486,31 @@ class ResourceController extends AbstractRestfulController
     }
 
     /**
-     * Retrieve an identifier from an item
+     * Retrieve an identifier from a resource
      *
-     * @param  array|object $item
+     * @param  array|object $resource
      * @return false|int|string
      */
-    protected function getIdentifierFromItem($item)
+    protected function getIdentifierFromResource($resource)
     {
         // Found id in array
-        if (is_array($item) && array_key_exists('id', $item)) {
-            return $item['id'];
+        if (is_array($resource) && array_key_exists('id', $resource)) {
+            return $resource['id'];
         }
 
         // No id in array, or not an object; return false
-        if (is_array($item) || !is_object($item)) {
+        if (is_array($resource) || !is_object($resource)) {
             return false;
         }
 
         // Found public id property on object
-        if (isset($item->id)) {
-            return $item->id;
+        if (isset($resource->id)) {
+            return $resource->id;
         }
 
         // Found public id getter on object
-        if (method_exists($item, 'getid')) {
-            return $item->getId();
+        if (method_exists($resource, 'getid')) {
+            return $resource->getId();
         }
 
         // not found
@@ -518,16 +518,16 @@ class ResourceController extends AbstractRestfulController
     }
 
     /**
-     * Is the current HTTP method allowed for an item?
+     * Is the current HTTP method allowed for a resource?
      *
      * @return bool
      */
-    protected function isMethodAllowedForItem()
+    protected function isMethodAllowedForResource()
     {
-        array_walk($this->itemHttpOptions, function (&$method) {
+        array_walk($this->resourceHttpOptions, function (&$method) {
             $method = strtoupper($method);
         });
-        $options = array_merge($this->itemHttpOptions, array('OPTIONS', 'HEAD'));
+        $options = array_merge($this->resourceHttpOptions, array('OPTIONS', 'HEAD'));
         $request = $this->getRequest();
         $method  = strtoupper($request->getMethod());
         if (!in_array($method, $options)) {
@@ -541,12 +541,12 @@ class ResourceController extends AbstractRestfulController
      *
      * @return bool
      */
-    protected function isMethodAllowedForResource()
+    protected function isMethodAllowedForCollection()
     {
-        array_walk($this->resourceHttpOptions, function (&$method) {
+        array_walk($this->collectionHttpOptions, function (&$method) {
             $method = strtoupper($method);
         });
-        $options = array_merge($this->resourceHttpOptions, array('OPTIONS', 'HEAD'));
+        $options = array_merge($this->collectionHttpOptions, array('OPTIONS', 'HEAD'));
         $request = $this->getRequest();
         $method  = strtoupper($request->getMethod());
         if (!in_array($method, $options)) {

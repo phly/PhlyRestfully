@@ -47,7 +47,7 @@ appropriate response.
 
 In cases of errors, a Problem API response payload is generated.
 
-When an item or collection is returned, a HAL payload is generated with
+When a resource or collection is returned, a HAL payload is generated with
 appropriate links.
 
 In all cases, appropriate HTTP response status codes are generated.
@@ -62,9 +62,9 @@ The controller expects you to inject the following:
 - "Accept" criteria for use with the `AcceptableViewModelSelector` (optional;
   by default, assigns any `*/json` requests to the `RestfulJsonModel`)
 - HTTP OPTIONS the service is allowed to respond to, for both collections and
-  individual items (optional; head and options are always allowed; by default,
+  individual resources (optional; head and options are always allowed; by default,
   allows get and post requests on collections, and delete, get, patch, and put
-  requests on items)
+  requests on resources)
 - Page size (optional; for paginated results. Defaults to 30.)
 
 Tying it Together
@@ -91,11 +91,11 @@ As a quick example:
     $controller = new PhlyRestfully\ResourceController();
     $controller->setResource($resource);
     $controller->setRoute('paste/api');
-    $controller->setResourceHttpOptions(array(
+    $controller->setCollectionHttpOptions(array(
         'GET',
         'POST',
     ));
-    $controller->setItemHttpOptions(array(
+    $controller->setResourceHttpOptions(array(
         'GET',
     ));
     return $controller;
@@ -104,7 +104,7 @@ As a quick example:
 
 The above example instantiates a listener directly, and attaches it to the
 event manager instance of a new Resource intance. That resource instance then
-is attached to a new ResourceController instance, and the route and HTTP
+is attached to a new `ResourceController` instance, and the route and HTTP
 OPTIONS are provided. Finally, the controller instance is returned.
 
 Routes
@@ -158,13 +158,13 @@ Collections
 -----------
 
 Collections are resources, too, which means they may hold more than simply the
-set of items they encapsulate.
+set of resources they encapsulate.
 
 By default, the `ResourceController` simply returns a `HalCollection` with the
-collection of items; if you are using a paginator for the collection, it will
+collection of resources; if you are using a paginator for the collection, it will
 also set the current page and number of items per page to render.
 
-You may want to name the collection of items you are representing. By default,
+You may want to name the collection of resources you are representing. By default,
 we use "items" as the name; you should use a semantic name. This can be done
 by either directly setting the collection name on the `HalCollection` using the
 `setCollectionName()` method, or calling the same method on the controller.
@@ -194,8 +194,8 @@ $events->attach('dispatch', public function ($e) {
 }, -1);
 ```
 
-Embedding Items
----------------
+Embedding Resources
+-------------------
 
 To follow the HAL specification properly, when you embed resources within
 resources, they, too, should be rendered as HAL resources. As an example,
@@ -217,14 +217,14 @@ consider the following object:
 In the above, we have an embedded "user" object. In HAL, this, too, should
 be treated as a resource.
 
-To accomplish this, simply assign a `HalItem` value as a resource value.
+To accomplish this, simply assign a `HalResource` value as a resource value.
 As an example, consider the following pseudo-code for the above example:
 
 ```php
 $status = new Status(array(
     'status' => 'this is my current status',
     'type'   => 'text',
-    'user'   => new HalItem(new User(array(
+    'user'   => new HalResource(new User(array(
         'id'     => 'matthew',
         'url'    => 'http://mwop.net',
         'github' => 'weierophinney',
@@ -232,7 +232,7 @@ $status = new Status(array(
 ));
 ```
 
-When this object is used within a `HalItem`, it will be rendered as an
+When this object is used within a `HalResource`, it will be rendered as an
 embedded resource:
 
 ```javascript
@@ -258,7 +258,7 @@ embedded resource:
 
 This will work in collections as well.
 
-I recommend converting embedded resources to `HalItem` instances either
+I recommend converting embedded resources to `HalResource` instances either
 during hydration, or as part of your `Resource` listener's mapping logic.
 
 LICENSE

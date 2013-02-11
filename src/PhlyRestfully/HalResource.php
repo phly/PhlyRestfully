@@ -8,30 +8,30 @@
 
 namespace PhlyRestfully;
 
-class HalItem
+class HalResource
 {
     protected $id;
 
-    protected $item;
+    protected $resource;
 
     protected $route;
 
     protected $routeParams;
 
     /**
-     * @param  object|array $item
+     * @param  object|array $resource
      * @param  mixed $id
      * @param  string $route
      * @param  array $routeParams
-     * @throws Exception\InvalidItemException if item is not an object or array
+     * @throws Exception\InvalidResourceException if resource is not an object or array
      */
-    public function __construct($item, $id, $route, array $routeParams = array())
+    public function __construct($resource, $id, $route, array $routeParams = array())
     {
-        if (!is_object($item) && !is_array($item)) {
-            throw new Exception\InvalidItemException();
+        if (!is_object($resource) && !is_array($resource)) {
+            throw new Exception\InvalidResourceException();
         }
 
-        $this->item        = $item;
+        $this->resource    = $resource;
         $this->id          = $id;
         $this->route       = (string) $route;
         $this->routeParams = $routeParams;
@@ -46,7 +46,7 @@ class HalItem
     public function __get($name)
     {
         $names = array(
-            'item'         => 'item',
+            'resource'     => 'resource',
             'id'           => 'id',
             'route'        => 'route',
             'routeparams'  => 'routeParams',

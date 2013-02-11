@@ -111,16 +111,16 @@ class HalLinks extends AbstractHelper implements ControllerPluginInterface
     /**
      * Create a fully qualified URI for a link
      *
-     * Triggers the "createLink" event with the route, id, item, and a set of
+     * Triggers the "createLink" event with the route, id, resource, and a set of
      * params that will be passed to the route; listeners can alter any of the
      * arguments, which will then be used by the method to generate the url.
      *
      * @param  string $route
      * @param  null|false|int|string $id
-     * @param  null|mixed $item
+     * @param  null|mixed $resource
      * @return string
      */
-    public function createLink($route, $id = null, $item = null)
+    public function createLink($route, $id = null, $resource = null)
     {
         $params             = new ArrayObject();
         $reUseMatchedParams = true;
@@ -133,10 +133,10 @@ class HalLinks extends AbstractHelper implements ControllerPluginInterface
 
         $events      = $this->getEventManager();
         $eventParams = $events->prepareArgs(array(
-            'route'  => $route,
-            'id'     => $id,
-            'item'   => $item,
-            'params' => $params,
+            'route'    => $route,
+            'id'       => $id,
+            'resource' => $resource,
+            'params'   => $params,
         ));
         $events->trigger(__FUNCTION__, $this, $eventParams);
         $route = $eventParams['route'];
@@ -146,18 +146,18 @@ class HalLinks extends AbstractHelper implements ControllerPluginInterface
     }
 
     /**
-     * Generate HAL links for a given item
+     * Generate HAL links for a given resource
      *
      * Generates a "self" link
      *
      * @param  string $route
      * @param  null|false|mixed $id
-     * @param  array|object $item
+     * @param  array|object $resource
      * @return array
      */
-    public function forItem($route, $id = null, $item = null)
+    public function forResource($route, $id = null, $resource = null)
     {
-        $url = $this->createLink($route, $id, $item);
+        $url = $this->createLink($route, $id, $resource);
         return array('self' => array('href' => $url));
     }
 

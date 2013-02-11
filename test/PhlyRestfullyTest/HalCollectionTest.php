@@ -43,7 +43,7 @@ class HalCollectionTest extends TestCase
         $hal = new HalCollection(array(), 'collection/route', 'item/route');
         $this->assertEquals(array(), $hal->collection);
         $this->assertEquals('collection/route', $hal->collectionRoute);
-        $this->assertEquals('item/route', $hal->itemRoute);
+        $this->assertEquals('item/route', $hal->resourceRoute);
     }
 
     public function testDefaultPageIsOne()

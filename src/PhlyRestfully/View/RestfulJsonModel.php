@@ -10,7 +10,7 @@ namespace PhlyRestfully\View;
 
 use PhlyRestfully\ApiProblem;
 use PhlyRestfully\HalCollection;
-use PhlyRestfully\HalItem;
+use PhlyRestfully\HalResource;
 use Zend\View\Model\JsonModel;
 
 /**
@@ -46,10 +46,10 @@ class RestfulJsonModel extends JsonModel
      *
      * @return bool
      */
-    public function isHalItem()
+    public function isHalResource()
     {
         $payload = $this->getPayload();
-        return ($payload instanceof HalItem);
+        return ($payload instanceof HalResource);
     }
 
     /**
