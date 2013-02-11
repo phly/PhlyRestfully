@@ -217,14 +217,14 @@ consider the following object:
 In the above, we have an embedded "user" object. In HAL, this, too, should
 be treated as a resource.
 
-To accomplish this, simply assign a `HalItem` value as a resource value.
+To accomplish this, simply assign a `HalResource` value as a resource value.
 As an example, consider the following pseudo-code for the above example:
 
 ```php
 $status = new Status(array(
     'status' => 'this is my current status',
     'type'   => 'text',
-    'user'   => new HalItem(new User(array(
+    'user'   => new HalResource(new User(array(
         'id'     => 'matthew',
         'url'    => 'http://mwop.net',
         'github' => 'weierophinney',
@@ -232,7 +232,7 @@ $status = new Status(array(
 ));
 ```
 
-When this object is used within a `HalItem`, it will be rendered as an
+When this object is used within a `HalResource`, it will be rendered as an
 embedded resource:
 
 ```javascript
@@ -258,7 +258,7 @@ embedded resource:
 
 This will work in collections as well.
 
-I recommend converting embedded resources to `HalItem` instances either
+I recommend converting embedded resources to `HalResource` instances either
 during hydration, or as part of your `Resource` listener's mapping logic.
 
 LICENSE
