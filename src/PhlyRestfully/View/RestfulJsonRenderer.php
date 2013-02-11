@@ -198,9 +198,10 @@ class RestfulJsonRenderer extends JsonRenderer
      * Creates the hyperlinks necessary, and serializes the item to JSON.
      *
      * @param  HalItem $halItem
-     * @return string
+     * @param  bool $returnAsArray Whether or not to return the item as an array, or as rendered JSON
+     * @return string|array
      */
-    protected function renderHalItem(HalItem $halItem)
+    protected function renderHalItem(HalItem $halItem, $returnAsArray = false)
     {
         $item    = $halItem->item;
         $id      = $halItem->id;
@@ -213,7 +214,18 @@ class RestfulJsonRenderer extends JsonRenderer
             $item = $this->convertItemToArray($item);
         }
 
+        foreach ($item as $key => $value) {
+            if (!$value instanceof HalItem) {
+                continue;
+            }
+            $this->extractEmbeddedHalItem($item, $key, $value);
+        }
+
         $item['_links'] = $links;
+
+        if ($returnAsArray) {
+            return $item;
+        }
         return parent::render($item);
     }
 
@@ -251,6 +263,27 @@ class RestfulJsonRenderer extends JsonRenderer
         }
 
         return $hydrator->extract($item);
+    }
+
+    /**
+     * Extracts and renders a HalItem and embeds it in the parent 
+     * representation
+     *
+     * Removes the key from the parent representation, and creates a 
+     * representation for the key in the _embedded object.
+     * 
+     * @param  array $parent 
+     * @param  string $key 
+     * @param  HalItem $item 
+     */
+    protected function extractEmbeddedHalItem(array &$parent, $key, HalItem $item)
+    {
+        $rendered = $this->renderHalItem($item, true);
+        if (!isset($parent['_embedded'])) {
+            $parent['_embedded'] = array();
+        }
+        $parent['_embedded'][$key] = $rendered;
+        unset($parent[$key]);
     }
 
     /**

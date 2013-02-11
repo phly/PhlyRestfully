@@ -427,4 +427,42 @@ class RestfulJsonRendererTest extends TestCase
         $this->assertObjectHasAttribute('type', $test);
         $this->assertEquals('foo', $test->type);
     }
+
+    public function testCanRenderNestedHalItemsAsEmbeddedItems()
+    {
+        $this->setUpHelpers();
+        $this->router->addRoute('user', new Segment('/user[/:id]'));
+
+        $child = new HalItem(array(
+            'id'     => 'matthew',
+            'name'   => 'matthew',
+            'github' => 'weierophinney',
+        ), 'matthew', 'user');
+
+        $item = new HalItem(array(
+            'foo'  => 'bar',
+            'id'   => 'identifier',
+            'user' => $child,
+        ), 'identifier', 'resource');
+
+        $model = new RestfulJsonModel(array('payload' => $item));
+        $test  = $this->renderer->render($model);
+        $test  = json_decode($test);
+
+        $this->assertObjectNotHasAttribute('user', $test);
+        $this->assertObjectHasAttribute('_embedded', $test);
+        $embedded = $test->_embedded;
+        $this->assertObjectHasAttribute('user', $embedded);
+        $user = (array) $embedded->user;
+        foreach ($child->item as $key => $value) {
+            $this->assertArrayHasKey($key, $user);
+            $this->assertEquals($value, $user[$key]);
+        }
+        $this->assertArrayHasKey('_links', $user);
+        $this->assertInstanceof('stdClass', $user['_links']);
+        $links = $user['_links'];
+        $this->assertObjectHasAttribute('self', $links);
+        $this->assertObjectHasAttribute('href', $links->self);
+        $this->assertContains('/user/matthew', $links->self->href);
+    }
 }
