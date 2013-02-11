@@ -153,6 +153,114 @@ It retrieves the "user" parameter from the route first. Then it retrieves the
 event; the listener simply assigns the user to the parameters -- which are then
 passed to the `url()` helper when creating a link.
 
+
+Collections
+-----------
+
+Collections are resources, too, which means they may hold more than simply the
+set of items they encapsulate.
+
+By default, the `ResourceController` simply returns a `HalCollection` with the
+collection of items; if you are using a paginator for the collection, it will
+also set the current page and number of items per page to render.
+
+You may want to name the collection of items you are representing. By default,
+we use "items" as the name; you should use a semantic name. This can be done
+by either directly setting the collection name on the `HalCollection` using the
+`setCollectionName()` method, or calling the same method on the controller.
+
+You can also set additional attributes. This can be done via a listener; 
+typically, a post-dispatch listener, such as the following, would be a
+reasonable time to alter the collection instance. In the following, we update
+the collection to include the count, number per page, and type of objects
+in the collection.
+
+```php
+$events->attach('dispatch', public function ($e) {
+    $result = $e->getResult();
+    if (!$result instanceof RestfulJsonModel) {
+        return;
+    }
+    if (!$result->isHalCollection()) {
+        return;
+    }
+    $collection = $result->getPayload();
+    $paginator  = $collection->collection;
+    $collection->setAttributes(array(
+        'count'         => $paginator->getTotalItemCount(),
+        'per_page'      => $collection->pageSize,
+        'resource_type' => 'status',
+    ));
+}, -1);
+```
+
+Embedding Items
+---------------
+
+To follow the HAL specification properly, when you embed resources within
+resources, they, too, should be rendered as HAL resources. As an example,
+consider the following object:
+
+```javascript
+{
+    "status": "this is my current status",
+    "type": "text",
+    "user": {
+        "id": "matthew",
+        "url": "http://mwop.net",
+        "github": "weierophinney"
+    },
+    "id": "afcdeb0123456789afcdeb0123456789"
+}
+```
+
+In the above, we have an embedded "user" object. In HAL, this, too, should
+be treated as a resource.
+
+To accomplish this, simply assign a `HalItem` value as a resource value.
+As an example, consider the following pseudo-code for the above example:
+
+```php
+$status = new Status(array(
+    'status' => 'this is my current status',
+    'type'   => 'text',
+    'user'   => new HalItem(new User(array(
+        'id'     => 'matthew',
+        'url'    => 'http://mwop.net',
+        'github' => 'weierophinney',
+    ), 'matthew', 'user')),
+));
+```
+
+When this object is used within a `HalItem`, it will be rendered as an
+embedded resource:
+
+```javascript
+{
+    "_links": {
+        "self": "http://status.dev:8080/api/status/afcdeb0123456789afcdeb0123456789"
+    },
+    "status": "this is my current status",
+    "type": "text",
+    "id": "afcdeb0123456789afcdeb0123456789",
+    "_embedded": {
+        "user": {
+            "_links": {
+                "self": "http://status.dev:8080/api/user/matthew"
+            },
+            "id": "matthew",
+            "url": "http://mwop.net",
+            "github": "weierophinney"
+        },
+    }
+}
+```
+
+This will work in collections as well.
+
+I recommend converting embedded resources to `HalItem` instances either
+during hydration, or as part of your `Resource` listener's mapping logic.
+
 LICENSE
 =======
 
