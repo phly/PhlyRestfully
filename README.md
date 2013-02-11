@@ -153,6 +153,68 @@ It retrieves the "user" parameter from the route first. Then it retrieves the
 event; the listener simply assigns the user to the parameters -- which are then
 passed to the `url()` helper when creating a link.
 
+Embedding Items
+---------------
+
+To follow the HAL specification properly, when you embed resources within
+resources, they, too, should be rendered as HAL resources. As an example,
+consider the following object:
+
+```javascript
+{
+    "status": "this is my current status",
+    "type": "text",
+    "user": {
+        "id": "matthew",
+        "url": "http://mwop.net",
+        "github": "weierophinney"
+    },
+    "id": "afcdeb0123456789afcdeb0123456789"
+}
+```
+
+In the above, we have an embedded "user" object. In HAL, this, too, should
+be treated as a resource.
+
+To accomplish this, simply assign a `HalItem` value as a resource value.
+As an example, consider the following pseudo-code for the above example:
+
+```php
+$status = new Status(array(
+    'status' => 'this is my current status',
+    'type'   => 'text',
+    'user'   => new HalItem(new User(array(
+        'id'     => 'matthew',
+        'url'    => 'http://mwop.net',
+        'github' => 'weierophinney',
+    ), 'matthew', 'user')),
+));
+```
+
+When this object is used within a `HalItem`, it will be rendered as an
+embedded resource:
+
+```javascript
+{
+    "_links": {
+        "self": "http://status.dev:8080/api/status/afcdeb0123456789afcdeb0123456789"
+    },
+    "status": "this is my current status",
+    "type": "text",
+    "id": "afcdeb0123456789afcdeb0123456789",
+    "_embedded": {
+        "user": {
+            "_links": {
+                "self": "http://status.dev:8080/api/user/matthew"
+            },
+            "id": "matthew",
+            "url": "http://mwop.net",
+            "github": "weierophinney"
+        },
+    }
+}
+```
+
 LICENSE
 =======
 
