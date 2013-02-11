@@ -84,4 +84,21 @@ class HalCollectionTest extends TestCase
         $hal->setCollectionName('records');
         $this->assertEquals('records', $hal->collectionName);
     }
+
+    public function testDefaultAttributesAreEmpty()
+    {
+        $hal = new HalCollection(array(), 'collection/route', 'item/route');
+        $this->assertEquals(array(), $hal->attributes);
+    }
+
+    public function testAttributesAreMutable()
+    {
+        $hal = new HalCollection(array(), 'collection/route', 'item/route');
+        $attributes = array(
+            'count' => 1376,
+            'order' => 'desc',
+        );
+        $hal->setAttributes($attributes);
+        $this->assertEquals($attributes, $hal->attributes);
+    }
 }
