@@ -10,7 +10,7 @@ namespace PhlyRestfully\View;
 
 use PhlyRestfully\ApiProblem;
 use PhlyRestfully\HalCollection;
-use PhlyRestfully\HalItem;
+use PhlyRestfully\HalResource;
 use Zend\Paginator\Paginator;
 use Zend\Stdlib\Hydrator\HydratorInterface;
 use Zend\View\HelperPluginManager;
@@ -21,7 +21,7 @@ use Zend\View\Renderer\JsonRenderer;
  *
  * - API-Problem
  * - HAL collections
- * - HAL items
+ * - HAL resources
  */
 class RestfulJsonRenderer extends JsonRenderer
 {
@@ -31,7 +31,7 @@ class RestfulJsonRenderer extends JsonRenderer
     protected $apiProblem;
 
     /**
-     * Default hydrator to use if no hydrator found for a specific item class.
+     * Default hydrator to use if no hydrator found for a specific resource class.
      *
      * @var HydratorInterface
      */
@@ -50,7 +50,7 @@ class RestfulJsonRenderer extends JsonRenderer
     protected $helpers;
 
     /**
-     * Map of item classes => hydrators
+     * Map of resource classes => hydrators
      *
      * @var HydratorInterface[]
      */
@@ -85,7 +85,7 @@ class RestfulJsonRenderer extends JsonRenderer
     }
 
     /**
-     * Map an item class to a specific hydrator instance
+     * Map a resource class to a specific hydrator instance
      *
      * @param  string $class
      * @param  HydratorInterface $hydrator
@@ -143,7 +143,7 @@ class RestfulJsonRenderer extends JsonRenderer
      * Render a view model
      *
      * If the view model is a RestfulJsonRenderer, determines if it represents
-     * an ApiProblem, HalCollection, or HalItem, and, if so, creates a custom
+     * an ApiProblem, HalCollection, or HalResource, and, if so, creates a custom
      * representation appropriate to the type.
      *
      * If not, it passes control to the parent to render.
@@ -164,8 +164,8 @@ class RestfulJsonRenderer extends JsonRenderer
             return $this->renderApiProblem($nameOrModel->getPayload());
         }
 
-        if ($nameOrModel->isHalItem()) {
-            return $this->renderHalItem($nameOrModel->getPayload());
+        if ($nameOrModel->isHalResource()) {
+            return $this->renderHalResource($nameOrModel->getPayload());
         }
 
         if ($nameOrModel->isHalCollection()) {
@@ -193,28 +193,40 @@ class RestfulJsonRenderer extends JsonRenderer
     }
 
     /**
-     * Render an individual HAL item
+     * Render an individual HAL resource
      *
-     * Creates the hyperlinks necessary, and serializes the item to JSON.
+     * Creates the hyperlinks necessary, and serializes the resource to JSON.
      *
-     * @param  HalItem $halItem
-     * @return string
+     * @param  HalResource $halResource
+     * @param  bool $returnAsArray Whether or not to return the resource as an array, or as rendered JSON
+     * @return string|array
      */
-    protected function renderHalItem(HalItem $halItem)
+    protected function renderHalResource(HalResource $halResource, $returnAsArray = false)
     {
-        $item    = $halItem->item;
-        $id      = $halItem->id;
-        $route   = $halItem->route;
+        $resource = $halResource->resource;
+        $id       = $halResource->id;
+        $route    = $halResource->route;
 
-        $helper  = $this->helpers->get('HalLinks');
-        $links   = $helper->forItem($route, $id, $item);
+        $helper   = $this->helpers->get('HalLinks');
+        $links    = $helper->forResource($route, $id, $resource);
 
-        if (!is_array($item)) {
-            $item = $this->convertItemToArray($item);
+        if (!is_array($resource)) {
+            $resource = $this->convertResourceToArray($resource);
         }
 
-        $item['_links'] = $links;
-        return parent::render($item);
+        foreach ($resource as $key => $value) {
+            if (!$value instanceof HalResource) {
+                continue;
+            }
+            $this->extractEmbeddedHalResource($resource, $key, $value);
+        }
+
+        $resource['_links'] = $links;
+
+        if ($returnAsArray) {
+            return $resource;
+        }
+        return parent::render($resource);
     }
 
     /**
@@ -222,7 +234,7 @@ class RestfulJsonRenderer extends JsonRenderer
      *
      * Determines if the collection composes a Paginator or non-paginated
      * set, and delegates to the appropriate method in order to generate
-     * a HAL response. All items are serialized in a "collection" member
+     * a HAL response. All resources are serialized in a "collection" member
      * of the response.
      *
      * @param  HalCollection $halCollection
@@ -238,34 +250,55 @@ class RestfulJsonRenderer extends JsonRenderer
     }
 
     /**
-     * Convert an individual item to an array
+     * Convert an individual resource to an array
      *
-     * @param  object $item
+     * @param  object $resource
      * @return array
      */
-    protected function convertItemToArray($item)
+    protected function convertResourceToArray($resource)
     {
-        $hydrator = $this->getHydratorForItem($item);
+        $hydrator = $this->getHydratorForResource($resource);
         if (!$hydrator) {
-            return (array) $item;
+            return (array) $resource;
         }
 
-        return $hydrator->extract($item);
+        return $hydrator->extract($resource);
     }
 
     /**
-     * Retrieve a hydrator for a given item
+     * Extracts and renders a HalResource and embeds it in the parent
+     * representation
      *
-     * If the item has a mapped hydrator, returns that hydrator. If not, and
+     * Removes the key from the parent representation, and creates a
+     * representation for the key in the _embedded object.
+     *
+     * @param  array $parent
+     * @param  string $key
+     * @param  HalResource $resource
+     */
+    protected function extractEmbeddedHalResource(array &$parent, $key, HalResource $resource)
+    {
+        $rendered = $this->renderHalResource($resource, true);
+        if (!isset($parent['_embedded'])) {
+            $parent['_embedded'] = array();
+        }
+        $parent['_embedded'][$key] = $rendered;
+        unset($parent[$key]);
+    }
+
+    /**
+     * Retrieve a hydrator for a given resource
+     *
+     * If the resource has a mapped hydrator, returns that hydrator. If not, and
      * a default hydrator is present, the default hydrator is returned.
      * Otherwise, a boolean false is returned.
      *
-     * @param  object $item
+     * @param  object $resource
      * @return HydratorInterface|false
      */
-    protected function getHydratorForItem($item)
+    protected function getHydratorForResource($resource)
     {
-        $class = strtolower(get_class($item));
+        $class = strtolower(get_class($resource));
         if (isset($this->hydrators[$class])) {
             return $this->hydrators[$class];
         }
@@ -281,36 +314,45 @@ class RestfulJsonRenderer extends JsonRenderer
      * Render a non-paginated collection
      *
      * Creates a HAL response with only a "self" link, with all composed
-     * items rendered.
+     * resources rendered.
      *
      * @param  HalCollection $halCollection
      * @return string
      */
     protected function renderNonPaginatedCollection(HalCollection $halCollection)
     {
-        $collection = $halCollection->collection;
+        $collection     = $halCollection->collection;
+        $collectionName = $halCollection->collectionName;
 
         $helper  = $this->helpers->get('HalLinks');
-        $payload = array(
-            '_links'     => $helper->forCollection($halCollection->collectionRoute),
-            'collection' => array(),
+        $payload = $halCollection->attributes;
+        $payload['_links'] = $helper->forCollection($halCollection->collectionRoute);
+        $payload['_embedded'] = array(
+            $collectionName => array(),
         );
 
-        $itemRoute = $halCollection->itemRoute;
-        foreach ($collection as $item) {
-            $origItem = $item;
-            if (!is_array($item)) {
-                $item = $this->convertItemToArray($item);
+        $resourceRoute = $halCollection->resourceRoute;
+        foreach ($collection as $resource) {
+            $origResource = $resource;
+            if (!is_array($resource)) {
+                $resource = $this->convertResourceToArray($resource);
             }
 
-            $id = $this->getIdFromItem($item);
+            foreach ($resource as $key => $value) {
+                if (!$value instanceof HalResource) {
+                    continue;
+                }
+                $this->extractEmbeddedHalResource($resource, $key, $value);
+            }
+
+            $id = $this->getIdFromResource($resource);
             if (!$id) {
-                // Cannot handle items without an identifier
+                // Cannot handle resources without an identifier
                 continue;
             }
 
-            $item['_links']          = $helper->forItem($itemRoute, $id, $origItem);
-            $payload['collection'][] = $item;
+            $resource['_links'] = $helper->forResource($resourceRoute, $id, $origResource);
+            $payload['_embedded'][$collectionName][] = $resource;
         }
 
         return parent::render($payload);
@@ -328,7 +370,8 @@ class RestfulJsonRenderer extends JsonRenderer
      */
     protected function renderPaginatedCollection(HalCollection $halCollection)
     {
-        $collection = $halCollection->collection;
+        $collection     = $halCollection->collection;
+        $collectionName = $halCollection->collectionName;
 
         $helper  = $this->helpers->get('HalLinks');
         $links   = $helper->forPaginatedCollection($halCollection);
@@ -336,47 +379,55 @@ class RestfulJsonRenderer extends JsonRenderer
             return $this->renderApiProblem($links);
         }
 
-        $payload = array(
-            '_links'     => $links,
-            'collection' => array(),
+        $payload = $halCollection->attributes;
+        $payload['_links']    = $links;
+        $payload['_embedded'] = array(
+            $collectionName => array(),
         );
 
-        $itemRoute = $halCollection->itemRoute;
-        foreach ($collection as $item) {
-            $origItem = $item;
-            if (!is_array($item)) {
-                $item = $this->convertItemToArray($item);
+        $resourceRoute = $halCollection->resourceRoute;
+        foreach ($collection as $resource) {
+            $origResource = $resource;
+            if (!is_array($resource)) {
+                $resource = $this->convertResourceToArray($resource);
             }
 
-            $id = $this->getIdFromItem($item);
+            foreach ($resource as $key => $value) {
+                if (!$value instanceof HalResource) {
+                    continue;
+                }
+                $this->extractEmbeddedHalResource($resource, $key, $value);
+            }
+
+            $id = $this->getIdFromResource($resource);
             if (!$id) {
-                // Cannot handle items without an identifier
+                // Cannot handle resources without an identifier
                 // Return as-is
-                $payload['collection'][] = $item;
+                $payload['_embedded'][$collectionName][] = $resource;
                 continue;
             }
 
-            $item['_links']          = $helper->forItem($itemRoute, $id, $origItem);
-            $payload['collection'][] = $item;
+            $resource['_links'] = $helper->forResource($resourceRoute, $id, $origResource);
+            $payload['_embedded'][$collectionName][] = $resource;
         }
 
         return parent::render($payload);
     }
 
     /**
-     * Retrieve the identifier from an item
+     * Retrieve the identifier from a resource
      *
      * Expects an "id" member to exist; if not, a boolean false is returned.
      *
      * @todo   Potentially allow registering a callback to run, before using
      *         the default routine here.
-     * @param  array $item
+     * @param  array $resource
      * @return mixed|false
      */
-    protected function getIdFromItem(array $item)
+    protected function getIdFromResource(array $resource)
     {
-        if (array_key_exists('id', $item)) {
-            return $item['id'];
+        if (array_key_exists('id', $resource)) {
+            return $resource['id'];
         }
         return false;
     }

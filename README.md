@@ -47,7 +47,7 @@ appropriate response.
 
 In cases of errors, a Problem API response payload is generated.
 
-When an item or collection is returned, a HAL payload is generated with
+When a resource or collection is returned, a HAL payload is generated with
 appropriate links.
 
 In all cases, appropriate HTTP response status codes are generated.
@@ -62,9 +62,9 @@ The controller expects you to inject the following:
 - "Accept" criteria for use with the `AcceptableViewModelSelector` (optional;
   by default, assigns any `*/json` requests to the `RestfulJsonModel`)
 - HTTP OPTIONS the service is allowed to respond to, for both collections and
-  individual items (optional; head and options are always allowed; by default,
+  individual resources (optional; head and options are always allowed; by default,
   allows get and post requests on collections, and delete, get, patch, and put
-  requests on items)
+  requests on resources)
 - Page size (optional; for paginated results. Defaults to 30.)
 
 Tying it Together
@@ -91,11 +91,11 @@ As a quick example:
     $controller = new PhlyRestfully\ResourceController();
     $controller->setResource($resource);
     $controller->setRoute('paste/api');
-    $controller->setResourceHttpOptions(array(
+    $controller->setCollectionHttpOptions(array(
         'GET',
         'POST',
     ));
-    $controller->setItemHttpOptions(array(
+    $controller->setResourceHttpOptions(array(
         'GET',
     ));
     return $controller;
@@ -104,7 +104,7 @@ As a quick example:
 
 The above example instantiates a listener directly, and attaches it to the
 event manager instance of a new Resource intance. That resource instance then
-is attached to a new ResourceController instance, and the route and HTTP
+is attached to a new `ResourceController` instance, and the route and HTTP
 OPTIONS are provided. Finally, the controller instance is returned.
 
 Routes
@@ -152,6 +152,145 @@ It retrieves the "user" parameter from the route first. Then it retrieves the
 `HalLinks` plugin from the view helpers, and attaches to its `createLink`
 event; the listener simply assigns the user to the parameters -- which are then
 passed to the `url()` helper when creating a link.
+
+
+Collections
+-----------
+
+Collections are resources, too, which means they may hold more than simply the
+set of resources they encapsulate.
+
+By default, the `ResourceController` simply returns a `HalCollection` with the
+collection of resources; if you are using a paginator for the collection, it will
+also set the current page and number of items per page to render.
+
+You may want to name the collection of resources you are representing. By default,
+we use "items" as the name; you should use a semantic name. This can be done
+by either directly setting the collection name on the `HalCollection` using the
+`setCollectionName()` method, or calling the same method on the controller.
+
+You can also set additional attributes. This can be done via a listener; 
+typically, a post-dispatch listener, such as the following, would be a
+reasonable time to alter the collection instance. In the following, we update
+the collection to include the count, number per page, and type of objects
+in the collection.
+
+```php
+$events->attach('dispatch', public function ($e) {
+    $result = $e->getResult();
+    if (!$result instanceof RestfulJsonModel) {
+        return;
+    }
+    if (!$result->isHalCollection()) {
+        return;
+    }
+    $collection = $result->getPayload();
+    $paginator  = $collection->collection;
+    $collection->setAttributes(array(
+        'count'         => $paginator->getTotalItemCount(),
+        'per_page'      => $collection->pageSize,
+        'resource_type' => 'status',
+    ));
+}, -1);
+```
+
+Embedding Resources
+-------------------
+
+To follow the HAL specification properly, when you embed resources within
+resources, they, too, should be rendered as HAL resources. As an example,
+consider the following object:
+
+```javascript
+{
+    "status": "this is my current status",
+    "type": "text",
+    "user": {
+        "id": "matthew",
+        "url": "http://mwop.net",
+        "github": "weierophinney"
+    },
+    "id": "afcdeb0123456789afcdeb0123456789"
+}
+```
+
+In the above, we have an embedded "user" object. In HAL, this, too, should
+be treated as a resource.
+
+To accomplish this, simply assign a `HalResource` value as a resource value.
+As an example, consider the following pseudo-code for the above example:
+
+```php
+$status = new Status(array(
+    'status' => 'this is my current status',
+    'type'   => 'text',
+    'user'   => new HalResource(new User(array(
+        'id'     => 'matthew',
+        'url'    => 'http://mwop.net',
+        'github' => 'weierophinney',
+    ), 'matthew', 'user')),
+));
+```
+
+When this object is used within a `HalResource`, it will be rendered as an
+embedded resource:
+
+```javascript
+{
+    "_links": {
+        "self": "http://status.dev:8080/api/status/afcdeb0123456789afcdeb0123456789"
+    },
+    "status": "this is my current status",
+    "type": "text",
+    "id": "afcdeb0123456789afcdeb0123456789",
+    "_embedded": {
+        "user": {
+            "_links": {
+                "self": "http://status.dev:8080/api/user/matthew"
+            },
+            "id": "matthew",
+            "url": "http://mwop.net",
+            "github": "weierophinney"
+        },
+    }
+}
+```
+
+This will work in collections as well.
+
+I recommend converting embedded resources to `HalResource` instances either
+during hydration, or as part of your `Resource` listener's mapping logic.
+
+
+Upgrading
+=========
+
+If you were using version 1.0.0 or earlier (the version presented at PHP
+Benelux 2013), you will need to make some changes to your application to get it
+to work.
+
+- First, the terminology has changed, as have some class names, to reference
+  "resources" instead of "items"; this is more in line with RESTful terminology.
+    - As such, if you had any code using `PhlyRestfully\HalItem`, it should now
+      reference `PhlyRestfully\HalResource`. Similarly, in that class, you will
+      access the actual resource object now from the `resource` property
+      instead of the `item` property. (This should only affect those post-1.0.0).
+    - If you want to create link for an individual resource, use the
+      `forResource` method of `HalLinks`, and not the `forItem` method.
+    - `InvalidItemException` was renamed to `InvalidResourceException`.
+- A number of items were moved from the `RestfulJsonModel` to the
+  `RestfulJsonRenderer`.
+    - Hydrators
+    - The flag for displaying exception backtraces; in fact, you can use
+      the `view_manager.display_exceptions` configuration setting to set
+      this behavior.
+- All results from the `ResourceController` are now pushed to a `payload`
+  variable in the view model. 
+    - Additionally, `ApiProblem`, `HalItem`, and `HalCollection` are
+      first-class objects, and are used as the `payload` values.
+- The `Links` plugin was renamed to `HalLinks`, and is now also available as
+  a view helper.
+
 
 LICENSE
 =======

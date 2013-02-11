@@ -16,9 +16,23 @@ use Traversable;
 class HalCollection
 {
     /**
+     * Additional attributes to render with resource
+     *
+     * @var array
+     */
+    protected $attributes = array();
+
+    /**
      * @var array|Traversable|\Zend\Paginator\Paginator
      */
     protected $collection;
+
+    /**
+     * Name of collection (used to identify it in the "_embedded" object)
+     *
+     * @var string
+     */
+    protected $collectionName = 'items';
 
     /**
      * @var string
@@ -28,7 +42,7 @@ class HalCollection
     /**
      * @var string
      */
-    protected $itemRoute;
+    protected $resourceRoute;
 
     /**
      * Current page
@@ -38,7 +52,7 @@ class HalCollection
     protected $page = 1;
 
     /**
-     * Number of items per page
+     * Number of resources per page
      *
      * @var int
      */
@@ -47,10 +61,10 @@ class HalCollection
     /**
      * @param  array|Traversable|\Zend\Paginator\Paginator $collection
      * @param  string $collectionRoute
-     * @param  string $itemRoute
+     * @param  string $resourceRoute
      * @throws Exception\InvalidCollectionException
      */
-    public function __construct($collection, $collectionRoute, $itemRoute)
+    public function __construct($collection, $collectionRoute, $resourceRoute)
     {
         if (!is_array($collection) && !$collection instanceof Traversable) {
             throw new Exception\InvalidCollectionException();
@@ -58,7 +72,7 @@ class HalCollection
 
         $this->collection      = $collection;
         $this->collectionRoute = (string) $collectionRoute;
-        $this->itemRoute       = (string) $itemRoute;
+        $this->resourceRoute   = (string) $resourceRoute;
     }
 
     /**
@@ -70,11 +84,14 @@ class HalCollection
     public function __get($name)
     {
         $names = array(
+            'attributes'       => 'attributes',
             'collection'       => 'collection',
+            'collectionname'   => 'collectionName',
+            'collection_name'  => 'collectionName',
             'collectionroute'  => 'collectionRoute',
             'collection_route' => 'collectionRoute',
-            'itemroute'        => 'itemRoute',
-            'item_route'       => 'itemRoute',
+            'resourceroute'    => 'resourceRoute',
+            'resource_route'   => 'resourceRoute',
             'page'             => 'page',
             'pagesize'         => 'pageSize',
             'page_size'        => 'pageSize',
@@ -88,6 +105,30 @@ class HalCollection
         }
         $prop = $names[$name];
         return $this->{$prop};
+    }
+
+    /**
+     * Set additional attributes to render as part of resource
+     *
+     * @param  array $attributes
+     * @return HalCollection
+     */
+    public function setAttributes(array $attributes)
+    {
+        $this->attributes = $attributes;
+        return $this;
+    }
+
+    /**
+     * Set the collection name (for use within the _embedded object)
+     *
+     * @param  string $name
+     * @return HalCollection
+     */
+    public function setCollectionName($name)
+    {
+        $this->collectionName = (string) $name;
+        return $this;
     }
 
     /**

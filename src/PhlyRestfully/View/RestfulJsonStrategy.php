@@ -83,7 +83,7 @@ class RestfulJsonStrategy extends JsonStrategy
             $contentType = 'application/api-problem+json';
             $response->setStatusCode($model->getPayload()->httpStatus);
         } elseif ($model instanceof RestfulJsonModel
-            && ($model->isHalCollection() || $model->isHalItem())
+            && ($model->isHalCollection() || $model->isHalResource())
         ) {
             $contentType = 'application/hal+json';
         }
