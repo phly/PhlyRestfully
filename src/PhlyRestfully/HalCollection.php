@@ -42,7 +42,7 @@ class HalCollection
     /**
      * @var string
      */
-    protected $itemRoute;
+    protected $resourceRoute;
 
     /**
      * Current page
@@ -52,7 +52,7 @@ class HalCollection
     protected $page = 1;
 
     /**
-     * Number of items per page
+     * Number of resources per page
      *
      * @var int
      */
@@ -61,10 +61,10 @@ class HalCollection
     /**
      * @param  array|Traversable|\Zend\Paginator\Paginator $collection
      * @param  string $collectionRoute
-     * @param  string $itemRoute
+     * @param  string $resourceRoute
      * @throws Exception\InvalidCollectionException
      */
-    public function __construct($collection, $collectionRoute, $itemRoute)
+    public function __construct($collection, $collectionRoute, $resourceRoute)
     {
         if (!is_array($collection) && !$collection instanceof Traversable) {
             throw new Exception\InvalidCollectionException();
@@ -72,7 +72,7 @@ class HalCollection
 
         $this->collection      = $collection;
         $this->collectionRoute = (string) $collectionRoute;
-        $this->itemRoute       = (string) $itemRoute;
+        $this->resourceRoute   = (string) $resourceRoute;
     }
 
     /**
@@ -90,8 +90,8 @@ class HalCollection
             'collection_name'  => 'collectionName',
             'collectionroute'  => 'collectionRoute',
             'collection_route' => 'collectionRoute',
-            'itemroute'        => 'itemRoute',
-            'item_route'       => 'itemRoute',
+            'resourceroute'    => 'resourceRoute',
+            'resource_route'   => 'resourceRoute',
             'page'             => 'page',
             'pagesize'         => 'pageSize',
             'page_size'        => 'pageSize',

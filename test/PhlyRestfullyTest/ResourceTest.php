@@ -70,7 +70,7 @@ class ResourceTest extends TestCase
         $this->assertSame($object, $test);
     }
 
-    public function testCreateReturnsDataIfLastListenerDoesNotReturnItem()
+    public function testCreateReturnsDataIfLastListenerDoesNotReturnResource()
     {
         $data = new stdClass;
         $object = new stdClass;
@@ -108,7 +108,7 @@ class ResourceTest extends TestCase
         $this->assertSame($object, $test);
     }
 
-    public function testUpdateReturnsDataIfLastListenerDoesNotReturnItem()
+    public function testUpdateReturnsDataIfLastListenerDoesNotReturnResource()
     {
         $data = new stdClass;
         $object = new stdClass;
@@ -146,7 +146,7 @@ class ResourceTest extends TestCase
         $this->assertSame($object, $test);
     }
 
-    public function testReplaceListReturnsDataIfLastListenerDoesNotReturnItem()
+    public function testReplaceListReturnsDataIfLastListenerDoesNotReturnResource()
     {
         $data = array(new stdClass);
         $object = new stdClass;
@@ -184,7 +184,7 @@ class ResourceTest extends TestCase
         $this->assertSame($object, $test);
     }
 
-    public function testPatchReturnsDataIfLastListenerDoesNotReturnItem()
+    public function testPatchReturnsDataIfLastListenerDoesNotReturnResource()
     {
         $data = new stdClass;
         $object = new stdClass;

@@ -10,7 +10,7 @@ namespace PhlyRestfullyTest\View;
 
 use PhlyRestfully\ApiProblem;
 use PhlyRestfully\HalCollection;
-use PhlyRestfully\HalItem;
+use PhlyRestfully\HalResource;
 use PhlyRestfully\View\RestfulJsonModel;
 use PHPUnit_Framework_TestCase as TestCase;
 use stdClass;
@@ -56,7 +56,7 @@ class RestfulJsonModelTest extends TestCase
     {
         $payloads = $this->invalidPayloads();
         $payloads['hal-collection'] = array(new HalCollection(array(), 'collection/route', 'item/route'));
-        $payloads['hal-item'] = array(new HalItem(array(), 'id', 'route'));
+        $payloads['hal-item'] = array(new HalResource(array(), 'id', 'route'));
         return $payloads;
     }
 
@@ -80,7 +80,7 @@ class RestfulJsonModelTest extends TestCase
     {
         $payloads = $this->invalidPayloads();
         $payloads['api-problem'] = array(new ApiProblem(401, 'unauthorized'));
-        $payloads['hal-item'] = array(new HalItem(array(), 'id', 'route'));
+        $payloads['hal-item'] = array(new HalResource(array(), 'id', 'route'));
         return $payloads;
     }
 
@@ -100,7 +100,7 @@ class RestfulJsonModelTest extends TestCase
         $this->assertTrue($this->model->isHalCollection());
     }
 
-    public function invalidHalItemPayloads()
+    public function invalidHalResourcePayloads()
     {
         $payloads = $this->invalidPayloads();
         $payloads['api-problem'] = array(new ApiProblem(401, 'unauthorized'));
@@ -109,18 +109,18 @@ class RestfulJsonModelTest extends TestCase
     }
 
     /**
-     * @dataProvider invalidHalItemPayloads
+     * @dataProvider invalidHalResourcePayloads
      */
-    public function testIsHalItemReturnsFalseForInvalidValues($payload)
+    public function testIsHalResourceReturnsFalseForInvalidValues($payload)
     {
         $this->model->setPayload($payload);
-        $this->assertFalse($this->model->isHalItem());
+        $this->assertFalse($this->model->isHalResource());
     }
 
-    public function testIsHalItemReturnsTrueForHalItemPayload()
+    public function testIsHalResourceReturnsTrueForHalResourcePayload()
     {
-        $item = new HalItem(array(), 'id', 'route');
+        $item = new HalResource(array(), 'id', 'route');
         $this->model->setPayload($item);
-        $this->assertTrue($this->model->isHalItem());
+        $this->assertTrue($this->model->isHalResource());
     }
 }

@@ -10,7 +10,7 @@ namespace PhlyRestfullyTest\View;
 
 use PhlyRestfully\ApiProblem;
 use PhlyRestfully\HalCollection;
-use PhlyRestfully\HalItem;
+use PhlyRestfully\HalResource;
 use PhlyRestfully\View\RestfulJsonModel;
 use PhlyRestfully\View\RestfulJsonRenderer;
 use PhlyRestfully\View\RestfulJsonStrategy;
@@ -89,13 +89,13 @@ class RestfulJsonStrategyTest extends TestCase
 
     public function halObjects()
     {
-        $item = new HalItem(array(
+        $resource = new HalResource(array(
             'foo' => 'bar',
         ), 'identifier', 'route');
-        $collection = new HalCollection(array($item), 'collection/route', 'item/route');
+        $collection = new HalCollection(array($resource), 'collection/route', 'resource/route');
 
         return array(
-            'item'       => array($item),
+            'resource'   => array($resource),
             'collection' => array($collection),
         );
     }

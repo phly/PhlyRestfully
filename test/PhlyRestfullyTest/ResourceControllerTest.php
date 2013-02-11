@@ -85,26 +85,26 @@ class ResourceControllerTest extends TestCase
         $this->assertProblemApiResult(500, 'failed', $result);
     }
 
-    public function testCreateReturnsProblemResultOnBadItemIdentifier()
+    public function testCreateReturnsProblemResultOnBadResourceIdentifier()
     {
         $this->resource->getEventManager()->attach('create', function ($e) {
             return array('foo' => 'bar');
         });
 
         $result = $this->controller->create(array());
-        $this->assertProblemApiResult(422, 'item identifier', $result);
+        $this->assertProblemApiResult(422, 'resource identifier', $result);
     }
 
-    public function testCreateReturnsHalItemOnSuccess()
+    public function testCreateReturnsHalResourceOnSuccess()
     {
-        $item = array('id' => 'foo', 'bar' => 'baz');
-        $this->resource->getEventManager()->attach('create', function ($e) use ($item) {
-            return $item;
+        $resource = array('id' => 'foo', 'bar' => 'baz');
+        $this->resource->getEventManager()->attach('create', function ($e) use ($resource) {
+            return $resource;
         });
 
         $result = $this->controller->create(array());
-        $this->assertInstanceOf('PhlyRestfully\HalItem', $result);
-        $this->assertEquals($item, $result->item);
+        $this->assertInstanceOf('PhlyRestfully\HalResource', $result);
+        $this->assertEquals($resource, $result->resource);
     }
 
     public function testFalseFromDeleteResourceReturnsProblemApiResult()
@@ -159,16 +159,16 @@ class ResourceControllerTest extends TestCase
         $this->assertProblemApiResult(404, 'not found', $result);
     }
 
-    public function testReturningItemFromGetReturnsExpectedHalItem()
+    public function testReturningResourceFromGetReturnsExpectedHalResource()
     {
-        $item = array('id' => 'foo', 'bar' => 'baz');
-        $this->resource->getEventManager()->attach('fetch', function ($e) use ($item) {
-            return $item;
+        $resource = array('id' => 'foo', 'bar' => 'baz');
+        $this->resource->getEventManager()->attach('fetch', function ($e) use ($resource) {
+            return $resource;
         });
 
         $result = $this->controller->get('foo');
-        $this->assertInstanceOf('PhlyRestfully\HalItem', $result);
-        $this->assertEquals($item, $result->item);
+        $this->assertInstanceOf('PhlyRestfully\HalResource', $result);
+        $this->assertEquals($resource, $result->resource);
     }
 
     public function testReturnsHalCollectionForNonPaginatedList()
@@ -231,22 +231,22 @@ class ResourceControllerTest extends TestCase
         $this->assertSame($paginator, $result->collection);
     }
 
-    public function testHeadReturnsItemResponseWhenIdProvided()
+    public function testHeadReturnsResourceResponseWhenIdProvided()
     {
-        $item = array('id' => 'foo', 'bar' => 'baz');
-        $this->resource->getEventManager()->attach('fetch', function ($e) use ($item) {
-            return $item;
+        $resource = array('id' => 'foo', 'bar' => 'baz');
+        $this->resource->getEventManager()->attach('fetch', function ($e) use ($resource) {
+            return $resource;
         });
 
         $result = $this->controller->head('foo');
-        $this->assertInstanceOf('PhlyRestfully\HalItem', $result);
-        $this->assertEquals($item, $result->item);
+        $this->assertInstanceOf('PhlyRestfully\HalResource', $result);
+        $this->assertEquals($resource, $result->resource);
     }
 
-    public function testOptionsReturnsEmptyResponseWithAllowHeaderPopulatedForResource()
+    public function testOptionsReturnsEmptyResponseWithAllowHeaderPopulatedForCollection()
     {
         $r = new ReflectionObject($this->controller);
-        $httpOptionsProp = $r->getProperty('resourceHttpOptions');
+        $httpOptionsProp = $r->getProperty('collectionHttpOptions');
         $httpOptionsProp->setAccessible(true);
         $httpOptions = $httpOptionsProp->getValue($this->controller);
         sort($httpOptions);
@@ -263,10 +263,10 @@ class ResourceControllerTest extends TestCase
         $this->assertEquals($httpOptions, $test);
     }
 
-    public function testOptionsReturnsEmptyResponseWithAllowHeaderPopulatedForItem()
+    public function testOptionsReturnsEmptyResponseWithAllowHeaderPopulatedForResource()
     {
         $r = new ReflectionObject($this->controller);
-        $httpOptionsProp = $r->getProperty('itemHttpOptions');
+        $httpOptionsProp = $r->getProperty('resourceHttpOptions');
         $httpOptionsProp->setAccessible(true);
         $httpOptions = $httpOptionsProp->getValue($this->controller);
         sort($httpOptions);
@@ -296,16 +296,16 @@ class ResourceControllerTest extends TestCase
         $this->assertProblemApiResult(500, 'failed', $result);
     }
 
-    public function testPatchReturnsHalItemOnSuccess()
+    public function testPatchReturnsHalResourceOnSuccess()
     {
-        $item = array('id' => 'foo', 'bar' => 'baz');
-        $this->resource->getEventManager()->attach('patch', function ($e) use ($item) {
-            return $item;
+        $resource = array('id' => 'foo', 'bar' => 'baz');
+        $this->resource->getEventManager()->attach('patch', function ($e) use ($resource) {
+            return $resource;
         });
 
-        $result = $this->controller->patch('foo', $item);
-        $this->assertInstanceOf('PhlyRestfully\HalItem', $result);
-        $this->assertEquals($item, $result->item);
+        $result = $this->controller->patch('foo', $resource);
+        $this->assertInstanceOf('PhlyRestfully\HalResource', $result);
+        $this->assertEquals($resource, $result->resource);
     }
 
     public function testUpdateReturnsProblemResultOnUpdateException()
@@ -318,16 +318,16 @@ class ResourceControllerTest extends TestCase
         $this->assertProblemApiResult(500, 'failed', $result);
     }
 
-    public function testUpdateReturnsHalItemOnSuccess()
+    public function testUpdateReturnsHalResourceOnSuccess()
     {
-        $item = array('id' => 'foo', 'bar' => 'baz');
-        $this->resource->getEventManager()->attach('update', function ($e) use ($item) {
-            return $item;
+        $resource = array('id' => 'foo', 'bar' => 'baz');
+        $this->resource->getEventManager()->attach('update', function ($e) use ($resource) {
+            return $resource;
         });
 
-        $result = $this->controller->update('foo', $item);
-        $this->assertInstanceOf('PhlyRestfully\HalItem', $result);
-        $this->assertEquals($item, $result->item);
+        $result = $this->controller->update('foo', $resource);
+        $this->assertInstanceOf('PhlyRestfully\HalResource', $result);
+        $this->assertEquals($resource, $result->resource);
     }
 
     public function testReplaceListReturnsProblemResultOnUpdateException()
@@ -368,9 +368,9 @@ class ResourceControllerTest extends TestCase
         $controller->onDispatch($this->event);
     }
 
-    public function testOnDispatchReturns405ResponseForInvalidResourceMethod()
+    public function testOnDispatchReturns405ResponseForInvalidCollectionMethod()
     {
-        $this->controller->setResourceHttpOptions(array('GET'));
+        $this->controller->setCollectionHttpOptions(array('GET'));
         $request = $this->controller->getRequest();
         $request->setMethod('POST');
         $this->event->setRequest($request);
@@ -385,9 +385,9 @@ class ResourceControllerTest extends TestCase
         $this->assertEquals('GET', $allow->getFieldValue());
     }
 
-    public function testOnDispatchReturns405ResponseForInvalidItemMethod()
+    public function testOnDispatchReturns405ResponseForInvalidResourceMethod()
     {
-        $this->controller->setItemHttpOptions(array('GET'));
+        $this->controller->setResourceHttpOptions(array('GET'));
         $request = $this->controller->getRequest();
         $request->setMethod('PUT');
         $this->event->setRequest($request);
@@ -405,12 +405,12 @@ class ResourceControllerTest extends TestCase
 
     public function testValidMethodReturningHalOrApiValueIsCastToViewModel()
     {
-        $item = array('id' => 'foo', 'bar' => 'baz');
-        $this->resource->getEventManager()->attach('fetch', function ($e) use ($item) {
-            return $item;
+        $resource = array('id' => 'foo', 'bar' => 'baz');
+        $this->resource->getEventManager()->attach('fetch', function ($e) use ($resource) {
+            return $resource;
         });
 
-        $this->controller->setItemHttpOptions(array('GET'));
+        $this->controller->setResourceHttpOptions(array('GET'));
 
         $request = $this->controller->getRequest();
         $request->setMethod('GET');
@@ -423,12 +423,12 @@ class ResourceControllerTest extends TestCase
 
     public function testValidMethodReturningHalOrApiValueCastsReturnToRestfulJsonModelWhenAcceptHeaderIsJson()
     {
-        $item = array('id' => 'foo', 'bar' => 'baz');
-        $this->resource->getEventManager()->attach('fetch', function ($e) use ($item) {
-            return $item;
+        $resource = array('id' => 'foo', 'bar' => 'baz');
+        $this->resource->getEventManager()->attach('fetch', function ($e) use ($resource) {
+            return $resource;
         });
 
-        $this->controller->setItemHttpOptions(array('GET'));
+        $this->controller->setResourceHttpOptions(array('GET'));
 
         $request = $this->controller->getRequest();
         $request->setMethod('GET');

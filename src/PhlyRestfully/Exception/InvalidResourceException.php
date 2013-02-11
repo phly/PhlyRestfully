@@ -8,6 +8,6 @@
 
 namespace PhlyRestfully\Exception;
 
-class InvalidItemException extends InvalidArgumentException
+class InvalidResourceException extends InvalidArgumentException
 {
 }
