@@ -210,11 +210,13 @@ class RestfulJsonRendererTest extends TestCase
         $this->assertObjectHasAttribute('href', $links->self);
         $this->assertEquals('http://localhost.localdomain/resource', $links->self->href);
 
-        $this->assertObjectHasAttribute('collection', $test);
-        $this->assertInternalType('array', $test->collection);
-        $this->assertEquals(100, count($test->collection));
+        $this->assertObjectHasAttribute('_embedded', $test);
+        $this->assertInstanceof('stdClass', $test->_embedded);
+        $this->assertObjectHasAttribute('items', $test->_embedded);
+        $this->assertInternalType('array', $test->_embedded->items);
+        $this->assertEquals(100, count($test->_embedded->items));
 
-        foreach ($test->collection as $key => $item) {
+        foreach ($test->_embedded->items as $key => $item) {
             $id = $key + 1;
 
             $this->assertObjectHasAttribute('_links', $item);
@@ -273,11 +275,13 @@ class RestfulJsonRendererTest extends TestCase
         $this->assertObjectHasAttribute('href', $links->next);
         $this->assertEquals('http://localhost.localdomain/resource?page=4', $links->next->href);
 
-        $this->assertObjectHasAttribute('collection', $test);
-        $this->assertInternalType('array', $test->collection);
-        $this->assertEquals(5, count($test->collection));
+        $this->assertObjectHasAttribute('_embedded', $test);
+        $this->assertInstanceof('stdClass', $test->_embedded);
+        $this->assertObjectHasAttribute('items', $test->_embedded);
+        $this->assertInternalType('array', $test->_embedded->items);
+        $this->assertEquals(5, count($test->_embedded->items));
 
-        foreach ($test->collection as $key => $item) {
+        foreach ($test->_embedded->items as $key => $item) {
             $id = $key + 11;
 
             $this->assertObjectHasAttribute('_links', $item);
@@ -354,5 +358,73 @@ class RestfulJsonRendererTest extends TestCase
         $test = $this->renderer->render($model);
         $test = json_decode($test, true);
         $this->assertContains($exception->getMessage() . "\n" . $exception->getTraceAsString(), $test['detail']);
+    }
+
+    public function testRendersAttributesAsPartOfNonPaginatedHalCollection()
+    {
+        $this->setUpHelpers();
+
+        $attributes = array(
+            'count' => 100,
+            'type'  => 'foo',
+        );
+
+        $prototype = array('foo' => 'bar');
+        $items = array();
+        foreach (range(1, 100) as $id) {
+            $item       = $prototype;
+            $item['id'] = $id;
+            $items[]    = $item;
+
+        }
+
+        $collection = new HalCollection($items, 'resource', 'resource');
+        $collection->setAttributes($attributes);
+
+        $model      = new RestfulJsonModel(array('payload' => $collection));
+        $test       = $this->renderer->render($model);
+        $test       = json_decode($test);
+
+        $this->assertInstanceof('stdClass', $test, var_export($test, 1));
+        $this->assertObjectHasAttribute('count', $test, var_export($test, 1));
+        $this->assertEquals(100, $test->count);
+        $this->assertObjectHasAttribute('type', $test);
+        $this->assertEquals('foo', $test->type);
+    }
+
+    public function testRendersAttributeAsPartOfPaginatedCollectionResource()
+    {
+        $this->setUpHelpers();
+
+        $attributes = array(
+            'count' => 100,
+            'type'  => 'foo',
+        );
+
+        $prototype = array('foo' => 'bar');
+        $items = array();
+        foreach (range(1, 100) as $id) {
+            $item       = $prototype;
+            $item['id'] = $id;
+            $items[]    = $item;
+
+        }
+        $adapter   = new ArrayAdapter($items);
+        $paginator = new Paginator($adapter);
+
+        $collection = new HalCollection($paginator, 'resource', 'resource');
+        $collection->setPageSize(5);
+        $collection->setPage(3);
+        $collection->setAttributes($attributes);
+
+        $model      = new RestfulJsonModel(array('payload' => $collection));
+        $test       = $this->renderer->render($model);
+        $test       = json_decode($test);
+
+        $this->assertInstanceof('stdClass', $test, var_export($test, 1));
+        $this->assertObjectHasAttribute('count', $test, var_export($test, 1));
+        $this->assertEquals(100, $test->count);
+        $this->assertObjectHasAttribute('type', $test);
+        $this->assertEquals('foo', $test->type);
     }
 }

@@ -288,12 +288,14 @@ class RestfulJsonRenderer extends JsonRenderer
      */
     protected function renderNonPaginatedCollection(HalCollection $halCollection)
     {
-        $collection = $halCollection->collection;
+        $collection     = $halCollection->collection;
+        $collectionName = $halCollection->collectionName;
 
         $helper  = $this->helpers->get('HalLinks');
-        $payload = array(
-            '_links'     => $helper->forCollection($halCollection->collectionRoute),
-            'collection' => array(),
+        $payload = $halCollection->attributes;
+        $payload['_links'] = $helper->forCollection($halCollection->collectionRoute);
+        $payload['_embedded'] = array(
+            $collectionName => array(),
         );
 
         $itemRoute = $halCollection->itemRoute;
@@ -310,7 +312,7 @@ class RestfulJsonRenderer extends JsonRenderer
             }
 
             $item['_links']          = $helper->forItem($itemRoute, $id, $origItem);
-            $payload['collection'][] = $item;
+            $payload['_embedded'][$collectionName][] = $item;
         }
 
         return parent::render($payload);
@@ -328,7 +330,8 @@ class RestfulJsonRenderer extends JsonRenderer
      */
     protected function renderPaginatedCollection(HalCollection $halCollection)
     {
-        $collection = $halCollection->collection;
+        $collection     = $halCollection->collection;
+        $collectionName = $halCollection->collectionName;
 
         $helper  = $this->helpers->get('HalLinks');
         $links   = $helper->forPaginatedCollection($halCollection);
@@ -336,9 +339,10 @@ class RestfulJsonRenderer extends JsonRenderer
             return $this->renderApiProblem($links);
         }
 
-        $payload = array(
-            '_links'     => $links,
-            'collection' => array(),
+        $payload = $halCollection->attributes;
+        $payload['_links']    = $links;
+        $payload['_embedded'] = array(
+            $collectionName => array(),
         );
 
         $itemRoute = $halCollection->itemRoute;
@@ -352,12 +356,12 @@ class RestfulJsonRenderer extends JsonRenderer
             if (!$id) {
                 // Cannot handle items without an identifier
                 // Return as-is
-                $payload['collection'][] = $item;
+                $payload['_embedded'][$collectionName][] = $item;
                 continue;
             }
 
-            $item['_links']          = $helper->forItem($itemRoute, $id, $origItem);
-            $payload['collection'][] = $item;
+            $item['_links'] = $helper->forItem($itemRoute, $id, $origItem);
+            $payload['_embedded'][$collectionName][] = $item;
         }
 
         return parent::render($payload);
