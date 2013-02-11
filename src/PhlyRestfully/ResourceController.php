@@ -48,6 +48,13 @@ class ResourceController extends AbstractRestfulController
     );
 
     /**
+     * Name of the collections entry in a HalCollection
+     *
+     * @var string
+     */
+    protected $collectionName = 'items';
+
+    /**
      * Content types that will trigger marshalling data from the request body.
      *
      * @var array
@@ -127,6 +134,16 @@ class ResourceController extends AbstractRestfulController
     public function setAcceptCriteria(array $criteria)
     {
         $this->acceptCriteria = $criteria;
+    }
+
+    /**
+     * Set the name to which to assign a collection in a HalCollection
+     *
+     * @param  string $name
+     */
+    public function setCollectionName($name)
+    {
+        $this->collectionName = (string) $name;
     }
 
     /**
@@ -345,6 +362,7 @@ class ResourceController extends AbstractRestfulController
         $collection = new HalCollection($items, $this->route, $this->route);
         $collection->setPage($this->getRequest()->getQuery('page', 1));
         $collection->setPageSize($this->pageSize);
+        $collection->setCollectionName($this->collectionName);
         return $collection;
     }
 
@@ -463,6 +481,7 @@ class ResourceController extends AbstractRestfulController
         $collection = new HalCollection($items, $this->route, $this->route);
         $collection->setPage($this->getRequest()->getQuery('page', 1));
         $collection->setPageSize($this->pageSize);
+        $collection->setCollectionName($this->collectionName);
         return $collection;
     }
 

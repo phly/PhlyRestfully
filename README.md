@@ -153,6 +153,47 @@ It retrieves the "user" parameter from the route first. Then it retrieves the
 event; the listener simply assigns the user to the parameters -- which are then
 passed to the `url()` helper when creating a link.
 
+
+Collections
+-----------
+
+Collections are resources, too, which means they may hold more than simply the
+set of items they encapsulate.
+
+By default, the `ResourceController` simply returns a `HalCollection` with the
+collection of items; if you are using a paginator for the collection, it will
+also set the current page and number of items per page to render.
+
+You may want to name the collection of items you are representing. By default,
+we use "items" as the name; you should use a semantic name. This can be done
+by either directly setting the collection name on the `HalCollection` using the
+`setCollectionName()` method, or calling the same method on the controller.
+
+You can also set additional attributes. This can be done via a listener; 
+typically, a post-dispatch listener, such as the following, would be a
+reasonable time to alter the collection instance. In the following, we update
+the collection to include the count, number per page, and type of objects
+in the collection.
+
+```php
+$events->attach('dispatch', public function ($e) {
+    $result = $e->getResult();
+    if (!$result instanceof RestfulJsonModel) {
+        return;
+    }
+    if (!$result->isHalCollection()) {
+        return;
+    }
+    $collection = $result->getPayload();
+    $paginator  = $collection->collection;
+    $collection->setAttributes(array(
+        'count'         => $paginator->getTotalItemCount(),
+        'per_page'      => $collection->pageSize,
+        'resource_type' => 'status',
+    ));
+}, -1);
+```
+
 Embedding Items
 ---------------
 
@@ -214,6 +255,11 @@ embedded resource:
     }
 }
 ```
+
+This will work in collections as well.
+
+I recommend converting embedded resources to `HalItem` instances either
+during hydration, or as part of your `Resource` listener's mapping logic.
 
 LICENSE
 =======

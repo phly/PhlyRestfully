@@ -457,4 +457,21 @@ class ResourceControllerTest extends TestCase
         $events->trigger('test', $controller, array());
         $this->assertTrue($test->flag);
     }
+
+    public function testHalCollectionUsesControllerCollectionName()
+    {
+        $items = array(
+            array('id' => 'foo', 'bar' => 'baz')
+        );
+        $this->resource->getEventManager()->attach('fetchAll', function ($e) use ($items) {
+            return $items;
+        });
+
+        $this->controller->setCollectionName('resources');
+
+        $result = $this->controller->getList();
+        $this->assertInstanceOf('PhlyRestfully\HalCollection', $result);
+        $this->assertEquals('resources', $result->collectionName);
+    }
+
 }

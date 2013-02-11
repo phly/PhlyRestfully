@@ -266,15 +266,15 @@ class RestfulJsonRenderer extends JsonRenderer
     }
 
     /**
-     * Extracts and renders a HalItem and embeds it in the parent 
+     * Extracts and renders a HalItem and embeds it in the parent
      * representation
      *
-     * Removes the key from the parent representation, and creates a 
+     * Removes the key from the parent representation, and creates a
      * representation for the key in the _embedded object.
-     * 
-     * @param  array $parent 
-     * @param  string $key 
-     * @param  HalItem $item 
+     *
+     * @param  array $parent
+     * @param  string $key
+     * @param  HalItem $item
      */
     protected function extractEmbeddedHalItem(array &$parent, $key, HalItem $item)
     {
