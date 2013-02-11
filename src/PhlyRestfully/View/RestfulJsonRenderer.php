@@ -338,6 +338,13 @@ class RestfulJsonRenderer extends JsonRenderer
                 $item = $this->convertItemToArray($item);
             }
 
+            foreach ($item as $key => $value) {
+                if (!$value instanceof HalItem) {
+                    continue;
+                }
+                $this->extractEmbeddedHalItem($item, $key, $value);
+            }
+
             $id = $this->getIdFromItem($item);
             if (!$id) {
                 // Cannot handle items without an identifier
@@ -383,6 +390,13 @@ class RestfulJsonRenderer extends JsonRenderer
             $origItem = $item;
             if (!is_array($item)) {
                 $item = $this->convertItemToArray($item);
+            }
+
+            foreach ($item as $key => $value) {
+                if (!$value instanceof HalItem) {
+                    continue;
+                }
+                $this->extractEmbeddedHalItem($item, $key, $value);
             }
 
             $id = $this->getIdFromItem($item);

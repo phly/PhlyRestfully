@@ -465,4 +465,100 @@ class RestfulJsonRendererTest extends TestCase
         $this->assertObjectHasAttribute('href', $links->self);
         $this->assertContains('/user/matthew', $links->self->href);
     }
+
+    public function testRendersEmbeddedItemsOfIndividualNonPaginatedCollectionItems()
+    {
+        $this->setUpHelpers();
+        $this->router->addRoute('user', new Segment('/user[/:id]'));
+
+        $child = new HalItem(array(
+            'id'     => 'matthew',
+            'name'   => 'matthew',
+            'github' => 'weierophinney',
+        ), 'matthew', 'user');
+
+        $prototype = array('foo' => 'bar', 'user' => $child);
+        $items = array();
+        foreach (range(1, 3) as $id) {
+            $item       = $prototype;
+            $item['id'] = $id;
+            $items[]    = $item;
+
+        }
+
+        $collection = new HalCollection($items, 'resource', 'resource');
+
+        $model      = new RestfulJsonModel(array('payload' => $collection));
+        $test       = $this->renderer->render($model);
+        $test       = json_decode($test);
+
+        $this->assertInstanceof('stdClass', $test, var_export($test, 1));
+        $collection = $test->_embedded->items;
+        foreach ($collection as $item) {
+            $this->assertObjectHasAttribute('_embedded', $item);
+            $embedded = $item->_embedded;
+            $this->assertObjectHasAttribute('user', $embedded);
+            $user = (array) $embedded->user;
+            foreach ($child->item as $key => $value) {
+                $this->assertArrayHasKey($key, $user);
+                $this->assertEquals($value, $user[$key]);
+            }
+            $this->assertArrayHasKey('_links', $user);
+            $this->assertInstanceof('stdClass', $user['_links']);
+            $links = $user['_links'];
+            $this->assertObjectHasAttribute('self', $links);
+            $this->assertObjectHasAttribute('href', $links->self);
+            $this->assertContains('/user/matthew', $links->self->href);
+        }
+    }
+
+    public function testRendersEmbeddedItemsOfIndividualPaginatedCollectionItems()
+    {
+        $this->setUpHelpers();
+        $this->router->addRoute('user', new Segment('/user[/:id]'));
+
+        $child = new HalItem(array(
+            'id'     => 'matthew',
+            'name'   => 'matthew',
+            'github' => 'weierophinney',
+        ), 'matthew', 'user');
+
+        $prototype = array('foo' => 'bar', 'user' => $child);
+        $items = array();
+        foreach (range(1, 3) as $id) {
+            $item       = $prototype;
+            $item['id'] = $id;
+            $items[]    = $item;
+
+        }
+        $adapter   = new ArrayAdapter($items);
+        $paginator = new Paginator($adapter);
+
+        $collection = new HalCollection($paginator, 'resource', 'resource');
+        $collection->setPageSize(5);
+        $collection->setPage(1);
+
+        $model      = new RestfulJsonModel(array('payload' => $collection));
+        $test       = $this->renderer->render($model);
+        $test       = json_decode($test);
+
+        $this->assertInstanceof('stdClass', $test, var_export($test, 1));
+        $collection = $test->_embedded->items;
+        foreach ($collection as $item) {
+            $this->assertObjectHasAttribute('_embedded', $item, var_export($item, 1));
+            $embedded = $item->_embedded;
+            $this->assertObjectHasAttribute('user', $embedded);
+            $user = (array) $embedded->user;
+            foreach ($child->item as $key => $value) {
+                $this->assertArrayHasKey($key, $user);
+                $this->assertEquals($value, $user[$key]);
+            }
+            $this->assertArrayHasKey('_links', $user);
+            $this->assertInstanceof('stdClass', $user['_links']);
+            $links = $user['_links'];
+            $this->assertObjectHasAttribute('self', $links);
+            $this->assertObjectHasAttribute('href', $links->self);
+            $this->assertContains('/user/matthew', $links->self->href);
+        }
+    }
 }
