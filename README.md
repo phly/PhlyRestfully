@@ -261,6 +261,37 @@ This will work in collections as well.
 I recommend converting embedded resources to `HalResource` instances either
 during hydration, or as part of your `Resource` listener's mapping logic.
 
+
+Upgrading
+=========
+
+If you were using version 1.0.0 or earlier (the version presented at PHP
+Benelux 2013), you will need to make some changes to your application to get it
+to work.
+
+- First, the terminology has changed, as have some class names, to reference
+  "resources" instead of "items"; this is more in line with RESTful terminology.
+    - As such, if you had any code using `PhlyRestfully\HalItem`, it should now
+      reference `PhlyRestfully\HalResource`. Similarly, in that class, you will
+      access the actual resource object now from the `resource` property
+      instead of the `item` property. (This should only affect those post-1.0.0).
+    - If you want to create link for an individual resource, use the
+      `forResource` method of `HalLinks`, and not the `forItem` method.
+    - `InvalidItemException` was renamed to `InvalidResourceException`.
+- A number of items were moved from the `RestfulJsonModel` to the
+  `RestfulJsonRenderer`.
+    - Hydrators
+    - The flag for displaying exception backtraces; in fact, you can use
+      the `view_manager.display_exceptions` configuration setting to set
+      this behavior.
+- All results from the `ResourceController` are now pushed to a `payload`
+  variable in the view model. 
+    - Additionally, `ApiProblem`, `HalItem`, and `HalCollection` are
+      first-class objects, and are used as the `payload` values.
+- The `Links` plugin was renamed to `HalLinks`, and is now also available as
+  a view helper.
+
+
 LICENSE
 =======
 

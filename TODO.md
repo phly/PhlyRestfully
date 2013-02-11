@@ -5,25 +5,6 @@ Notes:
 
 Tasks:
 
-- [ ] Embedded items
-  Technically, when doing collections, you should have a key, "\_embedded", which
-  is a hash. When doing a collection, you'll have a key that indicates the "type"
-  of resources under it -- for example: 
-
-```javascript
-  {"\_links": { ... }, "\_embedded": { "books": [ ... ] } }
-```
-
-  This will mean that the controller will need to inject the collection name 
-  into the view model, and the renderer will need to use that name when 
-  rendering the collection.
-
-  Additionally, we may want to allow recursive rendering of individual items,
-  looking for other RestfulJsonModel child items; these would be embedded in
-  the representation using the captureTo value as the "type", and the object
-  itself would act as a resource with links.
-
-  This will address issue #1 (I believe).
 - [X] Additional changes to ResourceController
   - [ ] have property that indicates response headers that should always be present,
     and inject these into the view model?
