@@ -5,10 +5,25 @@ Notes:
 
 Tasks:
 
-- [X] Create ApiProblem object
-- [X] Create HalItem and HalCollection objects
-- [X] Modify ResourceController to return objects of above types
-  - [X] Remove controller plugins for generating api problem results, links
+- [ ] Embedded items
+  Technically, when doing collections, you should have a key, "\_embedded", which
+  is a hash. When doing a collection, you'll have a key that indicates the "type"
+  of resources under it -- for example: 
+
+```javascript
+  {"\_links": { ... }, "\_embedded": { "books": [ ... ] } }
+```
+
+  This will mean that the controller will need to inject the collection name 
+  into the view model, and the renderer will need to use that name when 
+  rendering the collection.
+
+  Additionally, we may want to allow recursive rendering of individual items,
+  looking for other RestfulJsonModel child items; these would be embedded in
+  the representation using the captureTo value as the "type", and the object
+  itself would act as a resource with links.
+
+  This will address issue #1 (I believe).
 - [X] Additional changes to ResourceController
   - [ ] have property that indicates response headers that should always be present,
     and inject these into the view model?
@@ -16,16 +31,6 @@ Tasks:
     and "createMethodNotAllowedForItem()" and "createMethodNotAllowedResponse()"
     functionality into listeners?
     - [ ] Maybe a new event triggered at the beginning of onDispatch()
-- [X] Create RestfulJsonRenderer to check for above types of objects when rendering
-  - [X] Render ApiProblem objects
-  - [X] Render HalItem and HalCollection objects
-    - [X] Use helper system to produce links for items and collections (based on
-      pagination)
-      - [X] Create view helper for rendering links
-      - [X] Create view helper for producing links from paginated collection
-      - [X] Create view helper for producing links from non-paginated collection
-- [X] Update RestfulJsonStrategy to produce content-type header based on ApiProblem
-  or HalItem/Collection
 - [ ] Update RestfulJsonStrategy to allow looping through key of view model in order
   to set additional headers
 - [ ] Potentially add Link header, duplicating HAL, for purposes of API
