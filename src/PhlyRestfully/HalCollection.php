@@ -21,6 +21,13 @@ class HalCollection
     protected $collection;
 
     /**
+     * Name of collection (used to identify it in the "_embedded" object)
+     * 
+     * @var string
+     */
+    protected $collectionName = 'items';
+
+    /**
      * @var string
      */
     protected $collectionRoute;
@@ -71,6 +78,8 @@ class HalCollection
     {
         $names = array(
             'collection'       => 'collection',
+            'collectionname'   => 'collectionName',
+            'collection_name'  => 'collectionName',
             'collectionroute'  => 'collectionRoute',
             'collection_route' => 'collectionRoute',
             'itemroute'        => 'itemRoute',
@@ -88,6 +97,18 @@ class HalCollection
         }
         $prop = $names[$name];
         return $this->{$prop};
+    }
+
+    /**
+     * Set the collection name (for use within the _embedded object)
+     * 
+     * @param  string $name 
+     * @return HalCollection
+     */
+    public function setCollectionName($name)
+    {
+        $this->collectionName = (string) $name;
+        return $this;
     }
 
     /**
