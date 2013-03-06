@@ -71,7 +71,15 @@ class ApiProblemListener implements ListenerAggregateInterface
 
         // ... that matches certain criteria
         $accept = $headers->get('Accept');
-        if (!$accept->match('*/json')) {
+        $matched = false;
+        foreach ($headers->get('Accept')->getPrioritized() as $check) {
+            if ($check->format == 'json' || $check->format == '*') {
+                $matched = true;
+                break;
+            }
+        }
+
+        if (!$matched) {
             return;
         }
 
