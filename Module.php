@@ -8,6 +8,8 @@
 
 namespace PhlyRestfully;
 
+use Zend\Stdlib\Hydrator\HydratorInterface;
+
 /**
  * ZF2 module
  */
@@ -74,6 +76,35 @@ class Module
                 $renderer = new View\RestfulJsonRenderer();
                 $renderer->setHelperPluginManager($helpers);
                 $renderer->setDisplayExceptions($displayExceptions);
+
+                if (isset($config['phlyrestfully'])
+                    && isset($config['phlyrestfully']['renderer'])
+                ) {
+                    $config = $config['phlyrestfully']['renderer'];
+
+                    if (isset($config['default_hydrator'])) {
+                        $hydratorServiceName = $config['default_hydrator'];
+                        if ($services->has($hydratorServiceName)) {
+                            $hydrator = $services->get($hydratorServiceName);
+                            if ($hydrator instanceof HydratorInterface) {
+                                $renderer->setDefaultHydrator($hydrator);
+                            }
+                        }
+                    }
+
+                    if (isset($config['hydrators']) && is_array($config['hydrators'])) {
+                        $hydratorMap = $config['hydrators'];
+                        foreach ($hydratorMap as $class => $hydratorServiceName) {
+                            if ($services->has($hydratorServiceName)) {
+                                $hydrator = $services->get($hydratorServiceName);
+                                if ($hydrator instanceof HydratorInterface) {
+                                    $renderer->addHydrator($class, $hydrator);
+                                }
+                            }
+                        }
+                    }
+                }
+
                 return $renderer;
             },
             'PhlyRestfully\RestfulJsonStrategy' => function ($services) {
