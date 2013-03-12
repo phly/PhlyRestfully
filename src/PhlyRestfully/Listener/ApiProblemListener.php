@@ -27,7 +27,7 @@ class ApiProblemListener implements ListenerAggregateInterface
 {
     /**
      * Default values to match in Accept header
-     * 
+     *
      * @var string
      */
     protected $acceptFilter = 'application/hal+json,application/api-problem+json,application/json';
@@ -41,8 +41,8 @@ class ApiProblemListener implements ListenerAggregateInterface
      * Constructor
      *
      * Set the accept filter, if one is passed
-     * 
-     * @param string $filter 
+     *
+     * @param string $filter
      */
     public function __construct($filter = null)
     {
