@@ -26,9 +26,30 @@ use Zend\View\Model\ModelInterface;
 class ApiProblemListener implements ListenerAggregateInterface
 {
     /**
+     * Default values to match in Accept header
+     * 
+     * @var string
+     */
+    protected $acceptFilter = 'application/hal+json,application/api-problem+json,application/json';
+
+    /**
      * @var \Zend\Stdlib\CallbackHandler[]
      */
     protected $listeners = array();
+
+    /**
+     * Constructor
+     *
+     * Set the accept filter, if one is passed
+     * 
+     * @param string $filter 
+     */
+    public function __construct($filter = null)
+    {
+        if (is_string($filter) && !empty($filter)) {
+            $this->acceptFilter = $filter;
+        }
+    }
 
     /**
      * @param EventManagerInterface $events
@@ -71,10 +92,7 @@ class ApiProblemListener implements ListenerAggregateInterface
 
         // ... that matches certain criteria
         $accept = $headers->get('Accept');
-        $config = $e->getApplication()->getServiceManager()->get('Config');
-        $filter = isset($config['phlyrestfully']['accept_filter']) ?
-            $config['phlyrestfully']['accept_filter'] : 'application/hal+json,application/api-problem+json,application/json';
-        if (!$accept->match($filter)) {
+        if (!$accept->match($this->acceptFilter)) {
             return;
         }
 

@@ -7,12 +7,6 @@
  */
 
 return array(
-    'service_manager' => array(
-        'invokables' => array(
-            // API-Problem render listener
-            'PhlyRestfully\ApiProblemListener' => 'PhlyRestfully\Listener\ApiProblemListener'
-        ),
-    ),
     'view_manager' => array(
         // Enable this in your application configuration in order to get full
         // exception stack traces in your API-Problem responses.
