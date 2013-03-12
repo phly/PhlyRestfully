@@ -35,7 +35,7 @@ class ApiProblemListener implements ListenerAggregateInterface
      */
     public function attach(EventManagerInterface $events)
     {
-        $events->attach(MvcEvent::EVENT_RENDER, __CLASS__ . '::onRender', 1000);
+        $this->listeners[] = $events->attach(MvcEvent::EVENT_RENDER, __CLASS__ . '::onRender', 1000);
     }
 
     /**
