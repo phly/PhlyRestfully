@@ -10,6 +10,7 @@ namespace PhlyRestfullyTest;
 
 use PhlyRestfully\Module;
 use PHPUnit_Framework_TestCase as TestCase;
+use ReflectionObject;
 use Zend\Mvc\MvcEvent;
 use Zend\Mvc\Router\RouteMatch;
 use Zend\ServiceManager\Config;
@@ -65,9 +66,10 @@ class ModuleTest extends TestCase
             'phlyrestfully' => array(
                 'renderer' => array(
                     'default_hydrator' => 'Hydrator\ObjectProperty',
-                )
+                ),
             ),
         );
+
         $services = $this->setupServiceManager();
         $services->setService('Config', $options);
 
@@ -77,17 +79,35 @@ class ModuleTest extends TestCase
 
     public function testJsonRendererFactoryInjectsHydratorMappingsIfPresentInConfig()
     {
-        $this->markTestIncomplete();
         $options = array(
             'phlyrestfully' => array(
                 'renderer' => array(
-                    'default_hydrator' => 'Hydrator\ObjectProperty',
-                )
+                    'hydrators' => array(
+                        'Some/MadeUp/Component'            => 'Hydrator\ClassMethods',
+                        'Another/MadeUp/Component'         => 'Hydrator\Reflection',
+                        'StillAnother/MadeUp/Component'    => 'Hydrator\ArraySerializable',
+                        'A\Component\With\SharedHydrators' => 'Hydrator\Reflection',
+                    ),
+                ),
             ),
         );
+
+        $services = $this->setupServiceManager();
         $services->setService('Config', $options);
 
         $renderer = $services->get('PhlyRestfully\JsonRenderer');
-        $this->assertAttributeInstanceOf('Zend\Stdlib\Hydrator\ObjectProperty', 'defaultHydrator', $renderer);
+        $r             = new ReflectionObject($renderer);
+        $hydratorsProp = $r->getProperty('hydrators');
+        $hydratorsProp->setAccessible(true);
+        $hydrators = $hydratorsProp->getValue($renderer);
+
+        $this->assertInternalType('array', $hydrators);
+
+        foreach ($options['phlyrestfully']['renderer']['hydrators'] as $class => $serviceName) {
+            $key = strtolower($class);
+            $this->assertArrayHasKey($key, $hydrators);
+            $hydrator = $hydrators[$key];
+            $this->assertSame($services->get($serviceName), $hydrator);
+        }
     }
 }
