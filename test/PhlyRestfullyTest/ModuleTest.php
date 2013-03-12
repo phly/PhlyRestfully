@@ -42,9 +42,9 @@ class ModuleTest extends TestCase
                 ),
             ),
         );
-        $options  = ArrayUtils::merge($options['service_manager'], $this->module->getServiceConfig());
+        $config   = ArrayUtils::merge($options['service_manager'], $this->module->getServiceConfig());
         $services = new ServiceManager();
-        $config   = new Config($options);
+        $config   = new Config($config);
         $config->configureServiceManager($services);
         $services->setService('Config', $options);
 
