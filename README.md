@@ -83,12 +83,12 @@ As a quick example:
 'PasteController' => function ($controllers) {
     $services   = $controllers->getServiceLocator();
     $events     = $services->get('EventManager');
-    $listener   = new PasteResourceListener(new PasteMongoAdapter);
-    $resource   = new PhlyRestfully\Resource();
+    $listener   = new \PasteResourceListener(new PasteMongoAdapter);
+    $resource   = new \PhlyRestfully\Resource();
     $resource->setEventManager($events);
     $events->attach($listener);
 
-    $controller = new PhlyRestfully\ResourceController();
+    $controller = new \PhlyRestfully\ResourceController();
     $controller->setResource($resource);
     $controller->setRoute('paste/api');
     $controller->setCollectionHttpOptions(array(
