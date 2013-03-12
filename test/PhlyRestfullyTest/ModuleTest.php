@@ -83,9 +83,9 @@ class ModuleTest extends TestCase
             'phlyrestfully' => array(
                 'renderer' => array(
                     'hydrators' => array(
-                        'Some/MadeUp/Component'            => 'Hydrator\ClassMethods',
-                        'Another/MadeUp/Component'         => 'Hydrator\Reflection',
-                        'StillAnother/MadeUp/Component'    => 'Hydrator\ArraySerializable',
+                        'Some\MadeUp\Component'            => 'Hydrator\ClassMethods',
+                        'Another\MadeUp\Component'         => 'Hydrator\Reflection',
+                        'StillAnother\MadeUp\Component'    => 'Hydrator\ArraySerializable',
                         'A\Component\With\SharedHydrators' => 'Hydrator\Reflection',
                     ),
                 ),
