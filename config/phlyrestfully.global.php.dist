@@ -1,0 +1,14 @@
+<?php
+
+$config = array(
+    /*
+     * Specify what MIME types the ApiProblemListener will respond to.
+     * DEFAULT: application/hal+json,application/api-problem+json,application/json
+     */
+    //'accept_filter' => 'application/hal+json,application/api-problem+json,application/json',
+);
+
+/* No need to edit below this line */
+return array(
+    'phlyrestfully' => $config,
+);
