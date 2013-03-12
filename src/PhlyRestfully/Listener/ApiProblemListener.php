@@ -71,7 +71,10 @@ class ApiProblemListener implements ListenerAggregateInterface
 
         // ... that matches certain criteria
         $accept = $headers->get('Accept');
-        if (!$accept->match('*/json')) {
+        $config = $e->getApplication()->getServiceManager()->get('Config');
+        $filter = isset($config['phlyrestfully']['accept_filter']) ?
+            $config['phlyrestfully']['accept_filter'] : 'application/hal+json,application/api-problem+json,application/json';
+        if (!$accept->match($filter)) {
             return;
         }
 
