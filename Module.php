@@ -45,6 +45,21 @@ class Module
     public function getServiceConfig()
     {
         return array('factories' => array(
+            'PhlyRestfully\ApiProblemListener' => function ($services) {
+                $config = array();
+                if ($services->has('config')) {
+                    $config = $services->get('config');
+                }
+
+                $filter = null;
+                if (isset($config['phlyrestfully'])
+                    && isset($config['phlyrestfully']['accept_filter'])
+                ) {
+                    $filter = $config['phlyrestfully']['accept_filter'];
+                }
+
+                return new Listener\ApiProblemListener($filter);
+            },
             'PhlyRestfully\JsonRenderer' => function ($services) {
                 $helpers  = $services->get('ViewHelperManager');
                 $config   = $services->get('Config');
