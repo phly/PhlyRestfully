@@ -286,7 +286,7 @@ to work.
       this behavior.
 - All results from the `ResourceController` are now pushed to a `payload`
   variable in the view model. 
-    - Additionally, `ApiProblem`, `HalItem`, and `HalCollection` are
+    - Additionally, `ApiProblem`, `HalResource`, and `HalCollection` are
       first-class objects, and are used as the `payload` values.
 - The `Links` plugin was renamed to `HalLinks`, and is now also available as
   a view helper.
