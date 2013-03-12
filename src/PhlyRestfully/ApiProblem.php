@@ -119,7 +119,7 @@ class ApiProblem
         return array(
             'describedBy' => $this->describedBy,
             'title'       => $this->getTitle(),
-            'httpStatus'  => $this->httpStatus,
+            'httpStatus'  => $this->getHttpStatus(),
             'detail'      => $this->getDetail(),
         );
     }
@@ -154,6 +154,22 @@ class ApiProblem
     }
 
     /**
+     * Retrieve the API-Problem HTTP status code
+     *
+     * If an exception was provided, creates the status code from it;
+     * otherwise, code as provided is used.
+     *
+     * @return string
+     */
+    protected function getHttpStatus()
+    {
+        if ($this->detail instanceof \Exception) {
+            $this->httpStatus = $this->createStatusFromException();
+        }
+        return $this->httpStatus;
+    }
+
+    /**
      * Retrieve the title
      *
      * If the default $describedBy is used, and the $httpStatus is found in
@@ -170,11 +186,13 @@ class ApiProblem
     {
         if (null === $this->title
             && $this->describedBy == 'http://www.w3.org/Protocols/rfc2616/rfc2616-sec10.html'
-            && array_key_exists($this->httpStatus, $this->problemStatusTitles)
+            && array_key_exists($this->getHttpStatus(), $this->problemStatusTitles)
         ) {
             return $this->problemStatusTitles[$this->httpStatus];
         }
-
+        if ($this->detail instanceof \Exception) {
+            return get_class($this->detail);
+        }
         if (null === $this->title) {
             return 'Unknown';
         }
@@ -201,5 +219,20 @@ class ApiProblem
             $e = $e->getPrevious();
         } while ($e instanceof \Exception);
         return trim($message);
+    }
+    /**
+     * Create HTTP status from an exception.
+     *
+     * @return string
+     */
+    protected function createStatusFromException()
+    {
+        $e = $this->detail;
+        $httpStatus = $e->getCode();
+        if (!empty($httpStatus)) {
+            return $httpStatus;
+        } else {
+            return 500;
+        }
     }
 }

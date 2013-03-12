@@ -40,6 +40,15 @@ class ApiProblemTest extends TestCase
         $this->assertEquals($status, $payload['httpStatus']);
     }
 
+    public function testExceptionCodeIsUsedForHttpStatus()
+    {
+        $exception  = new \Exception('exception message', 401);
+        $apiProblem = new ApiProblem('500', $exception);
+        $payload    = $apiProblem->toArray();
+        $this->assertArrayHasKey('httpStatus', $payload);
+        $this->assertEquals($exception->getCode(), $payload['httpStatus']);
+    }
+
     public function testDetailStringIsUsedVerbatim()
     {
         $apiProblem = new ApiProblem('500', 'foo');
