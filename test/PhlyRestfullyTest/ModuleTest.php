@@ -23,30 +23,25 @@ class ModuleTest extends TestCase
         $this->module = new Module;
     }
 
-    public function testJsonRendererFactoryInjectsHydratorIfPresentInConfig()
+    public function setupServiceManager()
     {
-        $options = array(
-            'phlyrestfully' => array(
-                'renderer' => array(
-                    'default_hydrator' => 'Hydrator\ObjectProperty',
-                )
+        $options = array('service_manager' => array(
+            'invokables' => array(
+                // Some hydrator services, so we have something to work with
+                'Hydrator\ArraySerializable' => 'Zend\Stdlib\Hydrator\ArraySerializable',
+                'Hydrator\ClassMethods'      => 'Zend\Stdlib\Hydrator\ClassMethods',
+                'Hydrator\ObjectProperty'    => 'Zend\Stdlib\Hydrator\ObjectProperty',
+                'Hydrator\Reflection'        => 'Zend\Stdlib\Hydrator\Reflection',
             ),
-            'service_manager' => array(
-                'invokables' => array(
-                    // Created so we have a service for the default_hydrator
-                    'Hydrator\ObjectProperty' => 'Zend\Stdlib\Hydrator\ObjectProperty',
-                ),
-                'factories' => array(
-                    // Consumed by PhlyRestfully\JsonRenderer service
-                    'ViewHelperManager' => 'Zend\Mvc\Service\ViewHelperManagerFactory',
-                ),
+            'factories' => array(
+                // Consumed by PhlyRestfully\JsonRenderer service
+                'ViewHelperManager' => 'Zend\Mvc\Service\ViewHelperManagerFactory',
             ),
-        );
+        ));
         $config   = ArrayUtils::merge($options['service_manager'], $this->module->getServiceConfig());
         $services = new ServiceManager();
         $config   = new Config($config);
         $config->configureServiceManager($services);
-        $services->setService('Config', $options);
 
         $event = new MvcEvent();
         $event->setRouteMatch(new RouteMatch(array()));
@@ -61,6 +56,36 @@ class ModuleTest extends TestCase
             ->method('getMvcEvent')
             ->will($this->returnValue($event));
         $services->setService('application', $app);
+        return $services;
+    }
+
+    public function testJsonRendererFactoryInjectsDefaultHydratorIfPresentInConfig()
+    {
+        $options = array(
+            'phlyrestfully' => array(
+                'renderer' => array(
+                    'default_hydrator' => 'Hydrator\ObjectProperty',
+                )
+            ),
+        );
+        $services = $this->setupServiceManager();
+        $services->setService('Config', $options);
+
+        $renderer = $services->get('PhlyRestfully\JsonRenderer');
+        $this->assertAttributeInstanceOf('Zend\Stdlib\Hydrator\ObjectProperty', 'defaultHydrator', $renderer);
+    }
+
+    public function testJsonRendererFactoryInjectsHydratorMappingsIfPresentInConfig()
+    {
+        $this->markTestIncomplete();
+        $options = array(
+            'phlyrestfully' => array(
+                'renderer' => array(
+                    'default_hydrator' => 'Hydrator\ObjectProperty',
+                )
+            ),
+        );
+        $services->setService('Config', $options);
 
         $renderer = $services->get('PhlyRestfully\JsonRenderer');
         $this->assertAttributeInstanceOf('Zend\Stdlib\Hydrator\ObjectProperty', 'defaultHydrator', $renderer);
