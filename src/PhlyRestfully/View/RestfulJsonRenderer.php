@@ -11,6 +11,7 @@ namespace PhlyRestfully\View;
 use PhlyRestfully\ApiProblem;
 use PhlyRestfully\HalCollection;
 use PhlyRestfully\HalResource;
+use PhlyRestfully\Plugin\HalLinks;
 use Zend\Paginator\Paginator;
 use Zend\Stdlib\Hydrator\HydratorInterface;
 use Zend\View\HelperPluginManager;
@@ -439,7 +440,7 @@ class RestfulJsonRenderer extends JsonRenderer
      */
     protected function injectHalLinksHelper(HelperPluginManager $helpers)
     {
-        $helper = new Helper\HalLinks();
+        $helper = new HalLinks();
         $helper->setView($this);
         $helper->setServerUrlHelper($helpers->get('ServerUrl'));
         $helper->setUrlHelper($helpers->get('Url'));

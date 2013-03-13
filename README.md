@@ -261,6 +261,39 @@ This will work in collections as well.
 I recommend converting embedded resources to `HalResource` instances either
 during hydration, or as part of your `Resource` listener's mapping logic.
 
+Hydrators
+---------
+
+You can specify hydrators to use with the objects you return from your resources
+by attaching them to the `PhlyRestfully\JsonRenderer` service. This can be done
+most easily via configuration, and you can specify both a map of class/hydrator
+service pairs as well as a default hydrator to use as a fallback. As an example,
+consider the following `config/autoload/phlyrestfully.global.config.php` file:
+
+```php
+return array(
+    'phlyrestfully' => array(
+        'renderer' => array(
+            'default_hydrator' => 'Hydrator\ArraySerializable',
+            'hydrators' => array(
+                'My\Resources\Foo' => 'Hydrator\ObjectProperty',
+                'My\Resources\Bar' => 'Hydrator\Reflection',
+            ),
+        ),
+    ),
+    'service_manager' => array('invokables' => array(
+        'Hydrator\ArraySerializable' => 'Zend\Stdlib\Hydrator\ArraySerializable',
+        'Hydrator\ObjectProperty'    => 'Zend\Stdlib\Hydrator\ObjectProperty',
+        'Hydrator\Reflection'        => 'Zend\Stdlib\Hydrator\Reflection',
+    ));
+);
+```
+
+The above specifies 'Zend\Stdlib\Hydrator\ArraySerializable' as the default
+hydrator, and maps the `ObjecProperty` hydrator to the `Foo` resource, and the
+`Reflection` hydrator to the `Bar` resource. Note that you need to define
+invokable services for the hydrators; otherwise, the service manager will be
+unable to resolve the hydrator services, and will not map any it cannot resolve.
 
 Upgrading
 =========
