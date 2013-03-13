@@ -474,4 +474,17 @@ class ResourceControllerTest extends TestCase
         $this->assertEquals('resources', $result->collectionName);
     }
 
+    public function testAllowsInjectingContentTypesForRequestMarshalling()
+    {
+        $types = array(
+            ResourceController::CONTENT_TYPE_JSON => array(
+                'application/api-problem+json',
+                'text/json',
+            ),
+        );
+        $controller = new ResourceController();
+        $controller->setContentTypes($types);
+
+        $this->assertAttributeEquals($types, 'contentTypes', $controller);
+    }
 }
