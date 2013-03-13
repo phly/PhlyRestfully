@@ -157,6 +157,16 @@ class ResourceController extends AbstractRestfulController
     }
 
     /**
+     * Set the allowed content types for the resource (collection)
+     *
+     * @param  array $contentTypes
+     */
+    public function setContentTypes(array $contentTypes)
+    {
+        $this->contentTypes = $contentTypes;
+    }
+
+    /**
      * Set the default page size for paginated responses
      *
      * @param  int
