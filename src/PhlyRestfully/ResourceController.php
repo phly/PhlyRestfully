@@ -279,21 +279,25 @@ class ResourceController extends AbstractRestfulController
             return new ApiProblem($code, $e);
         }
 
-        $id = $this->getIdentifierFromResource($resource);
-        if (!$id) {
-            return new ApiProblem(
-                422,
-                'No resource identifier present following resource creation.'
-            );
+        if (!$resource instanceof HalResource) {
+            $id = $this->getIdentifierFromResource($resource);
+            if (!$id) {
+                return new ApiProblem(
+                    422,
+                    'No resource identifier present following resource creation.'
+                );
+            }
+            $resource = new HalResource($resource, $id);
         }
 
+        $resource->route = $this->route;
         $response->setStatusCode(201);
         $response->getHeaders()->addHeaderLine(
             'Location',
-            $this->halLinks()->createLink($this->route, $id, $resource)
+            $this->halLinks()->createLink($this->route, $resource->id, $resource->resource)
         );
 
-        return new HalResource($resource, $id, $this->route);
+        return $resource;
     }
 
     /**
