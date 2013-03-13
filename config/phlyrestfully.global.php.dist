@@ -20,7 +20,7 @@ $config = array(
          */
         // 'hydrators' => array(
         //     'Some\Class\Name' => 'Some\Hydrator\Service',
-        // )
+        // ),
     ),
 );
 
