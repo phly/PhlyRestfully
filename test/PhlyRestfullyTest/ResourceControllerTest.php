@@ -9,6 +9,8 @@
 namespace PhlyRestfullyTest;
 
 use PhlyRestfully\Exception;
+use PhlyRestfully\HalCollection;
+use PhlyRestfully\HalResource;
 use PhlyRestfully\Plugin;
 use PhlyRestfully\Resource;
 use PhlyRestfully\ResourceController;
@@ -486,5 +488,75 @@ class ResourceControllerTest extends TestCase
         $controller->setContentTypes($types);
 
         $this->assertAttributeEquals($types, 'contentTypes', $controller);
+    }
+
+    public function testCreateUsesHalResourceReturnedByResource()
+    {
+        $data     = array('id' => 'foo', 'data' => 'bar');
+        $resource = new HalResource($data, 'foo', 'resource');
+        $this->resource->getEventManager()->attach('create', function ($e) use ($resource) {
+            return $resource;
+        });
+
+        $result = $this->controller->create($data);
+        $this->assertSame($resource, $result);
+    }
+
+    public function testGetUsesHalResourceReturnedByResource()
+    {
+        $data     = array('id' => 'foo', 'data' => 'bar');
+        $resource = new HalResource($data, 'foo', 'resource');
+        $this->resource->getEventManager()->attach('fetch', function ($e) use ($resource) {
+            return $resource;
+        });
+
+        $result = $this->controller->get('foo');
+        $this->assertSame($resource, $result);
+    }
+
+    public function testGetListUsesHalCollectionReturnedByResource()
+    {
+        $collection = new HalCollection(array());
+        $this->resource->getEventManager()->attach('fetchAll', function ($e) use ($collection) {
+            return $collection;
+        });
+
+        $result = $this->controller->getList();
+        $this->assertSame($collection, $result);
+    }
+
+    public function testPatchUsesHalResourceReturnedByResource()
+    {
+        $data     = array('id' => 'foo', 'data' => 'bar');
+        $resource = new HalResource($data, 'foo', 'resource');
+        $this->resource->getEventManager()->attach('patch', function ($e) use ($resource) {
+            return $resource;
+        });
+
+        $result = $this->controller->patch('foo', $data);
+        $this->assertSame($resource, $result);
+    }
+
+    public function testUpdateUsesHalResourceReturnedByResource()
+    {
+        $data     = array('id' => 'foo', 'data' => 'bar');
+        $resource = new HalResource($data, 'foo', 'resource');
+        $this->resource->getEventManager()->attach('update', function ($e) use ($resource) {
+            return $resource;
+        });
+
+        $result = $this->controller->update('foo', $data);
+        $this->assertSame($resource, $result);
+    }
+
+    public function testReplaceListUsesHalCollectionReturnedByResource()
+    {
+        $collection = new HalCollection(array());
+        $this->resource->getEventManager()->attach('replaceList', function ($e) use ($collection) {
+            return $collection;
+        });
+
+        $result = $this->controller->replaceList(array());
+        $this->assertSame($collection, $result);
     }
 }

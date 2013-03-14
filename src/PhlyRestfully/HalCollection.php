@@ -64,15 +64,23 @@ class HalCollection
      * @param  string $resourceRoute
      * @throws Exception\InvalidCollectionException
      */
-    public function __construct($collection, $collectionRoute, $resourceRoute)
+    public function __construct($collection, $collectionRoute = null, $resourceRoute = null)
     {
         if (!is_array($collection) && !$collection instanceof Traversable) {
-            throw new Exception\InvalidCollectionException();
+            throw new Exception\InvalidCollectionException(sprintf(
+                '%s expects an array or Traversable; received "%s"',
+                __METHOD__,
+                (is_object($collection) ? get_class($collection) : gettype($collection))
+            ));
         }
 
-        $this->collection      = $collection;
-        $this->collectionRoute = (string) $collectionRoute;
-        $this->resourceRoute   = (string) $resourceRoute;
+        $this->collection = $collection;
+        if (null !== $collectionRoute) {
+            $this->setCollectionRoute($collectionRoute);
+        }
+        if (null !== $resourceRoute) {
+            $this->setResourceRoute($resourceRoute);
+        }
     }
 
     /**
@@ -132,6 +140,18 @@ class HalCollection
     }
 
     /**
+     * Set the collection route
+     *
+     * @param  string $route
+     * @return HalCollection
+     */
+    public function setCollectionRoute($route)
+    {
+        $this->collectionRoute = (string) $route;
+        return $this;
+    }
+
+    /**
      * Set current page
      *
      * @param  int $page
@@ -184,6 +204,18 @@ class HalCollection
         }
 
         $this->pageSize = $size;
+        return $this;
+    }
+
+    /**
+     * Set the resource route
+     *
+     * @param  string $route
+     * @return HalCollection
+     */
+    public function setResourceRoute($route)
+    {
+        $this->resourceRoute = (string) $route;
         return $this;
     }
 }

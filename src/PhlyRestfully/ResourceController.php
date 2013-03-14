@@ -279,21 +279,25 @@ class ResourceController extends AbstractRestfulController
             return new ApiProblem($code, $e);
         }
 
-        $id = $this->getIdentifierFromResource($resource);
-        if (!$id) {
-            return new ApiProblem(
-                422,
-                'No resource identifier present following resource creation.'
-            );
+        if (!$resource instanceof HalResource) {
+            $id = $this->getIdentifierFromResource($resource);
+            if (!$id) {
+                return new ApiProblem(
+                    422,
+                    'No resource identifier present following resource creation.'
+                );
+            }
+            $resource = new HalResource($resource, $id);
         }
 
+        $resource->route = $this->route;
         $response->setStatusCode(201);
         $response->getHeaders()->addHeaderLine(
             'Location',
-            $this->halLinks()->createLink($this->route, $id, $resource)
+            $this->halLinks()->createLink($this->route, $resource->id, $resource->resource)
         );
 
-        return new HalResource($resource, $id, $this->route);
+        return $resource;
     }
 
     /**
@@ -352,7 +356,12 @@ class ResourceController extends AbstractRestfulController
             return new ApiProblem(404, 'Resource not found.');
         }
 
-        return new HalResource($resource, $id, $this->route);
+        if (!$resource instanceof HalResource) {
+            $resource = new HalResource($resource, $id);
+        }
+
+        $resource->route = $this->route;
+        return $resource;
     }
 
     /**
@@ -366,10 +375,14 @@ class ResourceController extends AbstractRestfulController
             return $this->createMethodNotAllowedResponse($this->collectionHttpOptions);
         }
 
-        $response = $this->getResponse();
-        $items    = $this->resource->fetchAll();
+        $response   = $this->getResponse();
+        $collection = $this->resource->fetchAll();
 
-        $collection = new HalCollection($items, $this->route, $this->route);
+        if (!$collection instanceof HalCollection) {
+            $collection = new HalCollection($collection);
+        }
+        $collection->setCollectionRoute($this->route);
+        $collection->setResourceRoute($this->route);
         $collection->setPage($this->getRequest()->getQuery('page', 1));
         $collection->setPageSize($this->pageSize);
         $collection->setCollectionName($this->collectionName);
@@ -440,7 +453,12 @@ class ResourceController extends AbstractRestfulController
             return new ApiProblem($code, $e);
         }
 
-        return new HalResource($resource, $id, $this->route);
+        if (!$resource instanceof HalResource) {
+            $resource = new HalResource($resource, $id);
+        }
+
+        $resource->route = $this->route;
+        return $resource;
     }
 
     /**
@@ -466,7 +484,12 @@ class ResourceController extends AbstractRestfulController
             return new ApiProblem($code, $e);
         }
 
-        return new HalResource($resource, $id, $this->route);
+        if (!$resource instanceof HalResource) {
+            $resource = new HalResource($resource, $id);
+        }
+
+        $resource->route = $this->route;
+        return $resource;
     }
 
     /**
@@ -482,13 +505,17 @@ class ResourceController extends AbstractRestfulController
         }
 
         try {
-            $items = $this->resource->replaceList($data);
+            $collection = $this->resource->replaceList($data);
         } catch (Exception\UpdateException $e) {
             $code = $e->getCode() ?: 500;
             return new ApiProblem($code, $e);
         }
 
-        $collection = new HalCollection($items, $this->route, $this->route);
+        if (!$collection instanceof HalCollection) {
+            $collection = new HalCollection($collection);
+        }
+        $collection->setCollectionRoute($this->route);
+        $collection->setResourceRoute($this->route);
         $collection->setPage($this->getRequest()->getQuery('page', 1));
         $collection->setPageSize($this->pageSize);
         $collection->setCollectionName($this->collectionName);

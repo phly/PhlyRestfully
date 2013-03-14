@@ -25,7 +25,7 @@ class HalResource
      * @param  array $routeParams
      * @throws Exception\InvalidResourceException if resource is not an object or array
      */
-    public function __construct($resource, $id, $route, array $routeParams = array())
+    public function __construct($resource, $id, $route = null, array $routeParams = array())
     {
         if (!is_object($resource) && !is_array($resource)) {
             throw new Exception\InvalidResourceException();
@@ -61,5 +61,24 @@ class HalResource
         }
         $prop = $names[$name];
         return $this->{$prop};
+    }
+
+    public function __set($name, $value)
+    {
+        $names = array(
+            'route'        => 'route',
+            'routeparams'  => 'routeParams',
+            'route_params' => 'routeParams',
+        );
+        $name = strtolower($name);
+        if (!in_array($name, array_keys($names))) {
+            throw new Exception\InvalidArgumentException(sprintf(
+                'Cannot set property name "%s"',
+                $name
+            ));
+        }
+        $prop = $names[$name];
+        $this->{$prop} = $value;
+        return true;
     }
 }
