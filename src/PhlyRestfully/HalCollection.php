@@ -67,7 +67,11 @@ class HalCollection
     public function __construct($collection, $collectionRoute = null, $resourceRoute = null)
     {
         if (!is_array($collection) && !$collection instanceof Traversable) {
-            throw new Exception\InvalidCollectionException();
+            throw new Exception\InvalidCollectionException(sprintf(
+                '%s expects an array or Traversable; received "%s"',
+                __METHOD__,
+                (is_object($collection) ? get_class($collection) : gettype($collection))
+            ));
         }
 
         $this->collection = $collection;

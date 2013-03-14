@@ -524,4 +524,39 @@ class ResourceControllerTest extends TestCase
         $result = $this->controller->getList();
         $this->assertSame($collection, $result);
     }
+
+    public function testPatchUsesHalResourceReturnedByResource()
+    {
+        $data     = array('id' => 'foo', 'data' => 'bar');
+        $resource = new HalResource($data, 'foo', 'resource');
+        $this->resource->getEventManager()->attach('patch', function ($e) use ($resource) {
+            return $resource;
+        });
+
+        $result = $this->controller->patch('foo', $data);
+        $this->assertSame($resource, $result);
+    }
+
+    public function testUpdateUsesHalResourceReturnedByResource()
+    {
+        $data     = array('id' => 'foo', 'data' => 'bar');
+        $resource = new HalResource($data, 'foo', 'resource');
+        $this->resource->getEventManager()->attach('update', function ($e) use ($resource) {
+            return $resource;
+        });
+
+        $result = $this->controller->update('foo', $data);
+        $this->assertSame($resource, $result);
+    }
+
+    public function testReplaceListUsesHalCollectionReturnedByResource()
+    {
+        $collection = new HalCollection(array());
+        $this->resource->getEventManager()->attach('replaceList', function ($e) use ($collection) {
+            return $collection;
+        });
+
+        $result = $this->controller->replaceList(array());
+        $this->assertSame($collection, $result);
+    }
 }
