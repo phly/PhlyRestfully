@@ -321,12 +321,18 @@ class ResourceController extends AbstractRestfulController
             return $this->createMethodNotAllowedResponse($this->collectionHttpOptions);
         }
 
+        $events = $this->getEventManager();
+        $events->trigger('delete.pre', $this, array('id' => $id));
+
         if (!$this->resource->delete($id)) {
             return new ApiProblem(422, 'Unable to delete resource.');
         }
 
         $response = $this->getResponse();
         $response->setStatusCode(204);
+
+        $events->trigger('delete.post', $this, array('id' => $id));
+
         return $response;
     }
 

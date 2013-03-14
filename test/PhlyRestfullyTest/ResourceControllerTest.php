@@ -561,8 +561,6 @@ class ResourceControllerTest extends TestCase
     }
 
     /**
-     * create
-     * delete
      * deleteList
      * get
      * getList
@@ -605,5 +603,34 @@ class ResourceControllerTest extends TestCase
         $this->assertTrue($test->post);
         $this->assertEquals($data, $test->post_data);
         $this->assertSame($resource, $test->resource);
+    }
+
+    public function testDeleteTriggersPreAndPostEvents()
+    {
+        $test = (object) array(
+            'pre'       => false,
+            'pre_id'  => false,
+            'post'      => false,
+            'post_id' => false,
+        );
+
+        $this->controller->getEventManager()->attach('delete.pre', function ($e) use ($test) {
+            $test->pre      = true;
+            $test->pre_id = $e->getParam('id');
+        });
+        $this->controller->getEventManager()->attach('delete.post', function ($e) use ($test) {
+            $test->post = true;
+            $test->post_id = $e->getParam('id');
+        });
+
+        $this->resource->getEventManager()->attach('delete', function ($e) {
+            return true;
+        });
+
+        $result = $this->controller->delete('foo');
+        $this->assertTrue($test->pre);
+        $this->assertEquals('foo', $test->pre_id);
+        $this->assertTrue($test->post);
+        $this->assertEquals('foo', $test->post_id);
     }
 }
