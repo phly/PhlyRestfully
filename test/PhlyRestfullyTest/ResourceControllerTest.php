@@ -559,4 +559,51 @@ class ResourceControllerTest extends TestCase
         $result = $this->controller->replaceList(array());
         $this->assertSame($collection, $result);
     }
+
+    /**
+     * create
+     * delete
+     * deleteList
+     * get
+     * getList
+     * head (?)
+     * options (?)
+     * patch
+     * update
+     * replaceList
+     */
+
+    public function testCreateTriggersPreAndPostEvents()
+    {
+        $test = (object) array(
+            'pre'       => false,
+            'pre_data'  => false,
+            'post'      => false,
+            'post_data' => false,
+            'resource'  => false,
+        );
+
+        $this->controller->getEventManager()->attach('create.pre', function ($e) use ($test) {
+            $test->pre      = true;
+            $test->pre_data = $e->getParam('data');
+        });
+        $this->controller->getEventManager()->attach('create.post', function ($e) use ($test) {
+            $test->post = true;
+            $test->post_data = $e->getParam('data');
+            $test->resource = $e->getParam('resource');
+        });
+
+        $data     = array('id' => 'foo', 'data' => 'bar');
+        $resource = new HalResource($data, 'foo', 'resource');
+        $this->resource->getEventManager()->attach('create', function ($e) use ($resource) {
+            return $resource;
+        });
+
+        $result = $this->controller->create($data);
+        $this->assertTrue($test->pre);
+        $this->assertEquals($data, $test->pre_data);
+        $this->assertTrue($test->post);
+        $this->assertEquals($data, $test->post_data);
+        $this->assertSame($resource, $test->resource);
+    }
 }

@@ -271,7 +271,9 @@ class ResourceController extends AbstractRestfulController
             return $this->createMethodNotAllowedResponse($this->collectionHttpOptions);
         }
 
-        $response = $this->getResponse();
+        $events = $this->getEventManager();
+        $events->trigger('create.pre', $this, array('data' => $data));
+
         try {
             $resource = $this->resource->create($data);
         } catch (Exception\CreationException $e) {
@@ -291,11 +293,15 @@ class ResourceController extends AbstractRestfulController
         }
 
         $resource->route = $this->route;
+
+        $response = $this->getResponse();
         $response->setStatusCode(201);
         $response->getHeaders()->addHeaderLine(
             'Location',
             $this->halLinks()->createLink($this->route, $resource->id, $resource->resource)
         );
+
+        $events->trigger('create.post', $this, array('data' => $data, 'resource' => $resource));
 
         return $resource;
     }
