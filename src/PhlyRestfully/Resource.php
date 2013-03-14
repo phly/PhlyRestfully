@@ -310,7 +310,10 @@ class Resource implements ResourceInterface
         }
         $results = $events->trigger(__FUNCTION__, $this, $params);
         $last    = $results->last();
-        if (!is_array($last) && !$last instanceof Traversable) {
+        if (!is_array($last) 
+            && !$last instanceof HalCollection
+            && !$last instanceof Traversable
+        ) {
             return array();
         }
         return $last;

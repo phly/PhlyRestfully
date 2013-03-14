@@ -9,6 +9,7 @@
 namespace PhlyRestfullyTest;
 
 use PhlyRestfully\Exception;
+use PhlyRestfully\HalCollection;
 use PhlyRestfully\HalResource;
 use PhlyRestfully\Plugin;
 use PhlyRestfully\Resource;
@@ -499,5 +500,28 @@ class ResourceControllerTest extends TestCase
 
         $result = $this->controller->create($data);
         $this->assertSame($resource, $result);
+    }
+
+    public function testGetUsesHalResourceReturnedByResource()
+    {
+        $data     = array('id' => 'foo', 'data' => 'bar');
+        $resource = new HalResource($data, 'foo', 'resource');
+        $this->resource->getEventManager()->attach('fetch', function ($e) use ($resource) {
+            return $resource;
+        });
+
+        $result = $this->controller->get('foo');
+        $this->assertSame($resource, $result);
+    }
+
+    public function testGetListUsesHalCollectionReturnedByResource()
+    {
+        $collection = new HalCollection(array());
+        $this->resource->getEventManager()->attach('fetchAll', function ($e) use ($collection) {
+            return $collection;
+        });
+
+        $result = $this->controller->getList();
+        $this->assertSame($collection, $result);
     }
 }
