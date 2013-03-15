@@ -560,12 +560,6 @@ class ResourceControllerTest extends TestCase
         $this->assertSame($collection, $result);
     }
 
-    /**
-     * head (?)
-     * options (?)
-     * replaceList
-     */
-
     public function testCreateTriggersPreAndPostEvents()
     {
         $test = (object) array(
@@ -791,6 +785,40 @@ class ResourceControllerTest extends TestCase
         $this->assertEquals('foo', $test->post_id);
         $this->assertEquals($data, $test->post_data);
         $this->assertSame($resource, $test->resource);
+    }
+
+    public function testReplaceListTriggersPreAndPostEvents()
+    {
+        $test = (object) array(
+            'pre'        => false,
+            'pre_data'   => false,
+            'post'       => false,
+            'post_data'  => false,
+            'collection' => false,
+        );
+
+        $this->controller->getEventManager()->attach('replaceList.pre', function ($e) use ($test) {
+            $test->pre      = true;
+            $test->pre_data = $e->getParam('data');
+        });
+        $this->controller->getEventManager()->attach('replaceList.post', function ($e) use ($test) {
+            $test->post = true;
+            $test->post_data = $e->getParam('data');
+            $test->collection = $e->getParam('collection');
+        });
+
+        $data       = array('foo' => array('id' => 'bar'));
+        $collection = new HalCollection($data);
+        $this->resource->getEventManager()->attach('replaceList', function ($e) use ($collection) {
+            return $collection;
+        });
+
+        $result = $this->controller->replaceList($data);
+        $this->assertTrue($test->pre);
+        $this->assertEquals($data, $test->pre_data);
+        $this->assertTrue($test->post);
+        $this->assertEquals($data, $test->post_data);
+        $this->assertSame($collection, $test->collection);
     }
 
 }

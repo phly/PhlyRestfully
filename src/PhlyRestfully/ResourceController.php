@@ -540,6 +540,9 @@ class ResourceController extends AbstractRestfulController
             return $this->createMethodNotAllowedResponse($this->collectionHttpOptions);
         }
 
+        $events = $this->getEventManager();
+        $events->trigger('replaceList.pre', $this, array('data' => $data));
+
         try {
             $collection = $this->resource->replaceList($data);
         } catch (Exception\UpdateException $e) {
@@ -555,6 +558,8 @@ class ResourceController extends AbstractRestfulController
         $collection->setPage($this->getRequest()->getQuery('page', 1));
         $collection->setPageSize($this->pageSize);
         $collection->setCollectionName($this->collectionName);
+
+        $events->trigger('replaceList.post', $this, array('data' => $data, 'collection' => $collection));
         return $collection;
     }
 
