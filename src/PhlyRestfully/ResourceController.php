@@ -369,6 +369,9 @@ class ResourceController extends AbstractRestfulController
             return $this->createMethodNotAllowedResponse($this->resourceHttpOptions);
         }
 
+        $events = $this->getEventManager();
+        $events->trigger('get.pre', $this, array('id' => $id));
+
         $resource = $this->resource->fetch($id);
         if (!$resource) {
             return new ApiProblem(404, 'Resource not found.');
@@ -379,6 +382,7 @@ class ResourceController extends AbstractRestfulController
         }
 
         $resource->route = $this->route;
+        $events->trigger('get.post', $this, array('id' => $id, 'resource' => $resource));
         return $resource;
     }
 

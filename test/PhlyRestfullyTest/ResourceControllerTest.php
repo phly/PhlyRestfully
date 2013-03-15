@@ -561,7 +561,6 @@ class ResourceControllerTest extends TestCase
     }
 
     /**
-     * get
      * getList
      * head (?)
      * options (?)
@@ -655,4 +654,39 @@ class ResourceControllerTest extends TestCase
         $this->assertTrue($test->pre);
         $this->assertTrue($test->post);
     }
+
+    public function testGetTriggersPreAndPostEvents()
+    {
+        $test = (object) array(
+            'pre'       => false,
+            'pre_id'    => false,
+            'post'      => false,
+            'post_id'   => false,
+            'resource'  => false,
+        );
+
+        $this->controller->getEventManager()->attach('get.pre', function ($e) use ($test) {
+            $test->pre    = true;
+            $test->pre_id = $e->getParam('id');
+        });
+        $this->controller->getEventManager()->attach('get.post', function ($e) use ($test) {
+            $test->post = true;
+            $test->post_id = $e->getParam('id');
+            $test->resource = $e->getParam('resource');
+        });
+
+        $data     = array('id' => 'foo', 'data' => 'bar');
+        $resource = new HalResource($data, 'foo', 'resource');
+        $this->resource->getEventManager()->attach('fetch', function ($e) use ($resource) {
+            return $resource;
+        });
+
+        $result = $this->controller->get('foo');
+        $this->assertTrue($test->pre);
+        $this->assertEquals('foo', $test->pre_id);
+        $this->assertTrue($test->post);
+        $this->assertEquals('foo', $test->post_id);
+        $this->assertSame($resource, $test->resource);
+    }
+
 }
