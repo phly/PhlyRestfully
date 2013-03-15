@@ -563,7 +563,6 @@ class ResourceControllerTest extends TestCase
     /**
      * head (?)
      * options (?)
-     * update
      * replaceList
      */
 
@@ -754,5 +753,44 @@ class ResourceControllerTest extends TestCase
         $this->assertSame($resource, $test->resource);
     }
 
+    public function testUpdateTriggersPreAndPostEvents()
+    {
+        $test = (object) array(
+            'pre'       => false,
+            'pre_id'    => false,
+            'pre_data'  => false,
+            'post'      => false,
+            'post_id'   => false,
+            'post_data' => false,
+            'resource'  => false,
+        );
+
+        $this->controller->getEventManager()->attach('update.pre', function ($e) use ($test) {
+            $test->pre      = true;
+            $test->pre_id   = $e->getParam('id');
+            $test->pre_data = $e->getParam('data');
+        });
+        $this->controller->getEventManager()->attach('update.post', function ($e) use ($test) {
+            $test->post = true;
+            $test->post_id   = $e->getParam('id');
+            $test->post_data = $e->getParam('data');
+            $test->resource  = $e->getParam('resource');
+        });
+
+        $data     = array('id' => 'foo', 'data' => 'bar');
+        $resource = new HalResource($data, 'foo', 'resource');
+        $this->resource->getEventManager()->attach('update', function ($e) use ($resource) {
+            return $resource;
+        });
+
+        $result = $this->controller->update('foo', $data);
+        $this->assertTrue($test->pre);
+        $this->assertEquals('foo', $test->pre_id);
+        $this->assertEquals($data, $test->pre_data);
+        $this->assertTrue($test->post);
+        $this->assertEquals('foo', $test->post_id);
+        $this->assertEquals($data, $test->post_data);
+        $this->assertSame($resource, $test->resource);
+    }
 
 }

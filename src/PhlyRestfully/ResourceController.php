@@ -508,6 +508,9 @@ class ResourceController extends AbstractRestfulController
             return $this->createMethodNotAllowedResponse($this->collectionHttpOptions);
         }
 
+        $events = $this->getEventManager();
+        $events->trigger('update.pre', $this, array('id' => $id, 'data' => $data));
+
         try {
             $resource = $this->resource->update($id, $data);
         } catch (Exception\UpdateException $e) {
@@ -520,6 +523,8 @@ class ResourceController extends AbstractRestfulController
         }
 
         $resource->route = $this->route;
+
+        $events->trigger('update.post', $this, array('id' => $id, 'data' => $data, 'resource' => $resource));
         return $resource;
     }
 
