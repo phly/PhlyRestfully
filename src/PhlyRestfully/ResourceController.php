@@ -472,6 +472,9 @@ class ResourceController extends AbstractRestfulController
             return $this->createMethodNotAllowedResponse($this->resourceHttpOptions);
         }
 
+        $events = $this->getEventManager();
+        $events->trigger('patch.pre', $this, array('id' => $id, 'data' => $data));
+
         try {
             $resource = $this->resource->patch($id, $data);
         } catch (Exception\PatchException $e) {
@@ -484,6 +487,8 @@ class ResourceController extends AbstractRestfulController
         }
 
         $resource->route = $this->route;
+
+        $events->trigger('patch.post', $this, array('id' => $id, 'data' => $data, 'resource' => $resource));
         return $resource;
     }
 
