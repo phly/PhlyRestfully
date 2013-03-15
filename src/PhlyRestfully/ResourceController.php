@@ -397,7 +397,9 @@ class ResourceController extends AbstractRestfulController
             return $this->createMethodNotAllowedResponse($this->collectionHttpOptions);
         }
 
-        $response   = $this->getResponse();
+        $events = $this->getEventManager();
+        $events->trigger('getList.pre', $this, array());
+
         $collection = $this->resource->fetchAll();
 
         if (!$collection instanceof HalCollection) {
@@ -408,6 +410,8 @@ class ResourceController extends AbstractRestfulController
         $collection->setPage($this->getRequest()->getQuery('page', 1));
         $collection->setPageSize($this->pageSize);
         $collection->setCollectionName($this->collectionName);
+
+        $events->trigger('getList.post', $this, array('collection' => $collection));
         return $collection;
     }
 

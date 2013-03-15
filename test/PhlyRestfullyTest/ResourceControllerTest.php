@@ -561,7 +561,6 @@ class ResourceControllerTest extends TestCase
     }
 
     /**
-     * getList
      * head (?)
      * options (?)
      * patch
@@ -687,6 +686,33 @@ class ResourceControllerTest extends TestCase
         $this->assertTrue($test->post);
         $this->assertEquals('foo', $test->post_id);
         $this->assertSame($resource, $test->resource);
+    }
+
+    public function testGetListTriggersPreAndPostEvents()
+    {
+        $test = (object) array(
+            'pre'        => false,
+            'post'       => false,
+            'collection' => false,
+        );
+
+        $this->controller->getEventManager()->attach('getList.pre', function ($e) use ($test) {
+            $test->pre    = true;
+        });
+        $this->controller->getEventManager()->attach('getList.post', function ($e) use ($test) {
+            $test->post = true;
+            $test->collection = $e->getParam('collection');
+        });
+
+        $collection = new HalCollection(array());
+        $this->resource->getEventManager()->attach('fetchAll', function ($e) use ($collection) {
+            return $collection;
+        });
+
+        $result = $this->controller->getList();
+        $this->assertTrue($test->pre);
+        $this->assertTrue($test->post);
+        $this->assertSame($collection, $test->collection);
     }
 
 }
