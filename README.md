@@ -295,6 +295,50 @@ hydrator, and maps the `ObjecProperty` hydrator to the `Foo` resource, and the
 invokable services for the hydrators; otherwise, the service manager will be
 unable to resolve the hydrator services, and will not map any it cannot resolve.
 
+Controller Events
+-----------------
+
+Each of the various REST endpoint methods - `create()`, `delete()`,
+`deleteList()`, `get()`, `getList()`, `patch()`, `update()`, and `replaceList()`
+\- trigger both a `{methodname}.pre` and a `{methodname}.post` event. The "pre"
+event is executed after validating arguments, and will receive any arguments
+passed to the method; the "post" event occurs right before returning from the
+method, and receives the same arguments, plus the resource or collection, if
+applicable.
+
+These methods are useful in the following scenarios:
+
+- Specifying custom HAL links
+- Aggregating additional request parameters to pass to the resource object
+
+As an example, if you wanted to add a "describedby" HAL link to every resource
+or collection returned, you could do the following:
+
+```php
+$methods = array(
+    'create.post',
+    'get.post',
+    'getList.post',
+    'patch.post',
+    'update.post',
+    'replaceList.post',
+);
+$sharedEvents->attach('My\Namespaced\ResourceController', $methods, function ($e) {
+    $resource = $e->getParam('resource', false);
+    if (!$resource) {
+        $resource = $e->getParam('collection', false);
+    }
+    if (!$resource) {
+        return;
+    }
+
+    $resource->addLink('describedby', array('name' => 'api/docs'));
+});
+```
+
+(Note: the above will not work quite yet, as link aggregation in
+resources/collections is not yet implemented). 
+
 Upgrading
 =========
 

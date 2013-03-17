@@ -271,7 +271,9 @@ class ResourceController extends AbstractRestfulController
             return $this->createMethodNotAllowedResponse($this->collectionHttpOptions);
         }
 
-        $response = $this->getResponse();
+        $events = $this->getEventManager();
+        $events->trigger('create.pre', $this, array('data' => $data));
+
         try {
             $resource = $this->resource->create($data);
         } catch (Exception\CreationException $e) {
@@ -291,11 +293,15 @@ class ResourceController extends AbstractRestfulController
         }
 
         $resource->route = $this->route;
+
+        $response = $this->getResponse();
         $response->setStatusCode(201);
         $response->getHeaders()->addHeaderLine(
             'Location',
             $this->halLinks()->createLink($this->route, $resource->id, $resource->resource)
         );
+
+        $events->trigger('create.post', $this, array('data' => $data, 'resource' => $resource));
 
         return $resource;
     }
@@ -315,12 +321,18 @@ class ResourceController extends AbstractRestfulController
             return $this->createMethodNotAllowedResponse($this->collectionHttpOptions);
         }
 
+        $events = $this->getEventManager();
+        $events->trigger('delete.pre', $this, array('id' => $id));
+
         if (!$this->resource->delete($id)) {
             return new ApiProblem(422, 'Unable to delete resource.');
         }
 
         $response = $this->getResponse();
         $response->setStatusCode(204);
+
+        $events->trigger('delete.post', $this, array('id' => $id));
+
         return $response;
     }
 
@@ -330,12 +342,18 @@ class ResourceController extends AbstractRestfulController
             return $this->createMethodNotAllowedResponse($this->collectionHttpOptions);
         }
 
+        $events = $this->getEventManager();
+        $events->trigger('deleteList.pre', $this, array());
+
         if (!$this->resource->deleteList()) {
             return new ApiProblem(422, 'Unable to delete collection.');
         }
 
         $response = $this->getResponse();
         $response->setStatusCode(204);
+
+        $events->trigger('deleteList.post', $this, array());
+
         return $response;
     }
 
@@ -351,6 +369,9 @@ class ResourceController extends AbstractRestfulController
             return $this->createMethodNotAllowedResponse($this->resourceHttpOptions);
         }
 
+        $events = $this->getEventManager();
+        $events->trigger('get.pre', $this, array('id' => $id));
+
         $resource = $this->resource->fetch($id);
         if (!$resource) {
             return new ApiProblem(404, 'Resource not found.');
@@ -361,6 +382,7 @@ class ResourceController extends AbstractRestfulController
         }
 
         $resource->route = $this->route;
+        $events->trigger('get.post', $this, array('id' => $id, 'resource' => $resource));
         return $resource;
     }
 
@@ -375,7 +397,9 @@ class ResourceController extends AbstractRestfulController
             return $this->createMethodNotAllowedResponse($this->collectionHttpOptions);
         }
 
-        $response   = $this->getResponse();
+        $events = $this->getEventManager();
+        $events->trigger('getList.pre', $this, array());
+
         $collection = $this->resource->fetchAll();
 
         if (!$collection instanceof HalCollection) {
@@ -386,6 +410,8 @@ class ResourceController extends AbstractRestfulController
         $collection->setPage($this->getRequest()->getQuery('page', 1));
         $collection->setPageSize($this->pageSize);
         $collection->setCollectionName($this->collectionName);
+
+        $events->trigger('getList.post', $this, array('collection' => $collection));
         return $collection;
     }
 
@@ -446,6 +472,9 @@ class ResourceController extends AbstractRestfulController
             return $this->createMethodNotAllowedResponse($this->resourceHttpOptions);
         }
 
+        $events = $this->getEventManager();
+        $events->trigger('patch.pre', $this, array('id' => $id, 'data' => $data));
+
         try {
             $resource = $this->resource->patch($id, $data);
         } catch (Exception\PatchException $e) {
@@ -458,6 +487,8 @@ class ResourceController extends AbstractRestfulController
         }
 
         $resource->route = $this->route;
+
+        $events->trigger('patch.post', $this, array('id' => $id, 'data' => $data, 'resource' => $resource));
         return $resource;
     }
 
@@ -477,6 +508,9 @@ class ResourceController extends AbstractRestfulController
             return $this->createMethodNotAllowedResponse($this->collectionHttpOptions);
         }
 
+        $events = $this->getEventManager();
+        $events->trigger('update.pre', $this, array('id' => $id, 'data' => $data));
+
         try {
             $resource = $this->resource->update($id, $data);
         } catch (Exception\UpdateException $e) {
@@ -489,6 +523,8 @@ class ResourceController extends AbstractRestfulController
         }
 
         $resource->route = $this->route;
+
+        $events->trigger('update.post', $this, array('id' => $id, 'data' => $data, 'resource' => $resource));
         return $resource;
     }
 
@@ -503,6 +539,9 @@ class ResourceController extends AbstractRestfulController
         if (!$this->isMethodAllowedForCollection()) {
             return $this->createMethodNotAllowedResponse($this->collectionHttpOptions);
         }
+
+        $events = $this->getEventManager();
+        $events->trigger('replaceList.pre', $this, array('data' => $data));
 
         try {
             $collection = $this->resource->replaceList($data);
@@ -519,6 +558,8 @@ class ResourceController extends AbstractRestfulController
         $collection->setPage($this->getRequest()->getQuery('page', 1));
         $collection->setPageSize($this->pageSize);
         $collection->setCollectionName($this->collectionName);
+
+        $events->trigger('replaceList.post', $this, array('data' => $data, 'collection' => $collection));
         return $collection;
     }
 
