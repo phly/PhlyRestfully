@@ -45,9 +45,9 @@ class Link
 
     /**
      * Create a link relation
-     * 
-     * @todo  filtering and/or validation of relation string 
-     * @param string $relation 
+     *
+     * @todo  filtering and/or validation of relation string
+     * @param string $relation
      */
     public function __construct($relation)
     {
@@ -58,10 +58,10 @@ class Link
      * Set the route to use when generating the relation URI
      *
      * If any params or options are passed, those will be passed to route assembly.
-     * 
-     * @param  string $route 
-     * @param  null|array|Traversable $params 
-     * @param  null|array|Traversable $options 
+     *
+     * @param  string $route
+     * @param  null|array|Traversable $params
+     * @param  null|array|Traversable $options
      * @return self
      */
     public function setRoute($route, $params = null, $options = null)
@@ -85,8 +85,8 @@ class Link
 
     /**
      * Set route assembly options
-     * 
-     * @param  array|Traversable $options 
+     *
+     * @param  array|Traversable $options
      * @return self
      */
     public function setRouteOptions($options)
@@ -109,8 +109,8 @@ class Link
 
     /**
      * Set route assembly parameters/substitutions
-     * 
-     * @param  array|Traversable $params 
+     *
+     * @param  array|Traversable $params
      * @return self
      */
     public function setRouteParams($params)
@@ -133,8 +133,8 @@ class Link
 
     /**
      * Set an explicit URL for the link relation
-     * 
-     * @param  string $url 
+     *
+     * @param  string $url
      * @return self
      */
     public function setUrl($url)
@@ -166,7 +166,7 @@ class Link
 
     /**
      * Retrieve the link relation
-     * 
+     *
      * @return string
      */
     public function getRelation()
@@ -176,7 +176,7 @@ class Link
 
     /**
      * Return the route to be used to generate the link URL, if any
-     * 
+     *
      * @return null|string
      */
     public function getRoute()
@@ -186,7 +186,7 @@ class Link
 
     /**
      * Retrieve route assembly options, if any
-     * 
+     *
      * @return array
      */
     public function getRouteOptions()
@@ -196,7 +196,7 @@ class Link
 
     /**
      * Retrieve route assembly parameters/substitutions, if any
-     * 
+     *
      * @return array
      */
     public function getRouteParams()
@@ -206,7 +206,7 @@ class Link
 
     /**
      * Retrieve the link URL, if set
-     * 
+     *
      * @return null|string
      */
     public function getUrl()
@@ -216,7 +216,7 @@ class Link
 
     /**
      * Is the link relation complete -- do we have either a URL or a route set?
-     * 
+     *
      * @return bool
      */
     public function isComplete()
@@ -226,7 +226,7 @@ class Link
 
     /**
      * Does the link have a route set?
-     * 
+     *
      * @return bool
      */
     public function hasRoute()
@@ -236,7 +236,7 @@ class Link
 
     /**
      * Does the link have a URL set?
-     * 
+     *
      * @return bool
      */
     public function hasUrl()
