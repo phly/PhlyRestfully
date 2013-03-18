@@ -55,6 +55,11 @@ class HalCollection implements LinkCollectionAwareInterface
     protected $pageSize = 30;
 
     /**
+     * @var LinkCollection
+     */
+    protected $resourceLinks;
+
+    /**
      * @var string
      */
     protected $resourceRoute;
@@ -112,6 +117,8 @@ class HalCollection implements LinkCollectionAwareInterface
             'collectionname'         => 'collectionName',
             'collection_name'        => 'collectionName',
             'links'                  => 'links',
+            'resourcelinks'          => 'resourceLinks',
+            'resource_links'         => 'resourceLinks',
             'resourceroute'          => 'resourceRoute',
             'resource_route'         => 'resourceRoute',
             'resourcerouteoptions'   => 'resourceRouteOptions',
@@ -226,6 +233,18 @@ class HalCollection implements LinkCollectionAwareInterface
     }
 
     /**
+     * Set default set of links to use for resources
+     * 
+     * @param  LinkCollection $links 
+     * @return self
+     */
+    public function setResourceLinks(LinkCollection $links)
+    {
+        $this->resourceLinks = $links;
+        return $this;
+    }
+
+    /**
      * Set the resource route
      *
      * @param  string $route
@@ -294,5 +313,15 @@ class HalCollection implements LinkCollectionAwareInterface
             $this->setLinks(new LinkCollection());
         }
         return $this->links;
+    }
+
+    /**
+     * Retrieve default resource links, if any
+     * 
+     * @return null|LinkCollection
+     */
+    public function getResourceLinks()
+    {
+        return $this->resourceLinks;
     }
 }

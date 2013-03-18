@@ -9,6 +9,7 @@
 namespace PhlyRestfullyTest;
 
 use PhlyRestfully\HalCollection;
+use PhlyRestfully\Link;
 use PhlyRestfully\LinkCollection;
 use PHPUnit_Framework_TestCase as TestCase;
 use stdClass;
@@ -116,5 +117,16 @@ class HalCollectionTest extends TestCase
         $links = new LinkCollection();
         $hal->setLinks($links);
         $this->assertSame($links, $hal->getLinks());
+    }
+
+    public function testAllowsSettingAdditionalResourceLinks()
+    {
+        $links = new LinkCollection();
+        $links->add(new Link('describedby'));
+        $links->add(new Link('orders'));
+        $hal   = new HalCollection(array(), 'item/route');
+        $hal->setResourceLinks($links);
+        $this->assertSame($links, $hal->getResourceLinks());
+        $this->assertSame($links, $hal->resourceLinks);
     }
 }
