@@ -292,7 +292,7 @@ class ResourceController extends AbstractRestfulController
             $resource = new HalResource($resource, $id);
         }
 
-        $resource->route = $this->route;
+        $this->injectSelfLink($resource);
 
         $response = $this->getResponse();
         $response->setStatusCode(201);
@@ -381,7 +381,7 @@ class ResourceController extends AbstractRestfulController
             $resource = new HalResource($resource, $id);
         }
 
-        $resource->route = $this->route;
+        $this->injectSelfLink($resource);
         $events->trigger('get.post', $this, array('id' => $id, 'resource' => $resource));
         return $resource;
     }
@@ -405,7 +405,7 @@ class ResourceController extends AbstractRestfulController
         if (!$collection instanceof HalCollection) {
             $collection = new HalCollection($collection);
         }
-        $collection->setCollectionRoute($this->route);
+        $this->injectSelfLink($collection);
         $collection->setResourceRoute($this->route);
         $collection->setPage($this->getRequest()->getQuery('page', 1));
         $collection->setPageSize($this->pageSize);
@@ -486,7 +486,7 @@ class ResourceController extends AbstractRestfulController
             $resource = new HalResource($resource, $id);
         }
 
-        $resource->route = $this->route;
+        $this->injectSelfLink($resource);
 
         $events->trigger('patch.post', $this, array('id' => $id, 'data' => $data, 'resource' => $resource));
         return $resource;
@@ -522,7 +522,7 @@ class ResourceController extends AbstractRestfulController
             $resource = new HalResource($resource, $id);
         }
 
-        $resource->route = $this->route;
+        $this->injectSelfLink($resource);
 
         $events->trigger('update.post', $this, array('id' => $id, 'data' => $data, 'resource' => $resource));
         return $resource;
@@ -553,7 +553,7 @@ class ResourceController extends AbstractRestfulController
         if (!$collection instanceof HalCollection) {
             $collection = new HalCollection($collection);
         }
-        $collection->setCollectionRoute($this->route);
+        $this->injectSelfLink($collection);
         $collection->setResourceRoute($this->route);
         $collection->setPage($this->getRequest()->getQuery('page', 1));
         $collection->setPageSize($this->pageSize);
@@ -646,5 +646,15 @@ class ResourceController extends AbstractRestfulController
         $headers = $response->getHeaders();
         $headers->addHeaderLine('Allow', implode(', ', $options));
         return $response;
+    }
+
+    protected function injectSelfLink(LinkCollectionAwareInterface $resource)
+    {
+        $self = new Link('self');
+        $self->setRoute($this->route);
+        if ($resource instanceof HalResource) {
+            $self->setRouteParams(array('id' => $resource->id));
+        }
+        $resource->getLinks()->add($self);
     }
 }
