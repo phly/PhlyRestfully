@@ -9,6 +9,7 @@
 namespace PhlyRestfully;
 
 use Traversable;
+use Zend\Stdlib\ArrayUtils;
 
 /**
  * Model a collection for use with HAL payloads
@@ -35,19 +36,9 @@ class HalCollection implements LinkCollectionAwareInterface
     protected $collectionName = 'items';
 
     /**
-     * @var string
-     */
-    protected $collectionRoute;
-
-    /**
      * @var LinkCollection
      */
     protected $links;
-
-    /**
-     * @var string
-     */
-    protected $resourceRoute;
 
     /**
      * Current page
@@ -64,12 +55,27 @@ class HalCollection implements LinkCollectionAwareInterface
     protected $pageSize = 30;
 
     /**
+     * @var string
+     */
+    protected $resourceRoute;
+
+    /**
+     * @var array
+     */
+    protected $resourceRouteOptions = array();
+
+    /**
+     * @var array
+     */
+    protected $resourceRouteParams = array();
+
+    /**
      * @param  array|Traversable|\Zend\Paginator\Paginator $collection
      * @param  string $collectionRoute
      * @param  string $resourceRoute
      * @throws Exception\InvalidCollectionException
      */
-    public function __construct($collection, $collectionRoute = null, $resourceRoute = null)
+    public function __construct($collection, $resourceRoute = null, $resourceRouteParams = null, $resourceRouteOptions = null)
     {
         if (!is_array($collection) && !$collection instanceof Traversable) {
             throw new Exception\InvalidCollectionException(sprintf(
@@ -80,11 +86,15 @@ class HalCollection implements LinkCollectionAwareInterface
         }
 
         $this->collection = $collection;
-        if (null !== $collectionRoute) {
-            $this->setCollectionRoute($collectionRoute);
-        }
+
         if (null !== $resourceRoute) {
             $this->setResourceRoute($resourceRoute);
+        }
+        if (null !== $resourceRouteParams) {
+            $this->setResourceRouteParams($resourceRouteParams);
+        }
+        if (null !== $resourceRouteOptions) {
+            $this->setResourceRouteOptions($resourceRouteOptions);
         }
     }
 
@@ -97,17 +107,20 @@ class HalCollection implements LinkCollectionAwareInterface
     public function __get($name)
     {
         $names = array(
-            'attributes'       => 'attributes',
-            'collection'       => 'collection',
-            'collectionname'   => 'collectionName',
-            'collection_name'  => 'collectionName',
-            'collectionroute'  => 'collectionRoute',
-            'collection_route' => 'collectionRoute',
-            'resourceroute'    => 'resourceRoute',
-            'resource_route'   => 'resourceRoute',
-            'page'             => 'page',
-            'pagesize'         => 'pageSize',
-            'page_size'        => 'pageSize',
+            'attributes'             => 'attributes',
+            'collection'             => 'collection',
+            'collectionname'         => 'collectionName',
+            'collection_name'        => 'collectionName',
+            'links'                  => 'links',
+            'resourceroute'          => 'resourceRoute',
+            'resource_route'         => 'resourceRoute',
+            'resourcerouteoptions'   => 'resourceRouteOptions',
+            'resource_route_options' => 'resourceRouteOptions',
+            'resourcerouteparams'    => 'resourceRouteParams',
+            'resource_route_params'  => 'resourceRouteParams',
+            'page'                   => 'page',
+            'pagesize'               => 'pageSize',
+            'page_size'              => 'pageSize',
         );
         $name = strtolower($name);
         if (!in_array($name, array_keys($names))) {
@@ -145,14 +158,14 @@ class HalCollection implements LinkCollectionAwareInterface
     }
 
     /**
-     * Set the collection route
-     *
-     * @param  string $route
-     * @return HalCollection
+     * Set link collection
+     * 
+     * @param  LinkCollection $links 
+     * @return self
      */
-    public function setCollectionRoute($route)
+    public function setLinks(LinkCollection $links)
     {
-        $this->collectionRoute = (string) $route;
+        $this->links = $links;
         return $this;
     }
 
@@ -225,14 +238,48 @@ class HalCollection implements LinkCollectionAwareInterface
     }
 
     /**
-     * Set link collection
-     * 
-     * @param  LinkCollection $links 
-     * @return self
+     * Set options to use with the resource route
+     *
+     * @param  array|Traversable $options
+     * @return HalCollection
+     * @throws Exception\InvalidArgumentException
      */
-    public function setLinks(LinkCollection $links)
+    public function setResourceRouteOptions($options)
     {
-        $this->links = $links;
+        if ($options instanceof Traversable) {
+            $options = ArrayUtils::iteratorToArray($options);
+        }
+        if (!is_array($options)) {
+            throw new Exception\InvalidArgumentException(sprintf(
+                '%s expects an array or Traversable; received "%s"',
+                __METHOD__,
+                (is_object($options) ? get_class($options) : gettype($options))
+            ));
+        }
+        $this->resourceRouteOptions = $options;
+        return $this;
+    }
+
+    /**
+     * Set parameters/substitutions to use with the resource route
+     *
+     * @param  array|Traversable $params
+     * @return HalCollection
+     * @throws Exception\InvalidArgumentException
+     */
+    public function setResourceRouteParams($params)
+    {
+        if ($params instanceof Traversable) {
+            $params = ArrayUtils::iteratorToArray($params);
+        }
+        if (!is_array($params)) {
+            throw new Exception\InvalidArgumentException(sprintf(
+                '%s expects an array or Traversable; received "%s"',
+                __METHOD__,
+                (is_object($params) ? get_class($params) : gettype($params))
+            ));
+        }
+        $this->resourceRouteParams = $params;
         return $this;
     }
 
