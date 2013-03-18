@@ -8,6 +8,8 @@
 
 namespace PhlyRestfullyTest\Plugin;
 
+use PhlyRestfully\HalResource;
+use PhlyRestfully\Link;
 use PhlyRestfully\Plugin\HalLinks;
 use PHPUnit_Framework_TestCase as TestCase;
 use Zend\Mvc\Router\SimpleRouteStack;
@@ -26,6 +28,8 @@ class HalLinksTest extends TestCase
         $this->router = $router = new SimpleRouteStack();
         $route = new Segment('/resource[/[:id]]');
         $router->addRoute('resource', $route);
+        $route2 = new Segment('/help');
+        $router->addRoute('docs', $route2);
         $this->event = $event = new MvcEvent();
         $event->setRouter($router);
 
@@ -57,5 +61,30 @@ class HalLinksTest extends TestCase
     {
         $url = $this->plugin->createLink('resource', 123);
         $this->assertEquals('http://localhost.localdomain/resource/123', $url);
+    }
+
+    public function testLinkCreationFromHalResource()
+    {
+        $self = new Link('self');
+        $self->setRoute('resource', array('id' => 123));
+        $docs = new Link('describedby');
+        $docs->setRoute('docs');
+        $resource = new HalResource(array(), 123);
+        $resource->getLinks()->add($self)->add($docs);
+        $links = $this->plugin->fromResource($resource);
+
+        $this->assertInternalType('array', $links);
+        $this->assertArrayHasKey('self', $links, var_export($links, 1));
+        $this->assertArrayHasKey('describedby', $links, var_export($links, 1));
+
+        $selfLink = $links['self'];
+        $this->assertInternalType('array', $selfLink);
+        $this->assertArrayHasKey('href', $selfLink);
+        $this->assertEquals('http://localhost.localdomain/resource/123', $selfLink['href']);
+
+        $docsLink = $links['describedby'];
+        $this->assertInternalType('array', $docsLink);
+        $this->assertArrayHasKey('href', $docsLink);
+        $this->assertEquals('http://localhost.localdomain/help', $docsLink['href']);
     }
 }

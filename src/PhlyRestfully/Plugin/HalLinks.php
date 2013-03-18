@@ -12,6 +12,8 @@ use ArrayObject;
 use PhlyRestfully\ApiProblem;
 use PhlyRestfully\Exception;
 use PhlyRestfully\HalCollection;
+use PhlyRestfully\Link;
+use PhlyRestfully\LinkCollectionAwareInterface;
 use Zend\EventManager\EventManager;
 use Zend\EventManager\EventManagerAwareInterface;
 use Zend\EventManager\EventManagerInterface;
@@ -162,6 +164,42 @@ class HalLinks extends AbstractHelper implements ControllerPluginInterface
     }
 
     /**
+     * Create HAL links "object" from a resource/collection
+     * 
+     * @param  LinkCollectionAwareInterface $resource 
+     * @return array
+     */
+    public function fromResource(LinkCollectionAwareInterface $resource)
+    {
+        $links = array();
+        foreach($resource->getLinks() as $rel => $linkDefinition) {
+            if ($linkDefinition instanceof Link) {
+                $links[$rel] = $this->fromLink($linkDefinition);
+                continue;
+            }
+            if (!is_array($linkDefinition)) {
+                throw new Exception\DomainException(sprintf(
+                    'Link object for relation "%s" in resource was malformed; cannot generate link',
+                    $rel
+                ));
+            }
+
+            $aggregate = array();
+            foreach ($linkDefinition as $subLink) {
+                if (!$subLink instanceof Link) {
+                    throw new Exception\DomainException(sprintf(
+                        'Link object aggregated for relation "%s" in resource was malformed; cannot generate link',
+                        $rel
+                    ));
+                }
+                $aggregate[] = $this->fromLink($subLink);
+            }
+            $links[$rel] = $aggregate;
+        }
+        return $links;
+    }
+
+    /**
      * Generate a self link for a collection
      *
      * @param  string $route
@@ -230,5 +268,38 @@ class HalLinks extends AbstractHelper implements ControllerPluginInterface
         }
 
         return $links;
+    }
+
+    /**
+     * Create a URL from a Link
+     * 
+     * @param  Link $linkDefinition 
+     * @return string
+     * @throws Exception\DomainException if Link is incomplete
+     */
+    protected function fromLink(Link $linkDefinition)
+    {
+        if (!$linkDefinition->isComplete()) {
+            throw new Exception\DomainException(sprintf(
+                'Link from resource provided to %s was incomplete; must contain a URL or a route',
+                __METHOD__
+            ));
+        }
+
+        if ($linkDefinition->hasUrl()) {
+            return array(
+                'href' => $linkDefinition->getUrl(),
+            );
+        }
+
+        $path = call_user_func(
+            $this->urlHelper,
+            $linkDefinition->getRoute(),
+            $linkDefinition->getRouteParams(),
+            $linkDefinition->getRouteOptions()
+        );
+        return array(
+            'href' => call_user_func($this->serverUrlHelper, $path),
+        );
     }
 }
