@@ -8,9 +8,14 @@
 
 namespace PhlyRestfully;
 
-class HalResource
+class HalResource implements LinkCollectionAwareInterface
 {
     protected $id;
+
+    /**
+     * @var LinkCollection
+     */
+    protected $links;
 
     protected $resource;
 
@@ -80,5 +85,30 @@ class HalResource
         $prop = $names[$name];
         $this->{$prop} = $value;
         return true;
+    }
+
+    /**
+     * Set link collection
+     * 
+     * @param  LinkCollection $links 
+     * @return self
+     */
+    public function setLinks(LinkCollection $links)
+    {
+        $this->links = $links;
+        return $this;
+    }
+
+    /**
+     * Get link collection
+     * 
+     * @return LinkCollection
+     */
+    public function getLinks()
+    {
+        if (!$this->links instanceof LinkCollection) {
+            $this->setLinks(new LinkCollection());
+        }
+        return $this->links;
     }
 }

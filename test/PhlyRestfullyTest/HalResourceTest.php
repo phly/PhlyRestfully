@@ -9,6 +9,7 @@
 namespace PhlyRestfullyTest;
 
 use PhlyRestfully\HalResource;
+use PhlyRestfully\LinkCollection;
 use PHPUnit_Framework_TestCase as TestCase;
 use stdClass;
 
@@ -45,5 +46,19 @@ class HalResourceTest extends TestCase
         $this->assertEquals('id', $hal->id);
         $this->assertEquals('route', $hal->route);
         $this->assertEquals(array('foo' => 'bar'), $hal->routeParams);
+    }
+
+    public function testComposesLinkCollectionByDefault()
+    {
+        $hal  = new HalResource($resource, 'id', 'route', array('foo' => 'bar'));
+        $this->assertInstanceOf('PhlyRestfully\LinkCollection', $hal->getLinks());
+    }
+
+    public function testLinkCollectionMayBeInjected()
+    {
+        $hal  = new HalResource($resource, 'id', 'route', array('foo' => 'bar'));
+        $links = new LinkCollection();
+        $hal->setLinks($links);
+        $this->assertSame($links, $hal->getLinks());
     }
 }

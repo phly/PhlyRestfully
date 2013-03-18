@@ -13,7 +13,7 @@ use Traversable;
 /**
  * Model a collection for use with HAL payloads
  */
-class HalCollection
+class HalCollection implements LinkCollectionAwareInterface
 {
     /**
      * Additional attributes to render with resource
@@ -38,6 +38,11 @@ class HalCollection
      * @var string
      */
     protected $collectionRoute;
+
+    /**
+     * @var LinkCollection
+     */
+    protected $links;
 
     /**
      * @var string
@@ -217,5 +222,30 @@ class HalCollection
     {
         $this->resourceRoute = (string) $route;
         return $this;
+    }
+
+    /**
+     * Set link collection
+     * 
+     * @param  LinkCollection $links 
+     * @return self
+     */
+    public function setLinks(LinkCollection $links)
+    {
+        $this->links = $links;
+        return $this;
+    }
+
+    /**
+     * Get link collection
+     * 
+     * @return LinkCollection
+     */
+    public function getLinks()
+    {
+        if (!$this->links instanceof LinkCollection) {
+            $this->setLinks(new LinkCollection());
+        }
+        return $this->links;
     }
 }
