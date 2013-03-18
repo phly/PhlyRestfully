@@ -19,18 +19,12 @@ class HalResource implements LinkCollectionAwareInterface
 
     protected $resource;
 
-    protected $route;
-
-    protected $routeParams;
-
     /**
      * @param  object|array $resource
      * @param  mixed $id
-     * @param  string $route
-     * @param  array $routeParams
      * @throws Exception\InvalidResourceException if resource is not an object or array
      */
-    public function __construct($resource, $id, $route = null, array $routeParams = array())
+    public function __construct($resource, $id)
     {
         if (!is_object($resource) && !is_array($resource)) {
             throw new Exception\InvalidResourceException();
@@ -38,8 +32,6 @@ class HalResource implements LinkCollectionAwareInterface
 
         $this->resource    = $resource;
         $this->id          = $id;
-        $this->route       = (string) $route;
-        $this->routeParams = $routeParams;
     }
 
     /**
@@ -53,9 +45,6 @@ class HalResource implements LinkCollectionAwareInterface
         $names = array(
             'resource'     => 'resource',
             'id'           => 'id',
-            'route'        => 'route',
-            'routeparams'  => 'routeParams',
-            'route_params' => 'routeParams',
         );
         $name = strtolower($name);
         if (!in_array($name, array_keys($names))) {
@@ -66,25 +55,6 @@ class HalResource implements LinkCollectionAwareInterface
         }
         $prop = $names[$name];
         return $this->{$prop};
-    }
-
-    public function __set($name, $value)
-    {
-        $names = array(
-            'route'        => 'route',
-            'routeparams'  => 'routeParams',
-            'route_params' => 'routeParams',
-        );
-        $name = strtolower($name);
-        if (!in_array($name, array_keys($names))) {
-            throw new Exception\InvalidArgumentException(sprintf(
-                'Cannot set property name "%s"',
-                $name
-            ));
-        }
-        $prop = $names[$name];
-        $this->{$prop} = $value;
-        return true;
     }
 
     /**

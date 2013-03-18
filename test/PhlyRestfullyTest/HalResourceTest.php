@@ -35,17 +35,15 @@ class HalResourceTest extends TestCase
     public function testConstructorRaisesExceptionForNonObjectNonArrayResource($resource)
     {
         $this->setExpectedException('PhlyRestfully\Exception\InvalidResourceException');
-        $hal = new HalResource($resource, 'id', 'route');
+        $hal = new HalResource($resource, 'id');
     }
 
     public function testPropertiesAreAccessibleAfterConstruction()
     {
         $resource = new stdClass;
-        $hal  = new HalResource($resource, 'id', 'route', array('foo' => 'bar'));
+        $hal  = new HalResource($resource, 'id');
         $this->assertSame($resource, $hal->resource);
         $this->assertEquals('id', $hal->id);
-        $this->assertEquals('route', $hal->route);
-        $this->assertEquals(array('foo' => 'bar'), $hal->routeParams);
     }
 
     public function testComposesLinkCollectionByDefault()
