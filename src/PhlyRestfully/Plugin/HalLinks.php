@@ -13,12 +13,14 @@ use PhlyRestfully\ApiProblem;
 use PhlyRestfully\Exception;
 use PhlyRestfully\HalCollection;
 use PhlyRestfully\Link;
+use PhlyRestfully\LinkCollection;
 use PhlyRestfully\LinkCollectionAwareInterface;
 use Zend\EventManager\EventManager;
 use Zend\EventManager\EventManagerAwareInterface;
 use Zend\EventManager\EventManagerInterface;
 use Zend\Mvc\Controller\Plugin\PluginInterface as ControllerPluginInterface;
 use Zend\Paginator\Paginator;
+use Zend\Stdlib\ArrayUtils;
 use Zend\Stdlib\DispatchableInterface;
 use Zend\View\Helper\AbstractHelper;
 use Zend\View\Helper\ServerUrl;
@@ -164,15 +166,15 @@ class HalLinks extends AbstractHelper implements ControllerPluginInterface
     }
 
     /**
-     * Create HAL links "object" from a resource/collection
+     * Generate HAL links from a LinkCollection
      * 
-     * @param  LinkCollectionAwareInterface $resource 
+     * @param  LinkCollection $collection 
      * @return array
      */
-    public function fromResource(LinkCollectionAwareInterface $resource)
+    public function fromLinkCollection(LinkCollection $collection)
     {
         $links = array();
-        foreach($resource->getLinks() as $rel => $linkDefinition) {
+        foreach($collection as $rel => $linkDefinition) {
             if ($linkDefinition instanceof Link) {
                 $links[$rel] = $this->fromLink($linkDefinition);
                 continue;
@@ -197,6 +199,17 @@ class HalLinks extends AbstractHelper implements ControllerPluginInterface
             $links[$rel] = $aggregate;
         }
         return $links;
+    }
+
+    /**
+     * Create HAL links "object" from a resource/collection
+     * 
+     * @param  LinkCollectionAwareInterface $resource 
+     * @return array
+     */
+    public function fromResource(LinkCollectionAwareInterface $resource)
+    {
+        return $this->fromLinkCollection($resource->getLinks());
     }
 
     /**
@@ -231,43 +244,73 @@ class HalLinks extends AbstractHelper implements ControllerPluginInterface
         $page     = $halCollection->page;
         $pageSize = $halCollection->pageSize;
         $route    = $halCollection->collectionRoute;
+        $params   = $halCollection->collectionRouteParams;
+        $options  = $halCollection->collectionRouteOptions;
 
         $collection->setItemCountPerPage($pageSize);
         $collection->setCurrentPageNumber($page);
 
-        $count    = count($collection);
+        $count = count($collection);
         if (!$count) {
-            return $this->forCollection($route);
+            return $this->fromResource($halCollection);
         }
 
         if ($page < 1 || $page > $count) {
             return new ApiProblem(409, 'Invalid page provided');
         }
 
-        $base  = $this->createLink($route);
-        $next  = ($page == $count) ? false : $page + 1;
-        $prev  = ($page == 1) ? false : $page - 1;
-        $links = array(
-            'self'  => $base . ((1 == $page) ? '' : '?page=' . $page),
-        );
-        if ($page != 1) {
-            $links['first'] = $base;
-        }
-        if ($count != 1) {
-            $links['last'] = $base . '?page=' . $count;
-        }
+        $links = $halCollection->getLinks();
+        $next  = ($page < $count) ? $page + 1 : false;
+        $prev  = ($page > 1)      ? $page - 1 : false;
+
+        // self link
+        $link = new Link('self');
+        $link->setRoute($route);
+        $link->setRouteParams($params);
+        $link->setRouteOptions(ArrayUtils::merge($options, array(
+            'query' => array('page' => $page))
+        ));
+        $links->add($link, true);
+
+        // first link
+        $link = new Link('first');
+        $link->setRoute($route);
+        $link->setRouteParams($params);
+        $link->setRouteOptions($options);
+        $links->add($link);
+
+        // last link
+        $link = new Link('last');
+        $link->setRoute($route);
+        $link->setRouteParams($params);
+        $link->setRouteOptions(ArrayUtils::merge($options, array(
+            'query' => array('page' => $count))
+        ));
+        $links->add($link);
+
+        // prev link
         if ($prev) {
-            $links['prev'] = $base . ((1 == $prev) ? '' : '?page=' . $prev);
+            $link = new Link('prev');
+            $link->setRoute($route);
+            $link->setRouteParams($params);
+            $link->setRouteOptions(ArrayUtils::merge($options, array(
+                'query' => array('page' => $prev))
+            ));
+            $links->add($link);
         }
+
+        // next link
         if ($next) {
-            $links['next'] = $base . '?page=' . $next;
+            $link = new Link('next');
+            $link->setRoute($route);
+            $link->setRouteParams($params);
+            $link->setRouteOptions(ArrayUtils::merge($options, array(
+                'query' => array('page' => $next))
+            ));
+            $links->add($link);
         }
 
-        foreach ($links as $index => $link) {
-            $links[$index] = array('href' => $link);
-        }
-
-        return $links;
+        return $this->fromResource($halCollection);
     }
 
     /**

@@ -41,21 +41,23 @@ class HalResourceTest extends TestCase
     public function testPropertiesAreAccessibleAfterConstruction()
     {
         $resource = new stdClass;
-        $hal  = new HalResource($resource, 'id');
+        $hal      = new HalResource($resource, 'id');
         $this->assertSame($resource, $hal->resource);
         $this->assertEquals('id', $hal->id);
     }
 
     public function testComposesLinkCollectionByDefault()
     {
-        $hal  = new HalResource($resource, 'id', 'route', array('foo' => 'bar'));
+        $resource = new stdClass;
+        $hal      = new HalResource($resource, 'id', 'route', array('foo' => 'bar'));
         $this->assertInstanceOf('PhlyRestfully\LinkCollection', $hal->getLinks());
     }
 
     public function testLinkCollectionMayBeInjected()
     {
-        $hal  = new HalResource($resource, 'id', 'route', array('foo' => 'bar'));
-        $links = new LinkCollection();
+        $resource = new stdClass;
+        $hal      = new HalResource($resource, 'id', 'route', array('foo' => 'bar'));
+        $links    = new LinkCollection();
         $hal->setLinks($links);
         $this->assertSame($links, $hal->getLinks());
     }

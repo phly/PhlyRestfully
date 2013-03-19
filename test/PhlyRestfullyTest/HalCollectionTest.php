@@ -42,11 +42,11 @@ class HalCollectionTest extends TestCase
 
     public function testPropertiesAreAccessibleFollowingConstruction()
     {
-        $hal = new HalCollection(array(), 'item/route', array('version' => 1), array('format=json'));
+        $hal = new HalCollection(array(), 'item/route', array('version' => 1), array('query' => 'format=json'));
         $this->assertEquals(array(), $hal->collection);
         $this->assertEquals('item/route', $hal->resourceRoute);
         $this->assertEquals(array('version' => 1), $hal->resourceRouteParams);
-        $this->assertEquals(array('format=json'), $hal->resourceRouteOptions);
+        $this->assertEquals(array('query' => 'format=json'), $hal->resourceRouteOptions);
     }
 
     public function testDefaultPageIsOne()

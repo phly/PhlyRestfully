@@ -11,6 +11,7 @@ namespace PhlyRestfullyTest\View;
 use PhlyRestfully\ApiProblem;
 use PhlyRestfully\HalCollection;
 use PhlyRestfully\HalResource;
+use PhlyRestfully\Link;
 use PhlyRestfully\Plugin\HalLinks;
 use PhlyRestfully\View\RestfulJsonModel;
 use PhlyRestfully\View\RestfulJsonRenderer;
@@ -18,7 +19,7 @@ use PhlyRestfullyTest\TestAsset;
 use PHPUnit_Framework_TestCase as TestCase;
 use ReflectionObject;
 use Zend\Mvc\Router\Http\Segment;
-use Zend\Mvc\Router\SimpleRouteStack;
+use Zend\Mvc\Router\Http\TreeRouteStack;
 use Zend\Paginator\Adapter\ArrayAdapter;
 use Zend\Paginator\Paginator;
 use Zend\Stdlib\Hydrator;
@@ -73,7 +74,7 @@ class RestfulJsonRendererTest extends TestCase
     {
         // need to setup routes
         // need to get a url and serverurl helper that have appropriate injections
-        $this->router = $router = new SimpleRouteStack();
+        $this->router = $router = new TreeRouteStack();
         $this->resourceRoute = new Segment('/resource[/[:id]]');
         $this->router->addRoute('resource', $this->resourceRoute);
 
@@ -98,14 +99,19 @@ class RestfulJsonRendererTest extends TestCase
         $item = new HalResource(array(
             'foo' => 'bar',
             'id'  => 'identifier',
-        ), 'identifier', 'resource');
+        ), 'identifier');
+        $links = $item->getLinks();
+        $self  = new Link('self');
+        $self->setRoute('resource')->setRouteParams(array('id' => 'identifier'));
+        $links->add($self);
+
         $model = new RestfulJsonModel(array('payload' => $item));
         $test  = $this->renderer->render($model);
         $test  = json_decode($test);
 
         $this->assertObjectHasAttribute('_links', $test);
         $links = $test->_links;
-        $this->assertInstanceof('stdClass', $links, var_export($links, 1));
+        $this->assertInstanceof('stdClass', $links, var_export($test, 1));
         $this->assertObjectHasAttribute('self', $links);
         $this->assertObjectHasAttribute('href', $links->self);
         $this->assertEquals('http://localhost.localdomain/resource/identifier', $links->self->href);
@@ -123,6 +129,11 @@ class RestfulJsonRendererTest extends TestCase
         );
 
         $item  = new HalResource($item, 'identifier', 'resource');
+        $links = $item->getLinks();
+        $self  = new Link('self');
+        $self->setRoute('resource')->setRouteParams(array('id' => 'identifier'));
+        $links->add($self);
+
         $model = new RestfulJsonModel(array('payload' => $item));
         $test  = $this->renderer->render($model);
         $test  = json_decode($test);
@@ -147,6 +158,11 @@ class RestfulJsonRendererTest extends TestCase
 
         $item  = new TestAsset\ArraySerializable();
         $item  = new HalResource(new TestAsset\ArraySerializable(), 'identifier', 'resource');
+        $links = $item->getLinks();
+        $self  = new Link('self');
+        $self->setRoute('resource')->setRouteParams(array('id' => 'identifier'));
+        $links->add($self);
+
         $model = new RestfulJsonModel(array('payload' => $item));
         $test  = $this->renderer->render($model);
         $test  = json_decode($test);
@@ -170,6 +186,11 @@ class RestfulJsonRendererTest extends TestCase
 
         $item  = new TestAsset\ArraySerializable();
         $item  = new HalResource(new TestAsset\ArraySerializable(), 'identifier', 'resource');
+        $links = $item->getLinks();
+        $self  = new Link('self');
+        $self->setRoute('resource')->setRouteParams(array('id' => 'identifier'));
+        $links->add($self);
+
         $model = new RestfulJsonModel(array('payload' => $item));
         $test  = $this->renderer->render($model);
         $test  = json_decode($test);
@@ -197,7 +218,14 @@ class RestfulJsonRendererTest extends TestCase
 
         }
 
-        $collection = new HalCollection($items, 'resource', 'resource');
+        $collection = new HalCollection($items);
+        $collection->setCollectionRoute('resource');
+        $collection->setResourceRoute('resource');
+        $links = $collection->getLinks();
+        $self  = new Link('self');
+        $self->setRoute('resource');
+        $links->add($self);
+
         $model      = new RestfulJsonModel(array('payload' => $collection));
         $test       = $this->renderer->render($model);
         $test       = json_decode($test);
@@ -247,9 +275,15 @@ class RestfulJsonRendererTest extends TestCase
         $adapter   = new ArrayAdapter($items);
         $paginator = new Paginator($adapter);
 
-        $collection = new HalCollection($paginator, 'resource', 'resource');
+        $collection = new HalCollection($paginator);
         $collection->setPageSize(5);
         $collection->setPage(3);
+        $collection->setCollectionRoute('resource');
+        $collection->setResourceRoute('resource');
+        $links = $collection->getLinks();
+        $self  = new Link('self');
+        $self->setRoute('resource');
+        $links->add($self);
 
         $model      = new RestfulJsonModel(array('payload' => $collection));
         $test       = $this->renderer->render($model);
@@ -323,7 +357,7 @@ class RestfulJsonRendererTest extends TestCase
         $adapter   = new ArrayAdapter($items);
         $paginator = new Paginator($adapter);
 
-        $collection = new HalCollection($paginator, 'resource', 'resource');
+        $collection = new HalCollection($paginator, 'resource');
         $collection->setPageSize(5);
 
         // Using reflection object so we can force a negative page number if desired
@@ -378,7 +412,7 @@ class RestfulJsonRendererTest extends TestCase
 
         }
 
-        $collection = new HalCollection($items, 'resource', 'resource');
+        $collection = new HalCollection($items, 'resource');
         $collection->setAttributes($attributes);
 
         $model      = new RestfulJsonModel(array('payload' => $collection));
@@ -412,10 +446,16 @@ class RestfulJsonRendererTest extends TestCase
         $adapter   = new ArrayAdapter($items);
         $paginator = new Paginator($adapter);
 
-        $collection = new HalCollection($paginator, 'resource', 'resource');
+        $collection = new HalCollection($paginator);
         $collection->setPageSize(5);
         $collection->setPage(3);
         $collection->setAttributes($attributes);
+        $collection->setCollectionRoute('resource');
+        $collection->setResourceRoute('resource');
+        $links = $collection->getLinks();
+        $self  = new Link('self');
+        $self->setRoute('resource');
+        $links->add($self);
 
         $model      = new RestfulJsonModel(array('payload' => $collection));
         $test       = $this->renderer->render($model);
@@ -438,12 +478,18 @@ class RestfulJsonRendererTest extends TestCase
             'name'   => 'matthew',
             'github' => 'weierophinney',
         ), 'matthew', 'user');
+        $link = new Link('self');
+        $link->setRoute('user')->setRouteParams(array('id' => 'matthew'));
+        $child->getLinks()->add($link);
 
         $item = new HalResource(array(
             'foo'  => 'bar',
             'id'   => 'identifier',
             'user' => $child,
         ), 'identifier', 'resource');
+        $link = new Link('self');
+        $link->setRoute('resource')->setRouteParams(array('id' => 'identifier'));
+        $item->getLinks()->add($link);
 
         $model = new RestfulJsonModel(array('payload' => $item));
         $test  = $this->renderer->render($model);
@@ -476,6 +522,9 @@ class RestfulJsonRendererTest extends TestCase
             'name'   => 'matthew',
             'github' => 'weierophinney',
         ), 'matthew', 'user');
+        $link = new Link('self');
+        $link->setRoute('user')->setRouteParams(array('id' => 'matthew'));
+        $child->getLinks()->add($link);
 
         $prototype = array('foo' => 'bar', 'user' => $child);
         $items = array();
@@ -486,11 +535,17 @@ class RestfulJsonRendererTest extends TestCase
 
         }
 
-        $collection = new HalCollection($items, 'resource', 'resource');
+        $collection = new HalCollection($items);
+        $collection->setCollectionRoute('resource');
+        $collection->setResourceRoute('resource');
+        $links = $collection->getLinks();
+        $self  = new Link('self');
+        $self->setRoute('resource');
+        $links->add($self);
 
-        $model      = new RestfulJsonModel(array('payload' => $collection));
-        $test       = $this->renderer->render($model);
-        $test       = json_decode($test);
+        $model = new RestfulJsonModel(array('payload' => $collection));
+        $test  = $this->renderer->render($model);
+        $test  = json_decode($test);
 
         $this->assertInstanceof('stdClass', $test, var_export($test, 1));
         $collection = $test->_embedded->items;
@@ -522,6 +577,9 @@ class RestfulJsonRendererTest extends TestCase
             'name'   => 'matthew',
             'github' => 'weierophinney',
         ), 'matthew', 'user');
+        $link = new Link('self');
+        $link->setRoute('user')->setRouteParams(array('id' => 'matthew'));
+        $child->getLinks()->add($link);
 
         $prototype = array('foo' => 'bar', 'user' => $child);
         $items = array();
@@ -534,9 +592,15 @@ class RestfulJsonRendererTest extends TestCase
         $adapter   = new ArrayAdapter($items);
         $paginator = new Paginator($adapter);
 
-        $collection = new HalCollection($paginator, 'resource', 'resource');
+        $collection = new HalCollection($paginator);
         $collection->setPageSize(5);
         $collection->setPage(1);
+        $collection->setCollectionRoute('resource');
+        $collection->setResourceRoute('resource');
+        $links = $collection->getLinks();
+        $self  = new Link('self');
+        $self->setRoute('resource');
+        $links->add($self);
 
         $model      = new RestfulJsonModel(array('payload' => $collection));
         $test       = $this->renderer->render($model);

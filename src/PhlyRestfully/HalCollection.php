@@ -36,6 +36,21 @@ class HalCollection implements LinkCollectionAwareInterface
     protected $collectionName = 'items';
 
     /**
+     * @var string
+     */
+    protected $collectionRoute;
+
+    /**
+     * @var array
+     */
+    protected $collectionRouteOptions = array();
+
+    /**
+     * @var array
+     */
+    protected $collectionRouteParams = array();
+
+    /**
      * @var LinkCollection
      */
     protected $links;
@@ -112,22 +127,28 @@ class HalCollection implements LinkCollectionAwareInterface
     public function __get($name)
     {
         $names = array(
-            'attributes'             => 'attributes',
-            'collection'             => 'collection',
-            'collectionname'         => 'collectionName',
-            'collection_name'        => 'collectionName',
-            'links'                  => 'links',
-            'resourcelinks'          => 'resourceLinks',
-            'resource_links'         => 'resourceLinks',
-            'resourceroute'          => 'resourceRoute',
-            'resource_route'         => 'resourceRoute',
-            'resourcerouteoptions'   => 'resourceRouteOptions',
-            'resource_route_options' => 'resourceRouteOptions',
-            'resourcerouteparams'    => 'resourceRouteParams',
-            'resource_route_params'  => 'resourceRouteParams',
-            'page'                   => 'page',
-            'pagesize'               => 'pageSize',
-            'page_size'              => 'pageSize',
+            'attributes'               => 'attributes',
+            'collection'               => 'collection',
+            'collectionname'           => 'collectionName',
+            'collection_name'          => 'collectionName',
+            'collectionroute'          => 'collectionRoute',
+            'collection_route'         => 'collectionRoute',
+            'collectionrouteoptions'   => 'collectionRouteOptions',
+            'collection_route_options' => 'collectionRouteOptions',
+            'collectionrouteparams'    => 'collectionRouteParams',
+            'collection_route_params'  => 'collectionRouteParams',
+            'links'                    => 'links',
+            'resourcelinks'            => 'resourceLinks',
+            'resource_links'           => 'resourceLinks',
+            'resourceroute'            => 'resourceRoute',
+            'resource_route'           => 'resourceRoute',
+            'resourcerouteoptions'     => 'resourceRouteOptions',
+            'resource_route_options'   => 'resourceRouteOptions',
+            'resourcerouteparams'      => 'resourceRouteParams',
+            'resource_route_params'    => 'resourceRouteParams',
+            'page'                     => 'page',
+            'pagesize'                 => 'pageSize',
+            'page_size'                => 'pageSize',
         );
         $name = strtolower($name);
         if (!in_array($name, array_keys($names))) {
@@ -161,6 +182,64 @@ class HalCollection implements LinkCollectionAwareInterface
     public function setCollectionName($name)
     {
         $this->collectionName = (string) $name;
+        return $this;
+    }
+
+    /**
+     * Set the collection route; used for generating pagination links
+     *
+     * @param  string $route
+     * @return HalCollection
+     */
+    public function setCollectionRoute($route)
+    {
+        $this->collectionRoute = (string) $route;
+        return $this;
+    }
+
+    /**
+     * Set options to use with the collection route; used for generating pagination links
+     *
+     * @param  array|Traversable $options
+     * @return HalCollection
+     * @throws Exception\InvalidArgumentException
+     */
+    public function setCollectionRouteOptions($options)
+    {
+        if ($options instanceof Traversable) {
+            $options = ArrayUtils::iteratorToArray($options);
+        }
+        if (!is_array($options)) {
+            throw new Exception\InvalidArgumentException(sprintf(
+                '%s expects an array or Traversable; received "%s"',
+                __METHOD__,
+                (is_object($options) ? get_class($options) : gettype($options))
+            ));
+        }
+        $this->collectionRouteOptions = $options;
+        return $this;
+    }
+
+    /**
+     * Set parameters/substitutions to use with the collection route; used for generating pagination links
+     *
+     * @param  array|Traversable $params
+     * @return HalCollection
+     * @throws Exception\InvalidArgumentException
+     */
+    public function setCollectionRouteParams($params)
+    {
+        if ($params instanceof Traversable) {
+            $params = ArrayUtils::iteratorToArray($params);
+        }
+        if (!is_array($params)) {
+            throw new Exception\InvalidArgumentException(sprintf(
+                '%s expects an array or Traversable; received "%s"',
+                __METHOD__,
+                (is_object($params) ? get_class($params) : gettype($params))
+            ));
+        }
+        $this->collectionRouteParams = $params;
         return $this;
     }
 

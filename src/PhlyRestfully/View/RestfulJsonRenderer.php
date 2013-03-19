@@ -11,6 +11,8 @@ namespace PhlyRestfully\View;
 use PhlyRestfully\ApiProblem;
 use PhlyRestfully\HalCollection;
 use PhlyRestfully\HalResource;
+use PhlyRestfully\Link;
+use PhlyRestfully\LinkCollection;
 use PhlyRestfully\Plugin\HalLinks;
 use Zend\Paginator\Paginator;
 use Zend\Stdlib\Hydrator\HydratorInterface;
@@ -206,10 +208,9 @@ class RestfulJsonRenderer extends JsonRenderer
     {
         $resource = $halResource->resource;
         $id       = $halResource->id;
-        $route    = $halResource->route;
 
         $helper   = $this->helpers->get('HalLinks');
-        $links    = $helper->forResource($route, $id, $resource);
+        $links    = $helper->fromResource($halResource);
 
         if (!is_array($resource)) {
             $resource = $this->convertResourceToArray($resource);
@@ -327,12 +328,14 @@ class RestfulJsonRenderer extends JsonRenderer
 
         $helper  = $this->helpers->get('HalLinks');
         $payload = $halCollection->attributes;
-        $payload['_links'] = $helper->forCollection($halCollection->collectionRoute);
+        $payload['_links'] = $helper->fromResource($halCollection);
         $payload['_embedded'] = array(
             $collectionName => array(),
         );
 
-        $resourceRoute = $halCollection->resourceRoute;
+        $resourceRoute        = $halCollection->resourceRoute;
+        $resourceRouteParams  = $halCollection->resourceRouteParams;
+        $resourceRouteOptions = $halCollection->resourceRouteOptions;
         foreach ($collection as $resource) {
             $origResource = $resource;
             if (!is_array($resource)) {
@@ -352,7 +355,16 @@ class RestfulJsonRenderer extends JsonRenderer
                 continue;
             }
 
-            $resource['_links'] = $helper->forResource($resourceRoute, $id, $origResource);
+            $link = new Link('self');
+            $link->setRoute(
+                $resourceRoute,
+                array_merge($resourceRouteParams, array('id' => $id)),
+                $resourceRouteOptions
+            );
+            $links = new LinkCollection();
+            $links->add($link);
+
+            $resource['_links'] = $helper->fromLinkCollection($links);
             $payload['_embedded'][$collectionName][] = $resource;
         }
 
@@ -386,7 +398,9 @@ class RestfulJsonRenderer extends JsonRenderer
             $collectionName => array(),
         );
 
-        $resourceRoute = $halCollection->resourceRoute;
+        $resourceRoute        = $halCollection->resourceRoute;
+        $resourceRouteParams  = $halCollection->resourceRouteParams;
+        $resourceRouteOptions = $halCollection->resourceRouteOptions;
         foreach ($collection as $resource) {
             $origResource = $resource;
             if (!is_array($resource)) {
@@ -408,7 +422,16 @@ class RestfulJsonRenderer extends JsonRenderer
                 continue;
             }
 
-            $resource['_links'] = $helper->forResource($resourceRoute, $id, $origResource);
+            $link = new Link('self');
+            $link->setRoute(
+                $resourceRoute,
+                array_merge($resourceRouteParams, array('id' => $id)),
+                $resourceRouteOptions
+            );
+            $links = new LinkCollection();
+            $links->add($link);
+
+            $resource['_links'] = $helper->fromLinkCollection($links);
             $payload['_embedded'][$collectionName][] = $resource;
         }
 
