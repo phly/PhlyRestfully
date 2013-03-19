@@ -59,8 +59,8 @@ class HalResource implements LinkCollectionAwareInterface
 
     /**
      * Set link collection
-     * 
-     * @param  LinkCollection $links 
+     *
+     * @param  LinkCollection $links
      * @return self
      */
     public function setLinks(LinkCollection $links)
@@ -71,7 +71,7 @@ class HalResource implements LinkCollectionAwareInterface
 
     /**
      * Get link collection
-     * 
+     *
      * @return LinkCollection
      */
     public function getLinks()

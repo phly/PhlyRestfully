@@ -245,8 +245,8 @@ class HalCollection implements LinkCollectionAwareInterface
 
     /**
      * Set link collection
-     * 
-     * @param  LinkCollection $links 
+     *
+     * @param  LinkCollection $links
      * @return self
      */
     public function setLinks(LinkCollection $links)
@@ -313,8 +313,8 @@ class HalCollection implements LinkCollectionAwareInterface
 
     /**
      * Set default set of links to use for resources
-     * 
-     * @param  LinkCollection $links 
+     *
+     * @param  LinkCollection $links
      * @return self
      */
     public function setResourceLinks(LinkCollection $links)
@@ -383,7 +383,7 @@ class HalCollection implements LinkCollectionAwareInterface
 
     /**
      * Get link collection
-     * 
+     *
      * @return LinkCollection
      */
     public function getLinks()
@@ -396,7 +396,7 @@ class HalCollection implements LinkCollectionAwareInterface
 
     /**
      * Retrieve default resource links, if any
-     * 
+     *
      * @return null|LinkCollection
      */
     public function getResourceLinks()

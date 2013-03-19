@@ -24,7 +24,7 @@ class LinkCollection implements Countable, IteratorAggregate
 
     /**
      * Return a count of link relations
-     * 
+     *
      * @return int
      */
     public function count()
@@ -34,7 +34,7 @@ class LinkCollection implements Countable, IteratorAggregate
 
     /**
      * Retrieve internal iterator
-     * 
+     *
      * @return ArrayIterator
      */
     public function getIterator()
@@ -44,9 +44,9 @@ class LinkCollection implements Countable, IteratorAggregate
 
     /**
      * Add a link
-     * 
-     * @param  Link $link 
-     * @param  bool $overwrite 
+     *
+     * @param  Link $link
+     * @param  bool $overwrite
      * @return self
      */
     public function add(Link $link, $overwrite = false)
@@ -76,8 +76,8 @@ class LinkCollection implements Countable, IteratorAggregate
 
     /**
      * Retrieve a link relation
-     * 
-     * @param  string $relation 
+     *
+     * @param  string $relation
      * @return Link|array
      */
     public function get($relation)
@@ -90,8 +90,8 @@ class LinkCollection implements Countable, IteratorAggregate
 
     /**
      * Does a given link relation exist?
-     * 
-     * @param  string $relation 
+     *
+     * @param  string $relation
      * @return bool
      */
     public function has($relation)
@@ -101,8 +101,8 @@ class LinkCollection implements Countable, IteratorAggregate
 
     /**
      * Remove a given link relation
-     * 
-     * @param  string $relation 
+     *
+     * @param  string $relation
      * @return bool
      */
     public function remove($relation)

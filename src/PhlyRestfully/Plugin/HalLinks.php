@@ -167,8 +167,8 @@ class HalLinks extends AbstractHelper implements ControllerPluginInterface
 
     /**
      * Generate HAL links from a LinkCollection
-     * 
-     * @param  LinkCollection $collection 
+     *
+     * @param  LinkCollection $collection
      * @return array
      */
     public function fromLinkCollection(LinkCollection $collection)
@@ -203,8 +203,8 @@ class HalLinks extends AbstractHelper implements ControllerPluginInterface
 
     /**
      * Create HAL links "object" from a resource/collection
-     * 
-     * @param  LinkCollectionAwareInterface $resource 
+     *
+     * @param  LinkCollectionAwareInterface $resource
      * @return array
      */
     public function fromResource(LinkCollectionAwareInterface $resource)
@@ -315,8 +315,8 @@ class HalLinks extends AbstractHelper implements ControllerPluginInterface
 
     /**
      * Create a URL from a Link
-     * 
-     * @param  Link $linkDefinition 
+     *
+     * @param  Link $linkDefinition
      * @return string
      * @throws Exception\DomainException if Link is incomplete
      */
