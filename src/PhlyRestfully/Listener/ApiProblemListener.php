@@ -30,7 +30,7 @@ class ApiProblemListener implements ListenerAggregateInterface
      *
      * @var string
      */
-    static protected $acceptFilter = 'application/hal+json,application/api-problem+json,application/json';
+    protected static $acceptFilter = 'application/hal+json,application/api-problem+json,application/json';
 
     /**
      * @var \Zend\Stdlib\CallbackHandler[]
