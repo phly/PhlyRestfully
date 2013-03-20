@@ -180,11 +180,11 @@ class HalLinks extends AbstractHelper implements ControllerPluginInterface
     /**
      * "Render" a HalCollection
      *
-     * Injects pagination links, if the composed collection is a Paginator, and 
+     * Injects pagination links, if the composed collection is a Paginator, and
      * then loops through the collection to create the data structure representing
      * the collection.
-     * 
-     * @param  HalCollection $halCollection 
+     *
+     * @param  HalCollection $halCollection
      * @return array|ApiProblem Associative array representing the payload to render; returns ApiProblem if error in pagination occurs
      */
     public function renderCollection(HalCollection $halCollection)
