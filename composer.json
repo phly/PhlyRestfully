@@ -17,6 +17,12 @@
             "homepage": "http://mwop.net/"
         }
     ],
+    "repositories": [
+        {
+            "type": "composer",
+            "url": "https://packages.zendframework.com"
+        }
+    ],
     "require": {
         "php": ">=5.3.3",
         "zendframework/zend-eventmanager": ">=2.1.0",
