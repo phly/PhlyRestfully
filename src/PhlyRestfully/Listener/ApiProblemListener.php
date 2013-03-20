@@ -30,7 +30,7 @@ class ApiProblemListener implements ListenerAggregateInterface
      *
      * @var string
      */
-    protected $acceptFilter = 'application/hal+json,application/api-problem+json,application/json';
+    protected static $acceptFilter = 'application/hal+json,application/api-problem+json,application/json';
 
     /**
      * @var \Zend\Stdlib\CallbackHandler[]
@@ -47,7 +47,7 @@ class ApiProblemListener implements ListenerAggregateInterface
     public function __construct($filter = null)
     {
         if (is_string($filter) && !empty($filter)) {
-            $this->acceptFilter = $filter;
+            self::$acceptFilter = $filter;
         }
     }
 
@@ -92,7 +92,7 @@ class ApiProblemListener implements ListenerAggregateInterface
 
         // ... that matches certain criteria
         $accept = $headers->get('Accept');
-        if (!$accept->match($this->acceptFilter)) {
+        if (!$accept->match(self::$acceptFilter)) {
             return;
         }
 
