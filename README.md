@@ -265,7 +265,7 @@ Hydrators
 ---------
 
 You can specify hydrators to use with the objects you return from your resources
-by attaching them to the `PhlyRestfully\JsonRenderer` service. This can be done
+by attaching them to the `HalLinks` view helper/controller plugin. This can be done
 most easily via configuration, and you can specify both a map of class/hydrator
 service pairs as well as a default hydrator to use as a fallback. As an example,
 consider the following `config/autoload/phlyrestfully.global.config.php` file:
@@ -289,7 +289,7 @@ return array(
 );
 ```
 
-The above specifies 'Zend\Stdlib\Hydrator\ArraySerializable' as the default
+The above specifies `Zend\Stdlib\Hydrator\ArraySerializable` as the default
 hydrator, and maps the `ObjecProperty` hydrator to the `Foo` resource, and the
 `Reflection` hydrator to the `Bar` resource. Note that you need to define
 invokable services for the hydrators; otherwise, the service manager will be
@@ -315,6 +315,7 @@ As an example, if you wanted to add a "describedby" HAL link to every resource
 or collection returned, you could do the following:
 
 ```php
+// Methods we're interested in
 $methods = array(
     'create.post',
     'get.post',
@@ -323,21 +324,22 @@ $methods = array(
     'update.post',
     'replaceList.post',
 );
+// Assuming $sharedEvents is a ZF2 SharedEventManager instance
 $sharedEvents->attach('My\Namespaced\ResourceController', $methods, function ($e) {
     $resource = $e->getParam('resource', false);
     if (!$resource) {
         $resource = $e->getParam('collection', false);
     }
-    if (!$resource) {
+
+    if (!$resource instanceof \PhlyRestfully\LinkCollectionAwareInterface) {
         return;
     }
 
-    $resource->addLink('describedby', array('name' => 'api/docs'));
+    $link = new \PhlyRestfully\Link('describedby');
+    $link->setRoute('api/docs');
+    $resource->getLinks()->add($link);
 });
 ```
-
-(Note: the above will not work quite yet, as link aggregation in
-resources/collections is not yet implemented). 
 
 Upgrading
 =========
