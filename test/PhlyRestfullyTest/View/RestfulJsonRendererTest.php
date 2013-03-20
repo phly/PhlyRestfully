@@ -625,4 +625,73 @@ class RestfulJsonRendererTest extends TestCase
             $this->assertContains('/user/matthew', $links->self->href);
         }
     }
+
+    public function testAllowsSpecifyingAlternateCallbackForReturningResourceId()
+    {
+        $this->setUpHelpers();
+
+        $this->helpers->get('HalLinks')->getEventManager()->attach('getIdFromResource', function ($e) {
+            $resource = $e->getParam('resource');
+
+            if (!is_array($resource)) {
+                return false;
+            }
+
+            if (array_key_exists('name', $resource)) {
+                return $resource['name'];
+            }
+
+            return false;
+        }, 10);
+
+
+        $prototype = array('foo' => 'bar');
+        $items = array();
+        foreach (range(1, 100) as $id) {
+            $item         = $prototype;
+            $item['name'] = $id;
+            $items[]      = $item;
+        }
+
+        $collection = new HalCollection($items);
+        $collection->setCollectionRoute('resource');
+        $collection->setResourceRoute('resource');
+        $links = $collection->getLinks();
+        $self  = new Link('self');
+        $self->setRoute('resource');
+        $links->add($self);
+
+        $model      = new RestfulJsonModel(array('payload' => $collection));
+        $test       = $this->renderer->render($model);
+        $test       = json_decode($test);
+
+        $this->assertInstanceof('stdClass', $test, var_export($test, 1));
+        $this->assertObjectHasAttribute('_links', $test);
+        $links = $test->_links;
+        $this->assertInstanceof('stdClass', $links, var_export($links, 1));
+        $this->assertObjectHasAttribute('self', $links);
+        $this->assertObjectHasAttribute('href', $links->self);
+        $this->assertEquals('http://localhost.localdomain/resource', $links->self->href);
+
+        $this->assertObjectHasAttribute('_embedded', $test);
+        $this->assertInstanceof('stdClass', $test->_embedded);
+        $this->assertObjectHasAttribute('items', $test->_embedded);
+        $this->assertInternalType('array', $test->_embedded->items);
+        $this->assertEquals(100, count($test->_embedded->items));
+
+        foreach ($test->_embedded->items as $key => $item) {
+            $id = $key + 1;
+
+            $this->assertObjectHasAttribute('_links', $item);
+            $links = $item->_links;
+            $this->assertInstanceof('stdClass', $links, var_export($links, 1));
+            $this->assertObjectHasAttribute('self', $links);
+            $this->assertObjectHasAttribute('href', $links->self);
+            $this->assertEquals('http://localhost.localdomain/resource/' . $id, $links->self->href);
+            $this->assertObjectHasAttribute('name', $item, var_export($item, 1));
+            $this->assertEquals($id, $item->name);
+            $this->assertObjectHasAttribute('foo', $item);
+            $this->assertEquals('bar', $item->foo);
+        }
+    }
 }
