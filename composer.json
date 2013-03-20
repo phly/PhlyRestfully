@@ -22,8 +22,9 @@
         "zendframework/zend-eventmanager": ">=2.1.0",
         "zendframework/zend-json": ">=2.1.0",
         "zendframework/zend-loader": ">=2.1.0",
-        "zendframework/zend-mvc": ">=2.1.0",
+        "zendframework/zend-mvc": ">=2.1.4",
         "zendframework/zend-paginator": ">=2.1.0",
+        "zendframework/zend-uri": ">=2.1.0",
         "zendframework/zend-view": ">=2.1.0",
         "zendframework/zend-stdlib": ">=2.1.0"
     },

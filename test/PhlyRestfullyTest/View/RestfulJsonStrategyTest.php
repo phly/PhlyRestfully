@@ -11,6 +11,7 @@ namespace PhlyRestfullyTest\View;
 use PhlyRestfully\ApiProblem;
 use PhlyRestfully\HalCollection;
 use PhlyRestfully\HalResource;
+use PhlyRestfully\Link;
 use PhlyRestfully\View\RestfulJsonModel;
 use PhlyRestfully\View\RestfulJsonRenderer;
 use PhlyRestfully\View\RestfulJsonStrategy;
@@ -92,7 +93,13 @@ class RestfulJsonStrategyTest extends TestCase
         $resource = new HalResource(array(
             'foo' => 'bar',
         ), 'identifier', 'route');
-        $collection = new HalCollection(array($resource), 'collection/route', 'resource/route');
+        $link = new Link('self');
+        $link->setRoute('resource/route')->setRouteParams(array('id' => 'identifier'));
+        $resource->getLinks()->add($link);
+
+        $collection = new HalCollection(array($resource));
+        $collection->setCollectionRoute('collection/route');
+        $collection->setResourceRoute('resource/route');
 
         return array(
             'resource'   => array($resource),
