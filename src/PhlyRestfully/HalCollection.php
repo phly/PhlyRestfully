@@ -44,6 +44,8 @@ class HalCollection
      */
     protected $resourceRoute;
 
+    protected $links;
+
     /**
      * Current page
      *
@@ -64,7 +66,7 @@ class HalCollection
      * @param  string $resourceRoute
      * @throws Exception\InvalidCollectionException
      */
-    public function __construct($collection, $collectionRoute = null, $resourceRoute = null)
+    public function __construct($collection, $collectionRoute = null, $resourceRoute = null, array $links = array())
     {
         if (!is_array($collection) && !$collection instanceof Traversable) {
             throw new Exception\InvalidCollectionException(sprintf(
@@ -81,6 +83,7 @@ class HalCollection
         if (null !== $resourceRoute) {
             $this->setResourceRoute($resourceRoute);
         }
+        $this->links = $links;
     }
 
     /**
@@ -100,6 +103,7 @@ class HalCollection
             'collection_route' => 'collectionRoute',
             'resourceroute'    => 'resourceRoute',
             'resource_route'   => 'resourceRoute',
+            'links'            => 'links',
             'page'             => 'page',
             'pagesize'         => 'pageSize',
             'page_size'        => 'pageSize',
@@ -216,6 +220,18 @@ class HalCollection
     public function setResourceRoute($route)
     {
         $this->resourceRoute = (string) $route;
+        return $this;
+    }
+
+    /**
+     * Set the collection links
+     *
+     * @param  array $links
+     * @return HalCollection
+     */
+    public function setLinks(array $links)
+    {
+        $this->links = $links;
         return $this;
     }
 }

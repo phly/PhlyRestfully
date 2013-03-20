@@ -325,10 +325,12 @@ class RestfulJsonRenderer extends JsonRenderer
     {
         $collection     = $halCollection->collection;
         $collectionName = $halCollection->collectionName;
+        $links          = $halCollection->links;
 
         $helper  = $this->helpers->get('HalLinks');
         $payload = $halCollection->attributes;
-        $payload['_links'] = $helper->forCollection($halCollection->collectionRoute);
+        $links   = array_merge($helper->forCollection($halCollection->collectionRoute), $links);
+        $payload['_links'] = $links;
         $payload['_embedded'] = array(
             $collectionName => array(),
         );
@@ -353,7 +355,13 @@ class RestfulJsonRenderer extends JsonRenderer
                 continue;
             }
 
-            $resource['_links'] = $helper->forResource($resourceRoute, $id, $origResource);
+            $links = $helper->forResource($resourceRoute, $id, $origResource);
+            if ($origResource instanceof HalResource) {
+                $resource['_links'] = array_merge($links, $origResource->links);
+            } else {
+                $resource['_links'] = $links;
+            }
+
             $payload['_embedded'][$collectionName][] = $resource;
         }
 
@@ -374,9 +382,10 @@ class RestfulJsonRenderer extends JsonRenderer
     {
         $collection     = $halCollection->collection;
         $collectionName = $halCollection->collectionName;
+        $links          = $halCollection->links;
 
         $helper  = $this->helpers->get('HalLinks');
-        $links   = $helper->forPaginatedCollection($halCollection);
+        $links   = array_merge($helper->forPaginatedCollection($halCollection), $links);
         if ($links instanceof ApiProblem) {
             return $this->renderApiProblem($links);
         }
@@ -409,7 +418,13 @@ class RestfulJsonRenderer extends JsonRenderer
                 continue;
             }
 
-            $resource['_links'] = $helper->forResource($resourceRoute, $id, $origResource);
+            $links = $helper->forResource($resourceRoute, $id, $origResource);
+            if ($origResource instanceof HalResource) {
+                $resource['_links'] = array_merge($links, $origResource->links);
+            } else {
+                $resource['_links'] = $links;
+            }
+
             $payload['_embedded'][$collectionName][] = $resource;
         }
 
