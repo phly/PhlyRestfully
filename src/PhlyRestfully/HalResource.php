@@ -18,6 +18,8 @@ class HalResource
 
     protected $routeParams;
 
+    protected $links;
+
     /**
      * @param  object|array $resource
      * @param  mixed $id
@@ -25,7 +27,7 @@ class HalResource
      * @param  array $routeParams
      * @throws Exception\InvalidResourceException if resource is not an object or array
      */
-    public function __construct($resource, $id, $route = null, array $routeParams = array())
+    public function __construct($resource, $id, $route = null, array $routeParams = array(), array $links = array())
     {
         if (!is_object($resource) && !is_array($resource)) {
             throw new Exception\InvalidResourceException();
@@ -35,6 +37,7 @@ class HalResource
         $this->id          = $id;
         $this->route       = (string) $route;
         $this->routeParams = $routeParams;
+        $this->links       = $links;
     }
 
     /**
@@ -51,6 +54,7 @@ class HalResource
             'route'        => 'route',
             'routeparams'  => 'routeParams',
             'route_params' => 'routeParams',
+            'links'        => 'links',
         );
         $name = strtolower($name);
         if (!in_array($name, array_keys($names))) {
@@ -69,6 +73,7 @@ class HalResource
             'route'        => 'route',
             'routeparams'  => 'routeParams',
             'route_params' => 'routeParams',
+            'links'        => 'links',
         );
         $name = strtolower($name);
         if (!in_array($name, array_keys($names))) {
