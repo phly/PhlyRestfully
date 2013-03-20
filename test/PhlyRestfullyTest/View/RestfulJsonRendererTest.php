@@ -151,7 +151,7 @@ class RestfulJsonRendererTest extends TestCase
     public function testCanSerializeHydratableHalResource()
     {
         $this->setUpHelpers();
-        $this->renderer->addHydrator(
+        $this->helpers->get('HalLinks')->addHydrator(
             'PhlyRestfullyTest\TestAsset\ArraySerializable',
             new Hydrator\ArraySerializable()
         );
@@ -180,7 +180,7 @@ class RestfulJsonRendererTest extends TestCase
     public function testUsesDefaultHydratorIfAvailable()
     {
         $this->setUpHelpers();
-        $this->renderer->setDefaultHydrator(
+        $this->helpers->get('HalLinks')->setDefaultHydrator(
             new Hydrator\ArraySerializable()
         );
 

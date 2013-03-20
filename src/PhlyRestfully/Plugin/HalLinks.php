@@ -12,6 +12,7 @@ use ArrayObject;
 use PhlyRestfully\ApiProblem;
 use PhlyRestfully\Exception;
 use PhlyRestfully\HalCollection;
+use PhlyRestfully\HalResource;
 use PhlyRestfully\Link;
 use PhlyRestfully\LinkCollection;
 use PhlyRestfully\LinkCollectionAwareInterface;
@@ -22,6 +23,7 @@ use Zend\Mvc\Controller\Plugin\PluginInterface as ControllerPluginInterface;
 use Zend\Paginator\Paginator;
 use Zend\Stdlib\ArrayUtils;
 use Zend\Stdlib\DispatchableInterface;
+use Zend\Stdlib\Hydrator\HydratorInterface;
 use Zend\View\Helper\AbstractHelper;
 use Zend\View\Helper\ServerUrl;
 use Zend\View\Helper\Url;
@@ -37,9 +39,23 @@ class HalLinks extends AbstractHelper implements ControllerPluginInterface
     protected $controller;
 
     /**
+     * Default hydrator to use if no hydrator found for a specific resource class.
+     *
+     * @var HydratorInterface
+     */
+    protected $defaultHydrator;
+
+    /**
      * @var EventManagerInterface
      */
     protected $events;
+
+    /**
+     * Map of resource classes => hydrators
+     *
+     * @var HydratorInterface[]
+     */
+    protected $hydrators = array();
 
     /**
      * @var ServerUrl
@@ -110,6 +126,145 @@ class HalLinks extends AbstractHelper implements ControllerPluginInterface
     public function setUrlHelper(Url $helper)
     {
         $this->urlHelper = $helper;
+    }
+
+    /**
+     * Map a resource class to a specific hydrator instance
+     *
+     * @param  string $class
+     * @param  HydratorInterface $hydrator
+     * @return RestfulJsonRenderer
+     */
+    public function addHydrator($class, HydratorInterface $hydrator)
+    {
+        $this->hydrators[strtolower($class)] = $hydrator;
+        return $this;
+    }
+
+    /**
+     * Set the default hydrator to use if none specified for a class.
+     *
+     * @param  HydratorInterface $hydrator
+     * @return RestfulJsonRenderer
+     */
+    public function setDefaultHydrator(HydratorInterface $hydrator)
+    {
+        $this->defaultHydrator = $hydrator;
+        return $this;
+    }
+
+    /**
+     * Retrieve a hydrator for a given resource
+     *
+     * If the resource has a mapped hydrator, returns that hydrator. If not, and
+     * a default hydrator is present, the default hydrator is returned.
+     * Otherwise, a boolean false is returned.
+     *
+     * @param  object $resource
+     * @return HydratorInterface|false
+     */
+    public function getHydratorForResource($resource)
+    {
+        $class = strtolower(get_class($resource));
+        if (isset($this->hydrators[$class])) {
+            return $this->hydrators[$class];
+        }
+
+        if ($this->defaultHydrator instanceof HydratorInterface) {
+            return $this->defaultHydrator;
+        }
+
+        return false;
+    }
+
+    /**
+     * "Render" a HalCollection
+     *
+     * Injects pagination links, if the composed collection is a Paginator, and 
+     * then loops through the collection to create the data structure representing
+     * the collection.
+     * 
+     * @param  HalCollection $halCollection 
+     * @return array|ApiProblem Associative array representing the payload to render; returns ApiProblem if error in pagination occurs
+     */
+    public function renderCollection(HalCollection $halCollection)
+    {
+        $collection     = $halCollection->collection;
+        $collectionName = $halCollection->collectionName;
+
+        if ($collection instanceof Paginator) {
+            $status = $this->injectPaginationLinks($halCollection);
+            if ($status instanceof ApiProblem) {
+                return $status;
+            }
+        }
+
+        $payload = $halCollection->attributes;
+        $payload['_links']    = $this->fromResource($halCollection);
+        $payload['_embedded'] = array(
+            $collectionName => array(),
+        );
+
+        $resourceRoute        = $halCollection->resourceRoute;
+        $resourceRouteParams  = $halCollection->resourceRouteParams;
+        $resourceRouteOptions = $halCollection->resourceRouteOptions;
+        foreach ($collection as $resource) {
+            $origResource = $resource;
+            if (!is_array($resource)) {
+                $resource = $this->convertResourceToArray($resource);
+            }
+
+            foreach ($resource as $key => $value) {
+                if (!$value instanceof HalResource) {
+                    continue;
+                }
+                $this->extractEmbeddedHalResource($resource, $key, $value);
+            }
+
+            $id = $this->getIdFromResource($resource);
+            if (!$id) {
+                // Cannot handle resources without an identifier
+                // Return as-is
+                $payload['_embedded'][$collectionName][] = $resource;
+                continue;
+            }
+
+            $link = new Link('self');
+            $link->setRoute(
+                $resourceRoute,
+                array_merge($resourceRouteParams, array('id' => $id)),
+                $resourceRouteOptions
+            );
+            $links = new LinkCollection();
+            $links->add($link);
+
+            $resource['_links'] = $this->fromLinkCollection($links);
+            $payload['_embedded'][$collectionName][] = $resource;
+        }
+
+        return $payload;
+    }
+
+    public function renderResource(HalResource $halResource)
+    {
+        $resource = $halResource->resource;
+        $id       = $halResource->id;
+        $links    = $this->fromResource($halResource);
+
+        if (!is_array($resource)) {
+            $resource = $this->convertResourceToArray($resource);
+        }
+
+        foreach ($resource as $key => $value) {
+            if (!$value instanceof HalResource) {
+                continue;
+            }
+            $this->extractEmbeddedHalResource($resource, $key, $value);
+        }
+
+        $resource['_links'] = $links;
+
+        return $resource;
     }
 
     /**
@@ -231,28 +386,21 @@ class HalLinks extends AbstractHelper implements ControllerPluginInterface
      * @param  HalCollection $halCollection
      * @return array
      */
-    public function forPaginatedCollection(HalCollection $halCollection)
+    protected function injectPaginationLinks(HalCollection $halCollection)
     {
         $collection = $halCollection->collection;
-        if (!$collection instanceof Paginator) {
-            throw new Exception\InvalidArgumentException(sprintf(
-                'Invalid collection provided: must be a Paginator instance; received "%s"',
-                get_class($collection)
-            ));
-        }
-
-        $page     = $halCollection->page;
-        $pageSize = $halCollection->pageSize;
-        $route    = $halCollection->collectionRoute;
-        $params   = $halCollection->collectionRouteParams;
-        $options  = $halCollection->collectionRouteOptions;
+        $page       = $halCollection->page;
+        $pageSize   = $halCollection->pageSize;
+        $route      = $halCollection->collectionRoute;
+        $params     = $halCollection->collectionRouteParams;
+        $options    = $halCollection->collectionRouteOptions;
 
         $collection->setItemCountPerPage($pageSize);
         $collection->setCurrentPageNumber($page);
 
         $count = count($collection);
         if (!$count) {
-            return $this->fromResource($halCollection);
+            return true;
         }
 
         if ($page < 1 || $page > $count) {
@@ -310,7 +458,7 @@ class HalLinks extends AbstractHelper implements ControllerPluginInterface
             $links->add($link);
         }
 
-        return $this->fromResource($halCollection);
+        return true;
     }
 
     /**
@@ -345,4 +493,60 @@ class HalLinks extends AbstractHelper implements ControllerPluginInterface
             'href' => call_user_func($this->serverUrlHelper, $path),
         );
     }
+
+    /**
+     * Extracts and renders a HalResource and embeds it in the parent
+     * representation
+     *
+     * Removes the key from the parent representation, and creates a
+     * representation for the key in the _embedded object.
+     *
+     * @param  array $parent
+     * @param  string $key
+     * @param  HalResource $resource
+     */
+    protected function extractEmbeddedHalResource(array &$parent, $key, HalResource $resource)
+    {
+        $rendered = $this->renderResource($resource);
+        if (!isset($parent['_embedded'])) {
+            $parent['_embedded'] = array();
+        }
+        $parent['_embedded'][$key] = $rendered;
+        unset($parent[$key]);
+    }
+
+    /**
+     * Retrieve the identifier from a resource
+     *
+     * Expects an "id" member to exist; if not, a boolean false is returned.
+     *
+     * @todo   Potentially allow registering a callback to run, before using
+     *         the default routine here.
+     * @param  array $resource
+     * @return mixed|false
+     */
+    protected function getIdFromResource(array $resource)
+    {
+        if (array_key_exists('id', $resource)) {
+            return $resource['id'];
+        }
+        return false;
+    }
+
+    /**
+     * Convert an individual resource to an array
+     *
+     * @param  object $resource
+     * @return array
+     */
+    protected function convertResourceToArray($resource)
+    {
+        $hydrator = $this->getHydratorForResource($resource);
+        if (!$hydrator) {
+            return (array) $resource;
+        }
+
+        return $hydrator->extract($resource);
+    }
+
 }
