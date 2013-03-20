@@ -295,6 +295,71 @@ hydrator, and maps the `ObjecProperty` hydrator to the `Foo` resource, and the
 invokable services for the hydrators; otherwise, the service manager will be
 unable to resolve the hydrator services, and will not map any it cannot resolve.
 
+Specifying Alternate Identifiers For URL Assembly
+-------------------------------------------------
+
+With individual resource endpoints, the identifier used in the URI is given to
+the `HalResource`, regardless of the structure of the actual resource object.
+However, with collections, the identifier has to be derived from the individual
+resources they compose.
+
+If you are not using the key or property "id", you will need to provide a
+listener that will derive and return the identifier. This is done by attaching
+to the `getIdFromResource` event of the `PhlyRestfully\Plugin\HalLinks` class.
+
+Let's look at an example. Consider the following resource structure:
+
+```javascript
+{
+    "name": "mwop",
+    "fullname": "Matthew Weier O'Phinney",
+    "url": "http://mwop.net"
+}
+```
+
+Now, let's consider the following listener:
+
+```php
+$listener = function ($e) {
+    $resource = $e->getParam('resource');
+    if (!is_array($resource)) {
+        return false;
+    }
+
+    if (!array_key_exists('name', $resource)) {
+        return false;
+    }
+
+    return $resource['name'];
+};
+```
+
+The above listener, on encountering the resource, would return "mwop", as that's
+the value of the "name" property.
+
+There are two ways to attach to this listener. First, we can grab the `HalLinks`
+plugin/helper, and attach directly to its service manager:
+
+```php
+// Assume $services is the application ServiceManager instance
+$helpers = $services->get('ViewHelperManager');
+$links   = $helpers->get('HalLinks');
+$links->getEventManager()->attach('getIdFromResource', $listener);
+```
+
+Alternately, you can do so via the `SharedEventManager` instance:
+
+```php
+// Assume $services is the application ServiceManager instance
+$sharedEvents = $services->get('SharedEventManager');
+
+// or, if you have access to another event manager instance:
+$sharedEvents = $events->getSharedManager();
+
+// Then, connect to it:
+$sharedEvents('PhlyRestfully\Plugin\HalLinks', 'getIdFromResource', $listener);
+```
+
 Controller Events
 -----------------
 
