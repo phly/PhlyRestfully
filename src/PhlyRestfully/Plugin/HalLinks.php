@@ -31,7 +31,9 @@ use Zend\View\Helper\Url;
 /**
  * Generate links for use with HAL payloads
  */
-class HalLinks extends AbstractHelper implements ControllerPluginInterface
+class HalLinks extends AbstractHelper implements 
+    ControllerPluginInterface,
+    EventManagerAwareInterface
 {
     /**
      * @var DispatchableInterface
@@ -110,6 +112,22 @@ class HalLinks extends AbstractHelper implements ControllerPluginInterface
             get_class($this),
         ));
         $this->events = $events;
+
+        $events->attach('getIdFromResource', function ($e) {
+            $resource = $e->getParam('resource');
+
+            if (!is_array($resource)) {
+                return false;
+            }
+
+            if (array_key_exists('id', $resource)) {
+                return $resource['id'];
+            }
+
+            return false;
+        });
+
+        return $this;
     }
 
     /**
@@ -527,9 +545,19 @@ class HalLinks extends AbstractHelper implements ControllerPluginInterface
      */
     protected function getIdFromResource(array $resource)
     {
-        if (array_key_exists('id', $resource)) {
-            return $resource['id'];
+        $results = $this->getEventManager()->trigger(
+            __FUNCTION__,
+            $this,
+            array('resource' => $resource),
+            function ($r) {
+                return (null !== $r && false !== $r);
+            }
+        );
+
+        if ($results->stopped()) {
+            return $results->last();
         }
+
         return false;
     }
 
