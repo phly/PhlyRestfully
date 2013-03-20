@@ -36,13 +36,18 @@ class ModuleTest extends TestCase
             ),
             'factories' => array(
                 // Consumed by PhlyRestfully\JsonRenderer service
-                'ViewHelperManager' => 'Zend\Mvc\Service\ViewHelperManagerFactory',
+                'ViewHelperManager'       => 'Zend\Mvc\Service\ViewHelperManagerFactory',
+                'ControllerPluginManager' => 'Zend\Mvc\Service\ControllerPluginManagerFactory',
             ),
         ));
-        $config   = ArrayUtils::merge($options['service_manager'], $this->module->getServiceConfig());
-        $services = new ServiceManager();
-        $config   = new Config($config);
-        $config->configureServiceManager($services);
+        $config = ArrayUtils::merge($options['service_manager'], $this->module->getServiceConfig());
+        $config['view_helpers']       = $this->module->getViewHelperConfig();
+        $config['controller_plugins'] = $this->module->getControllerPluginConfig();
+
+        $services       = new ServiceManager();
+        $servicesConfig = new Config($config);
+        $servicesConfig->configureServiceManager($services);
+        $services->setService('Config', $config);
 
         $event = new MvcEvent();
         $event->setRouteMatch(new RouteMatch(array()));
@@ -57,6 +62,15 @@ class ModuleTest extends TestCase
             ->method('getMvcEvent')
             ->will($this->returnValue($event));
         $services->setService('application', $app);
+
+        $helpers = $services->get('ViewHelperManager');
+        $helpersConfig = new Config($config['view_helpers']);
+        $helpersConfig->configureServiceManager($helpers);
+
+        $plugins = $services->get('ControllerPluginManager');
+        $pluginsConfig = new Config($config['controller_plugins']);
+        $pluginsConfig->configureServiceManager($plugins);
+
         return $services;
     }
 
@@ -71,10 +85,13 @@ class ModuleTest extends TestCase
         );
 
         $services = $this->setupServiceManager();
-        $services->setService('Config', $options);
+        $config   = $services->get('Config');
+        $services->setAllowOverride(true);
+        $services->setService('Config', ArrayUtils::merge($config, $options));
 
-        $renderer = $services->get('PhlyRestfully\JsonRenderer');
-        $this->assertAttributeInstanceOf('Zend\Stdlib\Hydrator\ObjectProperty', 'defaultHydrator', $renderer);
+        $helpers = $services->get('ViewHelperManager');
+        $plugin  = $helpers->get('HalLinks');
+        $this->assertAttributeInstanceOf('Zend\Stdlib\Hydrator\ObjectProperty', 'defaultHydrator', $plugin);
     }
 
     public function testJsonRendererFactoryInjectsHydratorMappingsIfPresentInConfig()
@@ -93,13 +110,17 @@ class ModuleTest extends TestCase
         );
 
         $services = $this->setupServiceManager();
-        $services->setService('Config', $options);
+        $config   = $services->get('Config');
+        $services->setAllowOverride(true);
+        $services->setService('Config', ArrayUtils::merge($config, $options));
 
-        $renderer = $services->get('PhlyRestfully\JsonRenderer');
-        $r             = new ReflectionObject($renderer);
+        $helpers = $services->get('ViewHelperManager');
+        $plugin  = $helpers->get('HalLinks');
+
+        $r             = new ReflectionObject($plugin);
         $hydratorsProp = $r->getProperty('hydrators');
         $hydratorsProp->setAccessible(true);
-        $hydrators = $hydratorsProp->getValue($renderer);
+        $hydrators = $hydratorsProp->getValue($plugin);
 
         $this->assertInternalType('array', $hydrators);
 

@@ -265,7 +265,7 @@ Hydrators
 ---------
 
 You can specify hydrators to use with the objects you return from your resources
-by attaching them to the `PhlyRestfully\JsonRenderer` service. This can be done
+by attaching them to the `HalLinks` view helper/controller plugin. This can be done
 most easily via configuration, and you can specify both a map of class/hydrator
 service pairs as well as a default hydrator to use as a fallback. As an example,
 consider the following `config/autoload/phlyrestfully.global.config.php` file:
@@ -289,11 +289,122 @@ return array(
 );
 ```
 
-The above specifies 'Zend\Stdlib\Hydrator\ArraySerializable' as the default
+The above specifies `Zend\Stdlib\Hydrator\ArraySerializable` as the default
 hydrator, and maps the `ObjecProperty` hydrator to the `Foo` resource, and the
 `Reflection` hydrator to the `Bar` resource. Note that you need to define
 invokable services for the hydrators; otherwise, the service manager will be
 unable to resolve the hydrator services, and will not map any it cannot resolve.
+
+Specifying Alternate Identifiers For URL Assembly
+-------------------------------------------------
+
+With individual resource endpoints, the identifier used in the URI is given to
+the `HalResource`, regardless of the structure of the actual resource object.
+However, with collections, the identifier has to be derived from the individual
+resources they compose.
+
+If you are not using the key or property "id", you will need to provide a
+listener that will derive and return the identifier. This is done by attaching
+to the `getIdFromResource` event of the `PhlyRestfully\Plugin\HalLinks` class.
+
+Let's look at an example. Consider the following resource structure:
+
+```javascript
+{
+    "name": "mwop",
+    "fullname": "Matthew Weier O'Phinney",
+    "url": "http://mwop.net"
+}
+```
+
+Now, let's consider the following listener:
+
+```php
+$listener = function ($e) {
+    $resource = $e->getParam('resource');
+    if (!is_array($resource)) {
+        return false;
+    }
+
+    if (!array_key_exists('name', $resource)) {
+        return false;
+    }
+
+    return $resource['name'];
+};
+```
+
+The above listener, on encountering the resource, would return "mwop", as that's
+the value of the "name" property.
+
+There are two ways to attach to this listener. First, we can grab the `HalLinks`
+plugin/helper, and attach directly to its service manager:
+
+```php
+// Assume $services is the application ServiceManager instance
+$helpers = $services->get('ViewHelperManager');
+$links   = $helpers->get('HalLinks');
+$links->getEventManager()->attach('getIdFromResource', $listener);
+```
+
+Alternately, you can do so via the `SharedEventManager` instance:
+
+```php
+// Assume $services is the application ServiceManager instance
+$sharedEvents = $services->get('SharedEventManager');
+
+// or, if you have access to another event manager instance:
+$sharedEvents = $events->getSharedManager();
+
+// Then, connect to it:
+$sharedEvents('PhlyRestfully\Plugin\HalLinks', 'getIdFromResource', $listener);
+```
+
+Controller Events
+-----------------
+
+Each of the various REST endpoint methods - `create()`, `delete()`,
+`deleteList()`, `get()`, `getList()`, `patch()`, `update()`, and `replaceList()`
+\- trigger both a `{methodname}.pre` and a `{methodname}.post` event. The "pre"
+event is executed after validating arguments, and will receive any arguments
+passed to the method; the "post" event occurs right before returning from the
+method, and receives the same arguments, plus the resource or collection, if
+applicable.
+
+These methods are useful in the following scenarios:
+
+- Specifying custom HAL links
+- Aggregating additional request parameters to pass to the resource object
+
+As an example, if you wanted to add a "describedby" HAL link to every resource
+or collection returned, you could do the following:
+
+```php
+// Methods we're interested in
+$methods = array(
+    'create.post',
+    'get.post',
+    'getList.post',
+    'patch.post',
+    'update.post',
+    'replaceList.post',
+);
+// Assuming $sharedEvents is a ZF2 SharedEventManager instance
+$sharedEvents->attach('My\Namespaced\ResourceController', $methods, function ($e) {
+    $resource = $e->getParam('resource', false);
+    if (!$resource) {
+        $resource = $e->getParam('collection', false);
+    }
+
+    if (!$resource instanceof \PhlyRestfully\LinkCollectionAwareInterface) {
+        return;
+    }
+
+    $link = new \PhlyRestfully\Link('describedby');
+    $link->setRoute('api/docs');
+    $resource->getLinks()->add($link);
+});
+```
 
 Upgrading
 =========

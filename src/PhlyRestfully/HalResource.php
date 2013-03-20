@@ -8,24 +8,23 @@
 
 namespace PhlyRestfully;
 
-class HalResource
+class HalResource implements LinkCollectionAwareInterface
 {
     protected $id;
 
+    /**
+     * @var LinkCollection
+     */
+    protected $links;
+
     protected $resource;
-
-    protected $route;
-
-    protected $routeParams;
 
     /**
      * @param  object|array $resource
      * @param  mixed $id
-     * @param  string $route
-     * @param  array $routeParams
      * @throws Exception\InvalidResourceException if resource is not an object or array
      */
-    public function __construct($resource, $id, $route, array $routeParams = array())
+    public function __construct($resource, $id)
     {
         if (!is_object($resource) && !is_array($resource)) {
             throw new Exception\InvalidResourceException();
@@ -33,8 +32,6 @@ class HalResource
 
         $this->resource    = $resource;
         $this->id          = $id;
-        $this->route       = (string) $route;
-        $this->routeParams = $routeParams;
     }
 
     /**
@@ -48,9 +45,6 @@ class HalResource
         $names = array(
             'resource'     => 'resource',
             'id'           => 'id',
-            'route'        => 'route',
-            'routeparams'  => 'routeParams',
-            'route_params' => 'routeParams',
         );
         $name = strtolower($name);
         if (!in_array($name, array_keys($names))) {
@@ -61,5 +55,30 @@ class HalResource
         }
         $prop = $names[$name];
         return $this->{$prop};
+    }
+
+    /**
+     * Set link collection
+     *
+     * @param  LinkCollection $links
+     * @return self
+     */
+    public function setLinks(LinkCollection $links)
+    {
+        $this->links = $links;
+        return $this;
+    }
+
+    /**
+     * Get link collection
+     *
+     * @return LinkCollection
+     */
+    public function getLinks()
+    {
+        if (!$this->links instanceof LinkCollection) {
+            $this->setLinks(new LinkCollection());
+        }
+        return $this->links;
     }
 }

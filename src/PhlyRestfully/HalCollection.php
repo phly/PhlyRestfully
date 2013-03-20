@@ -9,11 +9,12 @@
 namespace PhlyRestfully;
 
 use Traversable;
+use Zend\Stdlib\ArrayUtils;
 
 /**
  * Model a collection for use with HAL payloads
  */
-class HalCollection
+class HalCollection implements LinkCollectionAwareInterface
 {
     /**
      * Additional attributes to render with resource
@@ -40,9 +41,19 @@ class HalCollection
     protected $collectionRoute;
 
     /**
-     * @var string
+     * @var array
      */
-    protected $resourceRoute;
+    protected $collectionRouteOptions = array();
+
+    /**
+     * @var array
+     */
+    protected $collectionRouteParams = array();
+
+    /**
+     * @var LinkCollection
+     */
+    protected $links;
 
     /**
      * Current page
@@ -59,20 +70,52 @@ class HalCollection
     protected $pageSize = 30;
 
     /**
+     * @var LinkCollection
+     */
+    protected $resourceLinks;
+
+    /**
+     * @var string
+     */
+    protected $resourceRoute;
+
+    /**
+     * @var array
+     */
+    protected $resourceRouteOptions = array();
+
+    /**
+     * @var array
+     */
+    protected $resourceRouteParams = array();
+
+    /**
      * @param  array|Traversable|\Zend\Paginator\Paginator $collection
      * @param  string $collectionRoute
      * @param  string $resourceRoute
      * @throws Exception\InvalidCollectionException
      */
-    public function __construct($collection, $collectionRoute, $resourceRoute)
+    public function __construct($collection, $resourceRoute = null, $resourceRouteParams = null, $resourceRouteOptions = null)
     {
         if (!is_array($collection) && !$collection instanceof Traversable) {
-            throw new Exception\InvalidCollectionException();
+            throw new Exception\InvalidCollectionException(sprintf(
+                '%s expects an array or Traversable; received "%s"',
+                __METHOD__,
+                (is_object($collection) ? get_class($collection) : gettype($collection))
+            ));
         }
 
-        $this->collection      = $collection;
-        $this->collectionRoute = (string) $collectionRoute;
-        $this->resourceRoute   = (string) $resourceRoute;
+        $this->collection = $collection;
+
+        if (null !== $resourceRoute) {
+            $this->setResourceRoute($resourceRoute);
+        }
+        if (null !== $resourceRouteParams) {
+            $this->setResourceRouteParams($resourceRouteParams);
+        }
+        if (null !== $resourceRouteOptions) {
+            $this->setResourceRouteOptions($resourceRouteOptions);
+        }
     }
 
     /**
@@ -84,17 +127,28 @@ class HalCollection
     public function __get($name)
     {
         $names = array(
-            'attributes'       => 'attributes',
-            'collection'       => 'collection',
-            'collectionname'   => 'collectionName',
-            'collection_name'  => 'collectionName',
-            'collectionroute'  => 'collectionRoute',
-            'collection_route' => 'collectionRoute',
-            'resourceroute'    => 'resourceRoute',
-            'resource_route'   => 'resourceRoute',
-            'page'             => 'page',
-            'pagesize'         => 'pageSize',
-            'page_size'        => 'pageSize',
+            'attributes'               => 'attributes',
+            'collection'               => 'collection',
+            'collectionname'           => 'collectionName',
+            'collection_name'          => 'collectionName',
+            'collectionroute'          => 'collectionRoute',
+            'collection_route'         => 'collectionRoute',
+            'collectionrouteoptions'   => 'collectionRouteOptions',
+            'collection_route_options' => 'collectionRouteOptions',
+            'collectionrouteparams'    => 'collectionRouteParams',
+            'collection_route_params'  => 'collectionRouteParams',
+            'links'                    => 'links',
+            'resourcelinks'            => 'resourceLinks',
+            'resource_links'           => 'resourceLinks',
+            'resourceroute'            => 'resourceRoute',
+            'resource_route'           => 'resourceRoute',
+            'resourcerouteoptions'     => 'resourceRouteOptions',
+            'resource_route_options'   => 'resourceRouteOptions',
+            'resourcerouteparams'      => 'resourceRouteParams',
+            'resource_route_params'    => 'resourceRouteParams',
+            'page'                     => 'page',
+            'pagesize'                 => 'pageSize',
+            'page_size'                => 'pageSize',
         );
         $name = strtolower($name);
         if (!in_array($name, array_keys($names))) {
@@ -128,6 +182,76 @@ class HalCollection
     public function setCollectionName($name)
     {
         $this->collectionName = (string) $name;
+        return $this;
+    }
+
+    /**
+     * Set the collection route; used for generating pagination links
+     *
+     * @param  string $route
+     * @return HalCollection
+     */
+    public function setCollectionRoute($route)
+    {
+        $this->collectionRoute = (string) $route;
+        return $this;
+    }
+
+    /**
+     * Set options to use with the collection route; used for generating pagination links
+     *
+     * @param  array|Traversable $options
+     * @return HalCollection
+     * @throws Exception\InvalidArgumentException
+     */
+    public function setCollectionRouteOptions($options)
+    {
+        if ($options instanceof Traversable) {
+            $options = ArrayUtils::iteratorToArray($options);
+        }
+        if (!is_array($options)) {
+            throw new Exception\InvalidArgumentException(sprintf(
+                '%s expects an array or Traversable; received "%s"',
+                __METHOD__,
+                (is_object($options) ? get_class($options) : gettype($options))
+            ));
+        }
+        $this->collectionRouteOptions = $options;
+        return $this;
+    }
+
+    /**
+     * Set parameters/substitutions to use with the collection route; used for generating pagination links
+     *
+     * @param  array|Traversable $params
+     * @return HalCollection
+     * @throws Exception\InvalidArgumentException
+     */
+    public function setCollectionRouteParams($params)
+    {
+        if ($params instanceof Traversable) {
+            $params = ArrayUtils::iteratorToArray($params);
+        }
+        if (!is_array($params)) {
+            throw new Exception\InvalidArgumentException(sprintf(
+                '%s expects an array or Traversable; received "%s"',
+                __METHOD__,
+                (is_object($params) ? get_class($params) : gettype($params))
+            ));
+        }
+        $this->collectionRouteParams = $params;
+        return $this;
+    }
+
+    /**
+     * Set link collection
+     *
+     * @param  LinkCollection $links
+     * @return self
+     */
+    public function setLinks(LinkCollection $links)
+    {
+        $this->links = $links;
         return $this;
     }
 
@@ -185,5 +309,98 @@ class HalCollection
 
         $this->pageSize = $size;
         return $this;
+    }
+
+    /**
+     * Set default set of links to use for resources
+     *
+     * @param  LinkCollection $links
+     * @return self
+     */
+    public function setResourceLinks(LinkCollection $links)
+    {
+        $this->resourceLinks = $links;
+        return $this;
+    }
+
+    /**
+     * Set the resource route
+     *
+     * @param  string $route
+     * @return HalCollection
+     */
+    public function setResourceRoute($route)
+    {
+        $this->resourceRoute = (string) $route;
+        return $this;
+    }
+
+    /**
+     * Set options to use with the resource route
+     *
+     * @param  array|Traversable $options
+     * @return HalCollection
+     * @throws Exception\InvalidArgumentException
+     */
+    public function setResourceRouteOptions($options)
+    {
+        if ($options instanceof Traversable) {
+            $options = ArrayUtils::iteratorToArray($options);
+        }
+        if (!is_array($options)) {
+            throw new Exception\InvalidArgumentException(sprintf(
+                '%s expects an array or Traversable; received "%s"',
+                __METHOD__,
+                (is_object($options) ? get_class($options) : gettype($options))
+            ));
+        }
+        $this->resourceRouteOptions = $options;
+        return $this;
+    }
+
+    /**
+     * Set parameters/substitutions to use with the resource route
+     *
+     * @param  array|Traversable $params
+     * @return HalCollection
+     * @throws Exception\InvalidArgumentException
+     */
+    public function setResourceRouteParams($params)
+    {
+        if ($params instanceof Traversable) {
+            $params = ArrayUtils::iteratorToArray($params);
+        }
+        if (!is_array($params)) {
+            throw new Exception\InvalidArgumentException(sprintf(
+                '%s expects an array or Traversable; received "%s"',
+                __METHOD__,
+                (is_object($params) ? get_class($params) : gettype($params))
+            ));
+        }
+        $this->resourceRouteParams = $params;
+        return $this;
+    }
+
+    /**
+     * Get link collection
+     *
+     * @return LinkCollection
+     */
+    public function getLinks()
+    {
+        if (!$this->links instanceof LinkCollection) {
+            $this->setLinks(new LinkCollection());
+        }
+        return $this->links;
+    }
+
+    /**
+     * Retrieve default resource links, if any
+     *
+     * @return null|LinkCollection
+     */
+    public function getResourceLinks()
+    {
+        return $this->resourceLinks;
     }
 }

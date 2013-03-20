@@ -9,6 +9,8 @@
 namespace PhlyRestfullyTest;
 
 use PhlyRestfully\Exception;
+use PhlyRestfully\HalCollection;
+use PhlyRestfully\HalResource;
 use PhlyRestfully\Plugin;
 use PhlyRestfully\Resource;
 use PhlyRestfully\ResourceController;
@@ -487,4 +489,336 @@ class ResourceControllerTest extends TestCase
 
         $this->assertAttributeEquals($types, 'contentTypes', $controller);
     }
+
+    public function testCreateUsesHalResourceReturnedByResource()
+    {
+        $data     = array('id' => 'foo', 'data' => 'bar');
+        $resource = new HalResource($data, 'foo', 'resource');
+        $this->resource->getEventManager()->attach('create', function ($e) use ($resource) {
+            return $resource;
+        });
+
+        $result = $this->controller->create($data);
+        $this->assertSame($resource, $result);
+    }
+
+    public function testGetUsesHalResourceReturnedByResource()
+    {
+        $data     = array('id' => 'foo', 'data' => 'bar');
+        $resource = new HalResource($data, 'foo', 'resource');
+        $this->resource->getEventManager()->attach('fetch', function ($e) use ($resource) {
+            return $resource;
+        });
+
+        $result = $this->controller->get('foo');
+        $this->assertSame($resource, $result);
+    }
+
+    public function testGetListUsesHalCollectionReturnedByResource()
+    {
+        $collection = new HalCollection(array());
+        $this->resource->getEventManager()->attach('fetchAll', function ($e) use ($collection) {
+            return $collection;
+        });
+
+        $result = $this->controller->getList();
+        $this->assertSame($collection, $result);
+    }
+
+    public function testPatchUsesHalResourceReturnedByResource()
+    {
+        $data     = array('id' => 'foo', 'data' => 'bar');
+        $resource = new HalResource($data, 'foo', 'resource');
+        $this->resource->getEventManager()->attach('patch', function ($e) use ($resource) {
+            return $resource;
+        });
+
+        $result = $this->controller->patch('foo', $data);
+        $this->assertSame($resource, $result);
+    }
+
+    public function testUpdateUsesHalResourceReturnedByResource()
+    {
+        $data     = array('id' => 'foo', 'data' => 'bar');
+        $resource = new HalResource($data, 'foo', 'resource');
+        $this->resource->getEventManager()->attach('update', function ($e) use ($resource) {
+            return $resource;
+        });
+
+        $result = $this->controller->update('foo', $data);
+        $this->assertSame($resource, $result);
+    }
+
+    public function testReplaceListUsesHalCollectionReturnedByResource()
+    {
+        $collection = new HalCollection(array());
+        $this->resource->getEventManager()->attach('replaceList', function ($e) use ($collection) {
+            return $collection;
+        });
+
+        $result = $this->controller->replaceList(array());
+        $this->assertSame($collection, $result);
+    }
+
+    public function testCreateTriggersPreAndPostEvents()
+    {
+        $test = (object) array(
+            'pre'       => false,
+            'pre_data'  => false,
+            'post'      => false,
+            'post_data' => false,
+            'resource'  => false,
+        );
+
+        $this->controller->getEventManager()->attach('create.pre', function ($e) use ($test) {
+            $test->pre      = true;
+            $test->pre_data = $e->getParam('data');
+        });
+        $this->controller->getEventManager()->attach('create.post', function ($e) use ($test) {
+            $test->post = true;
+            $test->post_data = $e->getParam('data');
+            $test->resource = $e->getParam('resource');
+        });
+
+        $data     = array('id' => 'foo', 'data' => 'bar');
+        $resource = new HalResource($data, 'foo', 'resource');
+        $this->resource->getEventManager()->attach('create', function ($e) use ($resource) {
+            return $resource;
+        });
+
+        $result = $this->controller->create($data);
+        $this->assertTrue($test->pre);
+        $this->assertEquals($data, $test->pre_data);
+        $this->assertTrue($test->post);
+        $this->assertEquals($data, $test->post_data);
+        $this->assertSame($resource, $test->resource);
+    }
+
+    public function testDeleteTriggersPreAndPostEvents()
+    {
+        $test = (object) array(
+            'pre'       => false,
+            'pre_id'  => false,
+            'post'      => false,
+            'post_id' => false,
+        );
+
+        $this->controller->getEventManager()->attach('delete.pre', function ($e) use ($test) {
+            $test->pre      = true;
+            $test->pre_id = $e->getParam('id');
+        });
+        $this->controller->getEventManager()->attach('delete.post', function ($e) use ($test) {
+            $test->post = true;
+            $test->post_id = $e->getParam('id');
+        });
+
+        $this->resource->getEventManager()->attach('delete', function ($e) {
+            return true;
+        });
+
+        $result = $this->controller->delete('foo');
+        $this->assertTrue($test->pre);
+        $this->assertEquals('foo', $test->pre_id);
+        $this->assertTrue($test->post);
+        $this->assertEquals('foo', $test->post_id);
+    }
+
+    public function testDeleteListTriggersPreAndPostEvents()
+    {
+        $test = (object) array(
+            'pre'       => false,
+            'post'      => false,
+        );
+
+        $this->controller->getEventManager()->attach('deleteList.pre', function ($e) use ($test) {
+            $test->pre      = true;
+        });
+        $this->controller->getEventManager()->attach('deleteList.post', function ($e) use ($test) {
+            $test->post = true;
+        });
+
+        $this->resource->getEventManager()->attach('deleteList', function ($e) {
+            return true;
+        });
+
+        $result = $this->controller->deleteList();
+        $this->assertTrue($test->pre);
+        $this->assertTrue($test->post);
+    }
+
+    public function testGetTriggersPreAndPostEvents()
+    {
+        $test = (object) array(
+            'pre'       => false,
+            'pre_id'    => false,
+            'post'      => false,
+            'post_id'   => false,
+            'resource'  => false,
+        );
+
+        $this->controller->getEventManager()->attach('get.pre', function ($e) use ($test) {
+            $test->pre    = true;
+            $test->pre_id = $e->getParam('id');
+        });
+        $this->controller->getEventManager()->attach('get.post', function ($e) use ($test) {
+            $test->post = true;
+            $test->post_id = $e->getParam('id');
+            $test->resource = $e->getParam('resource');
+        });
+
+        $data     = array('id' => 'foo', 'data' => 'bar');
+        $resource = new HalResource($data, 'foo', 'resource');
+        $this->resource->getEventManager()->attach('fetch', function ($e) use ($resource) {
+            return $resource;
+        });
+
+        $result = $this->controller->get('foo');
+        $this->assertTrue($test->pre);
+        $this->assertEquals('foo', $test->pre_id);
+        $this->assertTrue($test->post);
+        $this->assertEquals('foo', $test->post_id);
+        $this->assertSame($resource, $test->resource);
+    }
+
+    public function testGetListTriggersPreAndPostEvents()
+    {
+        $test = (object) array(
+            'pre'        => false,
+            'post'       => false,
+            'collection' => false,
+        );
+
+        $this->controller->getEventManager()->attach('getList.pre', function ($e) use ($test) {
+            $test->pre    = true;
+        });
+        $this->controller->getEventManager()->attach('getList.post', function ($e) use ($test) {
+            $test->post = true;
+            $test->collection = $e->getParam('collection');
+        });
+
+        $collection = new HalCollection(array());
+        $this->resource->getEventManager()->attach('fetchAll', function ($e) use ($collection) {
+            return $collection;
+        });
+
+        $result = $this->controller->getList();
+        $this->assertTrue($test->pre);
+        $this->assertTrue($test->post);
+        $this->assertSame($collection, $test->collection);
+    }
+
+    public function testPatchTriggersPreAndPostEvents()
+    {
+        $test = (object) array(
+            'pre'       => false,
+            'pre_id'    => false,
+            'pre_data'  => false,
+            'post'      => false,
+            'post_id'   => false,
+            'post_data' => false,
+            'resource'  => false,
+        );
+
+        $this->controller->getEventManager()->attach('patch.pre', function ($e) use ($test) {
+            $test->pre      = true;
+            $test->pre_id   = $e->getParam('id');
+            $test->pre_data = $e->getParam('data');
+        });
+        $this->controller->getEventManager()->attach('patch.post', function ($e) use ($test) {
+            $test->post = true;
+            $test->post_id   = $e->getParam('id');
+            $test->post_data = $e->getParam('data');
+            $test->resource  = $e->getParam('resource');
+        });
+
+        $data     = array('id' => 'foo', 'data' => 'bar');
+        $resource = new HalResource($data, 'foo', 'resource');
+        $this->resource->getEventManager()->attach('patch', function ($e) use ($resource) {
+            return $resource;
+        });
+
+        $result = $this->controller->patch('foo', $data);
+        $this->assertTrue($test->pre);
+        $this->assertEquals('foo', $test->pre_id);
+        $this->assertEquals($data, $test->pre_data);
+        $this->assertTrue($test->post);
+        $this->assertEquals('foo', $test->post_id);
+        $this->assertEquals($data, $test->post_data);
+        $this->assertSame($resource, $test->resource);
+    }
+
+    public function testUpdateTriggersPreAndPostEvents()
+    {
+        $test = (object) array(
+            'pre'       => false,
+            'pre_id'    => false,
+            'pre_data'  => false,
+            'post'      => false,
+            'post_id'   => false,
+            'post_data' => false,
+            'resource'  => false,
+        );
+
+        $this->controller->getEventManager()->attach('update.pre', function ($e) use ($test) {
+            $test->pre      = true;
+            $test->pre_id   = $e->getParam('id');
+            $test->pre_data = $e->getParam('data');
+        });
+        $this->controller->getEventManager()->attach('update.post', function ($e) use ($test) {
+            $test->post = true;
+            $test->post_id   = $e->getParam('id');
+            $test->post_data = $e->getParam('data');
+            $test->resource  = $e->getParam('resource');
+        });
+
+        $data     = array('id' => 'foo', 'data' => 'bar');
+        $resource = new HalResource($data, 'foo', 'resource');
+        $this->resource->getEventManager()->attach('update', function ($e) use ($resource) {
+            return $resource;
+        });
+
+        $result = $this->controller->update('foo', $data);
+        $this->assertTrue($test->pre);
+        $this->assertEquals('foo', $test->pre_id);
+        $this->assertEquals($data, $test->pre_data);
+        $this->assertTrue($test->post);
+        $this->assertEquals('foo', $test->post_id);
+        $this->assertEquals($data, $test->post_data);
+        $this->assertSame($resource, $test->resource);
+    }
+
+    public function testReplaceListTriggersPreAndPostEvents()
+    {
+        $test = (object) array(
+            'pre'        => false,
+            'pre_data'   => false,
+            'post'       => false,
+            'post_data'  => false,
+            'collection' => false,
+        );
+
+        $this->controller->getEventManager()->attach('replaceList.pre', function ($e) use ($test) {
+            $test->pre      = true;
+            $test->pre_data = $e->getParam('data');
+        });
+        $this->controller->getEventManager()->attach('replaceList.post', function ($e) use ($test) {
+            $test->post = true;
+            $test->post_data = $e->getParam('data');
+            $test->collection = $e->getParam('collection');
+        });
+
+        $data       = array('foo' => array('id' => 'bar'));
+        $collection = new HalCollection($data);
+        $this->resource->getEventManager()->attach('replaceList', function ($e) use ($collection) {
+            return $collection;
+        });
+
+        $result = $this->controller->replaceList($data);
+        $this->assertTrue($test->pre);
+        $this->assertEquals($data, $test->pre_data);
+        $this->assertTrue($test->post);
+        $this->assertEquals($data, $test->post_data);
+        $this->assertSame($collection, $test->collection);
+    }
+
 }

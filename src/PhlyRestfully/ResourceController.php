@@ -271,7 +271,9 @@ class ResourceController extends AbstractRestfulController
             return $this->createMethodNotAllowedResponse($this->collectionHttpOptions);
         }
 
-        $response = $this->getResponse();
+        $events = $this->getEventManager();
+        $events->trigger('create.pre', $this, array('data' => $data));
+
         try {
             $resource = $this->resource->create($data);
         } catch (Exception\CreationException $e) {
@@ -279,21 +281,29 @@ class ResourceController extends AbstractRestfulController
             return new ApiProblem($code, $e);
         }
 
-        $id = $this->getIdentifierFromResource($resource);
-        if (!$id) {
-            return new ApiProblem(
-                422,
-                'No resource identifier present following resource creation.'
-            );
+        if (!$resource instanceof HalResource) {
+            $id = $this->getIdentifierFromResource($resource);
+            if (!$id) {
+                return new ApiProblem(
+                    422,
+                    'No resource identifier present following resource creation.'
+                );
+            }
+            $resource = new HalResource($resource, $id);
         }
 
+        $this->injectSelfLink($resource);
+
+        $response = $this->getResponse();
         $response->setStatusCode(201);
         $response->getHeaders()->addHeaderLine(
             'Location',
-            $this->halLinks()->createLink($this->route, $id, $resource)
+            $this->halLinks()->createLink($this->route, $resource->id, $resource->resource)
         );
 
-        return new HalResource($resource, $id, $this->route);
+        $events->trigger('create.post', $this, array('data' => $data, 'resource' => $resource));
+
+        return $resource;
     }
 
     /**
@@ -311,12 +321,18 @@ class ResourceController extends AbstractRestfulController
             return $this->createMethodNotAllowedResponse($this->collectionHttpOptions);
         }
 
+        $events = $this->getEventManager();
+        $events->trigger('delete.pre', $this, array('id' => $id));
+
         if (!$this->resource->delete($id)) {
             return new ApiProblem(422, 'Unable to delete resource.');
         }
 
         $response = $this->getResponse();
         $response->setStatusCode(204);
+
+        $events->trigger('delete.post', $this, array('id' => $id));
+
         return $response;
     }
 
@@ -326,12 +342,18 @@ class ResourceController extends AbstractRestfulController
             return $this->createMethodNotAllowedResponse($this->collectionHttpOptions);
         }
 
+        $events = $this->getEventManager();
+        $events->trigger('deleteList.pre', $this, array());
+
         if (!$this->resource->deleteList()) {
             return new ApiProblem(422, 'Unable to delete collection.');
         }
 
         $response = $this->getResponse();
         $response->setStatusCode(204);
+
+        $events->trigger('deleteList.post', $this, array());
+
         return $response;
     }
 
@@ -347,12 +369,21 @@ class ResourceController extends AbstractRestfulController
             return $this->createMethodNotAllowedResponse($this->resourceHttpOptions);
         }
 
+        $events = $this->getEventManager();
+        $events->trigger('get.pre', $this, array('id' => $id));
+
         $resource = $this->resource->fetch($id);
         if (!$resource) {
             return new ApiProblem(404, 'Resource not found.');
         }
 
-        return new HalResource($resource, $id, $this->route);
+        if (!$resource instanceof HalResource) {
+            $resource = new HalResource($resource, $id);
+        }
+
+        $this->injectSelfLink($resource);
+        $events->trigger('get.post', $this, array('id' => $id, 'resource' => $resource));
+        return $resource;
     }
 
     /**
@@ -366,13 +397,21 @@ class ResourceController extends AbstractRestfulController
             return $this->createMethodNotAllowedResponse($this->collectionHttpOptions);
         }
 
-        $response = $this->getResponse();
-        $items    = $this->resource->fetchAll();
+        $events = $this->getEventManager();
+        $events->trigger('getList.pre', $this, array());
 
-        $collection = new HalCollection($items, $this->route, $this->route);
+        $collection = $this->resource->fetchAll();
+
+        if (!$collection instanceof HalCollection) {
+            $collection = new HalCollection($collection);
+        }
+        $this->injectSelfLink($collection);
+        $collection->setResourceRoute($this->route);
         $collection->setPage($this->getRequest()->getQuery('page', 1));
         $collection->setPageSize($this->pageSize);
         $collection->setCollectionName($this->collectionName);
+
+        $events->trigger('getList.post', $this, array('collection' => $collection));
         return $collection;
     }
 
@@ -433,6 +472,9 @@ class ResourceController extends AbstractRestfulController
             return $this->createMethodNotAllowedResponse($this->resourceHttpOptions);
         }
 
+        $events = $this->getEventManager();
+        $events->trigger('patch.pre', $this, array('id' => $id, 'data' => $data));
+
         try {
             $resource = $this->resource->patch($id, $data);
         } catch (Exception\PatchException $e) {
@@ -440,7 +482,14 @@ class ResourceController extends AbstractRestfulController
             return new ApiProblem($code, $e);
         }
 
-        return new HalResource($resource, $id, $this->route);
+        if (!$resource instanceof HalResource) {
+            $resource = new HalResource($resource, $id);
+        }
+
+        $this->injectSelfLink($resource);
+
+        $events->trigger('patch.post', $this, array('id' => $id, 'data' => $data, 'resource' => $resource));
+        return $resource;
     }
 
     /**
@@ -459,6 +508,9 @@ class ResourceController extends AbstractRestfulController
             return $this->createMethodNotAllowedResponse($this->collectionHttpOptions);
         }
 
+        $events = $this->getEventManager();
+        $events->trigger('update.pre', $this, array('id' => $id, 'data' => $data));
+
         try {
             $resource = $this->resource->update($id, $data);
         } catch (Exception\UpdateException $e) {
@@ -466,7 +518,14 @@ class ResourceController extends AbstractRestfulController
             return new ApiProblem($code, $e);
         }
 
-        return new HalResource($resource, $id, $this->route);
+        if (!$resource instanceof HalResource) {
+            $resource = new HalResource($resource, $id);
+        }
+
+        $this->injectSelfLink($resource);
+
+        $events->trigger('update.post', $this, array('id' => $id, 'data' => $data, 'resource' => $resource));
+        return $resource;
     }
 
     /**
@@ -481,17 +540,26 @@ class ResourceController extends AbstractRestfulController
             return $this->createMethodNotAllowedResponse($this->collectionHttpOptions);
         }
 
+        $events = $this->getEventManager();
+        $events->trigger('replaceList.pre', $this, array('data' => $data));
+
         try {
-            $items = $this->resource->replaceList($data);
+            $collection = $this->resource->replaceList($data);
         } catch (Exception\UpdateException $e) {
             $code = $e->getCode() ?: 500;
             return new ApiProblem($code, $e);
         }
 
-        $collection = new HalCollection($items, $this->route, $this->route);
+        if (!$collection instanceof HalCollection) {
+            $collection = new HalCollection($collection);
+        }
+        $this->injectSelfLink($collection);
+        $collection->setResourceRoute($this->route);
         $collection->setPage($this->getRequest()->getQuery('page', 1));
         $collection->setPageSize($this->pageSize);
         $collection->setCollectionName($this->collectionName);
+
+        $events->trigger('replaceList.post', $this, array('data' => $data, 'collection' => $collection));
         return $collection;
     }
 
@@ -578,5 +646,15 @@ class ResourceController extends AbstractRestfulController
         $headers = $response->getHeaders();
         $headers->addHeaderLine('Allow', implode(', ', $options));
         return $response;
+    }
+
+    protected function injectSelfLink(LinkCollectionAwareInterface $resource)
+    {
+        $self = new Link('self');
+        $self->setRoute($this->route);
+        if ($resource instanceof HalResource) {
+            $self->setRouteParams(array('id' => $resource->id));
+        }
+        $resource->getLinks()->add($self);
     }
 }
