@@ -207,9 +207,10 @@ class RestfulJsonRenderer extends JsonRenderer
         $resource = $halResource->resource;
         $id       = $halResource->id;
         $route    = $halResource->route;
+        $links    = $halResource->links;
 
         $helper   = $this->helpers->get('HalLinks');
-        $links    = $helper->forResource($route, $id, $resource);
+        $links    = array_merge($helper->forResource($route, $id, $resource), $links);
 
         if (!is_array($resource)) {
             $resource = $this->convertResourceToArray($resource);
