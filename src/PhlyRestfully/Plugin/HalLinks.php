@@ -31,7 +31,7 @@ use Zend\View\Helper\Url;
 /**
  * Generate links for use with HAL payloads
  */
-class HalLinks extends AbstractHelper implements 
+class HalLinks extends AbstractHelper implements
     ControllerPluginInterface,
     EventManagerAwareInterface
 {
@@ -538,7 +538,7 @@ class HalLinks extends AbstractHelper implements
      *
      * Expects an "id" member to exist; if not, a boolean false is returned.
      *
-     * Triggers the "getIdFromResource" event with the resource; listeners can 
+     * Triggers the "getIdFromResource" event with the resource; listeners can
      * return a non-false, non-null value in order to specify the identifier
      * to use for URL assembly.
      *
