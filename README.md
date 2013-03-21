@@ -281,11 +281,13 @@ return array(
             ),
         ),
     ),
-    'service_manager' => array('invokables' => array(
-        'Hydrator\ArraySerializable' => 'Zend\Stdlib\Hydrator\ArraySerializable',
-        'Hydrator\ObjectProperty'    => 'Zend\Stdlib\Hydrator\ObjectProperty',
-        'Hydrator\Reflection'        => 'Zend\Stdlib\Hydrator\Reflection',
-    ));
+    'service_manager' => array(
+        'invokables' => array(
+            'Hydrator\ArraySerializable' => 'Zend\Stdlib\Hydrator\ArraySerializable',
+            'Hydrator\ObjectProperty'    => 'Zend\Stdlib\Hydrator\ObjectProperty',
+            'Hydrator\Reflection'        => 'Zend\Stdlib\Hydrator\Reflection',
+        ),
+    ),
 );
 ```
 
