@@ -268,7 +268,7 @@ You can specify hydrators to use with the objects you return from your resources
 by attaching them to the `HalLinks` view helper/controller plugin. This can be done
 most easily via configuration, and you can specify both a map of class/hydrator
 service pairs as well as a default hydrator to use as a fallback. As an example,
-consider the following `config/autoload/phlyrestfully.global.config.php` file:
+consider the following `config/autoload/phlyrestfully.global.php` file:
 
 ```php
 return array(
