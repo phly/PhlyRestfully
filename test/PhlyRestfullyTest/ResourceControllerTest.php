@@ -185,6 +185,7 @@ class ResourceControllerTest extends TestCase
         $result = $this->controller->getList();
         $this->assertInstanceOf('PhlyRestfully\HalCollection', $result);
         $this->assertEquals($items, $result->collection);
+        return $result;
     }
 
     public function testReturnsHalCollectionForPaginatedList()
@@ -209,6 +210,15 @@ class ResourceControllerTest extends TestCase
         $this->assertSame($paginator, $result->collection);
         $this->assertEquals(2, $result->page);
         $this->assertEquals(1, $result->pageSize);
+    }
+
+    /**
+     * @depends testReturnsHalCollectionForNonPaginatedList
+     */
+    public function testHalCollectionReturnedIncludesRoutes($collection)
+    {
+        $this->assertEquals('resource', $collection->collectionRoute);
+        $this->assertEquals('resource', $collection->resourceRoute);
     }
 
     public function testHeadReturnsListResponseWhenNoIdProvided()
@@ -353,6 +363,16 @@ class ResourceControllerTest extends TestCase
 
         $result = $this->controller->replaceList($items);
         $this->assertInstanceOf('PhlyRestfully\HalCollection', $result);
+        return $result;
+    }
+
+    /**
+     * @depends testReplaceListReturnsHalCollectionOnSuccess
+     */
+    public function testReplaceListReturnsHalCollectionWithRoutesInjected($collection)
+    {
+        $this->assertEquals('resource', $collection->collectionRoute);
+        $this->assertEquals('resource', $collection->resourceRoute);
     }
 
     public function testOnDispatchRaisesDomainExceptionOnMissingResource()
