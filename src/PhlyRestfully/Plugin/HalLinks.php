@@ -215,7 +215,7 @@ class HalLinks extends AbstractHelper implements
      * and wish to ensure that route parameters are injected, or if you want to
      * inject query or fragment parameters.
      *
-     * Event parameters are aggregated in an ArrayObject, which allows you to 
+     * Event parameters are aggregated in an ArrayObject, which allows you to
      * directly manipulate them in your listeners:
      *
      * <code>
@@ -300,10 +300,10 @@ class HalLinks extends AbstractHelper implements
      *
      * Creates a hash representation of the HalResource. The resource is first
      * converted to an array, and its associated links are injected as the
-     * "_links" member. If any members of the resource are themselves 
+     * "_links" member. If any members of the resource are themselves
      * HalResource objects, they are extracted into an "_embedded" hash.
-     * 
-     * @param  HalResource $halResource 
+     *
+     * @param  HalResource $halResource
      * @return array
      */
     public function renderResource(HalResource $halResource)
