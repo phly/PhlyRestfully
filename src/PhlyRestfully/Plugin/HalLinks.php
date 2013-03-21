@@ -519,7 +519,8 @@ class HalLinks extends AbstractHelper implements
             $this->urlHelper,
             $linkDefinition->getRoute(),
             $linkDefinition->getRouteParams(),
-            $linkDefinition->getRouteOptions()
+            $linkDefinition->getRouteOptions(),
+            true
         );
         return array(
             'href' => call_user_func($this->serverUrlHelper, $path),
