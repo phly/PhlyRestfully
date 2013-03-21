@@ -202,6 +202,27 @@ class HalLinks extends AbstractHelper implements
      * then loops through the collection to create the data structure representing
      * the collection.
      *
+     * For each resource in the collection, the event "renderCollection.resource" is
+     * triggered, with the following parameters:
+     *
+     * - "collection", which is the $halCollection passed to the method
+     * - "resource", which is the current resource
+     * - "route", the resource route that will be used to generate links
+     * - "routeParams", any default routing parameters/substitutions to use in URL assembly
+     * - "routeOptions", any default routing options to use in URL assembly
+     *
+     * This event can be useful particularly when you have multi-segment routes
+     * and wish to ensure that route parameters are injected, or if you want to
+     * inject query or fragment parameters.
+     *
+     * Event parameters are aggregated in an ArrayObject, which allows you to 
+     * directly manipulate them in your listeners:
+     *
+     * <code>
+     * $params = $e->getParams();
+     * $params['routeOptions']['query'] = array('format' => 'json');
+     * </code>
+     *
      * @param  HalCollection $halCollection
      * @return array|ApiProblem Associative array representing the payload to render; returns ApiProblem if error in pagination occurs
      */
@@ -223,11 +244,22 @@ class HalLinks extends AbstractHelper implements
             $collectionName => array(),
         );
 
+        $events               = $this->getEventManager();
         $resourceRoute        = $halCollection->resourceRoute;
         $resourceRouteParams  = $halCollection->resourceRouteParams;
         $resourceRouteOptions = $halCollection->resourceRouteOptions;
         foreach ($collection as $resource) {
-            $origResource = $resource;
+            $eventParams = new ArrayObject(array(
+                'collection'   => $halCollection,
+                'resource'     => $resource,
+                'route'        => $resourceRoute,
+                'routeParams'  => $resourceRouteParams,
+                'routeOptions' => $resourceRouteOptions,
+            ));
+            $events->trigger('renderCollection.resource', $this, $eventParams);
+
+            $resource = $eventParams['resource'];
+
             if (!is_array($resource)) {
                 $resource = $this->convertResourceToArray($resource);
             }
@@ -249,9 +281,9 @@ class HalLinks extends AbstractHelper implements
 
             $link = new Link('self');
             $link->setRoute(
-                $resourceRoute,
-                array_merge($resourceRouteParams, array('id' => $id)),
-                $resourceRouteOptions
+                $eventParams['route'],
+                array_merge($eventParams['routeParams'], array('id' => $id)),
+                $eventParams['routeOptions']
             );
             $links = new LinkCollection();
             $links->add($link);
@@ -263,6 +295,17 @@ class HalLinks extends AbstractHelper implements
         return $payload;
     }
 
+    /**
+     * Render an individual resource
+     *
+     * Creates a hash representation of the HalResource. The resource is first
+     * converted to an array, and its associated links are injected as the
+     * "_links" member. If any members of the resource are themselves 
+     * HalResource objects, they are extracted into an "_embedded" hash.
+     * 
+     * @param  HalResource $halResource 
+     * @return array
+     */
     public function renderResource(HalResource $halResource)
     {
         $resource = $halResource->resource;
@@ -323,22 +366,6 @@ class HalLinks extends AbstractHelper implements
     }
 
     /**
-     * Generate HAL links for a given resource
-     *
-     * Generates a "self" link
-     *
-     * @param  string $route
-     * @param  null|false|mixed $id
-     * @param  array|object $resource
-     * @return array
-     */
-    public function forResource($route, $id = null, $resource = null)
-    {
-        $url = $this->createLink($route, $id, $resource);
-        return array('self' => array('href' => $url));
-    }
-
-    /**
      * Generate HAL links from a LinkCollection
      *
      * @param  LinkCollection $collection
@@ -383,19 +410,6 @@ class HalLinks extends AbstractHelper implements
     public function fromResource(LinkCollectionAwareInterface $resource)
     {
         return $this->fromLinkCollection($resource->getLinks());
-    }
-
-    /**
-     * Generate a self link for a collection
-     *
-     * @param  string $route
-     * @param  null|false $reUseMatchedParams
-     * @return array
-     */
-    public function forCollection($route, $reUseMatchedParams = null)
-    {
-        $url  = $this->createLink($route, $reUseMatchedParams);
-        return array('self' => array('href' => $url));
     }
 
     /**
