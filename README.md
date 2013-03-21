@@ -409,6 +409,23 @@ $sharedEvents->attach('My\Namespaced\ResourceController', $methods, function ($e
 });
 ```
 
+Return all errors as JSON 
+-------------------------
+
+By default, the ApiProblemListener is only registered for ResourceControllers.
+You can return all errors rendered as JSON by attaching the ApiProblemListener to the EventManager in your Module.php.
+
+```php
+// Module.php
+public function onBootstrap(\Zend\Mvc\MvcEvent $e)  {
+    $application        = $e>getApplication();
+    $eventManager       = $application->getEventManager();
+    $apiProblemListener = $application->getServiceManager()->get('PhlyRestfully\ApiProblemListener');
+
+    $eventManager->attach($apiProblemListener);
+}
+```
+
 Upgrading
 =========
 
