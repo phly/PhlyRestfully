@@ -409,22 +409,59 @@ $sharedEvents->attach('My\Namespaced\ResourceController', $methods, function ($e
 });
 ```
 
-Return all errors as JSON 
--------------------------
+Using The ApiProblemListener
+----------------------------
 
-By default, the ApiProblemListener is only registered for ResourceControllers.
-You can return all errors rendered as JSON by attaching the ApiProblemListener to the EventManager in your Module.php.
+If you need to return all dispatch errors as JSON to the clients, you can easily bind the ApiProblemListener to the dispatch.error event.
 
 ```php
-// Module.php
-public function onBootstrap(\Zend\Mvc\MvcEvent $e)  {
-    $application        = $e>getApplication();
-    $eventManager       = $application->getEventManager();
-    $apiProblemListener = $application->getServiceManager()->get('PhlyRestfully\ApiProblemListener');
-
-    $eventManager->attach($apiProblemListener);
+public function onBootstrap(MvcEvent $mvcEvent)
+{
+    $eventManager = $mvcEvent->getApplication()->getEventManager();
+    $eventManager->attach(
+        'dispatch.error',
+        function (MvcEvent $mvcEvent) {
+            $application = $mvcEvent->getApplication();
+            $apiProblemListener = $application->getServiceManager()->get('PhlyRestfully\ApiProblemListener');
+            $application->getEventManager()->attach($apiProblemListener);
+        }
+    );
 }
 ```
+
+Example result set:
+
+```json
+{
+    "describedBy": "http:\/\/www.w3.org\/Protocols\/rfc2616\/rfc2616-sec10.html", 
+    "title": "Not Found", 
+    "httpStatus": 404, 
+    "detail": "Page not found."
+}
+```
+
+You can also bind it to specific controllers:
+
+```php
+public function onBootstrap(MvcEvent $mvcEvent)
+{
+    $eventManager = $mvcEvent->getApplication()->getEventManager();
+    $eventManager->attach(
+        'route',
+        function (MvcEvent $mvcEvent) {
+            $controller = $mvcEvent->getRouteMatch()->getParam('controller');
+            if($controller == 'MyController') {
+                $application = $mvcEvent->getApplication();
+                $apiProblemListener = $application->getServiceManager()->get('PhlyRestfully\ApiProblemListener');
+                $application->getEventManager()->attach($apiProblemListener);
+            }
+        },
+        -100
+    );
+}
+```
+
+*Note:* you don't need to do this for the ResourceController class
 
 Upgrading
 =========
