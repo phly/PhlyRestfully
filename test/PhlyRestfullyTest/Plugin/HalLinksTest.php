@@ -30,6 +30,25 @@ class HalLinksTest extends TestCase
         $router->addRoute('resource', $route);
         $route2 = new Segment('/help');
         $router->addRoute('docs', $route2);
+
+        $router->addRoute('hostname', array(
+
+            'type' => 'hostname',
+            'options' => array(
+                'localhost.localdomain'
+            ),
+
+            'child_routes' => array(
+
+                'resource' => array(
+                    'type' => 'segment',
+                    'options' => array(
+                        'route' => '/resource[/:id]'
+                    )
+                )
+            )
+        ));
+
         $this->event = $event = new MvcEvent();
         $event->setRouter($router);
 
@@ -49,6 +68,12 @@ class HalLinksTest extends TestCase
         $plugin->setController($controller);
         $plugin->setUrlHelper($urlHelper);
         $plugin->setServerUrlHelper($serverUrlHelper);
+    }
+
+    public function testCreateLinkSkipServerUrlHelperIfSchemeExists()
+    {
+        $url = $this->plugin->createLink('hostname/resource');
+        $this->assertEquals('http://localhost.localdomain/resource', $url);
     }
 
     public function testLinkCreationWithoutIdCreatesFullyQualifiedLink()
