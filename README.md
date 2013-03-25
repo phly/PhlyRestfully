@@ -409,6 +409,60 @@ $sharedEvents->attach('My\Namespaced\ResourceController', $methods, function ($e
 });
 ```
 
+Using The ApiProblemListener
+----------------------------
+
+If you need to return all dispatch errors as JSON to the clients, you can easily bind the ApiProblemListener to the dispatch.error event.
+
+```php
+public function onBootstrap(MvcEvent $mvcEvent)
+{
+    $eventManager = $mvcEvent->getApplication()->getEventManager();
+    $eventManager->attach(
+        'dispatch.error',
+        function (MvcEvent $mvcEvent) {
+            $application = $mvcEvent->getApplication();
+            $apiProblemListener = $application->getServiceManager()->get('PhlyRestfully\ApiProblemListener');
+            $application->getEventManager()->attach($apiProblemListener);
+        }
+    );
+}
+```
+
+Example result set:
+
+```json
+{
+    "describedBy": "http:\/\/www.w3.org\/Protocols\/rfc2616\/rfc2616-sec10.html", 
+    "title": "Not Found", 
+    "httpStatus": 404, 
+    "detail": "Page not found."
+}
+```
+
+You can also bind it to specific controllers:
+
+```php
+public function onBootstrap(MvcEvent $mvcEvent)
+{
+    $eventManager = $mvcEvent->getApplication()->getEventManager();
+    $eventManager->attach(
+        'route',
+        function (MvcEvent $mvcEvent) {
+            $controller = $mvcEvent->getRouteMatch()->getParam('controller');
+            if($controller == 'MyController') {
+                $application = $mvcEvent->getApplication();
+                $apiProblemListener = $application->getServiceManager()->get('PhlyRestfully\ApiProblemListener');
+                $application->getEventManager()->attach($apiProblemListener);
+            }
+        },
+        -100
+    );
+}
+```
+
+*Note:* you don't need to do this for the ResourceController class
+
 Upgrading
 =========
 
