@@ -279,14 +279,19 @@ class HalLinks extends AbstractHelper implements
                 continue;
             }
 
-            $link = new Link('self');
-            $link->setRoute(
+            if ($eventParams['resource'] instanceof LinkCollectionAwareInterface) {
+                $links = $eventParams['resource']->getLinks();
+            } else {
+                $links = new LinkCollection();
+            }
+
+            $selfLink = new Link('self');
+            $selfLink->setRoute(
                 $eventParams['route'],
                 array_merge($eventParams['routeParams'], array('id' => $id)),
                 $eventParams['routeOptions']
             );
-            $links = new LinkCollection();
-            $links->add($link);
+            $links->add($selfLink);
 
             $resource['_links'] = $this->fromLinkCollection($links);
             $payload['_embedded'][$collectionName][] = $resource;
