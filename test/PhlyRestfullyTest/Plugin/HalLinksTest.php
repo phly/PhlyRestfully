@@ -12,9 +12,12 @@ use PhlyRestfully\HalResource;
 use PhlyRestfully\Link;
 use PhlyRestfully\Plugin\HalLinks;
 use PHPUnit_Framework_TestCase as TestCase;
+use Zend\Mvc\Router\Http\TreeRouteStack;
 use Zend\Mvc\Router\SimpleRouteStack;
 use Zend\Mvc\Router\Http\Segment;
 use Zend\Mvc\MvcEvent;
+use Zend\Uri\Http;
+use Zend\Uri\Uri;
 use Zend\View\Helper\Url as UrlHelper;
 use Zend\View\Helper\ServerUrl as ServerUrlHelper;
 
@@ -25,17 +28,16 @@ class HalLinksTest extends TestCase
 {
     public function setUp()
     {
-        $this->router = $router = new SimpleRouteStack();
+        $this->router = $router = new TreeRouteStack();
         $route = new Segment('/resource[/[:id]]');
         $router->addRoute('resource', $route);
         $route2 = new Segment('/help');
         $router->addRoute('docs', $route2);
-
         $router->addRoute('hostname', array(
 
             'type' => 'hostname',
             'options' => array(
-                'localhost.localdomain'
+                'route' => 'localhost.localdomain',
             ),
 
             'child_routes' => array(
@@ -51,6 +53,7 @@ class HalLinksTest extends TestCase
 
         $this->event = $event = new MvcEvent();
         $event->setRouter($router);
+        $router->setRequestUri(new Http('http://localhost.localdomain/resource'));
 
         $controller = $this->controller = $this->getMock('PhlyRestfully\ResourceController');
         $controller->expects($this->any())
@@ -75,6 +78,7 @@ class HalLinksTest extends TestCase
         $url = $this->plugin->createLink('hostname/resource');
         $this->assertEquals('http://localhost.localdomain/resource', $url);
     }
+
 
     public function testLinkCreationWithoutIdCreatesFullyQualifiedLink()
     {
