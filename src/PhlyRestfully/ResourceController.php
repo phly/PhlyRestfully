@@ -112,6 +112,13 @@ class ResourceController extends AbstractRestfulController
     protected $route;
 
     /**
+     * Name of the param that should be used as the resource identifier.
+     *
+     * @var string
+     */
+    protected $resourceIdentifierParam = 'id';
+
+    /**
      * Constructor
      *
      * Allows you to set the event identifier, which can be useful to allow multiple
@@ -124,6 +131,26 @@ class ResourceController extends AbstractRestfulController
         if (null !== $eventIdentifier) {
             $this->eventIdentifier = $eventIdentifier;
         }
+    }
+
+    /**
+     * Get the param used to identify the resource in the route
+     *
+     * @return string
+     */
+    public function getResourceIdentifierParam()
+    {
+        return $this->resourceIdentifierParam;
+    }
+
+    /**
+     * Set the resource identifier param
+     *
+     * @param string $param
+     */
+    public function setResourceIdentifierParam($param)
+    {
+        $this->resourceIdentifierParam = $param;
     }
 
     /**
@@ -650,6 +677,9 @@ class ResourceController extends AbstractRestfulController
         return $response;
     }
 
+    /**
+     * @param LinkCollectionAwareInterface $resource
+     */
     protected function injectSelfLink(LinkCollectionAwareInterface $resource)
     {
         $self = new Link('self');
@@ -658,5 +688,32 @@ class ResourceController extends AbstractRestfulController
             $self->setRouteParams(array('id' => $resource->id));
         }
         $resource->getLinks()->add($self);
+    }
+
+    /**
+     * @param \Zend\Mvc\Router\RouteMatch   $routeMatch
+     * @param \Zend\Stdlib\RequestInterface $request
+     *
+     * @return string|bool
+     */
+    protected function getIdentifier($routeMatch, $request)
+    {
+        $id = $routeMatch->getParam($this->getResourceIdentifierParam(), false);
+
+        if ($id) {
+
+            return $id;
+        }
+
+        // Should we really allow this ?
+        // If we remove it it's a BC break
+        $id = $request->getQuery()->get($this->getResourceIdentifierParam(), false);
+
+        if ($id) {
+
+            return $id;
+        }
+
+        return false;
     }
 }
