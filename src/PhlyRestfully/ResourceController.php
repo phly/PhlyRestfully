@@ -383,7 +383,7 @@ class ResourceController extends AbstractRestfulController
     /**
      * Respond to OPTIONS request
      *
-     * Uses $options to set the Allow header line and return an empty response.
+     * Uses $options to set the Access-Control-Allow-Methods header line and return an empty response.
      *
      * @return Response
      */
@@ -406,7 +406,7 @@ class ResourceController extends AbstractRestfulController
         $response = $this->getResponse();
         $response->setStatusCode(204);
         $headers  = $response->getHeaders();
-        $headers->addHeaderLine('Allow', implode(', ', $options));
+        $headers->addHeaderLine('Access-Control-Allow-Methods', implode(', ', $options));
         return $response;
     }
 
