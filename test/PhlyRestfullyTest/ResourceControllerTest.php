@@ -859,4 +859,18 @@ class ResourceControllerTest extends TestCase
         $this->assertInstanceOf('PhlyRestfully\View\RestfulJsonModel', $result);
         $this->assertSame($problem, $result->getPayload());
     }
+
+    /**
+     * @expectedException \PhlyRestfully\Exception\DomainException
+     */
+    public function testGetResourceThrowsExceptionOnMissingResource()
+    {
+        $controller = new ResourceController();
+        $controller->getResource();
+    }
+
+    public function testGetResourceReturnsSameInstance()
+    {
+        $this->assertEquals($this->resource, $this->controller->getResource());
+    }
 }
