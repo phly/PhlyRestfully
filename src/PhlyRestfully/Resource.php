@@ -26,6 +26,58 @@ class Resource implements ResourceInterface
     protected $events;
 
     /**
+     * @var array
+     */
+    protected $params = array();
+
+    /**
+     * @param array $params
+     *
+     * @return self
+     */
+    public function setEventParams(array $params)
+    {
+        $this->params = $params;
+        return $this;
+    }
+
+    /**
+     * @return array
+     */
+    public function getEventParams()
+    {
+        return $this->params;
+    }
+
+    /**
+     * @param string $name
+     * @param mixed  $value
+     *
+     * @return mixed
+     */
+    public function setEventParam($name, $value)
+    {
+        $this->params[$name] = $value;
+        return $this;
+    }
+
+    /**
+     * @param mixed $name
+     * @param mixed $default
+     *
+     * @return mixed
+     */
+    public function getEventParam($name, $default = null)
+    {
+        if (isSet($this->params[$name])) {
+
+            return $this->params;
+        }
+
+        return $default;
+    }
+
+    /**
      * Set event manager instance
      *
      * Sets the event manager identifiers to the current class, this class, and
