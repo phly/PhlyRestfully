@@ -11,6 +11,7 @@ namespace PhlyRestfullyTest;
 use ArrayIterator;
 use PhlyRestfully\Resource;
 use PHPUnit_Framework_TestCase as TestCase;
+use Zend\Stdlib\ArrayObject;
 use stdClass;
 use Zend\EventManager\EventManager;
 
@@ -54,6 +55,31 @@ class ResourceTest extends TestCase
     {
         $this->setExpectedException('PhlyRestfully\Exception\InvalidArgumentException');
         $this->resource->create($data);
+    }
+
+    public function testEventParamsReturnDefaultValueOnNonExistingParam()
+    {
+        $this->assertEquals('world', $this->resource->getEventParam('hello', 'world'));
+    }
+
+    public function testSameInstanceReturnedByEventParams()
+    {
+        $instance = new ArrayObject();
+
+        $this->resource->setEventParam('instance', $instance);
+
+        $this->assertEquals($instance, $this->resource->getEventParam('instance'));
+    }
+
+    public function testClearOldParamsOnSetEventParams()
+    {
+        $this->resource->setEventParam('world', 'hello');
+
+        $params = array('hello' => 'world');
+
+        $this->resource->setEventParams($params);
+
+        $this->assertEquals($params, $this->resource->getEventParams());
     }
 
     public function testCreateReturnsResultOfLastListener()

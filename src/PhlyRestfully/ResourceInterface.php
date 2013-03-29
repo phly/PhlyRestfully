@@ -16,6 +16,38 @@ use Zend\EventManager\EventManagerAwareInterface;
 interface ResourceInterface extends EventManagerAwareInterface
 {
     /**
+     * Set the event parameters
+     *
+     * @param array $params
+     *
+     * @return self
+     */
+    public function setEventParams(array $params);
+
+    /**
+     * Get the event parameters
+     *
+     * @return array
+     */
+    public function getEventParams();
+
+    /**
+     * @param string $name
+     * @param mixed  $value
+     *
+     * @return mixed
+     */
+    public function setEventParam($name, $value);
+
+    /**
+     * @param mixed $name
+     * @param mixed $default
+     *
+     * @return mixed
+     */
+    public function getEventParam($name, $default = null);
+
+    /**
      * Create a record in the resource
      *
      * @param  array|object $data
