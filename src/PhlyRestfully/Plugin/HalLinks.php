@@ -367,6 +367,11 @@ class HalLinks extends AbstractHelper implements
         $route = $eventParams['route'];
 
         $path = call_user_func($this->urlHelper, $route, $params->getArrayCopy(), $reUseMatchedParams);
+
+        if (substr($path, 0, 4) == 'http') {
+            return $path;
+        }
+
         return call_user_func($this->serverUrlHelper, $path);
     }
 
@@ -527,6 +532,11 @@ class HalLinks extends AbstractHelper implements
             $linkDefinition->getRouteOptions(),
             true
         );
+
+        if (substr($path, 0, 4) == 'http') {
+            return $path;
+        }
+
         return array(
             'href' => call_user_func($this->serverUrlHelper, $path),
         );
