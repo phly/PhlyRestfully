@@ -347,7 +347,13 @@ class ResourceController extends AbstractRestfulController
         $events = $this->getEventManager();
         $events->trigger('delete.pre', $this, array('id' => $id));
 
-        if (!$this->resource->delete($id)) {
+        try {
+            $result = $this->resource->delete($id);
+        } catch (\Exception $e) {
+            return new ApiProblem(500, $e);
+        }
+
+        if (!$result) {
             return new ApiProblem(422, 'Unable to delete resource.');
         }
 
@@ -368,7 +374,13 @@ class ResourceController extends AbstractRestfulController
         $events = $this->getEventManager();
         $events->trigger('deleteList.pre', $this, array());
 
-        if (!$this->resource->deleteList()) {
+        try {
+            $result = $this->resource->deleteList();
+        } catch (\Exception $e) {
+            return new ApiProblem(500, $e);
+        }
+
+        if (!$result) {
             return new ApiProblem(422, 'Unable to delete collection.');
         }
 
@@ -395,7 +407,12 @@ class ResourceController extends AbstractRestfulController
         $events = $this->getEventManager();
         $events->trigger('get.pre', $this, array('id' => $id));
 
-        $resource = $this->resource->fetch($id);
+        try {
+            $resource = $this->resource->fetch($id);
+        } catch (\Exception $e) {
+            return new ApiProblem(500, $e);
+        }
+
         if (!$resource) {
             return new ApiProblem(404, 'Resource not found.');
         }
@@ -423,7 +440,11 @@ class ResourceController extends AbstractRestfulController
         $events = $this->getEventManager();
         $events->trigger('getList.pre', $this, array());
 
-        $collection = $this->resource->fetchAll();
+        try {
+            $collection = $this->resource->fetchAll();
+        } catch (\Exception $e) {
+            return new ApiProblem(500, $e);
+        }
 
         if (!$collection instanceof HalCollection) {
             $collection = new HalCollection($collection);
