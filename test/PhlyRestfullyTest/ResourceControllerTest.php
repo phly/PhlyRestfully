@@ -701,23 +701,62 @@ class ResourceControllerTest extends TestCase
         $this->assertSame($resource, $test->resource);
     }
 
-    public function testOptionsTriggersPreAndPostEvents()
+    public function testOptionsTriggersPreAndPostEventsForCollection()
     {
+        $options = array('GET', 'POST');
+        $this->controller->setCollectionHttpOptions($options);
+
         $test = (object) array(
-            'pre'     => false,
-            'post'    => false,
+            'pre'          => false,
+            'post'         => false,
+            'pre_options'  => false,
+            'post_options' => false,
         );
 
-        $this->controller->getEventManager()->attach('getList.pre', function ($e) use ($test) {
+        $this->controller->getEventManager()->attach('options.pre', function ($e) use ($test) {
             $test->pre = true;
+            $test->pre_options = $e->getParam('options');
         });
-        $this->controller->getEventManager()->attach('getList.post', function ($e) use ($test) {
+        $this->controller->getEventManager()->attach('options.post', function ($e) use ($test) {
             $test->post = true;
+            $test->post_options = $e->getParam('options');
         });
 
         $this->controller->options();
         $this->assertTrue($test->pre);
+        $this->assertEquals($options, $test->pre_options);
         $this->assertTrue($test->post);
+        $this->assertEquals($options, $test->post_options);
+    }
+
+    public function testOptionsTriggersPreAndPostEventsForResource()
+    {
+        $options = array('GET', 'PUT', 'PATCH');
+        $this->controller->setResourceHttpOptions($options);
+
+        $test = (object) array(
+            'pre'          => false,
+            'post'         => false,
+            'pre_options'  => false,
+            'post_options' => false,
+        );
+
+        $this->controller->getEventManager()->attach('options.pre', function ($e) use ($test) {
+            $test->pre = true;
+            $test->pre_options = $e->getParam('options');
+        });
+        $this->controller->getEventManager()->attach('options.post', function ($e) use ($test) {
+            $test->post = true;
+            $test->post_options = $e->getParam('options');
+        });
+
+        $this->event->getRouteMatch()->setParam('id', 'foo');
+
+        $this->controller->options();
+        $this->assertTrue($test->pre);
+        $this->assertEquals($options, $test->pre_options);
+        $this->assertTrue($test->post);
+        $this->assertEquals($options, $test->post_options);
     }
 
     public function testGetListTriggersPreAndPostEvents()
