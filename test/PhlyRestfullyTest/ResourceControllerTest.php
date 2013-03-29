@@ -701,6 +701,25 @@ class ResourceControllerTest extends TestCase
         $this->assertSame($resource, $test->resource);
     }
 
+    public function testOptionsTriggersPreAndPostEvents()
+    {
+        $test = (object) array(
+            'pre'     => false,
+            'post'    => false,
+        );
+
+        $this->controller->getEventManager()->attach('getList.pre', function ($e) use ($test) {
+            $test->pre = true;
+        });
+        $this->controller->getEventManager()->attach('getList.post', function ($e) use ($test) {
+            $test->post = true;
+        });
+
+        $this->controller->options();
+        $this->assertTrue($test->pre);
+        $this->assertTrue($test->post);
+    }
+
     public function testGetListTriggersPreAndPostEvents()
     {
         $test = (object) array(
