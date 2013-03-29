@@ -187,6 +187,14 @@ class ResourceController extends AbstractRestfulController
     }
 
     /**
+     * @return ResourceInterface
+     */
+    public function getResource()
+    {
+        return $this->resource;
+    }
+
+    /**
      * Set the allowed HTTP OPTIONS for a resource
      *
      * @param  array $options
