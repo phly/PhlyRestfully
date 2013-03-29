@@ -239,7 +239,13 @@ class ResourceController extends AbstractRestfulController
             ));
         }
 
-        $return = parent::onDispatch($e);
+        // Check for an API-Problem in the event
+        $return = $e->getParam('api-problem', false);
+
+        // If no API-Problem, dispatch the parent event
+        if (!$return) {
+            $return = parent::onDispatch($e);
+        }
 
         if (!$return instanceof ApiProblem
             && !$return instanceof HalResource
