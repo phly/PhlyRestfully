@@ -45,7 +45,7 @@ A generic ResourceController is provided which intercepts incoming requests
 and passes data to the Resource. It then inspects the result to generate an
 appropriate response.
 
-In cases of errors, a Problem API response payload is generated.
+In cases of errors, an Problem API response payload is generated.
 
 When a resource or collection is returned, a HAL payload is generated with
 appropriate links.
@@ -74,7 +74,7 @@ You will need to create at least one factory, and potentially several.
 
 Absolutely required is a unique controller factory for the
 ResourceController. As noted in the previous section, you will have to inject
-several dependencies. These may be hard-coded in your factory, or pulled as, or 
+several dependencies. These may be hard-coded in your factory, or pulled as, or
 from, other services.
 
 As a quick example:
@@ -170,7 +170,7 @@ we use "items" as the name; you should use a semantic name. This can be done
 by either directly setting the collection name on the `HalCollection` using the
 `setCollectionName()` method, or calling the same method on the controller.
 
-You can also set additional attributes. This can be done via a listener; 
+You can also set additional attributes. This can be done via a listener;
 typically, a post-dispatch listener, such as the following, would be a
 reasonable time to alter the collection instance. In the following, we update
 the collection to include the count, number per page, and type of objects
@@ -412,7 +412,8 @@ $sharedEvents->attach('My\Namespaced\ResourceController', $methods, function ($e
 Using The ApiProblemListener
 ----------------------------
 
-If you need to return all dispatch errors as JSON to the clients, you can easily bind the ApiProblemListener to the dispatch.error event.
+If you need to return all dispatch errors as JSON to the clients, you can easily
+bind the `ApiProblemListener` to the `dispatch.error` event.
 
 ```php
 public function onBootstrap(MvcEvent $mvcEvent)
@@ -433,9 +434,9 @@ Example result set:
 
 ```json
 {
-    "describedBy": "http:\/\/www.w3.org\/Protocols\/rfc2616\/rfc2616-sec10.html", 
-    "title": "Not Found", 
-    "httpStatus": 404, 
+    "describedBy": "http:\/\/www.w3.org\/Protocols\/rfc2616\/rfc2616-sec10.html",
+    "title": "Not Found",
+    "httpStatus": 404,
     "detail": "Page not found."
 }
 ```
@@ -463,6 +464,25 @@ public function onBootstrap(MvcEvent $mvcEvent)
 
 *Note:* you don't need to do this for the ResourceController class
 
+Returning a Problem API Result From A Listener
+----------------------------------------------
+
+At times, you may want to intercept calls before the controller does its work,
+and return a Problem API result. This can be done by setting the `api-problem`
+member of the `MvcEvent` in any listener that triggers before the controller's
+`dispatch` listener. As an example:
+
+```php
+$sharedEvents->attach('PhlyRestfully\ResourceController', 'dispatch', function ($e) {
+    // do some work, and determine that a problem exists
+    $problem = new \PhlyRestfully\ApiProblem(500, 'some error occurred!');
+    $e->setParam('api-problem', $problem);
+}, 100);
+```
+
+The `dispatch` listener of the controller will discover this, and prevent
+execution of any action/RESTful methods.
+
 Upgrading
 =========
 
@@ -486,7 +506,7 @@ to work.
       the `view_manager.display_exceptions` configuration setting to set
       this behavior.
 - All results from the `ResourceController` are now pushed to a `payload`
-  variable in the view model. 
+  variable in the view model.
     - Additionally, `ApiProblem`, `HalResource`, and `HalCollection` are
       first-class objects, and are used as the `payload` values.
 - The `Links` plugin was renamed to `HalLinks`, and is now also available as

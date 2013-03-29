@@ -8,6 +8,7 @@
 
 namespace PhlyRestfullyTest;
 
+use PhlyRestfully\ApiProblem;
 use PhlyRestfully\Exception;
 use PhlyRestfully\HalCollection;
 use PhlyRestfully\HalResource;
@@ -841,4 +842,21 @@ class ResourceControllerTest extends TestCase
         $this->assertSame($collection, $test->collection);
     }
 
+    public function testDispatchReturnsEarlyIfApiProblemReturnedFromListener()
+    {
+        $problem  = new ApiProblem(500, 'got an error');
+        $listener = function ($e) use ($problem) {
+            $e->setParam('api-problem', $problem);
+            return $problem;
+        };
+        $this->controller->getEventManager()->attach('dispatch', $listener, 100);
+
+        $request = $this->controller->getRequest();
+        $request->getHeaders()->addHeaderLine('Accept', 'application/json');
+
+        $result = $this->controller->dispatch($request, $this->controller->getResponse());
+
+        $this->assertInstanceOf('PhlyRestfully\View\RestfulJsonModel', $result);
+        $this->assertSame($problem, $result->getPayload());
+    }
 }
