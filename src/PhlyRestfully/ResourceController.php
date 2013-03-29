@@ -476,10 +476,16 @@ class ResourceController extends AbstractRestfulController
             $method = strtoupper($method);
         });
 
+        $events = $this->getEventManager();
+        $events->trigger('options.pre', $this, array('options' => $options));
+
         $response = $this->getResponse();
         $response->setStatusCode(204);
         $headers  = $response->getHeaders();
         $headers->addHeaderLine('Allow', implode(', ', $options));
+
+        $events->trigger('options.post', $this, array('options' => $options));
+
         return $response;
     }
 
