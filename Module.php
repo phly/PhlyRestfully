@@ -130,22 +130,36 @@ class Module
 
                     if (isset($config['default_hydrator'])) {
                         $hydratorServiceName = $config['default_hydrator'];
-                        if ($services->has($hydratorServiceName)) {
-                            $hydrator = $services->get($hydratorServiceName);
-                            if ($hydrator instanceof HydratorInterface) {
-                                $helper->setDefaultHydrator($hydrator);
-                            }
+
+                        $hydrator = $services->get($hydratorServiceName);
+
+                        if ($hydrator instanceof HydratorInterface) {
+                            $helper->setDefaultHydrator($hydrator);
+                        } else {
+                            throw new Exception\DomainException(
+                                sprintf(
+                                    'Hydrator %s must implement the Zend\Stdlib\Hydrator\HydratorInterface' .
+                                        'to be used as the default hydrator.',
+                                    get_class($hydrator)
+                                )
+                            );
                         }
                     }
 
                     if (isset($config['hydrators']) && is_array($config['hydrators'])) {
                         $hydratorMap = $config['hydrators'];
                         foreach ($hydratorMap as $class => $hydratorServiceName) {
-                            if ($services->has($hydratorServiceName)) {
-                                $hydrator = $services->get($hydratorServiceName);
-                                if ($hydrator instanceof HydratorInterface) {
-                                    $helper->addHydrator($class, $hydrator);
-                                }
+                            $hydrator = $services->get($hydratorServiceName);
+                            if ($hydrator instanceof HydratorInterface) {
+                                $helper->addHydrator($class, $hydrator);
+                            } else {
+                                throw new Exception\DomainException(
+                                    sprintf(
+                                        'Hydrator %s for class %s must implement the' .
+                                            'Zend\Stdlib\Hydrator\HydratorInterface',
+                                        get_class($hydrator), $class
+                                    )
+                                );
                             }
                         }
                     }
