@@ -71,7 +71,7 @@ class Resource implements ResourceInterface
     {
         if (isSet($this->params[$name])) {
 
-            return $this->params;
+            return $this->params[$name];
         }
 
         return $default;

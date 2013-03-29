@@ -841,4 +841,17 @@ class ResourceControllerTest extends TestCase
         $this->assertSame($collection, $test->collection);
     }
 
+    /**
+     * @expectedException \PhlyRestfully\Exception\DomainException
+     */
+    public function testGetResourceThrowsExceptionOnMissingResource()
+    {
+        $controller = new ResourceController();
+        $controller->getResource();
+    }
+
+    public function testGetResourceReturnsSameInstance()
+    {
+        $this->assertEquals($this->resource, $this->controller->getResource());
+    }
 }

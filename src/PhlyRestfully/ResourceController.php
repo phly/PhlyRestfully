@@ -187,10 +187,19 @@ class ResourceController extends AbstractRestfulController
     }
 
     /**
+     * Returns the resource
+     *
+     * @throws Exception\DomainException If no resource has been set
+     *
      * @return ResourceInterface
      */
     public function getResource()
     {
+        if ($this->resource === null) {
+
+            throw new Exception\DomainException('No resource has been set.');
+        }
+
         return $this->resource;
     }
 
