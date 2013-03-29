@@ -931,4 +931,36 @@ class ResourceControllerTest extends TestCase
     {
         $this->assertEquals($this->resource, $this->controller->getResource());
     }
+
+    public function eventsProducingApiProblems()
+    {
+        return array(
+            'delete' => array(
+                'delete', 'delete', 'foo',
+            ),
+            'deleteList' => array(
+                'deleteList', 'deleteList', null,
+            ),
+            'get' => array(
+                'fetch', 'get', 'foo',
+            ),
+            'getList' => array(
+                'fetchAll', 'getList', null,
+            ),
+        );
+    }
+
+    /**
+     * @group 36
+     * @dataProvider eventsProducingApiProblems
+     */
+    public function testExceptionDuringDeleteReturnsApiProblem($event, $method, $args)
+    {
+        $this->resource->getEventManager()->attach($event, function ($e) {
+            throw new \Exception('failed');
+        });
+
+        $result = $this->controller->$method($args);
+        $this->assertProblemApiResult(500, 'failed', $result);
+    }
 }
