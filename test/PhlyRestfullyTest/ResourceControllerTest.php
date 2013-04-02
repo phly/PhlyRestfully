@@ -963,4 +963,36 @@ class ResourceControllerTest extends TestCase
         $result = $this->controller->$method($args);
         $this->assertProblemApiResult(500, 'failed', $result);
     }
+
+    public function testResourceIdentifierHasSaneDefault()
+    {
+        $this->assertEquals('id', $this->controller->getResourceIdentifierName());
+    }
+
+    public function testCanSetResourceIdentifierName()
+    {
+        $this->controller->setResourceIdentifierName('name');
+        $this->assertEquals('name', $this->controller->getResourceIdentifierName());
+    }
+
+    public function testUsesConfiguredResourceIdentifierNameToGetIdentifier()
+    {
+        $r = new ReflectionObject($this->controller);
+        $getIdentifier = $r->getMethod('getIdentifier');
+        $getIdentifier->setAccessible(true);
+
+        $this->controller->setResourceIdentifierName('name');
+
+        $routeMatch = $this->event->getRouteMatch();
+        $request    = $this->controller->getRequest();
+
+        $routeMatch->setParam('name', 'foo');
+        $result = $getIdentifier->invoke($this->controller, $routeMatch, $request);
+        $this->assertEquals('foo', $result);
+
+        $routeMatch->setParam('name', false);
+        $request->getQuery()->set('name', 'bar');
+        $result = $getIdentifier->invoke($this->controller, $routeMatch, $request);
+        $this->assertEquals('bar', $result);
+    }
 }

@@ -105,6 +105,13 @@ class ResourceController extends AbstractRestfulController
     );
 
     /**
+     * Route segment or query parameter name indicating resource identifer
+     *
+     * @var string
+     */
+    protected $resourceIdentifierName = 'id';
+
+    /**
      * Route name that resolves to this resource; used to generate links.
      *
      * @var string
@@ -211,6 +218,25 @@ class ResourceController extends AbstractRestfulController
     public function setResourceHttpOptions(array $options)
     {
         $this->resourceHttpOptions = $options;
+    }
+
+    /**
+     * Set the route match segment or query string parameter indicating the
+     * resource identifier
+     *
+     * @param  string $name
+     */
+    public function setResourceIdentifierName($name)
+    {
+        $this->resourceIdentifierName = (string) $name;
+    }
+
+    /**
+     * @return string
+     */
+    public function getResourceIdentifierName()
+    {
+        return $this->resourceIdentifierName;
     }
 
     /**
@@ -616,6 +642,32 @@ class ResourceController extends AbstractRestfulController
     }
 
     /**
+     * Retrieve the identifier, if any
+     *
+     * Attempts to see if an identifier was passed in either the URI or the
+     * query string, returning it if found. Otherwise, returns a boolean false.
+     *
+     * @param  \Zend\Mvc\Router\RouteMatch $routeMatch
+     * @param  \Zend\Http\Request $request
+     * @return false|mixed
+     */
+    protected function getIdentifier($routeMatch, $request)
+    {
+        $identifier = $this->getResourceIdentifierName();
+        $id = $routeMatch->getParam($identifier, false);
+        if ($id) {
+            return $id;
+        }
+
+        $id = $request->getQuery()->get($identifier, false);
+        if ($id) {
+            return $id;
+        }
+
+        return false;
+    }
+
+    /**
      * Retrieve an identifier from a resource
      *
      * @param  array|object $resource
@@ -700,6 +752,11 @@ class ResourceController extends AbstractRestfulController
         return $response;
     }
 
+    /**
+     * Inject the "self" relational link into a resource/collection
+     *
+     * @param  LinkCollectionAwareInterface $resource
+     */
     protected function injectSelfLink(LinkCollectionAwareInterface $resource)
     {
         $self = new Link('self');
