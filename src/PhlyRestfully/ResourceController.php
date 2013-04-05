@@ -109,7 +109,7 @@ class ResourceController extends AbstractRestfulController
      *
      * @var string
      */
-    protected $resourceIdentifierName = 'id';
+    protected $identifierName = 'id';
 
     /**
      * Route name that resolves to this resource; used to generate links.
@@ -226,17 +226,17 @@ class ResourceController extends AbstractRestfulController
      *
      * @param  string $name
      */
-    public function setResourceIdentifierName($name)
+    public function setIdentifierName($name)
     {
-        $this->resourceIdentifierName = (string) $name;
+        $this->identifierName = (string) $name;
     }
 
     /**
      * @return string
      */
-    public function getResourceIdentifierName()
+    public function getIdentifierName()
     {
-        return $this->resourceIdentifierName;
+        return $this->identifierName;
     }
 
     /**
@@ -653,7 +653,7 @@ class ResourceController extends AbstractRestfulController
      */
     protected function getIdentifier($routeMatch, $request)
     {
-        $identifier = $this->getResourceIdentifierName();
+        $identifier = $this->getIdentifierName();
         $id = $routeMatch->getParam($identifier, false);
         if ($id) {
             return $id;
