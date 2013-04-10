@@ -350,7 +350,9 @@ class ResourceController extends AbstractRestfulController
         try {
             $result = $this->resource->delete($id);
         } catch (\Exception $e) {
-            return new ApiProblem(500, $e);
+            $code = $e->getCode() ?: 500;
+
+            return new ApiProblem($code, $e);
         }
 
         if (!$result) {
@@ -377,7 +379,9 @@ class ResourceController extends AbstractRestfulController
         try {
             $result = $this->resource->deleteList();
         } catch (\Exception $e) {
-            return new ApiProblem(500, $e);
+            $code = $e->getCode() ?: 500;
+
+            return new ApiProblem($code, $e);
         }
 
         if (!$result) {
@@ -410,7 +414,9 @@ class ResourceController extends AbstractRestfulController
         try {
             $resource = $this->resource->fetch($id);
         } catch (\Exception $e) {
-            return new ApiProblem(500, $e);
+            $code = $e->getCode() ?: 500;
+
+            return new ApiProblem($code, $e);
         }
 
         if (!$resource) {
@@ -443,7 +449,9 @@ class ResourceController extends AbstractRestfulController
         try {
             $collection = $this->resource->fetchAll();
         } catch (\Exception $e) {
-            return new ApiProblem(500, $e);
+            $code = $e->getCode() ?: 500;
+
+            return new ApiProblem($code, $e);
         }
 
         if (!$collection instanceof HalCollection) {
