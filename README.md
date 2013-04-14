@@ -177,7 +177,7 @@ the collection to include the count, number per page, and type of objects
 in the collection.
 
 ```php
-$events->attach('dispatch', public function ($e) {
+$events->attach('dispatch', function ($e) {
     $result = $e->getResult();
     if (!$result instanceof RestfulJsonModel) {
         return;
