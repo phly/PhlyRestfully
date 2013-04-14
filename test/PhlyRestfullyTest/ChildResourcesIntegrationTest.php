@@ -160,6 +160,9 @@ class ChildResourcesIntegrationTest extends TestCase
         $this->assertEquals('anakin', $matches->getParam('parent'));
         $this->assertEquals('parent', $matches->getMatchedRouteName());
 
+        // Emulate url helper factory and inject route matches
+        $this->helpers->get('url')->setRouteMatch($matches);
+
         $parent = $this->setUpParentResource();
         $model  = new RestfulJsonModel();
         $model->setPayload($parent);
@@ -183,6 +186,9 @@ class ChildResourcesIntegrationTest extends TestCase
         $this->assertEquals('luke', $matches->getParam('child'));
         $this->assertEquals('parent/child', $matches->getMatchedRouteName());
 
+        // Emulate url helper factory and inject route matches
+        $this->helpers->get('url')->setRouteMatch($matches);
+
         $child = $this->setUpChildResource('luke', 'Luke Skywalker');
         $model = new RestfulJsonModel();
         $model->setPayload($child);
@@ -205,6 +211,9 @@ class ChildResourcesIntegrationTest extends TestCase
         $this->assertEquals('anakin', $matches->getParam('parent'));
         $this->assertNull($matches->getParam('child'));
         $this->assertEquals('parent/child', $matches->getMatchedRouteName());
+
+        // Emulate url helper factory and inject route matches
+        $this->helpers->get('url')->setRouteMatch($matches);
 
         $collection = $this->setUpChildCollection();
         $model = new RestfulJsonModel();
