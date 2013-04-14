@@ -14,6 +14,13 @@ namespace PhlyRestfully;
 class ApiProblem
 {
     /**
+     * Additional details to include in report
+     *
+     * @var array
+     */
+    protected $additionalDetails = array();
+
+    /**
      * URL describing the problem type; defaults to HTTP status codes
      * @var string
      */
@@ -39,6 +46,20 @@ class ApiProblem
      * @var int
      */
     protected $httpStatus;
+
+    /**
+     * Normalized property names for overloading
+     *
+     * @var array
+     */
+    protected $normalizedProperties = array(
+        'describedby'  => 'describedBy',
+        'described_by' => 'describedBy',
+        'httpstatus'   => 'httpStatus',
+        'http_status'  => 'httpStatus',
+        'title'        => 'title',
+        'detail'       => 'detail',
+    );
 
     /**
      * Status titles for common problems
@@ -72,7 +93,7 @@ class ApiProblem
      * @param  string $describedBy
      * @param  string $title
      */
-    public function __construct($httpStatus, $detail, $describedBy = null, $title = null)
+    public function __construct($httpStatus, $detail, $describedBy = null, $title = null, array $additional = array())
     {
         $this->httpStatus = $httpStatus;
         $this->detail     = $detail;
@@ -80,6 +101,7 @@ class ApiProblem
         if (null !== $describedBy) {
             $this->describedBy = $describedBy;
         }
+        $this->additionalDetails = $additional;
     }
 
     /**
@@ -90,23 +112,24 @@ class ApiProblem
      */
     public function __get($name)
     {
-        $names = array(
-            'describedby'  => 'describedBy',
-            'described_by' => 'describedBy',
-            'httpstatus'   => 'httpStatus',
-            'http_status'  => 'httpStatus',
-            'title'        => 'title',
-            'detail'       => 'detail',
-        );
-        $name = strtolower($name);
-        if (!in_array($name, array_keys($names))) {
-            throw new Exception\InvalidArgumentException(sprintf(
-                'Invalid property name "%s"',
-                $name
-            ));
+        $normalized = strtolower($name);
+        if (in_array($normalized, array_keys($this->normalizedProperties))) {
+            $prop = $this->normalizedProperties[$normalized];
+            return $this->{$prop};
         }
-        $prop = $names[$name];
-        return $this->{$prop};
+
+        if (isset($this->additionalDetails[$name])) {
+            return $this->additionalDetails[$name];
+        }
+
+        if (isset($this->additionalDetails[$normalized])) {
+            return $this->additionalDetails[$normalized];
+        }
+
+        throw new Exception\InvalidArgumentException(sprintf(
+            'Invalid property name "%s"',
+            $name
+        ));
     }
 
     /**
@@ -116,12 +139,14 @@ class ApiProblem
      */
     public function toArray()
     {
-        return array(
+        $problem = array(
             'describedBy' => $this->describedBy,
             'title'       => $this->getTitle(),
             'httpStatus'  => $this->getHttpStatus(),
             'detail'      => $this->getDetail(),
         );
+        // Required fields should always overwrite additional fields
+        return array_merge($this->additionalDetails, $problem);
     }
 
     /**
