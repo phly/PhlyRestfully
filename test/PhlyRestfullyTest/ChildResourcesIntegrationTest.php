@@ -158,6 +158,7 @@ class ChildResourcesIntegrationTest extends TestCase
         $matches = $this->router->match($request);
         $this->assertInstanceOf('Zend\Mvc\Router\RouteMatch', $matches);
         $this->assertEquals('anakin', $matches->getParam('parent'));
+        $this->assertEquals('parent', $matches->getMatchedRouteName());
 
         $parent = $this->setUpParentResource();
         $model  = new RestfulJsonModel();
@@ -180,6 +181,7 @@ class ChildResourcesIntegrationTest extends TestCase
         $this->assertInstanceOf('Zend\Mvc\Router\RouteMatch', $matches);
         $this->assertEquals('anakin', $matches->getParam('parent'));
         $this->assertEquals('luke', $matches->getParam('child'));
+        $this->assertEquals('parent/child', $matches->getMatchedRouteName());
 
         $child = $this->setUpChildResource('luke', 'Luke Skywalker');
         $model = new RestfulJsonModel();
@@ -202,6 +204,7 @@ class ChildResourcesIntegrationTest extends TestCase
         $this->assertInstanceOf('Zend\Mvc\Router\RouteMatch', $matches);
         $this->assertEquals('anakin', $matches->getParam('parent'));
         $this->assertNull($matches->getParam('child'));
+        $this->assertEquals('parent/child', $matches->getMatchedRouteName());
 
         $collection = $this->setUpChildCollection();
         $model = new RestfulJsonModel();
