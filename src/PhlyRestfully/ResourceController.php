@@ -331,6 +331,10 @@ class ResourceController extends AbstractRestfulController
         }
 
         if (!$resource instanceof HalResource) {
+            if ($resource instanceof ApiProblem) {
+                return $resource;
+            }
+
             $id = $this->getIdentifierFromResource($resource);
             if (!$id) {
                 return new ApiProblem(
@@ -338,6 +342,7 @@ class ResourceController extends AbstractRestfulController
                     'No resource identifier present following resource creation.'
                 );
             }
+
             $resource = new HalResource($resource, $id);
         }
 
@@ -381,8 +386,10 @@ class ResourceController extends AbstractRestfulController
             return new ApiProblem($code, $e);
         }
 
-        if (!$result) {
-            return new ApiProblem(422, 'Unable to delete resource.');
+        $result = $result ?: new ApiProblem(422, 'Unable to delete resource.');
+
+        if ($result instanceof ApiProblem) {
+            return $result;
         }
 
         $response = $this->getResponse();
@@ -410,8 +417,10 @@ class ResourceController extends AbstractRestfulController
             return new ApiProblem($code, $e);
         }
 
-        if (!$result) {
-            return new ApiProblem(422, 'Unable to delete collection.');
+        $result = $result ?: new ApiProblem(422, 'Unable to delete collection.');
+
+        if ($result instanceof ApiProblem) {
+            return $result;
         }
 
         $response = $this->getResponse();
@@ -445,8 +454,10 @@ class ResourceController extends AbstractRestfulController
             return new ApiProblem($code, $e);
         }
 
-        if (!$resource) {
-            return new ApiProblem(404, 'Resource not found.');
+        $resource = $resource ?: new ApiProblem(404, 'Resource not found.');
+
+        if ($resource instanceof ApiProblem) {
+            return $resource;
         }
 
         if (!$resource instanceof HalResource) {
@@ -478,6 +489,10 @@ class ResourceController extends AbstractRestfulController
             $code = $e->getCode() ?: 500;
 
             return new ApiProblem($code, $e);
+        }
+
+        if ($collection instanceof ApiProblem) {
+            return $collection;
         }
 
         if (!$collection instanceof HalCollection) {
@@ -567,6 +582,10 @@ class ResourceController extends AbstractRestfulController
             return new ApiProblem($code, $e);
         }
 
+        if ($resource instanceof ApiProblem) {
+            return $resource;
+        }
+
         if (!$resource instanceof HalResource) {
             $resource = new HalResource($resource, $id);
         }
@@ -603,6 +622,10 @@ class ResourceController extends AbstractRestfulController
             return new ApiProblem($code, $e);
         }
 
+        if ($resource instanceof ApiProblem) {
+            return $resource;
+        }
+
         if (!$resource instanceof HalResource) {
             $resource = new HalResource($resource, $id);
         }
@@ -633,6 +656,10 @@ class ResourceController extends AbstractRestfulController
         } catch (Exception\UpdateException $e) {
             $code = $e->getCode() ?: 500;
             return new ApiProblem($code, $e);
+        }
+
+        if ($collection instanceof ApiProblem) {
+            return $collection;
         }
 
         if (!$collection instanceof HalCollection) {
