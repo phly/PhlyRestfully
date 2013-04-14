@@ -995,4 +995,116 @@ class ResourceControllerTest extends TestCase
         $result = $getIdentifier->invoke($this->controller, $routeMatch, $request);
         $this->assertEquals('bar', $result);
     }
+
+    /**
+     * @group 44
+     */
+    public function testCreateAllowsReturningApiProblemFromResource()
+    {
+        $problem = new ApiProblem(400, 'Validation error', null, null, array('email' => 'Invalid email address provided'));
+        $this->resource->getEventManager()->attach('create', function ($e) use ($problem) {
+            return $problem;
+        });
+
+        $result = $this->controller->create(array());
+        $this->assertSame($problem, $result);
+    }
+
+    /**
+     * @group 44
+     */
+    public function testDeleteAllowsReturningApiProblemFromResource()
+    {
+        $problem = new ApiProblem(400, 'Invalid identifier', null, null, array('delete' => 'Invalid identifier provided'));
+        $this->resource->getEventManager()->attach('delete', function ($e) use ($problem) {
+            return $problem;
+        });
+
+        $result = $this->controller->delete('foo');
+        $this->assertSame($problem, $result);
+    }
+
+    /**
+     * @group 44
+     */
+    public function testDeleteListAllowsReturningApiProblemFromResource()
+    {
+        $problem = new ApiProblem(400, 'Invalid list', null, null, array('delete' => 'Invalid collection'));
+        $this->resource->getEventManager()->attach('delete', function ($e) use ($problem) {
+            return $problem;
+        });
+
+        $result = $this->controller->deleteList();
+        $this->assertSame($problem, $result);
+    }
+
+    /**
+     * @group 44
+     */
+    public function testGetAllowsReturningApiProblemFromResource()
+    {
+        $problem = new ApiProblem(400, 'Invalid identifier', null, null, array('get' => 'Invalid identifier provided'));
+        $this->resource->getEventManager()->attach('fetch', function ($e) use ($problem) {
+            return $problem;
+        });
+
+        $result = $this->controller->get('foo');
+        $this->assertSame($problem, $result);
+    }
+
+    /**
+     * @group 44
+     */
+    public function testGetListAllowsReturningApiProblemFromResource()
+    {
+        $problem = new ApiProblem(400, 'Invalid collection', null, null, array('fetchAll' => 'Invalid collection'));
+        $this->resource->getEventManager()->attach('fetchAll', function ($e) use ($problem) {
+            return $problem;
+        });
+
+        $result = $this->controller->getList();
+        $this->assertSame($problem, $result);
+    }
+
+    /**
+     * @group 44
+     */
+    public function testPatchAllowsReturningApiProblemFromResource()
+    {
+        $problem = new ApiProblem(400, 'Validation error', null, null, array('email' => 'Invalid email address provided'));
+        $this->resource->getEventManager()->attach('patch', function ($e) use ($problem) {
+            return $problem;
+        });
+
+        $result = $this->controller->patch('foo', array());
+        $this->assertSame($problem, $result);
+    }
+
+    /**
+     * @group 44
+     */
+    public function testUpdateAllowsReturningApiProblemFromResource()
+    {
+        $problem = new ApiProblem(400, 'Validation error', null, null, array('email' => 'Invalid email address provided'));
+        $this->resource->getEventManager()->attach('update', function ($e) use ($problem) {
+            return $problem;
+        });
+
+        $result = $this->controller->update('foo', array());
+        $this->assertSame($problem, $result);
+    }
+
+    /**
+     * @group 44
+     */
+    public function testReplaceListAllowsReturningApiProblemFromResource()
+    {
+        $problem = new ApiProblem(400, 'Validation error', null, null, array('email' => 'Invalid email address provided'));
+        $this->resource->getEventManager()->attach('replaceList', function ($e) use ($problem) {
+            return $problem;
+        });
+
+        $result = $this->controller->replaceList(array());
+        $this->assertSame($problem, $result);
+    }
 }
