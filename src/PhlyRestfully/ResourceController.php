@@ -762,7 +762,8 @@ class ResourceController extends AbstractRestfulController
         $self = new Link('self');
         $self->setRoute($this->route);
         if ($resource instanceof HalResource) {
-            $self->setRouteParams(array('id' => $resource->id));
+            $identifier = $this->getIdentifierName();
+            $self->setRouteParams(array($identifier => $resource->id));
         }
         $resource->getLinks()->add($self);
     }
