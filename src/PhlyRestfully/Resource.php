@@ -286,7 +286,7 @@ class Resource implements ResourceInterface
         $events  = $this->getEventManager();
         $results = $events->trigger(__FUNCTION__, $this, array('id' => $id));
         $last    = $results->last();
-        if (!is_bool($last)) {
+        if (!is_bool($last) && !$last instanceof ApiProblem) {
             return false;
         }
         return $last;
@@ -312,7 +312,7 @@ class Resource implements ResourceInterface
         $events  = $this->getEventManager();
         $results = $events->trigger(__FUNCTION__, $this, array('data' => $data));
         $last    = $results->last();
-        if (!is_bool($last)) {
+        if (!is_bool($last) && !$last instanceof ApiProblem) {
             return false;
         }
         return $last;
@@ -364,6 +364,7 @@ class Resource implements ResourceInterface
         $last    = $results->last();
         if (!is_array($last)
             && !$last instanceof HalCollection
+            && !$last instanceof ApiProblem
             && !$last instanceof Traversable
         ) {
             return array();

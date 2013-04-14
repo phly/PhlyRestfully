@@ -1030,7 +1030,7 @@ class ResourceControllerTest extends TestCase
     public function testDeleteListAllowsReturningApiProblemFromResource()
     {
         $problem = new ApiProblem(400, 'Invalid list', null, null, array('delete' => 'Invalid collection'));
-        $this->resource->getEventManager()->attach('delete', function ($e) use ($problem) {
+        $this->resource->getEventManager()->attach('deleteList', function ($e) use ($problem) {
             return $problem;
         });
 
