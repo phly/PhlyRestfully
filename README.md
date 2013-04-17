@@ -503,6 +503,7 @@ For the paste ResourceController
 ```php
 $controller->setIdentifierName('comment_id');
 ```
+For the comment ResourceController
 
 What's left to do ?
 Well if you try and run the code you will notice that the route ```/api/v1/pastes/1/comments```
