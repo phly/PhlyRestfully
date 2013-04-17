@@ -381,11 +381,11 @@ class Resource implements ResourceInterface
     /**
      * Prepare event parameters
      *
-     * Merges any event parameters set in the resources with arguments passed 
-     * to a resource method, and passes them to the `prepareArgs` method of the 
+     * Merges any event parameters set in the resources with arguments passed
+     * to a resource method, and passes them to the `prepareArgs` method of the
      * event manager.
-     * 
-     * @param  array $args 
+     *
+     * @param  array $args
      * @return ArrayObject
      */
     protected function prepareEvent($name, array $args)
@@ -396,10 +396,10 @@ class Resource implements ResourceInterface
     /**
      * Prepare event parameters
      *
-     * Ensures event parameters are created as an array object, allowing them to be modified 
+     * Ensures event parameters are created as an array object, allowing them to be modified
      * by listeners and retrieved.
-     * 
-     * @param  array $args 
+     *
+     * @param  array $args
      * @return ArrayObject
      */
     protected function prepareEventParams(array $args)
