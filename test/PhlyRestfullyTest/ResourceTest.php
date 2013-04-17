@@ -360,4 +360,54 @@ class ResourceTest extends TestCase
         $test = $this->resource->fetchAll();
         $this->assertSame($object, $test);
     }
+
+    public function eventsToTrigger()
+    {
+        $id = 'resource_id';
+
+        $resource = array(
+            'id'  => $id,
+            'foo' => 'foo',
+            'bar' => 'bar',
+        );
+
+        $collection = array($resource);
+
+        return array(
+            'create' => array('create', array($resource), false),
+            'update' => array('update', array($id, $resource), true),
+            'replaceList' => array('replaceList', array($collection), false),
+            'patch' => array('patch', array($id, $resource), true),
+            'delete' => array('delete', array($id), true),
+            'deleteList' => array('deleteList', array($collection), false),
+            'fetch' => array('fetch', array($id), true),
+            'fetchAll' => array('fetchAll', array(), false),
+        );
+    }
+
+    /**
+     * @dataProvider eventsToTrigger
+     */
+    public function testEventParametersAreInjectedIntoEventWhenTriggered($eventName, $args, $idIsPresent)
+    {
+        $test = (object) array();
+        $this->events->attach($eventName, function ($e) use ($test) {
+            $test->event = $e;
+        });
+        $this->resource->setEventParam('id', 'OVERWRITTEN');
+        $this->resource->setEventParam('parent_id', 'parent_id');
+
+        call_user_func_array(array($this->resource, $eventName), $args);
+
+        $this->assertObjectHasAttribute('event', $test);
+        $e = $test->event;
+
+        if ($idIsPresent) {
+            $this->assertTrue(false !== $e->getParam('id', false));
+            $this->assertNotEquals('OVERWRITTEN', $e->getParam('id'));
+        }
+
+        $this->assertTrue(false !== $e->getParam('parent_id', false));
+        $this->assertEquals('parent_id', $e->getParam('parent_id'));
+    }
 }
