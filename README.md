@@ -485,44 +485,49 @@ execution of any action/RESTful methods.
 
 Implementing child resources
 ----------------------------
-Assume the following two routes
-```
-/api/v1/pastes[/:paste_id]
-```
-For the pastes
-```
-/api/v1/pastes[/:paste_id]/comments[/:comment_id]
-```
-For paste comments
 
-Now you must change the resource identifier name for the two ResourceControllers
+Assume the following two routes:
+
+- `api/v1/pastes[/:paste_id]` for pastebin resources
+- `/api/v1/pastes[/:paste_id]/comments[/:comment_id]` for comments on individual
+  pastebins
+
+For each resource's `ResourceController`, you will need to specify the resource
+identifier name:
+
 ```php
+// For the "pastes" resource:
 $controller->setIdentifierName('paste_id');
-```
-For the paste ResourceController
-```php
+
+// For the "comments" resource:
 $controller->setIdentifierName('comment_id');
 ```
-For the comment ResourceController
 
-What's left to do ?
-Well if you try and run the code you will notice that the route ```/api/v1/pastes/1/comments```
-does not have access to the paste_id. To do this we must add a listener on the getList.pre event and get the paste_id
-from the route match.
+What's left to do?
+
+If you try and run the code you will notice that the resources associated with
+comments does not have access to the `paste_id`. To do this
+we must add a listener on the controller events, and use it to inject the
+resource event parameters with the `paste_id` from the route matches.
+
+In the following example, we assume the comments controller service is named
+`Api\Controller\Comments`, and we attach to its RESTful events in order to
+inject the `paste_id` as a resource event parameter.
 
 ```php
-$controller->getEventManager()->attach('getList.pre', function(Event $e) {
-    /**
-     * @var $target \PhlyRestfully\ResourceController
-     */
-    $target  = $e->getTarget();
-    $event   = $target->getEvent();
+$sharedEvents->attach(
+    'Api\Controller\Comments', 
+    array('create', 'delete', 'get', 'getList', 'patch', 'update'),
+    function ($e) {
+        $matches  = $e->getRouteMatch();
+        $target   = $e->getTarget();
+        $resource = $target->getResource();
 
-    $resource = $target->getResource();
-    $resource->setEventParams(array(
-        'paste_id' => $target->getEvent()->getRouteMatch()->getParam('paste_id'),
-    ));
-});
+        $resource->setEventParams(array(
+            'paste_id' => $matches->getParam('paste_id'),
+        ));
+    }
+);
 ```
 
 Upgrading
