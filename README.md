@@ -507,7 +507,7 @@ For the comment ResourceController
 
 What's left to do ?
 Well if you try and run the code you will notice that the route ```/api/v1/pastes/1/comments```
-does not have access to the paste_id. To do this we must add a listener on the getList.pre event and get the paste_id
+does not have access to the ```paste_id```. To do this we must add a listener on the getList.pre event and get the paste_id
 from the route match.
 
 ```php
@@ -523,6 +523,11 @@ $controller->getEventManager()->attach('getList.pre', function(Event $e) {
         'paste_id' => $target->getEvent()->getRouteMatch()->getParam('paste_id'),
     ));
 });
+```
+
+And now to access the ```paste_id``` in the Resource you do the following
+```php
+$e->getTarget()->getEventParam('paste_id')
 ```
 
 Upgrading
