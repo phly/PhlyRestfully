@@ -9,6 +9,7 @@
 namespace PhlyRestfully;
 
 use Traversable;
+use Zend\EventManager\Event;
 use Zend\EventManager\EventManager;
 use Zend\EventManager\EventManagerInterface;
 
@@ -140,7 +141,8 @@ class Resource implements ResourceInterface
         }
 
         $events  = $this->getEventManager();
-        $results = $events->trigger(__FUNCTION__, $this, array('data' => $data));
+        $event   = $this->prepareEvent(__FUNCTION__, array('data' => $data));
+        $results = $events->trigger($event);
         $last    = $results->last();
         if (!is_array($last) && !is_object($last)) {
             return $data;
@@ -178,7 +180,8 @@ class Resource implements ResourceInterface
         }
 
         $events  = $this->getEventManager();
-        $results = $events->trigger(__FUNCTION__, $this, array('id' => $id, 'data' => $data));
+        $event   = $this->prepareEvent(__FUNCTION__, compact('id', 'data'));
+        $results = $events->trigger($event);
         $last    = $results->last();
         if (!is_array($last) && !is_object($last)) {
             return $data;
@@ -224,7 +227,8 @@ class Resource implements ResourceInterface
             }
         });
         $events  = $this->getEventManager();
-        $results = $events->trigger(__FUNCTION__, $this, array('data' => $data));
+        $event   = $this->prepareEvent(__FUNCTION__, array('data' => $data));
+        $results = $events->trigger($event);
         $last    = $results->last();
         if (!is_array($last) && !is_object($last)) {
             return $data;
@@ -263,7 +267,8 @@ class Resource implements ResourceInterface
         }
 
         $events  = $this->getEventManager();
-        $results = $events->trigger(__FUNCTION__, $this, array('id' => $id, 'data' => $data));
+        $event   = $this->prepareEvent(__FUNCTION__, compact('id', 'data'));
+        $results = $events->trigger($event);
         $last    = $results->last();
         if (!is_array($last) && !is_object($last)) {
             return $data;
@@ -284,7 +289,8 @@ class Resource implements ResourceInterface
     public function delete($id)
     {
         $events  = $this->getEventManager();
-        $results = $events->trigger(__FUNCTION__, $this, array('id' => $id));
+        $event   = $this->prepareEvent(__FUNCTION__, array('id' => $id));
+        $results = $events->trigger($event);
         $last    = $results->last();
         if (!is_bool($last) && !$last instanceof ApiProblem) {
             return false;
@@ -310,7 +316,8 @@ class Resource implements ResourceInterface
             ));
         }
         $events  = $this->getEventManager();
-        $results = $events->trigger(__FUNCTION__, $this, array('data' => $data));
+        $event   = $this->prepareEvent(__FUNCTION__, array('data' => $data));
+        $results = $events->trigger($event);
         $last    = $results->last();
         if (!is_bool($last) && !$last instanceof ApiProblem) {
             return false;
@@ -332,7 +339,8 @@ class Resource implements ResourceInterface
     public function fetch($id)
     {
         $events  = $this->getEventManager();
-        $results = $events->trigger(__FUNCTION__, $this, array('id' => $id));
+        $event   = $this->prepareEvent(__FUNCTION__, array('id' => $id));
+        $results = $events->trigger($event);
         $last    = $results->last();
         if (!is_array($last) && !is_object($last)) {
             return false;
@@ -357,10 +365,8 @@ class Resource implements ResourceInterface
     {
         $events  = $this->getEventManager();
         $params  = func_get_args();
-        if (!empty($params)) {
-            $params = $events->prepareArgs($params);
-        }
-        $results = $events->trigger(__FUNCTION__, $this, $params);
+        $event   = $this->prepareEvent(__FUNCTION__, $params);
+        $results = $events->trigger($event);
         $last    = $results->last();
         if (!is_array($last)
             && !$last instanceof HalCollection
@@ -370,5 +376,39 @@ class Resource implements ResourceInterface
             return array();
         }
         return $last;
+    }
+
+    /**
+     * Prepare event parameters
+     *
+     * Merges any event parameters set in the resources with arguments passed
+     * to a resource method, and passes them to the `prepareArgs` method of the
+     * event manager.
+     *
+     * @param  array $args
+     * @return ArrayObject
+     */
+    protected function prepareEvent($name, array $args)
+    {
+        return new Event($name, $this, $this->prepareEventParams($args));
+    }
+
+    /**
+     * Prepare event parameters
+     *
+     * Ensures event parameters are created as an array object, allowing them to be modified
+     * by listeners and retrieved.
+     *
+     * @param  array $args
+     * @return ArrayObject
+     */
+    protected function prepareEventParams(array $args)
+    {
+        $defaultParams = $this->getEventParams();
+        $params        = array_merge($defaultParams, $args);
+        if (empty($params)) {
+            return $params;
+        }
+        return $this->getEventManager()->prepareArgs($params);
     }
 }
