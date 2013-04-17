@@ -530,6 +530,12 @@ $sharedEvents->attach(
 );
 ```
 
+And now to access the ```paste_id``` in the Resource, do the following
+
+```php
+$pasteId = $e->getParam('paste_id')
+```
+
 Upgrading
 =========
 
