@@ -483,6 +483,47 @@ $sharedEvents->attach('PhlyRestfully\ResourceController', 'dispatch', function (
 The `dispatch` listener of the controller will discover this, and prevent
 execution of any action/RESTful methods.
 
+Implementing child resources
+----------------------------
+Assume the following two routes
+```
+/api/v1/pastes[/:paste_id]
+```
+For the pastes
+```
+/api/v1/pastes[/:paste_id]/comments[/:comment_id]
+```
+For paste comments
+
+Now you must change the resource identifier name for the two ResourceControllers
+```php
+$controller->setIdentifierName('paste_id');
+```
+For the paste ResourceController
+```php
+$controller->setIdentifierName('comment_id');
+```
+
+What's left to do ?
+Well if you try and run the code you will notice that the route ```/api/v1/pastes/1/comments```
+does not have access to the paste_id. To do this we must add a listener on the getList.pre event and get the paste_id
+from the route match.
+
+```php
+$controller->getEventManager()->attach('getList.pre', function(Event $e) {
+    /**
+     * @var $target \PhlyRestfully\ResourceController
+     */
+    $target  = $e->getTarget();
+    $event   = $target->getEvent();
+
+    $resource = $target->getResource();
+    $resource->setEventParams(array(
+        'paste_id' => $target->getEvent()->getRouteMatch()->getParam('paste_id'),
+    ));
+});
+```
+
 Upgrading
 =========
 
