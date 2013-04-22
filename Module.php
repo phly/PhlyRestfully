@@ -188,6 +188,7 @@ class Module
             $eventManager = $e->getApplication()->getEventManager();
             $eventManager->attach($services->get('PhlyRestfully\ApiProblemListener'));
         }, 300);
+        $sharedEvents->attachAggregate($services->get('PhlyRestfully\ResourceParametersListener'));
     }
 
     /**
