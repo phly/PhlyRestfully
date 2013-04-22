@@ -184,9 +184,9 @@ class Module
         $events   = $app->getEventManager();
         $events->attach('render', array($this, 'onRender'), 100);
         $sharedEvents = $events->getSharedManager();
-        $sharedEvents->attach('PhlyRestfully\ResourceController', 'dispatch', function($e) {
+        $sharedEvents->attach('PhlyRestfully\ResourceController', 'dispatch', function($e) use ($services) {
             $eventManager = $e->getApplication()->getEventManager();
-            $eventManager->attach($e->getApplication()->getServiceManager()->get('PhlyRestfully\ApiProblemListener'));
+            $eventManager->attach($services->get('PhlyRestfully\ApiProblemListener'));
         }, 300);
     }
 
