@@ -25,7 +25,7 @@ class ResourceEvent extends Event
     protected $routeMatch;
 
     /**
-     * @param Parameters $params 
+     * @param Parameters $params
      * @return self
      */
     public function setQueryParams(Parameters $params = null)
@@ -46,9 +46,9 @@ class ResourceEvent extends Event
      * Retrieve a single query parameter by name
      *
      * If not present, returns the $default value provided.
-     * 
-     * @param string $name 
-     * @param mixed $default 
+     *
+     * @param string $name
+     * @param mixed $default
      * @return mixed
      */
     public function getQueryParam($name, $default = null)
@@ -62,7 +62,7 @@ class ResourceEvent extends Event
     }
 
     /**
-     * @param RouteMatch $matches 
+     * @param RouteMatch $matches
      * @return self
      */
     public function setRouteMatch(RouteMatch $matches = null)
@@ -83,9 +83,9 @@ class ResourceEvent extends Event
      * Retrieve a single route match parameter by name.
      *
      * If not present, returns the $default value provided.
-     * 
-     * @param string $name 
-     * @param mixed $default 
+     *
+     * @param string $name
+     * @param mixed $default
      * @return mixed
      */
     public function getRouteParam($name, $default = null)

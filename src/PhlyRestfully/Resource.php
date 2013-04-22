@@ -61,7 +61,7 @@ class Resource implements ResourceInterface
     }
 
     /**
-     * @param Parameters $params 
+     * @param Parameters $params
      * @return self
      */
     public function setQueryParams(Parameters $params)
@@ -79,7 +79,7 @@ class Resource implements ResourceInterface
     }
 
     /**
-     * @param RouteMatch $matches 
+     * @param RouteMatch $matches
      * @return self
      */
     public function setRouteMatch(RouteMatch $matches)

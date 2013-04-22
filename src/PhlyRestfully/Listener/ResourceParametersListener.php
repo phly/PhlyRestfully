@@ -15,7 +15,7 @@ use Zend\EventManager\SharedEventManagerInterface;
 use Zend\EventManager\SharedListenerAggregateInterface;
 use Zend\Mvc\MvcEvent;
 
-class ResourceParametersListener implements 
+class ResourceParametersListener implements
     ListenerAggregateInterface,
     SharedListenerAggregateInterface
 {
@@ -89,4 +89,3 @@ class ResourceParametersListener implements
         $resource->setRouteMatch($matches);
     }
 }
-
