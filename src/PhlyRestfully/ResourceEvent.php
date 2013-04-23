@@ -58,7 +58,7 @@ class ResourceEvent extends Event
             return $default;
         }
 
-        return $default->get($name, $default);
+        return $params->get($name, $default);
     }
 
     /**
