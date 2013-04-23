@@ -63,12 +63,16 @@ class ResourceControllerFactory implements AbstractFactoryInterface
         $resource   = new Resource();
         $resource->setEventManager($events);
 
+
         $controller = new ResourceController();
         $controller->setResource($resource);
         $controller->setRoute($config['route_name']);
-        $controller->setIdentifierName($config['identifier_name']);
         $controller->setResourceHttpOptions($config['resource_http_options']);
         $controller->setCollectionHttpOptions($config['collection_http_options']);
+
+        if (isset($config['identifier_name'])) {
+            $controller->setIdentifierName($config['identifier_name']);
+        }
 
         return $controller;
     }
