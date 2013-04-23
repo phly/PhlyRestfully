@@ -9,9 +9,10 @@
 namespace PhlyRestfully;
 
 use Traversable;
-use Zend\EventManager\Event;
 use Zend\EventManager\EventManager;
 use Zend\EventManager\EventManagerInterface;
+use Zend\Mvc\Router\RouteMatch;
+use Zend\Stdlib\Parameters;
 
 /**
  * Base resource class
@@ -32,8 +33,17 @@ class Resource implements ResourceInterface
     protected $params = array();
 
     /**
+     * @var null|Parameters
+     */
+    protected $queryParams;
+
+    /**
+     * @var null|RouteMatch
+     */
+    protected $routeMatch;
+
+    /**
      * @param array $params
-     *
      * @return self
      */
     public function setEventParams(array $params)
@@ -48,6 +58,42 @@ class Resource implements ResourceInterface
     public function getEventParams()
     {
         return $this->params;
+    }
+
+    /**
+     * @param Parameters $params
+     * @return self
+     */
+    public function setQueryParams(Parameters $params)
+    {
+        $this->queryParams = $params;
+        return $this;
+    }
+
+    /**
+     * @return null|Parameters
+     */
+    public function getQueryParams()
+    {
+        return $this->queryParams;
+    }
+
+    /**
+     * @param RouteMatch $matches
+     * @return self
+     */
+    public function setRouteMatch(RouteMatch $matches)
+    {
+        $this->routeMatch = $matches;
+        return $this;
+    }
+
+    /**
+     * @return null|RouteMatch
+     */
+    public function getRouteMatch()
+    {
+        return $this->routeMatch;
     }
 
     /**
@@ -390,7 +436,10 @@ class Resource implements ResourceInterface
      */
     protected function prepareEvent($name, array $args)
     {
-        return new Event($name, $this, $this->prepareEventParams($args));
+        $event = new ResourceEvent($name, $this, $this->prepareEventParams($args));
+        $event->setQueryParams($this->getQueryParams());
+        $event->setRouteMatch($this->getRouteMatch());
+        return $event;
     }
 
     /**

@@ -38,6 +38,20 @@ Each method:
 As such, your job is primarily to create a `ListenerAggregate` for the Resource
 which performs the actual persistence operations.
 
+The event provided to the lister is an instance of
+`PhlyRestfully\ResourceEvent`. This event subclass provides several extra
+methods that allow you to access route and query parameters (often useful when
+working with child resources and collections, respectively):
+
+- `getRouteMatch()` returns the `Zend\Mvc\Router\RouteMatch` instance that
+  indicates the currently active route in the MVC.
+- `getRouteParam($name, $default = null)` allows you to retrieve a single route
+  match parameter.
+- `getQueryParams()` returns the collection of query parameters from the current
+  request.
+- `getQueryParam($name, $default = null)` allows you to retrieve a single query
+  parameter.
+
 Controller
 ----------
 

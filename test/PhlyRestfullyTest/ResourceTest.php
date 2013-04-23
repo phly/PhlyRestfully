@@ -11,9 +11,11 @@ namespace PhlyRestfullyTest;
 use ArrayIterator;
 use PhlyRestfully\Resource;
 use PHPUnit_Framework_TestCase as TestCase;
-use Zend\Stdlib\ArrayObject;
 use stdClass;
 use Zend\EventManager\EventManager;
+use Zend\Mvc\Router\RouteMatch;
+use Zend\Stdlib\ArrayObject;
+use Zend\Stdlib\Parameters;
 
 /**
  * @subpackage UnitTest
@@ -409,5 +411,29 @@ class ResourceTest extends TestCase
 
         $this->assertTrue(false !== $e->getParam('parent_id', false));
         $this->assertEquals('parent_id', $e->getParam('parent_id'));
+    }
+
+    /**
+     * @dataProvider eventsToTrigger
+     */
+    public function testComposedQueryParametersAndRouteMatchesAreInjectedIntoEvent($eventName, $args)
+    {
+        $test = (object) array();
+        $this->events->attach($eventName, function ($e) use ($test) {
+            $test->event = $e;
+        });
+        $matches     = new RouteMatch(array());
+        $queryParams = new Parameters();
+        $this->resource->setRouteMatch($matches);
+        $this->resource->setQueryParams($queryParams);
+
+        call_user_func_array(array($this->resource, $eventName), $args);
+
+        $this->assertObjectHasAttribute('event', $test);
+        $e = $test->event;
+
+        $this->assertInstanceOf('PhlyRestfully\ResourceEvent', $e);
+        $this->assertSame($matches, $e->getRouteMatch());
+        $this->assertSame($queryParams, $e->getQueryParams());
     }
 }
