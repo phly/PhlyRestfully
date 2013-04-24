@@ -10,7 +10,9 @@ namespace PhlyRestfully\Factory;
 
 use PhlyRestfully\Resource;
 use PhlyRestfully\ResourceController;
+use Zend\EventManager\ListenerAggregateInterface;
 use Zend\ServiceManager\AbstractFactoryInterface;
+use Zend\ServiceManager\Exception\ServiceNotCreatedException;
 use Zend\ServiceManager\ServiceLocatorInterface;
 
 /**
@@ -22,53 +24,86 @@ class ResourceControllerFactory implements AbstractFactoryInterface
     /**
      * Determine if we can create a service with name
      *
-     * @param ServiceLocatorInterface $serviceLocator
+     * @param ServiceLocatorInterface $controllers
      * @param string                  $name
      * @param string                  $requestedName
-     *
      * @return bool
      */
-    public function canCreateServiceWithName(ServiceLocatorInterface $serviceLocator, $name, $requestedName)
+    public function canCreateServiceWithName(ServiceLocatorInterface $controllers, $name, $requestedName)
     {
-        $config = $serviceLocator->getServiceLocator()->get('Config')['phlyrestfully']['resources'];
-        return isset($config[$requestedName]);
+        $services = $controllers->getServiceLocator();
+
+        if (!$services->has('Config') || !$services->has('EventManager')) {
+            // Config and EventManager are required
+            return false;
+        }
+
+        $config = $services->get('Config');
+        if (!isset($config['phlyrestfully'])
+            || !isset($config['phlyrestfully']['resources'])
+        ) {
+            return false;
+        }
+        $config = $config['phlyrestfully']['resources'];
+
+        if (!isset($config[$requestedName])
+            || !isset($config[$requestedName]['listener'])
+            || !isset($config[$requestedName]['route_name'])
+        ) {
+            // Configuration, and specifically the listener and route_name 
+            // keys, is required
+            return false;
+        }
+
+        if (!$services->has($config[$requestedName]['listener'])) {
+            // Service referenced by listener key is required
+            return false;
+        }
+
+        return true;
     }
 
     /**
      * Create service with name
      *
-     * @param ServiceLocatorInterface $serviceLocator
+     * @param ServiceLocatorInterface $controllers
      * @param string                  $name
      * @param string                  $requestedName
-     *
-     * @return mixed
+     * @return ResourceController
+     * @throws ServiceNotCreatedException if listener specified is not a ListenerAggregate
      */
-    public function createServiceWithName(ServiceLocatorInterface $serviceLocator, $name, $requestedName)
+    public function createServiceWithName(ServiceLocatorInterface $controllers, $name, $requestedName)
     {
-        /**
-         * @var $service \Zend\ServiceManager\ServiceLocatorInterface
-         */
-        $services = $serviceLocator->getServiceLocator();
-        $config   = $services->get('Config')['phlyrestfully']['resources'][$requestedName];
+        $services = $controllers->getServiceLocator();
+        $config   = $services->get('Config');
+        $config   = $config['phlyrestfully']['resources'][$requestedName];
 
-        /**
-         * @var $events   \Zend\EventManager\EventManagerInterface
-         * @var $listener \Zend\EventManager\ListenerAggregateInterface
-         */
-        $events   = $services->get('EventManager');
         $listener = $services->get($config['listener']);
+        if (!$listener instanceof ListenerAggregateInterface) {
+            throw new ServiceNotCreatedException(sprintf(
+                '%s expects that the "listener" reference a service that implements Zend\EventManager\ListenerAggregateInterface; received %s',
+                __METHOD__,
+                (is_object($listener) ? get_class($listener) : gettype($listener))
+            ));
+        }
 
+        $events = $services->get('EventManager');
         $events->attach($listener);
 
-        $resource   = new Resource();
+        $resource = new Resource();
         $resource->setEventManager($events);
-
 
         $controller = new ResourceController();
         $controller->setResource($resource);
         $controller->setRoute($config['route_name']);
-        $controller->setResourceHttpOptions($config['resource_http_options']);
-        $controller->setCollectionHttpOptions($config['collection_http_options']);
+
+        if (isset($config['resource_http_options'])) {
+            $controller->setResourceHttpOptions($config['resource_http_options']);
+        }
+
+        if (isset($config['collection_http_options'])) {
+            $controller->setCollectionHttpOptions($config['collection_http_options']);
+        }
 
         if (isset($config['identifier_name'])) {
             $controller->setIdentifierName($config['identifier_name']);
