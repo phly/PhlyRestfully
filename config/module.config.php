@@ -18,7 +18,7 @@ return array(
         ),
     ),
 
-    'controller_manager' => array(
+    'controllers' => array(
         'abstract_factories' => array(
             'PhlyRestfully\Factory\ResourceControllerFactory'
         )

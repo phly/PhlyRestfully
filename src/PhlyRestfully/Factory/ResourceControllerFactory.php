@@ -49,7 +49,7 @@ class ResourceControllerFactory implements AbstractFactoryInterface
          * @var $service \Zend\ServiceManager\ServiceLocatorInterface
          */
         $services = $serviceLocator->getServiceLocator();
-        $config   = $services->get('Config')['phlyrestfully']['resources'];
+        $config   = $services->get('Config')['phlyrestfully']['resources'][$requestedName];
 
         /**
          * @var $events   \Zend\EventManager\EventManagerInterface
