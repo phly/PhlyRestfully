@@ -13,6 +13,7 @@ use PhlyRestfully\ResourceController;
 use Zend\EventManager\ListenerAggregateInterface;
 use Zend\ServiceManager\AbstractFactoryInterface;
 use Zend\ServiceManager\Exception\ServiceNotCreatedException;
+use Zend\ServiceManager\Exception\ServiceNotFoundException;
 use Zend\ServiceManager\ServiceLocatorInterface;
 
 /**
@@ -57,7 +58,11 @@ class ResourceControllerFactory implements AbstractFactoryInterface
 
         if (!$services->has($config[$requestedName]['listener'])) {
             // Service referenced by listener key is required
-            return false;
+            throw new ServiceNotFoundException(sprintf(
+                '%s requires that a valid "listener" service be specified for controller %s; no service found',
+                __METHOD__,
+                $requestedName
+            ));
         }
 
         return true;
