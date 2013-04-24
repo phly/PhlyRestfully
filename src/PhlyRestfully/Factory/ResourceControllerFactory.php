@@ -51,7 +51,7 @@ class ResourceControllerFactory implements AbstractFactoryInterface
             || !isset($config[$requestedName]['listener'])
             || !isset($config[$requestedName]['route_name'])
         ) {
-            // Configuration, and specifically the listener and route_name 
+            // Configuration, and specifically the listener and route_name
             // keys, is required
             return false;
         }
