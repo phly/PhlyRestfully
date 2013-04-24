@@ -6,7 +6,7 @@ $config = array(
      * DEFAULT: application/hal+json,application/api-problem+json,application/json
      */
     //'accept_filter' => 'application/hal+json,application/api-problem+json,application/json',
-    
+
     'renderer' => array(
         /*
          * Specify a default hydrator if you wish; make sure the hydrator resolves
@@ -22,6 +22,18 @@ $config = array(
         //     'Some\Class\Name' => 'Some\Hydrator\Service',
         // ),
     ),
+
+    'resources' => array(
+
+//        'controller.name' => array(
+//            'listener'   => 'api.resource-listener.company.subscription',
+//            'route_name' => 'api/company/subscriptions',
+
+//            'identifier_name'         => 'user_id',
+//            'resource_http_options'   => array('get', 'post', 'delete'),
+//            'collection_http_options' => array('get')
+//        )
+    )
 );
 
 /* No need to edit below this line */
