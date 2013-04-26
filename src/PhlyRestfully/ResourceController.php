@@ -500,6 +500,7 @@ class ResourceController extends AbstractRestfulController
         }
         $this->injectSelfLink($collection);
         $collection->setCollectionRoute($this->route);
+        $collection->setIdentifierName($this->getIdentifierName());
         $collection->setResourceRoute($this->route);
         $collection->setPage($this->getRequest()->getQuery('page', 1));
         $collection->setPageSize($this->pageSize);
@@ -667,6 +668,7 @@ class ResourceController extends AbstractRestfulController
         }
         $this->injectSelfLink($collection);
         $collection->setCollectionRoute($this->route);
+        $collection->setIdentifierName($this->getIdentifierName());
         $collection->setResourceRoute($this->route);
         $collection->setPage($this->getRequest()->getQuery('page', 1));
         $collection->setPageSize($this->pageSize);

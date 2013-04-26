@@ -245,6 +245,7 @@ class HalLinks extends AbstractHelper implements
         );
 
         $events               = $this->getEventManager();
+        $identifierName       = $halCollection->identifierName;
         $resourceRoute        = $halCollection->resourceRoute;
         $resourceRouteParams  = $halCollection->resourceRouteParams;
         $resourceRouteOptions = $halCollection->resourceRouteOptions;
@@ -288,7 +289,7 @@ class HalLinks extends AbstractHelper implements
             $selfLink = new Link('self');
             $selfLink->setRoute(
                 $eventParams['route'],
-                array_merge($eventParams['routeParams'], array('id' => $id)),
+                array_merge($eventParams['routeParams'], array($identifierName => $id)),
                 $eventParams['routeOptions']
             );
             $links->add($selfLink);
