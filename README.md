@@ -562,7 +562,7 @@ inject the `paste_id` as a resource event parameter.
 
 ```php
 $sharedEvents->attach(
-    'Api\Controller\Comments', 
+    'Api\Controller\Comments',
     array('create', 'delete', 'get', 'getList', 'patch', 'update'),
     function ($e) {
         $matches  = $e->getRouteMatch();
@@ -580,6 +580,37 @@ And now to access the ```paste_id``` in the Resource, do the following
 
 ```php
 $pasteId = $e->getParam('paste_id')
+```
+
+Providing Problem API Details Via Exceptions
+--------------------------------------------
+
+If you want to provide custom "describedBy" or "title" fields for your Problem
+API results, or additional details, when throwing an exception from your
+resource listener, you can do so.
+
+Any exception that implements
+`PhlyRestfully\Exception\ProblemExceptionInterface` can provide these details;
+`PhlyRestfully\Exception\DomainException` already implements this, and, by
+extension, the `CreationException`, `UpdateException`, and `PatchException` do
+as well.
+
+`DomainException` defines three setters to set these fields:
+
+- `setTitle($title)`
+- `setDescribedBy($uri)`
+- `setAdditionalDetails(array $details)`
+
+As an example:
+
+```php
+$ex = new CreationException('Already exists', 409);
+$ex->setTitle('Matching resource already exists');
+$ex->setDescribedBy('http://example.com/api/help/409');
+$ex->setAdditionalDetails(array(
+    'conflicting_resource' => $someUri,
+));
+throw $ex;
 ```
 
 Upgrading
