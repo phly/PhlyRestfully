@@ -84,14 +84,46 @@ The controller expects you to inject the following:
 Tying it Together
 -----------------
 
-You will need to create at least one factory, and potentially several.
+There are two ways to tie it all together. One uses the included abstract
+factory `PhlyRestfully\Factory\ResourceControllerFactory`, and the other is a
+more manual process.
 
-Absolutely required is a unique controller factory for the
-ResourceController. As noted in the previous section, you will have to inject
-several dependencies. These may be hard-coded in your factory, or pulled as, or
-from, other services.
+Assuming you have a resource listener and route defined, you can use the
+`resources` key of the `phlyrestfully` configuration to define resource
+controllers as follows:
 
-As a quick example:
+```php
+// In a module's configuration, or the autoloadable configuration of your
+// application:
+return array(
+    'phlyrestfully' => array(
+        // Key is the service name for the controller; value is configuration
+        'MyApi\Controller\Contacts' => array(
+            // name of the service locator key of the resource
+            'listener'   => 'MyApi\Resource\Contacts',
+
+            // name of the route associated with this resource
+            'route_name' => 'api/contacts',
+
+            // HTTP options for individual resources (OPTIONAL)
+            'resource_http_options'   => array('get', 'patch', 'put', 'delete'),
+
+            // HTTP options for resource collections (OPTIONAL)
+            'collection_http_options' => array('get', 'post')
+
+            // if a custom identifier_name is used (OPTIONAL)
+            'identifier_name'  => 'contact_id',
+        )
+    ),
+);
+```
+
+As noted, the `listener` and `route_name` keys are the only required
+configuration; provide the other keys as needed. This is probably the easiest
+way to define resource controllers, and will serve easily 90% of use cases.
+
+If you want to customize controller instantiation, you can provide your own
+factory, just as you would for any other controller. As an example:
 
 ```php
 'PasteController' => function ($controllers) {
