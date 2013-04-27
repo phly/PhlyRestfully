@@ -130,6 +130,18 @@ class ApiProblem
      */
     public function __construct($httpStatus, $detail, $describedBy = null, $title = null, array $additional = array())
     {
+        if ($detail instanceof Exception\ProblemExceptionInterface) {
+            if (null === $describedBy) {
+                $describedBy = $detail->getDescribedBy();
+            }
+            if (null === $title) {
+                $title = $detail->getTitle();
+            }
+            if (empty($additional)) {
+                $additional = $detail->getAdditionalDetails();
+            }
+        }
+
         $this->httpStatus = $httpStatus;
         $this->detail     = $detail;
         $this->title      = $title;
@@ -244,6 +256,10 @@ class ApiProblem
      */
     protected function getTitle()
     {
+        if (null !== $this->title) {
+            return $this->title;
+        }
+
         if (null === $this->title
             && $this->describedBy == 'http://www.w3.org/Protocols/rfc2616/rfc2616-sec10.html'
             && array_key_exists($this->getHttpStatus(), $this->problemStatusTitles)
@@ -280,6 +296,7 @@ class ApiProblem
         } while ($e instanceof \Exception);
         return trim($message);
     }
+
     /**
      * Create HTTP status from an exception.
      *
