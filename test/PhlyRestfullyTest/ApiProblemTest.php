@@ -9,6 +9,7 @@
 namespace PhlyRestfullyTest;
 
 use PhlyRestfully\ApiProblem;
+use PhlyRestfully\Exception;
 use PHPUnit_Framework_TestCase as TestCase;
 use ReflectionObject;
 
@@ -162,5 +163,35 @@ class ApiProblemTest extends TestCase
         $array   = $problem->toArray();
         $this->assertArrayHasKey('title', $array);
         $this->assertEquals('Invalid entity', $array['title']);
+    }
+
+    public function testUsesTitleFromExceptionWhenProvided()
+    {
+        $exception  = new Exception\CreationException('exception message', 401);
+        $exception->setTitle('problem title');
+        $apiProblem = new ApiProblem('401', $exception);
+        $payload    = $apiProblem->toArray();
+        $this->assertArrayHasKey('title', $payload);
+        $this->assertEquals($exception->getTitle(), $payload['title']);
+    }
+
+    public function testUsesDescribedByFromExceptionWhenProvided()
+    {
+        $exception  = new Exception\CreationException('exception message', 401);
+        $exception->setDescribedBy('http://example.com/api/help/401');
+        $apiProblem = new ApiProblem('401', $exception);
+        $payload    = $apiProblem->toArray();
+        $this->assertArrayHasKey('describedBy', $payload);
+        $this->assertEquals($exception->getDescribedBy(), $payload['describedBy']);
+    }
+
+    public function testUsesAdditionalDetailsFromExceptionWhenProvided()
+    {
+        $exception  = new Exception\CreationException('exception message', 401);
+        $exception->setAdditionalDetails(array('foo' => 'bar'));
+        $apiProblem = new ApiProblem('401', $exception);
+        $payload    = $apiProblem->toArray();
+        $this->assertArrayHasKey('foo', $payload);
+        $this->assertEquals('bar', $payload['foo']);
     }
 }
