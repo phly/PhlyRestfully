@@ -51,6 +51,14 @@ class HalCollection implements LinkCollectionAwareInterface
     protected $collectionRouteParams = array();
 
     /**
+     * Resource key indicating the identifier; used for generating URIs to
+     * individual resources
+     *
+     * @var string
+     */
+    protected $identifierName = 'id';
+
+    /**
      * @var LinkCollection
      */
     protected $links;
@@ -137,6 +145,8 @@ class HalCollection implements LinkCollectionAwareInterface
             'collection_route_options' => 'collectionRouteOptions',
             'collectionrouteparams'    => 'collectionRouteParams',
             'collection_route_params'  => 'collectionRouteParams',
+            'identifiername'           => 'identifierName',
+            'identifier_name'          => 'identifierName',
             'links'                    => 'links',
             'resourcelinks'            => 'resourceLinks',
             'resource_links'           => 'resourceLinks',
@@ -240,6 +250,18 @@ class HalCollection implements LinkCollectionAwareInterface
             ));
         }
         $this->collectionRouteParams = $params;
+        return $this;
+    }
+
+    /**
+     * Set the resource key that represents the identifier name
+     *
+     * @param  string $name
+     * @return self
+     */
+    public function setIdentifierName($name)
+    {
+        $this->identifierName = (string) $name;
         return $this;
     }
 
