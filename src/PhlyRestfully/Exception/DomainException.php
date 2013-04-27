@@ -8,7 +8,7 @@
 
 namespace PhlyRestfully\Exception;
 
-class DomainException extends \DomainException implements 
+class DomainException extends \DomainException implements
     ExceptionInterface,
     ProblemExceptionInterface
 {

@@ -17,4 +17,3 @@ interface ProblemExceptionInterface
     public function getDescribedBy();
     public function getTitle();
 }
-

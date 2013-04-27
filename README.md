@@ -562,7 +562,7 @@ inject the `paste_id` as a resource event parameter.
 
 ```php
 $sharedEvents->attach(
-    'Api\Controller\Comments', 
+    'Api\Controller\Comments',
     array('create', 'delete', 'get', 'getList', 'patch', 'update'),
     function ($e) {
         $matches  = $e->getRouteMatch();
