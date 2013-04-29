@@ -97,23 +97,25 @@ controllers as follows:
 // application:
 return array(
     'phlyrestfully' => array(
-        // Key is the service name for the controller; value is configuration
-        'MyApi\Controller\Contacts' => array(
-            // name of the service locator key of the resource
-            'listener'   => 'MyApi\Resource\Contacts',
-
-            // name of the route associated with this resource
-            'route_name' => 'api/contacts',
-
-            // HTTP options for individual resources (OPTIONAL)
-            'resource_http_options'   => array('get', 'patch', 'put', 'delete'),
-
-            // HTTP options for resource collections (OPTIONAL)
-            'collection_http_options' => array('get', 'post')
-
-            // if a custom identifier_name is used (OPTIONAL)
-            'identifier_name'  => 'contact_id',
-        )
+        'resources' => array(
+            // Key is the service name for the controller; value is configuration
+            'MyApi\Controller\Contacts' => array(
+                // name of the service locator key of the resource
+                'listener'   => 'MyApi\Resource\Contacts',
+    
+                // name of the route associated with this resource
+                'route_name' => 'api/contacts',
+    
+                // HTTP options for individual resources (OPTIONAL)
+                'resource_http_options'   => array('get', 'patch', 'put', 'delete'),
+    
+                // HTTP options for resource collections (OPTIONAL)
+                'collection_http_options' => array('get', 'post'),
+    
+                // if a custom identifier_name is used (OPTIONAL)
+                'identifier_name'  => 'contact_id',
+            ),
+        ),
     ),
 );
 ```
