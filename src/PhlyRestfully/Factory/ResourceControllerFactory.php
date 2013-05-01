@@ -115,9 +115,9 @@ class ResourceControllerFactory implements AbstractFactoryInterface
 
     /**
      * Loop through configuration to discover and set controller options.
-     * 
-     * @param  array $config 
-     * @param  ResourceController $controller 
+     *
+     * @param  array $config
+     * @param  ResourceController $controller
      */
     protected function setControllerOptions(array $config, ResourceController $controller)
     {
