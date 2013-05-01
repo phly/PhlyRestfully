@@ -100,20 +100,43 @@ return array(
         'resources' => array(
             // Key is the service name for the controller; value is configuration
             'MyApi\Controller\Contacts' => array(
-                // name of the service locator key of the resource
+                // name of the service locator key of the resource listener
                 'listener'   => 'MyApi\Resource\Contacts',
-    
-                // name of the route associated with this resource
-                'route_name' => 'api/contacts',
-    
-                // HTTP options for individual resources (OPTIONAL)
-                'resource_http_options'   => array('get', 'patch', 'put', 'delete'),
+
+                // Accept criteria (which accept headers will be allowed) (OPTIONAL)
+                'accept_criteria' => array(
+                    'PhlyRestfully\View\RestfulJsonModel' => array(
+                        'application/json',
+                        'text/json',
+                    ),
+                ),
     
                 // HTTP options for resource collections (OPTIONAL)
                 'collection_http_options' => array('get', 'post'),
     
+                // Collection name (OPTIONAL)
+                'collection_name' => 'contacts',
+
+                // Content types to respond to (OPTIONAL)
+                'content_type' => array(
+                    ResourceController::CONTENT_TYPE_JSON => array(
+                        'application/json',
+                        'application/hal+json',
+                        'text/json',
+                    ),
+                ),
+
                 // if a custom identifier_name is used (OPTIONAL)
                 'identifier_name'  => 'contact_id',
+
+                // Number of items to return per page of a collection (OPTIONAL)
+                'page_size'  => 30,
+
+                // HTTP options for individual resources (OPTIONAL)
+                'resource_http_options'   => array('get', 'patch', 'put', 'delete'),
+    
+                // name of the route associated with this resource (REQUIRED)
+                'route_name' => 'api/contacts',
             ),
         ),
     ),
