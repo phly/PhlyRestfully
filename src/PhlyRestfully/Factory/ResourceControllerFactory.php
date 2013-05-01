@@ -95,7 +95,15 @@ class ResourceControllerFactory implements AbstractFactoryInterface
         $events = $services->get('EventManager');
         $events->attach($listener);
 
-        $resource = new Resource();
+        $identifiers = array($requestedName);
+        if (isset($config['identifiers'])) {
+            if (!is_array($config['identifiers'])) {
+                $config['identifiers'] = (array) $config['identifiers'];
+            }
+            $identifiers = array_merge($identifiers, $config['identifiers']);
+        }
+
+        $resource = new Resource($identifiers);
         $resource->setEventManager($events);
 
         $controller = new ResourceController();
