@@ -100,20 +100,53 @@ class ResourceControllerFactory implements AbstractFactoryInterface
 
         $controller = new ResourceController();
         $controller->setResource($resource);
-        $controller->setRoute($config['route_name']);
-
-        if (isset($config['resource_http_options'])) {
-            $controller->setResourceHttpOptions($config['resource_http_options']);
-        }
-
-        if (isset($config['collection_http_options'])) {
-            $controller->setCollectionHttpOptions($config['collection_http_options']);
-        }
-
-        if (isset($config['identifier_name'])) {
-            $controller->setIdentifierName($config['identifier_name']);
-        }
+        $this->setControllerOptions($config, $controller);
 
         return $controller;
+    }
+
+    /**
+     * Loop through configuration to discover and set controller options.
+     * 
+     * @param  array $config 
+     * @param  ResourceController $controller 
+     */
+    protected function setControllerOptions(array $config, ResourceController $controller)
+    {
+        foreach ($config as $option => $value) {
+            switch ($option) {
+                case 'accept_criteria':
+                    $controller->setAcceptCriteria($value);
+                    break;
+
+                case 'collection_http_options':
+                    $controller->setCollectionHttpOptions($value);
+                    break;
+
+                case 'collection_name':
+                    $controller->setCollectionName($value);
+                    break;
+
+                case 'content_types':
+                    $controller->setContentTypes($value);
+                    break;
+
+                case 'identifier_name':
+                    $controller->setIdentifierName($value);
+                    break;
+
+                case 'page_size':
+                    $controller->setPageSize($value);
+                    break;
+
+                case 'resource_http_options':
+                    $controller->setResourceHttpOptions($value);
+                    break;
+
+                case 'route_name':
+                    $controller->setRoute($value);
+                    break;
+            }
+        }
     }
 }
