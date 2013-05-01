@@ -100,6 +100,11 @@ return array(
         'resources' => array(
             // Key is the service name for the controller; value is configuration
             'MyApi\Controller\Contacts' => array(
+                // Event identifiers for the resource controller. By default,
+                // the resource name is used; you can add another identifier, or
+                // an array of identifiers, via this key. (OPTIONAL)
+                'identifiers' => array('Contacts', 'MyApi'),
+
                 // name of the service locator key of the resource listener
                 'listener'   => 'MyApi\Resource\Contacts',
 
