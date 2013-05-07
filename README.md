@@ -105,8 +105,15 @@ return array(
                 // an array of identifiers, via this key. (OPTIONAL)
                 'identifiers' => array('Contacts', 'MyApi'),
 
-                // name of the service locator key of the resource listener
+                // Name of the service locator key of the resource listener
+                // (REQUIRED)
                 'listener'   => 'MyApi\Resource\Contacts',
+
+                // Event identifiers for the composed resource. By default,
+                // the class name of the listener is used; you can add another
+                // identifier, or an array of identifiers, via this key.
+                // (OPTIONAL)
+                'resource_identifiers' => array('ContactsResource'),
 
                 // Accept criteria (which accept headers will be allowed) (OPTIONAL)
                 'accept_criteria' => array(
