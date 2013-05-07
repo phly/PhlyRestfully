@@ -92,8 +92,20 @@ class ResourceControllerFactory implements AbstractFactoryInterface
             ));
         }
 
+        $resourceIdentifiers = array(get_class($listener));
+        if (isset($config['resource_identifiers'])) {
+            if (!is_array($config['resource_identifiers'])) {
+                $config['resource_identifiers'] = (array) $config['resource_identifiers'];
+            }
+            $resourceIdentifiers = array_merge($resourceIdentifiers, $config['resource_identifiers']);
+        }
+
         $events = $services->get('EventManager');
         $events->attach($listener);
+        $events->setIdentifiers($resourceIdentifiers);
+
+        $resource = new Resource();
+        $resource->setEventManager($events);
 
         $identifiers = array($requestedName);
         if (isset($config['identifiers'])) {
@@ -103,10 +115,7 @@ class ResourceControllerFactory implements AbstractFactoryInterface
             $identifiers = array_merge($identifiers, $config['identifiers']);
         }
 
-        $resource = new Resource($identifiers);
-        $resource->setEventManager($events);
-
-        $controller = new ResourceController();
+        $controller = new ResourceController($identifiers);
         $controller->setResource($resource);
         $this->setControllerOptions($config, $controller);
 
