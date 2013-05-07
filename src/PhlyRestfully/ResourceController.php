@@ -300,7 +300,7 @@ class ResourceController extends AbstractRestfulController
         $viewModel = $this->acceptableViewModelSelector($this->acceptCriteria);
         $viewModel->setVariables(array('payload' => $return));
 
-        if ($viewModel instanceof RestfulJsonModel) {
+        if ($viewModel instanceof View\RestfulJsonModel) {
             $viewModel->setTerminal(true);
         }
 
