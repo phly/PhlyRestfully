@@ -118,10 +118,8 @@ class Module
 
                 $services        = $helpers->getServiceLocator();
                 $config          = $services->get('Config');
-                $request         = $services->get('Request');
 
                 $helper          = new Plugin\HalLinks();
-                $helper->setRequest($request);
                 $helper->setServerUrlHelper($serverUrlHelper);
                 $helper->setUrlHelper($urlHelper);
 
