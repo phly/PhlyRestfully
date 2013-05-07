@@ -181,6 +181,20 @@ class CollectionIntegrationTest extends TestCase
 
     public function testCollectionLinksIncludeFullQueryString()
     {
+        $this->controller->getEventManager()->attach('getList.post', function ($e) {
+            $request    = $e->getTarget()->getRequest();
+            $query = $request->getQuery('query', false);
+            if (!$query) {
+                return;
+            }
+
+            $collection = $e->getParam('collection');
+            $collection->setCollectionRouteOptions(array(
+                'query' => array(
+                    'query' => $query,
+                ),
+            ));
+        });
         $result = $this->controller->dispatch($this->request, $this->response);
         $this->assertInstanceOf('PhlyRestfully\View\RestfulJsonModel', $result);
 
@@ -190,8 +204,10 @@ class CollectionIntegrationTest extends TestCase
         $links = $payload['_links'];
         foreach ($links as $name => $link) {
             $this->assertArrayHasKey('href', $link);
-            $this->assertContains('page=', $link['href'], 'Link is missing page query param');
-            $this->assertContains('query=foo', $link['href'], 'Link is missing query query param');
+            if ('first' !== $name) {
+                $this->assertContains('page=', $link['href'], "Link $name ('{$link['href']}') is missing page query param");
+            }
+            $this->assertContains('query=foo', $link['href'], "Link $name ('{$link['href']}') is missing query query param");
         }
     }
 }
