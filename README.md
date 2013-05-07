@@ -271,6 +271,38 @@ $events->attach('dispatch', function ($e) {
 }, -1);
 ```
 
+Many APIs may use query string parameters to allow things like sorting,
+grouping, querying, etc. `PhlyRestfully` chooses to err on the side of caution
+and not add all query string parameters automatically to collection links. I
+recommend that you whitelist these via a listener:
+
+```php
+$allowedQueryParams = array('order', 'sort');
+$sharedEvents->attach('Your\Controller', 'getList.post', function ($e) use ($allowedQueryParams) {
+    $request = $e->getTarget()->getRequest();
+    $params  = array();
+    foreach ($request->getQuery() as $key => $value) {
+        if (in_array($key, $allowedQueryParams)) {
+            $params[$key] = $value;
+        }
+    }
+    if (empty($params)) {
+        return;
+    }
+
+    $collection = $e->getParam('collection');
+    $collection->setCollectionRouteOptions(array(
+        'query' => $params,
+    ));
+});
+```
+
+What the above does is listen on the `getList.post` event (which occurs after a
+successful list retrieval), and looks in the request object for any query
+parameters that are allowed.  If any are found, it adds them to the collection's
+route options -- ensuring that when URL generation occurs, those query string
+parameters and values will be present.
+
 Embedding Resources
 -------------------
 
