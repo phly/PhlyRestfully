@@ -100,10 +100,10 @@ return array(
         'resources' => array(
             // Key is the service name for the controller; value is configuration
             'MyApi\Controller\Contacts' => array(
-                // Event identifiers for the resource controller. By default,
-                // the resource name is used; you can add another identifier, or
-                // an array of identifiers, via this key. (OPTIONAL)
-                'identifiers' => array('Contacts', 'MyApi'),
+                // Event identifier for the resource controller. By default,
+                // the resource name is used; you can use a different identifier
+                // via this key. (OPTIONAL)
+                'identifier' => 'Contacts',
 
                 // Name of the service locator key of the resource listener
                 // (REQUIRED)
@@ -122,12 +122,18 @@ return array(
                         'text/json',
                     ),
                 ),
-    
+
                 // HTTP options for resource collections (OPTIONAL)
                 'collection_http_options' => array('get', 'post'),
-    
+
                 // Collection name (OPTIONAL)
                 'collection_name' => 'contacts',
+
+                // Query parameter or array of query parameters that should be
+                // injected into collection links if discovered in the request.
+                // By default, only the "page" query parameter will be present.
+                // (OPTIONAL)
+                'collection_query_whitelist' => 'sort',
 
                 // Content types to respond to (OPTIONAL)
                 'content_type' => array(
@@ -146,7 +152,7 @@ return array(
 
                 // HTTP options for individual resources (OPTIONAL)
                 'resource_http_options'   => array('get', 'patch', 'put', 'delete'),
-    
+
                 // name of the route associated with this resource (REQUIRED)
                 'route_name' => 'api/contacts',
             ),
@@ -309,6 +315,23 @@ successful list retrieval), and looks in the request object for any query
 parameters that are allowed.  If any are found, it adds them to the collection's
 route options -- ensuring that when URL generation occurs, those query string
 parameters and values will be present.
+
+The above is so common that I've added an automated listener for this as part of
+the resource controller factory. You can specify it as follows:
+
+```php
+return array(
+    'phlyrestfully' => array(
+        'resources' => array(
+            // Key is the service name for the controller; value is configuration
+            'MyApi\Controller\Contacts' => array(
+                /* ... */
+                'collection_query_whitelist' => array('order', 'sort'),
+            ),
+        ),
+    ),
+);
+```
 
 Embedding Resources
 -------------------

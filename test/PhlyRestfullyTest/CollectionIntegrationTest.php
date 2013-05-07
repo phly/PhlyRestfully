@@ -16,11 +16,13 @@ use PhlyRestfully\View\RestfulJsonRenderer;
 use PHPUnit_Framework_TestCase as TestCase;
 use Zend\Http\PhpEnvironment\Request;
 use Zend\Http\PhpEnvironment\Response;
+use Zend\Mvc\Controller\ControllerManager;
 use Zend\Mvc\MvcEvent;
 use Zend\Mvc\Router\Http\TreeRouteStack;
 use Zend\Mvc\Router\RouteMatch;
 use Zend\Paginator\Adapter\ArrayAdapter as ArrayPaginator;
 use Zend\Paginator\Paginator;
+use Zend\ServiceManager\ServiceManager;
 use Zend\Stdlib\Parameters;
 use Zend\Uri;
 use Zend\View\HelperPluginManager;
@@ -196,6 +198,69 @@ class CollectionIntegrationTest extends TestCase
             ));
         });
         $result = $this->controller->dispatch($this->request, $this->response);
+        $this->assertInstanceOf('PhlyRestfully\View\RestfulJsonModel', $result);
+
+        $json = $this->renderer->render($result);
+        $payload = json_decode($json, true);
+        $this->assertArrayHasKey('_links', $payload);
+        $links = $payload['_links'];
+        foreach ($links as $name => $link) {
+            $this->assertArrayHasKey('href', $link);
+            if ('first' !== $name) {
+                $this->assertContains('page=', $link['href'], "Link $name ('{$link['href']}') is missing page query param");
+            }
+            $this->assertContains('query=foo', $link['href'], "Link $name ('{$link['href']}') is missing query query param");
+        }
+    }
+
+    public function getServiceManager()
+    {
+        $controllers = new ControllerManager();
+        $controllers->addAbstractFactory('PhlyRestfully\Factory\ResourceControllerFactory');
+
+        $services    = new ServiceManager();
+        $services->setService('Zend\ServiceManager\ServiceLocatorInterface', $services);
+        $services->setService('ControllerLoader', $controllers);
+        $services->setService('Config', array(
+            'phlyrestfully' => array(
+                'resources' => array(
+                    'Api\ResourceController' => array(
+                        'listener'                   => 'CollectionIntegrationListener',
+                        'page_size'                  => 3,
+                        'route_name'                 => 'resource',
+                        'identifier_name'            => 'id',
+                        'collection_name'            => 'items',
+                        'collection_query_whitelist' => 'query',
+                    ),
+                ),
+            ),
+        ));
+        $services->setInvokableClass('SharedEventManager', 'Zend\EventManager\SharedEventManager');
+        $services->setInvokableClass('CollectionIntegrationListener', 'PhlyRestfullyTest\TestAsset\CollectionIntegrationListener');
+        $services->setFactory('EventManager', 'Zend\Mvc\Service\EventManagerFactory');
+        $services->setFactory('ControllerPluginManager', 'Zend\Mvc\Service\ControllerPluginManagerFactory');
+        $services->setShared('EventManager', false);
+
+        $collection = $this->setUpCollection();
+        $services->addInitializer(function ($instance, $services) use ($collection) {
+            if (!$instance instanceof TestAsset\CollectionIntegrationListener) {
+                return;
+            }
+            $instance->setCollection($collection);
+        });
+
+        $controllers->setServiceLocator($services);
+
+        return $services;
+    }
+
+    public function testFactoryEnabledListenerCreatesQueryStringWhitelist()
+    {
+        $services = $this->getServiceManager();
+        $controller = $services->get('ControllerLoader')->get('Api\ResourceController');
+        $controller->setEvent($this->getEvent());
+
+        $result = $controller->dispatch($this->request, $this->response);
         $this->assertInstanceOf('PhlyRestfully\View\RestfulJsonModel', $result);
 
         $json = $this->renderer->render($result);
