@@ -107,15 +107,14 @@ class ResourceControllerFactory implements AbstractFactoryInterface
         $resource = new Resource();
         $resource->setEventManager($events);
 
-        $identifiers = array($requestedName);
-        if (isset($config['identifiers'])) {
-            if (!is_array($config['identifiers'])) {
-                $config['identifiers'] = (array) $config['identifiers'];
-            }
-            $identifiers = array_merge($identifiers, $config['identifiers']);
+        $identifier = $requestedName;
+        if (isset($config['identifier'])) {
+            $identifier = $config['identifier'];
         }
 
-        $controller = new ResourceController($identifiers);
+        $events     = $services->get('EventManager');
+        $controller = new ResourceController($identifier);
+        $controller->setEventManager($events);
         $controller->setResource($resource);
         $this->setControllerOptions($config, $controller);
 
@@ -142,6 +141,42 @@ class ResourceControllerFactory implements AbstractFactoryInterface
 
                 case 'collection_name':
                     $controller->setCollectionName($value);
+                    break;
+
+                case 'collection_query_whitelist':
+                    if (is_string($value)) {
+                        $value = (array) $value;
+                    }
+                    if (!is_array($value)) {
+                        break;
+                    }
+
+                    // Create a listener that checks the query string against
+                    // the whitelisted query parameters in order to seed the
+                    // collection route options.
+                    $whitelist = $value;
+                    $controller->getEventManager()->attach('getList.post', function ($e) use ($whitelist) {
+                        $request = $e->getTarget()->getRequest();
+                        if (!method_exists($request, 'getQuery')) {
+                            return;
+                        }
+                        $query  = $request->getQuery();
+                        $params = array();
+                        foreach ($query as $key => $value) {
+                            if (!in_array($key, $whitelist)) {
+                                continue;
+                            }
+                            $params[$key] = $value;
+                        }
+                        if (empty($params)) {
+                            return;
+                        }
+
+                        $collection = $e->getParam('collection');
+                        $collection->setCollectionRouteOptions(array(
+                            'query' => $params,
+                        ));
+                    });
                     break;
 
                 case 'content_types':
