@@ -56,7 +56,9 @@ class ResourceControllerFactory implements AbstractFactoryInterface
             return false;
         }
 
-        if (!$services->has($config[$requestedName]['listener'])) {
+        if (!$services->has($config[$requestedName]['listener'])
+            && !class_exists($config[$requestedName]['listener'])
+        ) {
             // Service referenced by listener key is required
             throw new ServiceNotFoundException(sprintf(
                 '%s requires that a valid "listener" service be specified for controller %s; no service found',
@@ -83,7 +85,12 @@ class ResourceControllerFactory implements AbstractFactoryInterface
         $config   = $services->get('Config');
         $config   = $config['phlyrestfully']['resources'][$requestedName];
 
-        $listener = $services->get($config['listener']);
+        if ($services->has($config['listener'])) {
+            $listener = $services->get($config['listener']);
+        } else {
+            $listener = new $config['listener'];
+        }
+
         if (!$listener instanceof ListenerAggregateInterface) {
             throw new ServiceNotCreatedException(sprintf(
                 '%s expects that the "listener" reference a service that implements Zend\EventManager\ListenerAggregateInterface; received %s',
