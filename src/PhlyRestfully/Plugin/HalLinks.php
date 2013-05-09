@@ -269,10 +269,12 @@ class HalLinks extends AbstractHelper implements
         }
 
         foreach ($resource as $key => $value) {
-            if (!$value instanceof HalResource) {
-                continue;
+            if ($value instanceof HalResource) {
+                $this->extractEmbeddedHalResource($resource, $key, $value);
             }
-            $this->extractEmbeddedHalResource($resource, $key, $value);
+            if ($value instanceof HalCollection) {
+                $this->extractEmbeddedHalCollection($resource, $key, $value);
+            }
         }
 
         $resource['_links'] = $links;
@@ -511,6 +513,27 @@ class HalLinks extends AbstractHelper implements
     }
 
     /**
+     * Extracts and renders a HalCollection and embeds it in the parent
+     * representation
+     *
+     * Removes the key from the parent representation, and creates a
+     * representation for the key in the _embedded object.
+     *
+     * @param  array $parent
+     * @param  string $key
+     * @param  HalCollection $collection
+     */
+    protected function extractEmbeddedHalCollection(array &$parent, $key, HalCollection $collection)
+    {
+        $rendered = $this->extractCollection($collection);
+        if (!isset($parent['_embedded'])) {
+            $parent['_embedded'] = array();
+        }
+        $parent['_embedded'][$key] = $rendered;
+        unset($parent[$key]);
+    }
+
+    /**
      * Extract a collection as an array
      * 
      * @param  HalCollection $halCollection 
@@ -542,11 +565,12 @@ class HalLinks extends AbstractHelper implements
             }
 
             foreach ($resource as $key => $value) {
-// Add logic here to detect a HalCollection, too
-                if (!$value instanceof HalResource) {
-                    continue;
+                if ($value instanceof HalResource) {
+                    $this->extractEmbeddedHalResource($resource, $key, $value);
                 }
-                $this->extractEmbeddedHalResource($resource, $key, $value);
+                if ($value instanceof HalCollection) {
+                    $this->extractEmbeddedHalCollection($resource, $key, $value);
+                }
             }
 
             $id = $this->getIdFromResource($resource);

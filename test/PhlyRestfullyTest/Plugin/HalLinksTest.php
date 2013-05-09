@@ -161,6 +161,7 @@ class HalLinksTest extends TestCase
             $this->assertInternalType('array', $contact);
             $this->assertArrayHasKey('_links', $contact);
             $this->assertArrayHasKey('self', $contact['_links']);
+            $this->assertInternalType('array', $contact['_links']['self']);
             $this->assertArrayHasKey('href', $contact['_links']['self']);
             $this->assertContains('/contacts/', $contact['_links']['self']['href']);
         }
