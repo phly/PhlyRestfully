@@ -241,62 +241,8 @@ class HalLinks extends AbstractHelper implements
         $payload = $halCollection->attributes;
         $payload['_links']    = $this->fromResource($halCollection);
         $payload['_embedded'] = array(
-            $collectionName => array(),
+            $collectionName => $this->extractCollection($halCollection),
         );
-
-        $events               = $this->getEventManager();
-        $identifierName       = $halCollection->identifierName;
-        $resourceRoute        = $halCollection->resourceRoute;
-        $resourceRouteParams  = $halCollection->resourceRouteParams;
-        $resourceRouteOptions = $halCollection->resourceRouteOptions;
-        foreach ($collection as $resource) {
-            $eventParams = new ArrayObject(array(
-                'collection'   => $halCollection,
-                'resource'     => $resource,
-                'route'        => $resourceRoute,
-                'routeParams'  => $resourceRouteParams,
-                'routeOptions' => $resourceRouteOptions,
-            ));
-            $events->trigger('renderCollection.resource', $this, $eventParams);
-
-            $resource = $eventParams['resource'];
-
-            if (!is_array($resource)) {
-                $resource = $this->convertResourceToArray($resource);
-            }
-
-            foreach ($resource as $key => $value) {
-                if (!$value instanceof HalResource) {
-                    continue;
-                }
-                $this->extractEmbeddedHalResource($resource, $key, $value);
-            }
-
-            $id = $this->getIdFromResource($resource);
-            if (!$id) {
-                // Cannot handle resources without an identifier
-                // Return as-is
-                $payload['_embedded'][$collectionName][] = $resource;
-                continue;
-            }
-
-            if ($eventParams['resource'] instanceof LinkCollectionAwareInterface) {
-                $links = $eventParams['resource']->getLinks();
-            } else {
-                $links = new LinkCollection();
-            }
-
-            $selfLink = new Link('self');
-            $selfLink->setRoute(
-                $eventParams['route'],
-                array_merge($eventParams['routeParams'], array($identifierName => $id)),
-                $eventParams['routeOptions']
-            );
-            $links->add($selfLink);
-
-            $resource['_links'] = $this->fromLinkCollection($links);
-            $payload['_embedded'][$collectionName][] = $resource;
-        }
 
         return $payload;
     }
@@ -323,10 +269,12 @@ class HalLinks extends AbstractHelper implements
         }
 
         foreach ($resource as $key => $value) {
-            if (!$value instanceof HalResource) {
-                continue;
+            if ($value instanceof HalResource) {
+                $this->extractEmbeddedHalResource($resource, $key, $value);
             }
-            $this->extractEmbeddedHalResource($resource, $key, $value);
+            if ($value instanceof HalCollection) {
+                $this->extractEmbeddedHalCollection($resource, $key, $value);
+            }
         }
 
         $resource['_links'] = $links;
@@ -535,7 +483,9 @@ class HalLinks extends AbstractHelper implements
         );
 
         if (substr($path, 0, 4) == 'http') {
-            return $path;
+            return array(
+                'href' => $path,
+            );
         }
 
         return array(
@@ -562,6 +512,97 @@ class HalLinks extends AbstractHelper implements
         }
         $parent['_embedded'][$key] = $rendered;
         unset($parent[$key]);
+    }
+
+    /**
+     * Extracts and renders a HalCollection and embeds it in the parent
+     * representation
+     *
+     * Removes the key from the parent representation, and creates a
+     * representation for the key in the _embedded object.
+     *
+     * @param  array $parent
+     * @param  string $key
+     * @param  HalCollection $collection
+     */
+    protected function extractEmbeddedHalCollection(array &$parent, $key, HalCollection $collection)
+    {
+        $rendered = $this->extractCollection($collection);
+        if (!isset($parent['_embedded'])) {
+            $parent['_embedded'] = array();
+        }
+        $parent['_embedded'][$key] = $rendered;
+        unset($parent[$key]);
+    }
+
+    /**
+     * Extract a collection as an array
+     *
+     * @param  HalCollection $halCollection
+     * @return array
+     */
+    protected function extractCollection(HalCollection $halCollection)
+    {
+        $collection           = array();
+        $events               = $this->getEventManager();
+        $identifierName       = $halCollection->identifierName;
+        $resourceRoute        = $halCollection->resourceRoute;
+        $resourceRouteParams  = $halCollection->resourceRouteParams;
+        $resourceRouteOptions = $halCollection->resourceRouteOptions;
+
+        foreach ($halCollection->collection as $resource) {
+            $eventParams = new ArrayObject(array(
+                'collection'   => $halCollection,
+                'resource'     => $resource,
+                'route'        => $resourceRoute,
+                'routeParams'  => $resourceRouteParams,
+                'routeOptions' => $resourceRouteOptions,
+            ));
+            $events->trigger('renderCollection.resource', $this, $eventParams);
+
+            $resource = $eventParams['resource'];
+
+            if (!is_array($resource)) {
+                $resource = $this->convertResourceToArray($resource);
+            }
+
+            foreach ($resource as $key => $value) {
+                if ($value instanceof HalResource) {
+                    $this->extractEmbeddedHalResource($resource, $key, $value);
+                }
+                if ($value instanceof HalCollection) {
+                    $this->extractEmbeddedHalCollection($resource, $key, $value);
+                }
+            }
+
+            $id = $this->getIdFromResource($resource);
+            if (!$id) {
+                // Cannot handle resources without an identifier
+                // Return as-is
+                $collection[] = $resource;
+                continue;
+            }
+
+            if ($eventParams['resource'] instanceof LinkCollectionAwareInterface) {
+                $links = $eventParams['resource']->getLinks();
+            } else {
+                $links = new LinkCollection();
+            }
+
+            $selfLink = new Link('self');
+            $selfLink->setRoute(
+                $eventParams['route'],
+                array_merge($eventParams['routeParams'], array($identifierName => $id)),
+                $eventParams['routeOptions']
+            );
+            $links->add($selfLink);
+
+            $resource['_links'] = $this->fromLinkCollection($links);
+
+            $collection[] = $resource;
+        }
+
+        return $collection;
     }
 
     /**
