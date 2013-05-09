@@ -8,6 +8,7 @@
 
 namespace PhlyRestfullyTest\Plugin;
 
+use PhlyRestfully\HalCollection;
 use PhlyRestfully\HalResource;
 use PhlyRestfully\Link;
 use PhlyRestfully\Plugin\HalLinks;
@@ -41,13 +42,24 @@ class HalLinksTest extends TestCase
             ),
 
             'child_routes' => array(
-
                 'resource' => array(
                     'type' => 'segment',
                     'options' => array(
                         'route' => '/resource[/:id]'
                     )
-                )
+                ),
+                'users' => array(
+                    'type' => 'segment',
+                    'options' => array(
+                        'route' => '/users[/:id]'
+                    )
+                ),
+                'contacts' => array(
+                    'type' => 'segment',
+                    'options' => array(
+                        'route' => '/contacts[/:id]'
+                    )
+                ),
             )
         ));
 
@@ -115,5 +127,54 @@ class HalLinksTest extends TestCase
         $this->assertInternalType('array', $docsLink);
         $this->assertArrayHasKey('href', $docsLink);
         $this->assertEquals('http://localhost.localdomain/help', $docsLink['href']);
+    }
+
+    public function testRendersEmbeddedCollectionsInsideResources()
+    {
+        $collection = new HalCollection(
+            array(
+                (object) array('id' => 'foo', 'name' => 'foo'),
+                (object) array('id' => 'bar', 'name' => 'bar'),
+                (object) array('id' => 'baz', 'name' => 'baz'),
+            ),
+            'hostname/contacts'
+        );
+        $resource = new HalResource(
+            (object) array(
+                'id'       => 'user',
+                'contacts' => $collection,
+            ),
+            'user'
+        );
+        $self = new Link('self');
+        $self->setRoute('hostname/users', array('id' => 'user'));
+        $resource->getLinks()->add($self);
+
+        $rendered = $this->plugin->renderResource($resource);
+
+        $this->assertArrayHasKey('_links', $rendered);
+        $this->assertInternalType('array', $rendered['_links']);
+        $this->assertArrayHasKey('self', $rendered['_links']);
+        $this->assertInternalType('array', $rendered['_links']['self']);
+        $this->assertArrayHasKey('href', $rendered['_links']['self']);
+        $this->assertInternalType('string', $rendered['_links']['self']['href']);
+        $this->assertContains('/users/', $rendered['_links']['self']['href']);
+
+        $this->assertArrayHasKey('_embedded', $rendered);
+        $embed = $rendered['_embedded'];
+        $this->assertArrayHasKey('contacts', $embed);
+        $contacts = $embed['contacts'];
+        $this->assertInternalType('array', $contacts);
+        $this->assertEquals(3, count($contacts));
+        foreach ($contacts as $contact) {
+            $this->assertInternalType('array', $contact);
+            $this->assertArrayHasKey('_links', $contact);
+            $this->assertInternalType('array', $contact['_links']);
+            $this->assertArrayHasKey('self', $contact['_links']);
+            $this->assertInternalType('array', $contact['_links']['self']);
+            $this->assertArrayHasKey('href', $contact['_links']['self']);
+            $this->assertInternalType('string', $contact['_links']['self']['href']);
+            $this->assertContains('/contacts/', $contact['_links']['self']['href']);
+        }
     }
 }
