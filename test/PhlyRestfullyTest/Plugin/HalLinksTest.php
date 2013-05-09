@@ -136,7 +136,7 @@ class HalLinksTest extends TestCase
                 (object) array('id' => 'foo', 'name' => 'foo'),
                 (object) array('id' => 'bar', 'name' => 'bar'),
                 (object) array('id' => 'baz', 'name' => 'baz'),
-            ), 
+            ),
             'hostname/contacts'
         );
         $resource = new HalResource(

@@ -537,8 +537,8 @@ class HalLinks extends AbstractHelper implements
 
     /**
      * Extract a collection as an array
-     * 
-     * @param  HalCollection $halCollection 
+     *
+     * @param  HalCollection $halCollection
      * @return array
      */
     protected function extractCollection(HalCollection $halCollection)
