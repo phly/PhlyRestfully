@@ -105,7 +105,9 @@ return array(
                 // via this key. (OPTIONAL)
                 'identifier' => 'Contacts',
 
-                // Name of the service locator key of the resource listener
+                // Name of the service locator key OR the fully qualified class
+                // name of the resource listener (latter works only if the class
+                // has no required arguments in the constructor).
                 // (REQUIRED)
                 'listener'   => 'MyApi\Resource\Contacts',
 
