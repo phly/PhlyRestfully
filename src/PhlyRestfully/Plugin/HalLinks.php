@@ -483,7 +483,9 @@ class HalLinks extends AbstractHelper implements
         );
 
         if (substr($path, 0, 4) == 'http') {
-            return $path;
+            return array(
+                'href' => $path,
+            );
         }
 
         return array(
