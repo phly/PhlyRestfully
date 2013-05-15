@@ -60,6 +60,18 @@ class HalLinksTest extends TestCase
                         'route' => '/contacts[/:id]'
                     )
                 ),
+                'embedded' => array(
+                    'type' => 'segment',
+                    'options' => array(
+                        'route' => '/embedded[/:id]'
+                    )
+                ),
+                'embedded_custom' => array(
+                    'type' => 'segment',
+                    'options' => array(
+                        'route' => '/embedded_custom[/:custom_id]'
+                    )
+                ),
             )
         ));
 
@@ -131,6 +143,117 @@ class HalLinksTest extends TestCase
 
     public function testRendersEmbeddedCollectionsInsideResources()
     {
+        $collection = new HalCollection(
+            array(
+                (object) array('id' => 'foo', 'name' => 'foo'),
+                (object) array('id' => 'bar', 'name' => 'bar'),
+                (object) array('id' => 'baz', 'name' => 'baz'),
+            ),
+            'hostname/contacts'
+        );
+        $resource = new HalResource(
+            (object) array(
+                'id'       => 'user',
+                'contacts' => $collection,
+            ),
+            'user'
+        );
+        $self = new Link('self');
+        $self->setRoute('hostname/users', array('id' => 'user'));
+        $resource->getLinks()->add($self);
+
+        $rendered = $this->plugin->renderResource($resource);
+
+        $this->assertArrayHasKey('_links', $rendered);
+        $this->assertInternalType('array', $rendered['_links']);
+        $this->assertArrayHasKey('self', $rendered['_links']);
+        $this->assertInternalType('array', $rendered['_links']['self']);
+        $this->assertArrayHasKey('href', $rendered['_links']['self']);
+        $this->assertInternalType('string', $rendered['_links']['self']['href']);
+        $this->assertContains('/users/', $rendered['_links']['self']['href']);
+
+        $this->assertArrayHasKey('_embedded', $rendered);
+        $embed = $rendered['_embedded'];
+        $this->assertArrayHasKey('contacts', $embed);
+        $contacts = $embed['contacts'];
+        $this->assertInternalType('array', $contacts);
+        $this->assertEquals(3, count($contacts));
+        foreach ($contacts as $contact) {
+            $this->assertInternalType('array', $contact);
+            $this->assertArrayHasKey('_links', $contact);
+            $this->assertInternalType('array', $contact['_links']);
+            $this->assertArrayHasKey('self', $contact['_links']);
+            $this->assertInternalType('array', $contact['_links']['self']);
+            $this->assertArrayHasKey('href', $contact['_links']['self']);
+            $this->assertInternalType('string', $contact['_links']['self']['href']);
+            $this->assertContains('/contacts/', $contact['_links']['self']['href']);
+        }
+    }
+
+    public function testRendersEmbeddedResourcesInsideResourcesBasedOnMetadataMap()
+    {
+        $resource = new TestAsset\Resource('foo', 'Foo');
+        $resource->first_child  = new TestAsset\EmbeddedResource('bar', 'Bar');
+        $resource->second_child = new TestAsset\EmbeddedResourceWithCustomIdentifier('baz', 'Baz');
+
+        $metadata = new MetadataMap(array(
+            'PhlyRestfullyTest\Plugin\TestAsset\Resource' => array(
+                'hydrator' => 'ClassProperties',
+                'route'    => 'hostname/resource',
+            ),
+            'PhlyRestfullyTest\Plugin\TestAsset\EmbeddedResource' => array(
+                'hydrator' => 'ClassProperties',
+                'route'    => 'hostname/embedded',
+            ),
+            'PhlyRestfullyTest\Plugin\TestAsset\EmbeddedResourceWithCustomIdentifier' => array(
+                'hydrator'   => 'ClassProperties',
+                'route'      => 'hostname/embedded_custom',
+                'identifier' => 'custom_id',
+            ),
+        ));
+
+        $this->plugin->setMetadataMap($metadata);
+
+        $rendered = $this->plugin->renderResource($resource);
+
+        $this->assertArrayHasKey('_links', $rendered);
+        $this->assertInternalType('array', $rendered['_links']);
+        $this->assertArrayHasKey('self', $rendered['_links']);
+        $this->assertInternalType('array', $rendered['_links']['self']);
+        $this->assertArrayHasKey('href', $rendered['_links']['self']);
+        $this->assertInternalType('string', $rendered['_links']['self']['href']);
+        $this->assertContains('/resource/foo', $rendered['_links']['self']['href']);
+
+        $this->assertArrayHasKey('_embedded', $rendered);
+        $embed = $rendered['_embedded'];
+        $this->assertEquals(3, count($embed));
+        $this->assertArrayHasKey('first_child', $embed);
+        $this->assertArrayHasKey('second_child', $embed);
+
+        $first = $embed['first_child'];
+        $this->assertInternalType('array', $first);
+        $this->assertArrayHasKey('_links', $first);
+        $this->assertInternalType('array', $first['_links']);
+        $this->assertArrayHasKey('self', $first['_links']);
+        $this->assertInternalType('array', $first['_links']['self']);
+        $this->assertArrayHasKey('href', $first['_links']['self']);
+        $this->assertInternalType('string', $first['_links']['self']['href']);
+        $this->assertContains('/embedded/bar', $first['_links']['self']['href']);
+
+        $second = $embed['second_child'];
+        $this->assertInternalType('array', $second);
+        $this->assertArrayHasKey('_links', $second);
+        $this->assertInternalType('array', $second['_links']);
+        $this->assertArrayHasKey('self', $second['_links']);
+        $this->assertInternalType('array', $second['_links']['self']);
+        $this->assertArrayHasKey('href', $second['_links']['self']);
+        $this->assertInternalType('string', $second['_links']['self']['href']);
+        $this->assertContains('/embedded_custom/baz', $second['_links']['self']['href']);
+    }
+
+    public function testRendersEmbeddedCollectionsInsideResourcesBasedOnMetadataMap()
+    {
+        $this->markTestIncomplete('This test is copied from another, and needs to be updated');
         $collection = new HalCollection(
             array(
                 (object) array('id' => 'foo', 'name' => 'foo'),
