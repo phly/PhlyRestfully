@@ -16,6 +16,8 @@ use PhlyRestfully\HalResource;
 use PhlyRestfully\Link;
 use PhlyRestfully\LinkCollection;
 use PhlyRestfully\LinkCollectionAwareInterface;
+use PhlyRestfully\Metadata;
+use PhlyRestfully\MetadataMap;
 use Zend\EventManager\EventManager;
 use Zend\EventManager\EventManagerAwareInterface;
 use Zend\EventManager\EventManagerInterface;
@@ -58,6 +60,11 @@ class HalLinks extends AbstractHelper implements
      * @var HydratorInterface[]
      */
     protected $hydrators = array();
+
+    /**
+     * @var MetadataMap
+     */
+    protected $metadataMap;
 
     /**
      * @var ServerUrl
@@ -127,6 +134,31 @@ class HalLinks extends AbstractHelper implements
             return false;
         });
 
+        return $this;
+    }
+
+    /**
+     * Retrieve the metadata map
+     * 
+     * @return MetadataMap
+     */
+    public function getMetadataMap()
+    {
+        if (!$this->metadataMap instanceof MetadataMap) {
+            $this->setMetadataMap(new MetadataMap());
+        }
+        return $this->metadataMap;
+    }
+
+    /**
+     * Set the metadata map
+     * 
+     * @param  MetadataMap $map 
+     * @return self
+     */
+    public function setMetadataMap(MetadataMap $map)
+    {
+        $this->metadataMap = $map;
         return $this;
     }
 
@@ -268,7 +300,12 @@ class HalLinks extends AbstractHelper implements
             $resource = $this->convertResourceToArray($resource);
         }
 
+        $metadataMap = $this->getMetadataMap();
         foreach ($resource as $key => $value) {
+            if (is_object($value) && $metadataMap->has($value)) {
+                $value = $this->createResourceFromMetadata($value, $metadataMap->get($value));
+            }
+
             if ($value instanceof HalResource) {
                 $this->extractEmbeddedHalResource($resource, $key, $value);
             }
@@ -369,6 +406,56 @@ class HalLinks extends AbstractHelper implements
     public function fromResource(LinkCollectionAwareInterface $resource)
     {
         return $this->fromLinkCollection($resource->getLinks());
+    }
+
+    /**
+     * Create a resource and/or collection based on a metadata map
+     * 
+     * @param  object $object 
+     * @param  Metadata $metadata 
+     * @return HalResource|HalCollection
+     */
+    public function createResourceFromMetadata($object, Metadata $metadata)
+    {
+        if ($metadata->hasHydrator()) {
+            $hydrator = $metadata->getHydrator();
+        } else {
+            $hydrator = $this->getHydratorForResource($object);
+        }
+        if (!$hydrator instanceof HydratorInterface) {
+            throw new Exception\RuntimeException(sprintf(
+                'Unable to extract %s; no hydrator registered',
+                get_class($object)
+            ));
+        }
+        $data = $hydrator->extract($object);
+
+        $identiferName = $metadata->getIdentifierName();
+        if (!isset($data[$identiferName])) {
+            throw new Exception\RuntimeException(sprintf(
+                'Unable to determine identifier for object of type "%s"; no fields matching "%s"',
+                get_class($object),
+                $identiferName
+            ));
+        }
+        $id = $data[$identiferName];
+
+        $resource = new HalResource($data, $id);
+
+        $link = new Link('self');
+        if ($metadata->hasRoute()) {
+            $params = array_merge($metadata->getRouteParams(), array($identiferName => $id));
+            $link->setRoute($metadata->getRoute(), $params, $metadata->getRouteOptions());
+        } elseif ($metadata->hasUrl()) {
+            $link->setUrl($metadata->getUrl());
+        } else {
+            throw new Exception\RuntimeException(sprintf(
+                'Unable to create a self link for resource of type "%s"; metadata does not contain a route or a url',
+                get_class($object)
+            ));
+        }
+        $resource->getLinks()->add($link);
+        return $resource;
     }
 
     /**

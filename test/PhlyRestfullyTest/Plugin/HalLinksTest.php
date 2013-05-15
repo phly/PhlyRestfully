@@ -11,6 +11,7 @@ namespace PhlyRestfullyTest\Plugin;
 use PhlyRestfully\HalCollection;
 use PhlyRestfully\HalResource;
 use PhlyRestfully\Link;
+use PhlyRestfully\MetadataMap;
 use PhlyRestfully\Plugin\HalLinks;
 use PHPUnit_Framework_TestCase as TestCase;
 use Zend\Mvc\Router\Http\TreeRouteStack;
@@ -192,23 +193,27 @@ class HalLinksTest extends TestCase
 
     public function testRendersEmbeddedResourcesInsideResourcesBasedOnMetadataMap()
     {
-        $resource = new TestAsset\Resource('foo', 'Foo');
-        $resource->first_child  = new TestAsset\EmbeddedResource('bar', 'Bar');
-        $resource->second_child = new TestAsset\EmbeddedResourceWithCustomIdentifier('baz', 'Baz');
+        $object = new TestAsset\Resource('foo', 'Foo');
+        $object->first_child  = new TestAsset\EmbeddedResource('bar', 'Bar');
+        $object->second_child = new TestAsset\EmbeddedResourceWithCustomIdentifier('baz', 'Baz');
+        $resource = new HalResource($object, 'foo');
+        $self = new Link('self');
+        $self->setRoute('hostname/resource', array('id' => 'foo'));
+        $resource->getLinks()->add($self);
 
         $metadata = new MetadataMap(array(
             'PhlyRestfullyTest\Plugin\TestAsset\Resource' => array(
-                'hydrator' => 'ClassProperties',
+                'hydrator' => 'Zend\Stdlib\Hydrator\ObjectProperty',
                 'route'    => 'hostname/resource',
             ),
             'PhlyRestfullyTest\Plugin\TestAsset\EmbeddedResource' => array(
-                'hydrator' => 'ClassProperties',
+                'hydrator' => 'Zend\Stdlib\Hydrator\ObjectProperty',
                 'route'    => 'hostname/embedded',
             ),
             'PhlyRestfullyTest\Plugin\TestAsset\EmbeddedResourceWithCustomIdentifier' => array(
-                'hydrator'   => 'ClassProperties',
-                'route'      => 'hostname/embedded_custom',
-                'identifier' => 'custom_id',
+                'hydrator'        => 'Zend\Stdlib\Hydrator\ObjectProperty',
+                'route'           => 'hostname/embedded_custom',
+                'identifier_name' => 'custom_id',
             ),
         ));
 
@@ -226,7 +231,7 @@ class HalLinksTest extends TestCase
 
         $this->assertArrayHasKey('_embedded', $rendered);
         $embed = $rendered['_embedded'];
-        $this->assertEquals(3, count($embed));
+        $this->assertEquals(2, count($embed));
         $this->assertArrayHasKey('first_child', $embed);
         $this->assertArrayHasKey('second_child', $embed);
 
