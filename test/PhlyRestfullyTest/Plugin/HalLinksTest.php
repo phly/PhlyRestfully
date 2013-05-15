@@ -98,6 +98,17 @@ class HalLinksTest extends TestCase
         $plugin->setServerUrlHelper($serverUrlHelper);
     }
 
+    public function assertLink($rel, $matches, array $resource)
+    {
+        $this->assertArrayHasKey('_links', $resource);
+        $this->assertInternalType('array', $resource['_links']);
+        $this->assertArrayHasKey($rel, $resource['_links']);
+        $this->assertInternalType('array', $resource['_links'][$rel]);
+        $this->assertArrayHasKey('href', $resource['_links'][$rel]);
+        $this->assertInternalType('string', $resource['_links'][$rel]['href']);
+        $this->assertContains($matches, $resource['_links'][$rel]['href']);
+    }
+
     public function testCreateLinkSkipServerUrlHelperIfSchemeExists()
     {
         $url = $this->plugin->createLink('hostname/resource');
@@ -164,14 +175,7 @@ class HalLinksTest extends TestCase
         $resource->getLinks()->add($self);
 
         $rendered = $this->plugin->renderResource($resource);
-
-        $this->assertArrayHasKey('_links', $rendered);
-        $this->assertInternalType('array', $rendered['_links']);
-        $this->assertArrayHasKey('self', $rendered['_links']);
-        $this->assertInternalType('array', $rendered['_links']['self']);
-        $this->assertArrayHasKey('href', $rendered['_links']['self']);
-        $this->assertInternalType('string', $rendered['_links']['self']['href']);
-        $this->assertContains('/users/', $rendered['_links']['self']['href']);
+        $this->assertLink('self', '/users/', $rendered);
 
         $this->assertArrayHasKey('_embedded', $rendered);
         $embed = $rendered['_embedded'];
@@ -181,13 +185,7 @@ class HalLinksTest extends TestCase
         $this->assertEquals(3, count($contacts));
         foreach ($contacts as $contact) {
             $this->assertInternalType('array', $contact);
-            $this->assertArrayHasKey('_links', $contact);
-            $this->assertInternalType('array', $contact['_links']);
-            $this->assertArrayHasKey('self', $contact['_links']);
-            $this->assertInternalType('array', $contact['_links']['self']);
-            $this->assertArrayHasKey('href', $contact['_links']['self']);
-            $this->assertInternalType('string', $contact['_links']['self']['href']);
-            $this->assertContains('/contacts/', $contact['_links']['self']['href']);
+            $this->assertLink('self', '/contacts/', $contact);
         }
     }
 
@@ -220,14 +218,7 @@ class HalLinksTest extends TestCase
         $this->plugin->setMetadataMap($metadata);
 
         $rendered = $this->plugin->renderResource($resource);
-
-        $this->assertArrayHasKey('_links', $rendered);
-        $this->assertInternalType('array', $rendered['_links']);
-        $this->assertArrayHasKey('self', $rendered['_links']);
-        $this->assertInternalType('array', $rendered['_links']['self']);
-        $this->assertArrayHasKey('href', $rendered['_links']['self']);
-        $this->assertInternalType('string', $rendered['_links']['self']['href']);
-        $this->assertContains('/resource/foo', $rendered['_links']['self']['href']);
+        $this->assertLink('self', '/resource/foo', $rendered);
 
         $this->assertArrayHasKey('_embedded', $rendered);
         $embed = $rendered['_embedded'];
@@ -237,36 +228,33 @@ class HalLinksTest extends TestCase
 
         $first = $embed['first_child'];
         $this->assertInternalType('array', $first);
-        $this->assertArrayHasKey('_links', $first);
-        $this->assertInternalType('array', $first['_links']);
-        $this->assertArrayHasKey('self', $first['_links']);
-        $this->assertInternalType('array', $first['_links']['self']);
-        $this->assertArrayHasKey('href', $first['_links']['self']);
-        $this->assertInternalType('string', $first['_links']['self']['href']);
-        $this->assertContains('/embedded/bar', $first['_links']['self']['href']);
+        $this->assertLink('self', '/embedded/bar', $first);
 
         $second = $embed['second_child'];
         $this->assertInternalType('array', $second);
-        $this->assertArrayHasKey('_links', $second);
-        $this->assertInternalType('array', $second['_links']);
-        $this->assertArrayHasKey('self', $second['_links']);
-        $this->assertInternalType('array', $second['_links']['self']);
-        $this->assertArrayHasKey('href', $second['_links']['self']);
-        $this->assertInternalType('string', $second['_links']['self']['href']);
-        $this->assertContains('/embedded_custom/baz', $second['_links']['self']['href']);
+        $this->assertLink('self', '/embedded_custom/baz', $second);
     }
 
     public function testRendersEmbeddedCollectionsInsideResourcesBasedOnMetadataMap()
     {
-        $this->markTestIncomplete('This test is copied from another, and needs to be updated');
-        $collection = new HalCollection(
+        $collection = new TestAsset\Collection(
             array(
                 (object) array('id' => 'foo', 'name' => 'foo'),
                 (object) array('id' => 'bar', 'name' => 'bar'),
                 (object) array('id' => 'baz', 'name' => 'baz'),
-            ),
-            'hostname/contacts'
+            )
         );
+
+        $metadata = new MetadataMap(array(
+            'PhlyRestfullyTest\Plugin\TestAsset\Collection' => array(
+                'is_collection'  => true,
+                'route'          => 'hostname/contacts',
+                'resource_route' => 'hostname/embedded',
+            ),
+        ));
+
+        $this->plugin->setMetadataMap($metadata);
+
         $resource = new HalResource(
             (object) array(
                 'id'       => 'user',
@@ -280,13 +268,7 @@ class HalLinksTest extends TestCase
 
         $rendered = $this->plugin->renderResource($resource);
 
-        $this->assertArrayHasKey('_links', $rendered);
-        $this->assertInternalType('array', $rendered['_links']);
-        $this->assertArrayHasKey('self', $rendered['_links']);
-        $this->assertInternalType('array', $rendered['_links']['self']);
-        $this->assertArrayHasKey('href', $rendered['_links']['self']);
-        $this->assertInternalType('string', $rendered['_links']['self']['href']);
-        $this->assertContains('/users/', $rendered['_links']['self']['href']);
+        $this->assertLink('self', '/users/', $rendered);
 
         $this->assertArrayHasKey('_embedded', $rendered);
         $embed = $rendered['_embedded'];
@@ -296,13 +278,8 @@ class HalLinksTest extends TestCase
         $this->assertEquals(3, count($contacts));
         foreach ($contacts as $contact) {
             $this->assertInternalType('array', $contact);
-            $this->assertArrayHasKey('_links', $contact);
-            $this->assertInternalType('array', $contact['_links']);
-            $this->assertArrayHasKey('self', $contact['_links']);
-            $this->assertInternalType('array', $contact['_links']['self']);
-            $this->assertArrayHasKey('href', $contact['_links']['self']);
-            $this->assertInternalType('string', $contact['_links']['self']['href']);
-            $this->assertContains('/contacts/', $contact['_links']['self']['href']);
+            $this->assertArrayHasKey('id', $contact);
+            $this->assertLink('self', '/embedded/' . $contact['id'], $contact);
         }
     }
 }

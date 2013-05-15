@@ -417,6 +417,10 @@ class HalLinks extends AbstractHelper implements
      */
     public function createResourceFromMetadata($object, Metadata $metadata)
     {
+        if ($metadata->isCollection()) {
+            return $this->createCollectionFromMetadata($object, $metadata);
+        }
+
         if ($metadata->hasHydrator()) {
             $hydrator = $metadata->getHydrator();
         } else {
@@ -456,6 +460,20 @@ class HalLinks extends AbstractHelper implements
         }
         $resource->getLinks()->add($link);
         return $resource;
+    }
+
+    /**
+     * @param  object $object 
+     * @param  Metadata $metadata 
+     * @return HalCollection
+     */
+    public function createCollectionFromMetadata($object, Metadata $metadata)
+    {
+        $collection = new HalCollection($object);
+        $collection->setCollectionRoute($metadata->getRoute());
+        $collection->setResourceRoute($metadata->getResourceRoute());
+        $collection->setIdentifierName($metadata->getIdentifierName());
+        return $collection;
     }
 
     /**

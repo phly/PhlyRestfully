@@ -12,6 +12,10 @@ class Metadata
 
     protected $identifierName = 'id';
 
+    protected $isCollection = false;
+
+    protected $resourceRoute;
+
     protected $route;
 
     protected $routeOptions = array();
@@ -61,6 +65,18 @@ class Metadata
         return $this->identifierName;
     }
 
+    public function getResourceRoute()
+    {
+        if (null === $this->resourceRoute) {
+            if ($this->hasRoute()) {
+                $this->setResourceRoute($this->getRoute());
+            } else {
+                $this->setResourceRoute($this->getUrl());
+            }
+        }
+        return $this->resourceRoute;
+    }
+
     public function getRoute()
     {
         return $this->route;
@@ -96,6 +112,11 @@ class Metadata
         return (null !== $this->url);
     }
 
+    public function isCollection()
+    {
+        return $this->isCollection;
+    }
+
     public function setHydrator($hydrator)
     {
         if (is_string($hydrator)) {
@@ -120,6 +141,18 @@ class Metadata
     public function setIdentifierName($identifier)
     {
         $this->identifierName = $identifier;
+        return $this;
+    }
+
+    public function setIsCollection($flag)
+    {
+        $this->isCollection = (bool) $flag;
+        return $this;
+    }
+
+    public function setResourceRoute($route)
+    {
+        $this->resourceRoute = $route;
         return $this;
     }
 
