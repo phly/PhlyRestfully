@@ -139,7 +139,7 @@ class HalLinks extends AbstractHelper implements
 
     /**
      * Retrieve the metadata map
-     * 
+     *
      * @return MetadataMap
      */
     public function getMetadataMap()
@@ -152,8 +152,8 @@ class HalLinks extends AbstractHelper implements
 
     /**
      * Set the metadata map
-     * 
-     * @param  MetadataMap $map 
+     *
+     * @param  MetadataMap $map
      * @return self
      */
     public function setMetadataMap(MetadataMap $map)
@@ -410,9 +410,9 @@ class HalLinks extends AbstractHelper implements
 
     /**
      * Create a resource and/or collection based on a metadata map
-     * 
-     * @param  object $object 
-     * @param  Metadata $metadata 
+     *
+     * @param  object $object
+     * @param  Metadata $metadata
      * @return HalResource|HalCollection
      */
     public function createResourceFromMetadata($object, Metadata $metadata)
@@ -463,8 +463,8 @@ class HalLinks extends AbstractHelper implements
     }
 
     /**
-     * @param  object $object 
-     * @param  Metadata $metadata 
+     * @param  object $object
+     * @param  Metadata $metadata
      * @return HalCollection
      */
     public function createCollectionFromMetadata($object, Metadata $metadata)
