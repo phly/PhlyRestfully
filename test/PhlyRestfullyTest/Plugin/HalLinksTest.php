@@ -282,4 +282,61 @@ class HalLinksTest extends TestCase
             $this->assertLink('self', '/embedded/' . $contact['id'], $contact);
         }
     }
+
+    public function testRendersEmbeddedCollectionsInsideCollectionsBasedOnMetadataMap()
+    {
+        $childCollection = new TestAsset\Collection(
+            array(
+                (object) array('id' => 'foo', 'name' => 'foo'),
+                (object) array('id' => 'bar', 'name' => 'bar'),
+                (object) array('id' => 'baz', 'name' => 'baz'),
+            )
+        );
+        $resource = new TestAsset\Resource('spock', 'Spock');
+        $resource->first_child = $childCollection;
+
+        $metadata = new MetadataMap(array(
+            'PhlyRestfullyTest\Plugin\TestAsset\Collection' => array(
+                'is_collection'  => true,
+                'route'          => 'hostname/contacts',
+                'resource_route' => 'hostname/embedded',
+            ),
+            'PhlyRestfullyTest\Plugin\TestAsset\Resource' => array(
+                'hydrator' => 'Zend\Stdlib\Hydrator\ObjectProperty',
+                'route'    => 'hostname/resource',
+            ),
+        ));
+
+        $this->plugin->setMetadataMap($metadata);
+
+        $collection = new HalCollection(array($resource), 'hostname/resource');
+        $self = new Link('self');
+        $self->setRoute('hostname/resource');
+        $collection->getLinks()->add($self);
+        $collection->setCollectionName('resources');
+
+        $rendered = $this->plugin->renderCollection($collection);
+
+        $this->assertLink('self', '/resource', $rendered);
+
+        $this->assertArrayHasKey('_embedded', $rendered);
+        $embed = $rendered['_embedded'];
+        $this->assertArrayHasKey('resources', $embed);
+        $resources = $embed['resources'];
+        $this->assertInternalType('array', $resources);
+        $this->assertEquals(1, count($resources));
+
+        $resource = array_shift($resources);
+        $this->assertInternalType('array', $resource);
+        $this->assertArrayHasKey('_embedded', $resource);
+        $this->assertInternalType('array', $resource['_embedded']);
+        $this->assertArrayHasKey('first_child', $resource['_embedded']);
+        $this->assertInternalType('array', $resource['_embedded']['first_child']);
+
+        foreach ($resource['_embedded']['first_child'] as $contact) {
+            $this->assertInternalType('array', $contact);
+            $this->assertArrayHasKey('id', $contact);
+            $this->assertLink('self', '/embedded/' . $contact['id'], $contact);
+        }
+    }
 }

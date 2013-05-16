@@ -654,6 +654,7 @@ class HalLinks extends AbstractHelper implements
         $resourceRoute        = $halCollection->resourceRoute;
         $resourceRouteParams  = $halCollection->resourceRouteParams;
         $resourceRouteOptions = $halCollection->resourceRouteOptions;
+        $metadataMap          = $this->getMetadataMap();
 
         foreach ($halCollection->collection as $resource) {
             $eventParams = new ArrayObject(array(
@@ -672,6 +673,10 @@ class HalLinks extends AbstractHelper implements
             }
 
             foreach ($resource as $key => $value) {
+                if (is_object($value) && $metadataMap->has($value)) {
+                    $value = $this->createResourceFromMetadata($value, $metadataMap->get($value));
+                }
+
                 if ($value instanceof HalResource) {
                     $this->extractEmbeddedHalResource($resource, $key, $value);
                 }
