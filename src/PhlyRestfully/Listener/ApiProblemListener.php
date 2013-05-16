@@ -92,7 +92,8 @@ class ApiProblemListener implements ListenerAggregateInterface
 
         // ... that matches certain criteria
         $accept = $headers->get('Accept');
-        if (!($match = $accept->match(self::$acceptFilter)) || $match->getTypeString() == '*/*') {
+        $match  = $accept->match(self::$acceptFilter);
+        if (!$match || $match->getTypeString() == '*/*') {
             return;
         }
 
