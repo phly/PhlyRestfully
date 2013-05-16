@@ -495,10 +495,8 @@ class ResourceController extends AbstractRestfulController
             return $collection;
         }
 
-        if (!$collection instanceof HalCollection) {
-            $collection = new HalCollection($collection);
-        }
-        $this->injectSelfLink($collection);
+        $plugin     = $this->plugin('HalLinks');
+        $collection = $plugin->createCollection($collection, $this->route);
         $collection->setCollectionRoute($this->route);
         $collection->setIdentifierName($this->getIdentifierName());
         $collection->setResourceRoute($this->route);
@@ -663,10 +661,8 @@ class ResourceController extends AbstractRestfulController
             return $collection;
         }
 
-        if (!$collection instanceof HalCollection) {
-            $collection = new HalCollection($collection);
-        }
-        $this->injectSelfLink($collection);
+        $plugin = $this->plugin('HalLinks');
+        $collection = $plugin->createCollection($collection, $this->route);
         $collection->setCollectionRoute($this->route);
         $collection->setIdentifierName($this->getIdentifierName());
         $collection->setResourceRoute($this->route);

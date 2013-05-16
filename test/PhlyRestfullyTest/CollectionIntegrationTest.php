@@ -17,6 +17,7 @@ use PHPUnit_Framework_TestCase as TestCase;
 use Zend\Http\PhpEnvironment\Request;
 use Zend\Http\PhpEnvironment\Response;
 use Zend\Mvc\Controller\ControllerManager;
+use Zend\Mvc\Controller\PluginManager as ControllerPluginManager;
 use Zend\Mvc\MvcEvent;
 use Zend\Mvc\Router\Http\TreeRouteStack;
 use Zend\Mvc\Router\RouteMatch;
@@ -54,7 +55,7 @@ class CollectionIntegrationTest extends TestCase
         $serverUrlHelper->setScheme('http');
         $serverUrlHelper->setHost('localhost.localdomain');
 
-        $linksHelper = new HalLinks();
+        $this->linksHelper = $linksHelper = new HalLinks();
         $linksHelper->setUrlHelper($urlHelper);
         $linksHelper->setServerUrlHelper($serverUrlHelper);
 
@@ -141,6 +142,10 @@ class CollectionIntegrationTest extends TestCase
         $controller->setPageSize(3);
         $controller->setRoute('resource');
         $controller->setEvent($this->getEvent());
+
+        $plugins = new ControllerPluginManager();
+        $plugins->setService('HalLinks', $this->linksHelper);
+        $controller->setPluginManager($plugins);
     }
 
     public function setUpRequest()
@@ -250,6 +255,9 @@ class CollectionIntegrationTest extends TestCase
         });
 
         $controllers->setServiceLocator($services);
+
+        $plugins = $services->get('ControllerPluginManager');
+        $plugins->setService('HalLinks', $this->linksHelper);
 
         return $services;
     }

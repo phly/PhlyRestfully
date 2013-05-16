@@ -463,6 +463,28 @@ class HalLinks extends AbstractHelper implements
     }
 
     /**
+     * Creates a HalCollection instance with a self relational link
+     * 
+     * @param  HalCollection|array|object $collection 
+     * @param  null|string $route 
+     * @param  string $identiferName 
+     * @return HalCollection
+     */
+    public function createCollection($collection, $route = null)
+    {
+        if (!$collection instanceof HalCollection) {
+            $metadataMap = $this->getMetadataMap();
+            if (is_object($collection) && $metadataMap->has($collection)) {
+                $collection = $this->createCollectionFromMetadata($collection, $metadataMap->get($collection));
+            } else {
+                $collection = new HalCollection($collection);
+            }
+        }
+        $this->injectSelfLink($collection, $route);
+        return $collection;
+    }
+
+    /**
      * @param  object $object
      * @param  Metadata $metadata
      * @return HalCollection
@@ -474,6 +496,23 @@ class HalLinks extends AbstractHelper implements
         $collection->setResourceRoute($metadata->getResourceRoute());
         $collection->setIdentifierName($metadata->getIdentifierName());
         return $collection;
+    }
+
+    /**
+     * Inject a "self" relational link based on the route and identifier
+     * 
+     * @param  LinkCollectionAwareInterface $resource 
+     * @param  string $route 
+     * @param  string $identifier 
+     */
+    public function injectSelfLink(LinkCollectionAwareInterface $resource, $route, $identifier = 'id')
+    {
+        $self = new Link('self');
+        $self->setRoute($route);
+        if ($resource instanceof HalResource) {
+            $self->setRouteParams(array($identifier => $resource->id));
+        }
+        $resource->getLinks()->add($self);
     }
 
     /**
