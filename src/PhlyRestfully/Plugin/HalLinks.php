@@ -477,10 +477,10 @@ class HalLinks extends AbstractHelper implements
 
     /**
      * Create a HalResource instance and inject it with a self relational link
-     * 
-     * @param  HalResource|array|object $resource 
-     * @param  string $route 
-     * @param  string $identifierName 
+     *
+     * @param  HalResource|array|object $resource
+     * @param  string $route
+     * @param  string $identifierName
      * @return HalResource
      */
     public function createResource($resource, $route, $identifierName)
@@ -507,10 +507,10 @@ class HalLinks extends AbstractHelper implements
 
     /**
      * Creates a HalCollection instance with a self relational link
-     * 
-     * @param  HalCollection|array|object $collection 
-     * @param  null|string $route 
-     * @param  string $identiferName 
+     *
+     * @param  HalCollection|array|object $collection
+     * @param  null|string $route
+     * @param  string $identiferName
      * @return HalCollection
      */
     public function createCollection($collection, $route = null)
@@ -544,10 +544,10 @@ class HalLinks extends AbstractHelper implements
 
     /**
      * Inject a "self" relational link based on the route and identifier
-     * 
-     * @param  LinkCollectionAwareInterface $resource 
-     * @param  string $route 
-     * @param  string $identifier 
+     *
+     * @param  LinkCollectionAwareInterface $resource
+     * @param  string $route
+     * @param  string $identifier
      */
     public function injectSelfLink(LinkCollectionAwareInterface $resource, $route, $identifier = 'id')
     {
