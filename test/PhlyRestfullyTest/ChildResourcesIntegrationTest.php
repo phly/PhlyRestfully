@@ -354,6 +354,7 @@ class ChildResourcesIntegrationTest extends TestCase
             );
         });
         $controller = new ResourceController();
+        $controller->setPluginManager($this->plugins);
         $controller->setResource($resource);
         $controller->setIdentifierName('child_id');
         $r = new ReflectionObject($controller);

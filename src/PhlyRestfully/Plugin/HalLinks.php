@@ -123,14 +123,27 @@ class HalLinks extends AbstractHelper implements
         $events->attach('getIdFromResource', function ($e) {
             $resource = $e->getParam('resource');
 
-            if (!is_array($resource)) {
-                return false;
-            }
-
-            if (array_key_exists('id', $resource)) {
+            // Found id in array
+            if (is_array($resource) && array_key_exists('id', $resource)) {
                 return $resource['id'];
             }
 
+            // No id in array, or not an object; return false
+            if (is_array($resource) || !is_object($resource)) {
+                return false;
+            }
+
+            // Found public id property on object
+            if (isset($resource->id)) {
+                return $resource->id;
+            }
+
+            // Found public id getter on object
+            if (method_exists($resource, 'getid')) {
+                return $resource->getId();
+            }
+
+            // not found
             return false;
         });
 
@@ -463,6 +476,36 @@ class HalLinks extends AbstractHelper implements
     }
 
     /**
+     * Create a HalResource instance and inject it with a self relational link
+     * 
+     * @param  HalResource|array|object $resource 
+     * @param  string $route 
+     * @param  string $identifierName 
+     * @return HalResource
+     */
+    public function createResource($resource, $route, $identifierName)
+    {
+        $metadataMap = $this->getMetadataMap();
+        if (is_object($resource) && $metadataMap->has($resource)) {
+            $resource = $this->createResourceFromMetadata($resource, $metadataMap->get($resource));
+        }
+
+        if (!$resource instanceof HalResource) {
+            $id = $this->getIdFromResource($resource);
+            if (!$id) {
+                return new ApiProblem(
+                    422,
+                    'No resource identifier present following resource creation.'
+                );
+            }
+            $resource = new HalResource($resource, $id);
+        }
+
+        $this->injectSelfLink($resource, $route, $identifierName);
+        return $resource;
+    }
+
+    /**
      * Creates a HalCollection instance with a self relational link
      * 
      * @param  HalCollection|array|object $collection 
@@ -472,14 +515,15 @@ class HalLinks extends AbstractHelper implements
      */
     public function createCollection($collection, $route = null)
     {
-        if (!$collection instanceof HalCollection) {
-            $metadataMap = $this->getMetadataMap();
-            if (is_object($collection) && $metadataMap->has($collection)) {
-                $collection = $this->createCollectionFromMetadata($collection, $metadataMap->get($collection));
-            } else {
-                $collection = new HalCollection($collection);
-            }
+        $metadataMap = $this->getMetadataMap();
+        if (is_object($collection) && $metadataMap->has($collection)) {
+            $collection = $this->createCollectionFromMetadata($collection, $metadataMap->get($collection));
         }
+
+        if (!$collection instanceof HalCollection) {
+            $collection = new HalCollection($collection);
+        }
+
         $this->injectSelfLink($collection, $route);
         return $collection;
     }
@@ -763,10 +807,10 @@ class HalLinks extends AbstractHelper implements
      * return a non-false, non-null value in order to specify the identifier
      * to use for URL assembly.
      *
-     * @param  array $resource
+     * @param  array|object $resource
      * @return mixed|false
      */
-    protected function getIdFromResource(array $resource)
+    protected function getIdFromResource($resource)
     {
         $results = $this->getEventManager()->trigger(
             __FUNCTION__,
