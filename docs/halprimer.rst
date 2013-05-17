@@ -1,3 +1,5 @@
+.. _phlyrestfully.hal:
+
 HAL Primer
 ==========
 
@@ -16,6 +18,8 @@ Essentially, good RESTful APIs should:
 - and provide canonical links to themselves, as well as link to other, related
   resources.
 
+.. _phlyrestfully.hal.hypermedia:
+
 Hypermedia Type
 ---------------
 
@@ -24,6 +28,8 @@ type is only relevant for resources returned by the API, as relational links are
 not usually submitted when creating, updating, or deleting resources.
 
 The generic mediatype that HAL defines for JSON APIs is "application/hal+json".
+
+.. _phlyrestfully.hal.resources:
 
 Resources
 ---------
@@ -93,6 +99,8 @@ least a "_links" property with a "self" relational link.
 
 Note that each item in the "_embedded" list can be either a resource or an array
 of resources. That takes us to the next topic: collections.
+
+.. _phlyrestfully.hal.collections:
 
 Collections
 -----------
@@ -168,6 +176,8 @@ can get the full resource, but also know its canonical location. Often, you may
 not embed the full resource in a collection -- just the bits that are relevant
 when doing a quick list. As such, having the link to the individual resource
 allows you to get the full details later if desired.
+
+.. _phlyrestfully.hal.interactions:
 
 Interacting with HAL
 --------------------

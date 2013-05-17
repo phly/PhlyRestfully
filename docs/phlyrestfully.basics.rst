@@ -1,4 +1,4 @@
-.. phlyrestfully.basics::
+.. _phlyrestfully.basics:
 
 PhlyRestfully Basics
 ====================
@@ -35,6 +35,8 @@ header is used.
 If a ``PhlyRestfully\HalCollection`` is detected, and the renderer determines
 that it composes a ``Zend\Paginator\Paginator`` instance, the ``HalLinks``
 plugin will also generate pagination relational links to render in the payload.
+
+.. _phlyrestfully.basics.resources:
 
 Resources
 ---------
@@ -114,3 +116,74 @@ needs to define the following methods:
 
 The exception code and message will be used for the "httpStatus" and "detail",
 respectively.
+
+The ``CreationException``, ``UpdateException``, and ``PatchException`` types all
+inherit from ``DomainException``, which implements the
+``ProblemExceptionInterface``.
+
+As a quick example, let's look at two listeners, one that listens on the
+``create`` event, and another on the ``fetch`` event, in order to see how we
+might handle them.
+
+.. code-block:: php
+    :linenos:
+
+    // listener on "create"
+    function ($e) {
+        $data = $e->getParam('data');
+
+        // Assume an ActiveRecord-like pattern here for simplicity
+        $user = User::factory($data);
+        if (!$user->isValid()) {
+            $ex = new CreationException('New user failed validation', 400);
+            $ex->setAdditionalDetails($user->getMessages());
+            $ex->setDescibedBy('http://example.org/api/errors/user-validation');
+            $ex->setTitle('Validation error');
+            throw $ex;
+        }
+
+        $user->persist();
+        return $user;
+    }
+
+    // listener on "fetch"
+    function ($e) {
+        $id = $e->getParam('id');
+
+        // Assume an ActiveRecord-like pattern here for simplicity
+        $user = User::fetch($id);
+        if (!$user) {
+            $ex = new DomainException('User not found', 404);
+            $ex->setDescibedBy('http://example.org/api/errors/user-not-found');
+            $ex->setTitle('User not found');
+            throw $ex;
+        }
+
+        return $user;
+    }
+
+Typically, you will create a ``Zend\EventManager\ListenerAggregateInterface``
+implementation that will contain all of your listeners, so that you can also
+compose in other classes such as data mappers, a service layer, etc. Read about
+`listener aggregates in the ZF2 documentation
+<http://zf2.readthedocs.org/en/latest/tutorials/tutorial.eventmanager.html#listener-aggregates>`_
+if you are unfamiliar with them.
+
+In a later section, I will show you how to wire your listener aggregate to a
+resource and resource controller.
+
+.. _phlyrestfully.basics.controllers:
+
+ResourceControllers
+-------------------
+
+While the ``Resource`` hands off work to your domain logic,
+``PhlyRestfully\ResourceController`` mediates between the incoming request and
+the ``Resource``, as well as ensures an appropriate response payload is created
+and returned.
+
+For the majority of cases, you should be able to use the ``ResourceController``
+unmodified; you will only need to provide it with a ``Resource`` instance and
+some configuration detailing what Content-Types to respond to, what constitutes
+an acceptable Accept header, and what HTTP methods are valid for both
+collections and individual resources.

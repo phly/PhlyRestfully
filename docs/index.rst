@@ -14,11 +14,24 @@ For error reporting, it uses `API-Problem <http://tools.ietf.org/html/draft-nott
 Contents:
 
 .. toctree::
-   :maxdepth: 2
+   :hidden:
    
    halprimer
    problems
+   options
    phlyrestfully.basics
+
+RESTful JSON API Primer
+-----------------------
+
+    * :doc:`halprimer`
+    * :doc:`problems`
+    * :doc:`options`
+
+PhlyRestfully Walkthrough
+-------------------------
+
+    * :doc:`phlyrestfully.basics`
 
 Api docs:
 ---------
@@ -29,6 +42,7 @@ Api docs:
 Indices and tables
 ==================
 
+* :doc:`index`
 * :ref:`genindex`
 * :ref:`modindex`
 * :ref:`search`
