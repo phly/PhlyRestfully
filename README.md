@@ -358,8 +358,15 @@ consider the following object:
 In the above, we have an embedded "user" object. In HAL, this, too, should
 be treated as a resource.
 
-To accomplish this, simply assign a `HalResource` value as a resource value.
-As an example, consider the following pseudo-code for the above example:
+There are two ways to accomplish this: embedding `HalResource` and
+`HalCollection` objects in your resources, or defining a metadata map.
+
+### Embedding HalResource and HalCollection Objects
+
+The easiest, though less portable, method for embedding resources and
+collections is to assign a `HalResource` or `HalCollection` value to a resource
+property.  As an example, consider the following pseudo-code for the above
+example:
 
 ```php
 $status = new Status(array(
@@ -397,10 +404,71 @@ embedded resource:
 }
 ```
 
-This will work in collections as well.
+This works for `HalCollection` objects as well.
 
-I recommend converting embedded resources to `HalResource` instances either
-during hydration, or as part of your `Resource` listener's mapping logic.
+To make this more portable, I recommend converting embedded resources to
+`HalResource` instances either during hydration, or as part of your `Resource`
+listener's mapping logic.
+
+### Using a Metadata Map
+
+Starting in 2.1, you can also define a metadata map. This maps a specific class
+to a set of "rules" that define whether it represents a resource or collection,
+the information necessary to generate a "self" relational link, and optionally
+what hydrator should be used to extract the resource (you can also still define
+that rule via the renderer hydrators, as defined in the next section).
+
+The metadata map should typically be defined in configuration, and looks like
+this:
+
+```php
+return array(
+    'phlyrestfully' => array(
+        'metadata_map' => array(
+            'My\Api\User' => array(
+                'hydrator'        => 'Zend\Stdlib\Hydrator\ClassMethods',
+                'identifier_name' => 'user_id',
+                'route'           => 'api/user',
+            ),
+            'My\Api\Contacts' => array(
+                'is_collection'  => true,
+                'route'          => 'api/contacts',
+                'route_options'  => array('query' => true),
+                'resource_route' => 'api/user',
+            ),
+        ),
+    ),
+);
+```
+
+The following option keys are available for each metadata definition:
+
+- `hydrator`: the fully qualified class name of a hydrator to use to extract the
+  resource. (OPTIONAL)
+- `identifier_name`: the resource parameter corresponding to the identifier;
+  defaults to "id". (OPTIONAL)
+- `is_collection`: boolean flag indicating whether or not the resource is a
+  collection; defaults to "false". (OPTIONAL)
+- `resource_route`: the name of the route to use for resources embedded as part
+  of a collection. If not set, the route for the resource is used. (OPTIONAL)
+- `route`: the name of the route to use for generating the "self" relational
+  link. (OPTIONAL; this or `url` MUST be set, however)
+- `route_options`: any options to pass to the route when generating the "self"
+  relational link. (OPTIONAL)
+- `route_params`: any route match parameters to pass to the route when
+  generating the "self" relational link. (OPTIONAL)
+- `url`: the specific URL to use with this resource. (OPTIONAL; this or `route`
+  MUST be set, however)
+
+I recommend using the renderer hydrator maps instead of defining the hydrator in
+the metadata. I recommend using metadata for defining most resources, however,
+as it gives a single location to understand all resources exposed, and how they
+map to the routes defined.
+
+If you use metadata for collections, you will likely need to define first-class,
+explicit types for each collection. This means that if you are using pagination,
+you will need to extend `Zend\Paginator\Paginator` so that you have a distinct
+type available.
 
 Hydrators
 ---------
