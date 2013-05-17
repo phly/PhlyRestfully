@@ -62,6 +62,22 @@ class Module
 
                 return new Listener\ApiProblemListener($filter);
             },
+            'PhlyRestfully\MetadataMap' => function ($services) {
+                $config = array();
+                if ($services->has('config')) {
+                    $config = $services->get('config');
+                }
+
+                $map = array();
+                if (isset($config['phlyrestfully'])
+                    && isset($config['phlyrestfully']['metadata_map'])
+                    && is_array($config['phlyrestfully']['metadata_map'])
+                ) {
+                    $map = $config['phlyrestfully']['metadata_map'];
+                }
+
+                return new MetadataMap($map);
+            },
             'PhlyRestfully\JsonRenderer' => function ($services) {
                 $helpers  = $services->get('ViewHelperManager');
                 $config   = $services->get('Config');
@@ -118,8 +134,10 @@ class Module
 
                 $services        = $helpers->getServiceLocator();
                 $config          = $services->get('Config');
+                $metadataMap     = $services->get('PhlyRestfully\MetadataMap');
 
                 $helper          = new Plugin\HalLinks();
+                $helper->setMetadataMap($metadataMap);
                 $helper->setServerUrlHelper($serverUrlHelper);
                 $helper->setUrlHelper($urlHelper);
 
