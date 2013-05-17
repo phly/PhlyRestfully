@@ -1,0 +1,496 @@
+<!DOCTYPE html><html lang="en">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta name="viewport" content="width=device-width; initial-scale=1.0; maximum-scale=1.0; user-scalable=0;">
+<meta charset="utf-8">
+<title>PhlyRestfully » \PhlyRestfully\Plugin\HalLinks</title>
+<meta name="author" content="Mike van Riel">
+<meta name="description" content="">
+<link href="../css/template.css" rel="stylesheet" media="all">
+<script src="../js/jquery-1.7.1.min.js" type="text/javascript"></script><script src="../js/jquery-ui-1.8.2.custom.min.js" type="text/javascript"></script><script src="../js/jquery.mousewheel.min.js" type="text/javascript"></script><script src="../js/bootstrap.js" type="text/javascript"></script><script src="../js/template.js" type="text/javascript"></script><script src="../js/prettify/prettify.min.js" type="text/javascript"></script><link rel="shortcut icon" href="../img/favicon.ico">
+<link rel="apple-touch-icon" href="../img/apple-touch-icon.png">
+<link rel="apple-touch-icon" sizes="72x72" href="../img/apple-touch-icon-72x72.png">
+<link rel="apple-touch-icon" sizes="114x114" href="../img/apple-touch-icon-114x114.png">
+</head>
+<body>
+<div class="navbar navbar-fixed-top">
+<div class="navbar-inner"><div class="container">
+<a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse"><span class="icon-bar"></span><span class="icon-bar"></span><span class="icon-bar"></span></a><a class="brand" href="../index.html">PhlyRestfully</a><div class="nav-collapse"><ul class="nav">
+<li class="dropdown">
+<a href="#api" class="dropdown-toggle" data-toggle="dropdown">
+                                    API Documentation <b class="caret"></b></a><ul class="dropdown-menu">
+<li><a>Namespaces</a></li>
+<li><a href="../namespaces/PhlyRestfully.html"><i class="icon-th"></i> PhlyRestfully</a></li>
+<li><a>Packages</a></li>
+<li><a href="../packages/Default.html"><i class="icon-folder-open"></i> Default</a></li>
+<li><a href="../packages/PhlyRestfully.html"><i class="icon-folder-open"></i> PhlyRestfully</a></li>
+</ul>
+</li>
+<li class="dropdown" id="charts-menu">
+<a href="#charts" class="dropdown-toggle" data-toggle="dropdown">
+                                    Charts <b class="caret"></b></a><ul class="dropdown-menu"><li><a href="../graph_class.html"><i class="icon-list-alt"></i> Class hierarchy diagram</a></li></ul>
+</li>
+<li class="dropdown" id="reports-menu">
+<a href="#reports" class="dropdown-toggle" data-toggle="dropdown">
+                                    Reports <b class="caret"></b></a><ul class="dropdown-menu">
+<li><a href="../errors.html"><i class="icon-remove-sign"></i> Errors 
+                <span class="label label-info">129</span></a></li>
+<li><a href="../markers.html"><i class="icon-map-marker"></i> Markers 
+                <ul><li>todo 
+                <span class="label label-info">1</span>
+</li></ul></a></li>
+<li><a href="../deprecated.html"><i class="icon-stop"></i> Deprecated elements 
+                <span class="label label-info">0</span></a></li>
+</ul>
+</li>
+</ul></div>
+</div></div>
+<div class="go_to_top"><a href="#___" style="color: inherit">Back to top  <i class="icon-upload icon-white"></i></a></div>
+</div>
+<div id="___" class="container">
+<noscript><div class="alert alert-warning">
+                            Javascript is disabled; several features are only available
+                            if Javascript is enabled.
+                        </div></noscript>
+<div class="row">
+<div class="span4">
+<span class="btn-group visibility" data-toggle="buttons-checkbox"><button class="btn public active" title="Show public elements">Public</button><button class="btn protected" title="Show protected elements">Protected</button><button class="btn private" title="Show private elements">Private</button><button class="btn inherited active" title="Show inherited elements">Inherited</button></span><div class="btn-group view pull-right" data-toggle="buttons-radio">
+<button class="btn details" title="Show descriptions and method names"><i class="icon-list"></i></button><button class="btn simple" title="Show only method names"><i class="icon-align-justify"></i></button>
+</div>
+<ul class="side-nav nav nav-list"><li class="nav-header">
+<i class="icon-custom icon-method"></i> Methods
+                    <ul>
+<li class="method public "><a href="#method_addHydrator" title="addHydrator :: Map a resource class to a specific hydrator instance"><span class="description">Map a resource class to a specific hydrator instance</span><pre>addHydrator()</pre></a></li>
+<li class="method public "><a href="#method_createCollection" title="createCollection :: Creates a HalCollection instance with a self relational link"><span class="description">Creates a HalCollection instance with a self relational link</span><pre>createCollection()</pre></a></li>
+<li class="method public "><a href="#method_createCollectionFromMetadata" title="createCollectionFromMetadata :: "><span class="description">createCollectionFromMetadata()
+        </span><pre>createCollectionFromMetadata()</pre></a></li>
+<li class="method public "><a href="#method_createLink" title="createLink :: Create a fully qualified URI for a link"><span class="description">Create a fully qualified URI for a link</span><pre>createLink()</pre></a></li>
+<li class="method public "><a href="#method_createResource" title="createResource :: Create a HalResource instance and inject it with a self relational link"><span class="description">Create a HalResource instance and inject it with a self relational link</span><pre>createResource()</pre></a></li>
+<li class="method public "><a href="#method_createResourceFromMetadata" title="createResourceFromMetadata :: Create a resource and/or collection based on a metadata map"><span class="description">Create a resource and/or collection based on a metadata map</span><pre>createResourceFromMetadata()</pre></a></li>
+<li class="method public "><a href="#method_fromLinkCollection" title="fromLinkCollection :: Generate HAL links from a LinkCollection"><span class="description">Generate HAL links from a LinkCollection</span><pre>fromLinkCollection()</pre></a></li>
+<li class="method public "><a href="#method_fromResource" title='fromResource :: Create HAL links "object" from a resource/collection'><span class="description">Create HAL links "object" from a resource/collection</span><pre>fromResource()</pre></a></li>
+<li class="method public "><a href="#method_getController" title="getController :: "><span class="description">getController()
+        </span><pre>getController()</pre></a></li>
+<li class="method public "><a href="#method_getEventManager" title="getEventManager :: Retrieve the event manager instance"><span class="description">Retrieve the event manager instance</span><pre>getEventManager()</pre></a></li>
+<li class="method public "><a href="#method_getHydratorForResource" title="getHydratorForResource :: Retrieve a hydrator for a given resource"><span class="description">Retrieve a hydrator for a given resource</span><pre>getHydratorForResource()</pre></a></li>
+<li class="method public "><a href="#method_getMetadataMap" title="getMetadataMap :: Retrieve the metadata map"><span class="description">Retrieve the metadata map</span><pre>getMetadataMap()</pre></a></li>
+<li class="method public "><a href="#method_injectSelfLink" title='injectSelfLink :: Inject a "self" relational link based on the route and identifier'><span class="description">Inject a "self" relational link based on the route and identifier</span><pre>injectSelfLink()</pre></a></li>
+<li class="method public "><a href="#method_renderCollection" title='renderCollection :: "Render" a HalCollection'><span class="description">"Render" a HalCollection</span><pre>renderCollection()</pre></a></li>
+<li class="method public "><a href="#method_renderResource" title="renderResource :: Render an individual resource"><span class="description">Render an individual resource</span><pre>renderResource()</pre></a></li>
+<li class="method public "><a href="#method_setController" title="setController :: "><span class="description">setController()
+        </span><pre>setController()</pre></a></li>
+<li class="method public "><a href="#method_setDefaultHydrator" title="setDefaultHydrator :: Set the default hydrator to use if none specified for a class."><span class="description">Set the default hydrator to use if none specified for a class.</span><pre>setDefaultHydrator()</pre></a></li>
+<li class="method public "><a href="#method_setEventManager" title="setEventManager :: Set the event manager instance"><span class="description">Set the event manager instance</span><pre>setEventManager()</pre></a></li>
+<li class="method public "><a href="#method_setMetadataMap" title="setMetadataMap :: Set the metadata map"><span class="description">Set the metadata map</span><pre>setMetadataMap()</pre></a></li>
+<li class="method public "><a href="#method_setServerUrlHelper" title="setServerUrlHelper :: "><span class="description">setServerUrlHelper()
+        </span><pre>setServerUrlHelper()</pre></a></li>
+<li class="method public "><a href="#method_setUrlHelper" title="setUrlHelper :: "><span class="description">setUrlHelper()
+        </span><pre>setUrlHelper()</pre></a></li>
+</ul>
+</li></ul>
+</div>
+<div class="span8">
+<a id="\PhlyRestfully\Plugin\HalLinks"></a><ul class="breadcrumb">
+<li>
+<a href="../index.html"><i class="icon-custom icon-class"></i></a><span class="divider">\</span>
+</li>
+<li><a href="../namespaces/PhlyRestfully.html">PhlyRestfully</a></li>
+<li>
+<span class="divider">\</span><a href="../namespaces/PhlyRestfully.Plugin.html">Plugin</a>
+</li>
+<li class="active">
+<span class="divider">\</span><a href="../classes/PhlyRestfully.Plugin.HalLinks.html">HalLinks</a>
+</li>
+</ul>
+<div class="element class">
+<p class="short_description">Generate links for use with HAL payloads</p>
+<div class="details">
+<div class="long_description"></div>
+<h3>
+<i class="icon-custom icon-method"></i> Methods</h3>
+<a id="method_addHydrator"></a><div class="element clickable method public method_addHydrator" data-toggle="collapse" data-target=".method_addHydrator .collapse">
+<h2>Map a resource class to a specific hydrator instance</h2>
+<pre>addHydrator(string $class, \Zend\Stdlib\Hydrator\HydratorInterface $hydrator) : \PhlyRestfully\Plugin\RestfulJsonRenderer</pre>
+<div class="labels"></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"></div>
+<h3>Parameters</h3>
+<div class="subelement argument">
+<h4>$class</h4>
+<code>string</code>
+</div>
+<div class="subelement argument">
+<h4>$hydrator</h4>
+<code>\Zend\Stdlib\Hydrator\HydratorInterface</code>
+</div>
+<h3>Returns</h3>
+<div class="subelement response"><code>\PhlyRestfully\Plugin\RestfulJsonRenderer</code></div>
+</div></div>
+</div>
+<a id="method_createCollection"></a><div class="element clickable method public method_createCollection" data-toggle="collapse" data-target=".method_createCollection .collapse">
+<h2>Creates a HalCollection instance with a self relational link</h2>
+<pre>createCollection(<a href="../classes/PhlyRestfully.HalCollection.html">\PhlyRestfully\HalCollection</a> | array | object $collection, null | string $route) : <a href="../classes/PhlyRestfully.HalCollection.html">\PhlyRestfully\HalCollection</a></pre>
+<div class="labels"></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"></div>
+<h3>Parameters</h3>
+<div class="subelement argument">
+<h4>$collection</h4>
+<code><a href="../classes/PhlyRestfully.HalCollection.html">\PhlyRestfully\HalCollection</a></code><code>array</code><code>object</code>
+</div>
+<div class="subelement argument">
+<h4>$route</h4>
+<code>null</code><code>string</code>
+</div>
+<h3>Returns</h3>
+<div class="subelement response"><code><a href="../classes/PhlyRestfully.HalCollection.html">\PhlyRestfully\HalCollection</a></code></div>
+</div></div>
+</div>
+<a id="method_createCollectionFromMetadata"></a><div class="element clickable method public method_createCollectionFromMetadata" data-toggle="collapse" data-target=".method_createCollectionFromMetadata .collapse">
+<h2>createCollectionFromMetadata()
+        </h2>
+<pre>createCollectionFromMetadata(object $object, \PhlyRestfully\Metadata $metadata) : <a href="../classes/PhlyRestfully.HalCollection.html">\PhlyRestfully\HalCollection</a></pre>
+<div class="labels"></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"></div>
+<h3>Parameters</h3>
+<div class="subelement argument">
+<h4>$object</h4>
+<code>object</code>
+</div>
+<div class="subelement argument">
+<h4>$metadata</h4>
+<code><a href="../classes/PhlyRestfully.Metadata.html">\PhlyRestfully\Metadata</a></code>
+</div>
+<h3>Returns</h3>
+<div class="subelement response"><code><a href="../classes/PhlyRestfully.HalCollection.html">\PhlyRestfully\HalCollection</a></code></div>
+</div></div>
+</div>
+<a id="method_createLink"></a><div class="element clickable method public method_createLink" data-toggle="collapse" data-target=".method_createLink .collapse">
+<h2>Create a fully qualified URI for a link</h2>
+<pre>createLink(string $route, null | false | int | string $id, null | mixed $resource) : string</pre>
+<div class="labels"></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"><p>Triggers the "createLink" event with the route, id, resource, and a set of
+params that will be passed to the route; listeners can alter any of the
+arguments, which will then be used by the method to generate the url.</p></div>
+<h3>Parameters</h3>
+<div class="subelement argument">
+<h4>$route</h4>
+<code>string</code>
+</div>
+<div class="subelement argument">
+<h4>$id</h4>
+<code>null</code><code>false</code><code>int</code><code>string</code>
+</div>
+<div class="subelement argument">
+<h4>$resource</h4>
+<code>null</code><code>mixed</code>
+</div>
+<h3>Returns</h3>
+<div class="subelement response"><code>string</code></div>
+</div></div>
+</div>
+<a id="method_createResource"></a><div class="element clickable method public method_createResource" data-toggle="collapse" data-target=".method_createResource .collapse">
+<h2>Create a HalResource instance and inject it with a self relational link</h2>
+<pre>createResource(<a href="../classes/PhlyRestfully.HalResource.html">\PhlyRestfully\HalResource</a> | array | object $resource, string $route, string $identifierName) : <a href="../classes/PhlyRestfully.HalResource.html">\PhlyRestfully\HalResource</a></pre>
+<div class="labels"></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"></div>
+<h3>Parameters</h3>
+<div class="subelement argument">
+<h4>$resource</h4>
+<code><a href="../classes/PhlyRestfully.HalResource.html">\PhlyRestfully\HalResource</a></code><code>array</code><code>object</code>
+</div>
+<div class="subelement argument">
+<h4>$route</h4>
+<code>string</code>
+</div>
+<div class="subelement argument">
+<h4>$identifierName</h4>
+<code>string</code>
+</div>
+<h3>Returns</h3>
+<div class="subelement response"><code><a href="../classes/PhlyRestfully.HalResource.html">\PhlyRestfully\HalResource</a></code></div>
+</div></div>
+</div>
+<a id="method_createResourceFromMetadata"></a><div class="element clickable method public method_createResourceFromMetadata" data-toggle="collapse" data-target=".method_createResourceFromMetadata .collapse">
+<h2>Create a resource and/or collection based on a metadata map</h2>
+<pre>createResourceFromMetadata(object $object, \PhlyRestfully\Metadata $metadata) : <a href="../classes/PhlyRestfully.HalResource.html">\PhlyRestfully\HalResource</a> | <a href="../classes/PhlyRestfully.HalCollection.html">\PhlyRestfully\HalCollection</a></pre>
+<div class="labels"></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"></div>
+<h3>Parameters</h3>
+<div class="subelement argument">
+<h4>$object</h4>
+<code>object</code>
+</div>
+<div class="subelement argument">
+<h4>$metadata</h4>
+<code><a href="../classes/PhlyRestfully.Metadata.html">\PhlyRestfully\Metadata</a></code>
+</div>
+<h3>Returns</h3>
+<div class="subelement response">
+<code><a href="../classes/PhlyRestfully.HalResource.html">\PhlyRestfully\HalResource</a></code><code><a href="../classes/PhlyRestfully.HalCollection.html">\PhlyRestfully\HalCollection</a></code>
+</div>
+</div></div>
+</div>
+<a id="method_fromLinkCollection"></a><div class="element clickable method public method_fromLinkCollection" data-toggle="collapse" data-target=".method_fromLinkCollection .collapse">
+<h2>Generate HAL links from a LinkCollection</h2>
+<pre>fromLinkCollection(\PhlyRestfully\LinkCollection $collection) : array</pre>
+<div class="labels"></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"></div>
+<h3>Parameters</h3>
+<div class="subelement argument">
+<h4>$collection</h4>
+<code><a href="../classes/PhlyRestfully.LinkCollection.html">\PhlyRestfully\LinkCollection</a></code>
+</div>
+<h3>Returns</h3>
+<div class="subelement response"><code>array</code></div>
+</div></div>
+</div>
+<a id="method_fromResource"></a><div class="element clickable method public method_fromResource" data-toggle="collapse" data-target=".method_fromResource .collapse">
+<h2>Create HAL links "object" from a resource/collection</h2>
+<pre>fromResource(\PhlyRestfully\LinkCollectionAwareInterface $resource) : array</pre>
+<div class="labels"></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"></div>
+<h3>Parameters</h3>
+<div class="subelement argument">
+<h4>$resource</h4>
+<code><a href="../classes/PhlyRestfully.LinkCollectionAwareInterface.html">\PhlyRestfully\LinkCollectionAwareInterface</a></code>
+</div>
+<h3>Returns</h3>
+<div class="subelement response"><code>array</code></div>
+</div></div>
+</div>
+<a id="method_getController"></a><div class="element clickable method public method_getController" data-toggle="collapse" data-target=".method_getController .collapse">
+<h2>getController()
+        </h2>
+<pre>getController() : \Zend\Stdlib\DispatchableInterface</pre>
+<div class="labels"></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"></div>
+<h3>Returns</h3>
+<div class="subelement response"><code>\Zend\Stdlib\DispatchableInterface</code></div>
+</div></div>
+</div>
+<a id="method_getEventManager"></a><div class="element clickable method public method_getEventManager" data-toggle="collapse" data-target=".method_getEventManager .collapse">
+<h2>Retrieve the event manager instance</h2>
+<pre>getEventManager() : \Zend\EventManager\EventManagerInterface</pre>
+<div class="labels"></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"><p>Lazy-initializes one if none present.</p></div>
+<h3>Returns</h3>
+<div class="subelement response"><code>\Zend\EventManager\EventManagerInterface</code></div>
+</div></div>
+</div>
+<a id="method_getHydratorForResource"></a><div class="element clickable method public method_getHydratorForResource" data-toggle="collapse" data-target=".method_getHydratorForResource .collapse">
+<h2>Retrieve a hydrator for a given resource</h2>
+<pre>getHydratorForResource(object $resource) : \Zend\Stdlib\Hydrator\HydratorInterface | false</pre>
+<div class="labels"></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"><p>If the resource has a mapped hydrator, returns that hydrator. If not, and
+a default hydrator is present, the default hydrator is returned.
+Otherwise, a boolean false is returned.</p></div>
+<h3>Parameters</h3>
+<div class="subelement argument">
+<h4>$resource</h4>
+<code>object</code>
+</div>
+<h3>Returns</h3>
+<div class="subelement response">
+<code>\Zend\Stdlib\Hydrator\HydratorInterface</code><code>false</code>
+</div>
+</div></div>
+</div>
+<a id="method_getMetadataMap"></a><div class="element clickable method public method_getMetadataMap" data-toggle="collapse" data-target=".method_getMetadataMap .collapse">
+<h2>Retrieve the metadata map</h2>
+<pre>getMetadataMap() : <a href="../classes/PhlyRestfully.MetadataMap.html">\PhlyRestfully\MetadataMap</a></pre>
+<div class="labels"></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"></div>
+<h3>Returns</h3>
+<div class="subelement response"><code><a href="../classes/PhlyRestfully.MetadataMap.html">\PhlyRestfully\MetadataMap</a></code></div>
+</div></div>
+</div>
+<a id="method_injectSelfLink"></a><div class="element clickable method public method_injectSelfLink" data-toggle="collapse" data-target=".method_injectSelfLink .collapse">
+<h2>Inject a "self" relational link based on the route and identifier</h2>
+<pre>injectSelfLink(\PhlyRestfully\LinkCollectionAwareInterface $resource, string $route, string $identifier) </pre>
+<div class="labels"></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"></div>
+<h3>Parameters</h3>
+<div class="subelement argument">
+<h4>$resource</h4>
+<code><a href="../classes/PhlyRestfully.LinkCollectionAwareInterface.html">\PhlyRestfully\LinkCollectionAwareInterface</a></code>
+</div>
+<div class="subelement argument">
+<h4>$route</h4>
+<code>string</code>
+</div>
+<div class="subelement argument">
+<h4>$identifier</h4>
+<code>string</code>
+</div>
+</div></div>
+</div>
+<a id="method_renderCollection"></a><div class="element clickable method public method_renderCollection" data-toggle="collapse" data-target=".method_renderCollection .collapse">
+<h2>"Render" a HalCollection</h2>
+<pre>renderCollection(\PhlyRestfully\HalCollection $halCollection) : array | <a href="../classes/PhlyRestfully.ApiProblem.html">\PhlyRestfully\ApiProblem</a></pre>
+<div class="labels"></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"><p>Injects pagination links, if the composed collection is a Paginator, and
+then loops through the collection to create the data structure representing
+the collection.</p>
+
+<p>For each resource in the collection, the event "renderCollection.resource" is
+triggered, with the following parameters:</p>
+
+<ul>
+<li>"collection", which is the $halCollection passed to the method</li>
+<li>"resource", which is the current resource</li>
+<li>"route", the resource route that will be used to generate links</li>
+<li>"routeParams", any default routing parameters/substitutions to use in URL assembly</li>
+<li>"routeOptions", any default routing options to use in URL assembly</li>
+</ul>
+
+<p>This event can be useful particularly when you have multi-segment routes
+and wish to ensure that route parameters are injected, or if you want to
+inject query or fragment parameters.</p>
+
+<p>Event parameters are aggregated in an ArrayObject, which allows you to
+directly manipulate them in your listeners:</p>
+
+<pre><code>$params = $e->getParams();
+$params['routeOptions']['query'] = array('format' => 'json');
+</code></pre></div>
+<h3>Parameters</h3>
+<div class="subelement argument">
+<h4>$halCollection</h4>
+<code><a href="../classes/PhlyRestfully.HalCollection.html">\PhlyRestfully\HalCollection</a></code>
+</div>
+<h3>Returns</h3>
+<div class="subelement response">
+<code>array</code><code><a href="../classes/PhlyRestfully.ApiProblem.html">\PhlyRestfully\ApiProblem</a></code>Associative array representing the payload to render; returns ApiProblem if error in pagination occurs</div>
+</div></div>
+</div>
+<a id="method_renderResource"></a><div class="element clickable method public method_renderResource" data-toggle="collapse" data-target=".method_renderResource .collapse">
+<h2>Render an individual resource</h2>
+<pre>renderResource(\PhlyRestfully\HalResource $halResource) : array</pre>
+<div class="labels"></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"><p>Creates a hash representation of the HalResource. The resource is first
+converted to an array, and its associated links are injected as the
+"_links" member. If any members of the resource are themselves
+HalResource objects, they are extracted into an "_embedded" hash.</p></div>
+<h3>Parameters</h3>
+<div class="subelement argument">
+<h4>$halResource</h4>
+<code><a href="../classes/PhlyRestfully.HalResource.html">\PhlyRestfully\HalResource</a></code>
+</div>
+<h3>Returns</h3>
+<div class="subelement response"><code>array</code></div>
+</div></div>
+</div>
+<a id="method_setController"></a><div class="element clickable method public method_setController" data-toggle="collapse" data-target=".method_setController .collapse">
+<h2>setController()
+        </h2>
+<pre>setController(\Zend\Stdlib\DispatchableInterface $controller) </pre>
+<div class="labels"></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"></div>
+<h3>Parameters</h3>
+<div class="subelement argument">
+<h4>$controller</h4>
+<code>\Zend\Stdlib\DispatchableInterface</code>
+</div>
+</div></div>
+</div>
+<a id="method_setDefaultHydrator"></a><div class="element clickable method public method_setDefaultHydrator" data-toggle="collapse" data-target=".method_setDefaultHydrator .collapse">
+<h2>Set the default hydrator to use if none specified for a class.</h2>
+<pre>setDefaultHydrator(\Zend\Stdlib\Hydrator\HydratorInterface $hydrator) : \PhlyRestfully\Plugin\RestfulJsonRenderer</pre>
+<div class="labels"></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"></div>
+<h3>Parameters</h3>
+<div class="subelement argument">
+<h4>$hydrator</h4>
+<code>\Zend\Stdlib\Hydrator\HydratorInterface</code>
+</div>
+<h3>Returns</h3>
+<div class="subelement response"><code>\PhlyRestfully\Plugin\RestfulJsonRenderer</code></div>
+</div></div>
+</div>
+<a id="method_setEventManager"></a><div class="element clickable method public method_setEventManager" data-toggle="collapse" data-target=".method_setEventManager .collapse">
+<h2>Set the event manager instance</h2>
+<pre>setEventManager(\Zend\EventManager\EventManagerInterface $events) </pre>
+<div class="labels"></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"></div>
+<h3>Parameters</h3>
+<div class="subelement argument">
+<h4>$events</h4>
+<code>\Zend\EventManager\EventManagerInterface</code>
+</div>
+</div></div>
+</div>
+<a id="method_setMetadataMap"></a><div class="element clickable method public method_setMetadataMap" data-toggle="collapse" data-target=".method_setMetadataMap .collapse">
+<h2>Set the metadata map</h2>
+<pre>setMetadataMap(\PhlyRestfully\MetadataMap $map) : <a href="../classes/PhlyRestfully.Plugin.HalLinks.html">\PhlyRestfully\Plugin\HalLinks</a></pre>
+<div class="labels"></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"></div>
+<table class="table table-bordered"><tr>
+<th>fluent</th>
+<td>This method is part of a fluent interface and will return the same instance</td>
+</tr></table>
+<h3>Parameters</h3>
+<div class="subelement argument">
+<h4>$map</h4>
+<code><a href="../classes/PhlyRestfully.MetadataMap.html">\PhlyRestfully\MetadataMap</a></code>
+</div>
+<h3>Returns</h3>
+<div class="subelement response"><code><a href="../classes/PhlyRestfully.Plugin.HalLinks.html">\PhlyRestfully\Plugin\HalLinks</a></code></div>
+</div></div>
+</div>
+<a id="method_setServerUrlHelper"></a><div class="element clickable method public method_setServerUrlHelper" data-toggle="collapse" data-target=".method_setServerUrlHelper .collapse">
+<h2>setServerUrlHelper()
+        </h2>
+<pre>setServerUrlHelper(\Zend\View\Helper\ServerUrl $helper) </pre>
+<div class="labels"></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"></div>
+<h3>Parameters</h3>
+<div class="subelement argument">
+<h4>$helper</h4>
+<code>\Zend\View\Helper\ServerUrl</code>
+</div>
+</div></div>
+</div>
+<a id="method_setUrlHelper"></a><div class="element clickable method public method_setUrlHelper" data-toggle="collapse" data-target=".method_setUrlHelper .collapse">
+<h2>setUrlHelper()
+        </h2>
+<pre>setUrlHelper(\Zend\View\Helper\Url $helper) </pre>
+<div class="labels"></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"></div>
+<h3>Parameters</h3>
+<div class="subelement argument">
+<h4>$helper</h4>
+<code>\Zend\View\Helper\Url</code>
+</div>
+</div></div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="row"><footer class="span12">
+            Template is built using <a href="http://twitter.github.com/bootstrap/">Twitter Bootstrap 2</a> and icons provided by <a href="http://glyphicons.com/">Glyphicons</a>.<br>
+            Documentation is powered by <a href="http://www.phpdoc.org/">phpDocumentor 2.0.0a12</a> and<br>
+            generated on 2013-05-17T09:43:13-05:00.<br></footer></div>
+</div>
+</body>
+</html>

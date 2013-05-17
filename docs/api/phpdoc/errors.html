@@ -1,0 +1,1146 @@
+<!DOCTYPE html><html lang="en">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta name="viewport" content="width=device-width; initial-scale=1.0; maximum-scale=1.0; user-scalable=0;">
+<meta charset="utf-8">
+<title>PhlyRestfully</title>
+<meta name="author" content="Mike van Riel">
+<meta name="description" content="">
+<link href="css/template.css" rel="stylesheet" media="all">
+<script src="js/jquery-1.7.1.min.js" type="text/javascript"></script><script src="js/jquery-ui-1.8.2.custom.min.js" type="text/javascript"></script><script src="js/jquery.mousewheel.min.js" type="text/javascript"></script><script src="js/bootstrap.js" type="text/javascript"></script><script src="js/template.js" type="text/javascript"></script><script src="js/prettify/prettify.min.js" type="text/javascript"></script><link rel="shortcut icon" href="img/favicon.ico">
+<link rel="apple-touch-icon" href="img/apple-touch-icon.png">
+<link rel="apple-touch-icon" sizes="72x72" href="img/apple-touch-icon-72x72.png">
+<link rel="apple-touch-icon" sizes="114x114" href="img/apple-touch-icon-114x114.png">
+</head>
+<body>
+<div class="navbar navbar-fixed-top">
+<div class="navbar-inner"><div class="container">
+<a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse"><span class="icon-bar"></span><span class="icon-bar"></span><span class="icon-bar"></span></a><a class="brand" href="index.html">PhlyRestfully</a><div class="nav-collapse"><ul class="nav">
+<li class="dropdown">
+<a href="#api" class="dropdown-toggle" data-toggle="dropdown">
+                                    API Documentation <b class="caret"></b></a><ul class="dropdown-menu">
+<li><a>Namespaces</a></li>
+<li><a href="namespaces/PhlyRestfully.html"><i class="icon-th"></i> PhlyRestfully</a></li>
+<li><a>Packages</a></li>
+<li><a href="packages/Default.html"><i class="icon-folder-open"></i> Default</a></li>
+<li><a href="packages/PhlyRestfully.html"><i class="icon-folder-open"></i> PhlyRestfully</a></li>
+</ul>
+</li>
+<li class="dropdown" id="charts-menu">
+<a href="#charts" class="dropdown-toggle" data-toggle="dropdown">
+                                    Charts <b class="caret"></b></a><ul class="dropdown-menu"><li><a href="graph_class.html"><i class="icon-list-alt"></i> Class hierarchy diagram</a></li></ul>
+</li>
+<li class="dropdown" id="reports-menu">
+<a href="#reports" class="dropdown-toggle" data-toggle="dropdown">
+                                    Reports <b class="caret"></b></a><ul class="dropdown-menu">
+<li><a href="errors.html"><i class="icon-remove-sign"></i> Errors 
+                <span class="label label-info">129</span></a></li>
+<li><a href="markers.html"><i class="icon-map-marker"></i> Markers 
+                <ul><li>todo 
+                <span class="label label-info">1</span>
+</li></ul></a></li>
+<li><a href="deprecated.html"><i class="icon-stop"></i> Deprecated elements 
+                <span class="label label-info">0</span></a></li>
+</ul>
+</li>
+</ul></div>
+</div></div>
+<div class="go_to_top"><a href="#___" style="color: inherit">Back to top  <i class="icon-upload icon-white"></i></a></div>
+</div>
+<div id="___" class="container">
+<noscript><div class="alert alert-warning">
+                            Javascript is disabled; several features are only available
+                            if Javascript is enabled.
+                        </div></noscript>
+<div class="row">
+<div class="span4"><ul class="side-nav nav nav-list">
+<li class="nav-header">Filter type</li>
+<li><div class="btn-group type-filter" data-toggle="buttons-checkbox">
+<button class="btn critical">Critical</button><button class="btn error">Error</button><button class="btn notice">Notice</button>
+</div></li>
+<li class="nav-header">Navigation</li>
+<li><a href="#ResourceInterface.php"><i class="icon-file"></i>ResourceInterface.php</a></li>
+<li><a href="#ApiProblem.php"><i class="icon-file"></i>ApiProblem.php</a></li>
+<li><a href="#MetadataMap.php"><i class="icon-file"></i>MetadataMap.php</a></li>
+<li><a href="#Resource.php"><i class="icon-file"></i>Resource.php</a></li>
+<li><a href="#Exception/UpdateException.php"><i class="icon-file"></i>Exception/UpdateException.php</a></li>
+<li><a href="#Exception/PatchException.php"><i class="icon-file"></i>Exception/PatchException.php</a></li>
+<li><a href="#Exception/DomainException.php"><i class="icon-file"></i>Exception/DomainException.php</a></li>
+<li><a href="#Exception/InvalidResourceException.php"><i class="icon-file"></i>Exception/InvalidResourceException.php</a></li>
+<li><a href="#Exception/InvalidArgumentException.php"><i class="icon-file"></i>Exception/InvalidArgumentException.php</a></li>
+<li><a href="#Exception/ProblemExceptionInterface.php"><i class="icon-file"></i>Exception/ProblemExceptionInterface.php</a></li>
+<li><a href="#Exception/ExceptionInterface.php"><i class="icon-file"></i>Exception/ExceptionInterface.php</a></li>
+<li><a href="#Exception/RuntimeException.php"><i class="icon-file"></i>Exception/RuntimeException.php</a></li>
+<li><a href="#Exception/CreationException.php"><i class="icon-file"></i>Exception/CreationException.php</a></li>
+<li><a href="#Exception/InvalidCollectionException.php"><i class="icon-file"></i>Exception/InvalidCollectionException.php</a></li>
+<li><a href="#Metadata.php"><i class="icon-file"></i>Metadata.php</a></li>
+<li><a href="#LinkCollection.php"><i class="icon-file"></i>LinkCollection.php</a></li>
+<li><a href="#Factory/ResourceControllerFactory.php"><i class="icon-file"></i>Factory/ResourceControllerFactory.php</a></li>
+<li><a href="#View/RestfulJsonModel.php"><i class="icon-file"></i>View/RestfulJsonModel.php</a></li>
+<li><a href="#View/RestfulJsonStrategy.php"><i class="icon-file"></i>View/RestfulJsonStrategy.php</a></li>
+<li><a href="#View/RestfulJsonRenderer.php"><i class="icon-file"></i>View/RestfulJsonRenderer.php</a></li>
+<li><a href="#HalCollection.php"><i class="icon-file"></i>HalCollection.php</a></li>
+<li><a href="#ResourceController.php"><i class="icon-file"></i>ResourceController.php</a></li>
+<li><a href="#Listener/ApiProblemListener.php"><i class="icon-file"></i>Listener/ApiProblemListener.php</a></li>
+<li><a href="#Listener/ResourceParametersListener.php"><i class="icon-file"></i>Listener/ResourceParametersListener.php</a></li>
+<li><a href="#Link.php"><i class="icon-file"></i>Link.php</a></li>
+<li><a href="#ResourceEvent.php"><i class="icon-file"></i>ResourceEvent.php</a></li>
+<li><a href="#Plugin/HalLinks.php"><i class="icon-file"></i>Plugin/HalLinks.php</a></li>
+<li><a href="#HalResource.php"><i class="icon-file"></i>HalResource.php</a></li>
+<li><a href="#LinkCollectionAwareInterface.php"><i class="icon-file"></i>LinkCollectionAwareInterface.php</a></li>
+</ul></div>
+<div class="span8">
+<ul class="breadcrumb">
+<li>
+<a href=""><i class="icon-remove-sign"></i></a><span class="divider">\</span>
+</li>
+<li>Compilation Errors</li>
+</ul>
+<div class="package-contents">
+<a name="ResourceInterface.php" id="ResourceInterface.php"></a><h3>
+<i class="icon-file"></i>ResourceInterface.php<small style="float: right;padding-right: 10px;">3</small>
+</h3>
+<div><table class="table markers table-bordered">
+<thead><tr>
+<th>Type</th>
+<th>Line</th>
+<th>Description</th>
+</tr></thead>
+<tbody>
+<tr class="critical">
+<td>critical</td>
+<td>2</td>
+<td>No short description for file ResourceInterface.php</td>
+</tr>
+<tr class="error">
+<td>error</td>
+<td>34</td>
+<td>No short description for method setEventParam()</td>
+</tr>
+<tr class="error">
+<td>error</td>
+<td>42</td>
+<td>No short description for method getEventParam()</td>
+</tr>
+</tbody>
+</table></div>
+</div>
+<div class="package-contents">
+<a name="ApiProblem.php" id="ApiProblem.php"></a><h3>
+<i class="icon-file"></i>ApiProblem.php<small style="float: right;padding-right: 10px;">2</small>
+</h3>
+<div><table class="table markers table-bordered">
+<thead><tr>
+<th>Type</th>
+<th>Line</th>
+<th>Description</th>
+</tr></thead>
+<tbody>
+<tr class="critical">
+<td>critical</td>
+<td>2</td>
+<td>No short description for file ApiProblem.php</td>
+</tr>
+<tr class="error">
+<td>error</td>
+<td>118</td>
+<td>Argument $additional is missing from the Docblock of __construct()</td>
+</tr>
+</tbody>
+</table></div>
+</div>
+<div class="package-contents">
+<a name="MetadataMap.php" id="MetadataMap.php"></a><h3>
+<i class="icon-file"></i>MetadataMap.php<small style="float: right;padding-right: 10px;">3</small>
+</h3>
+<div><table class="table markers table-bordered">
+<thead><tr>
+<th>Type</th>
+<th>Line</th>
+<th>Description</th>
+</tr></thead>
+<tbody>
+<tr class="critical">
+<td>critical</td>
+<td>2</td>
+<td>No short description for file MetadataMap.php</td>
+</tr>
+<tr class="error">
+<td>error</td>
+<td>11</td>
+<td>No DocBlock was found for \PhlyRestfully\MetadataMap</td>
+</tr>
+<tr class="critical">
+<td>critical</td>
+<td>13</td>
+<td>No short description for property $map</td>
+</tr>
+</tbody>
+</table></div>
+</div>
+<div class="package-contents">
+<a name="Resource.php" id="Resource.php"></a><h3>
+<i class="icon-file"></i>Resource.php<small style="float: right;padding-right: 10px;">15</small>
+</h3>
+<div><table class="table markers table-bordered">
+<thead><tr>
+<th>Type</th>
+<th>Line</th>
+<th>Description</th>
+</tr></thead>
+<tbody>
+<tr class="critical">
+<td>critical</td>
+<td>2</td>
+<td>No short description for file Resource.php</td>
+</tr>
+<tr class="critical">
+<td>critical</td>
+<td>25</td>
+<td>No short description for property $events</td>
+</tr>
+<tr class="critical">
+<td>critical</td>
+<td>30</td>
+<td>No short description for property $params</td>
+</tr>
+<tr class="critical">
+<td>critical</td>
+<td>35</td>
+<td>No short description for property $queryParams</td>
+</tr>
+<tr class="critical">
+<td>critical</td>
+<td>40</td>
+<td>No short description for property $routeMatch</td>
+</tr>
+<tr class="error">
+<td>error</td>
+<td>45</td>
+<td>No short description for method setEventParams()</td>
+</tr>
+<tr class="error">
+<td>error</td>
+<td>55</td>
+<td>No short description for method getEventParams()</td>
+</tr>
+<tr class="error">
+<td>error</td>
+<td>63</td>
+<td>No short description for method setQueryParams()</td>
+</tr>
+<tr class="error">
+<td>error</td>
+<td>73</td>
+<td>No short description for method getQueryParams()</td>
+</tr>
+<tr class="error">
+<td>error</td>
+<td>81</td>
+<td>No short description for method setRouteMatch()</td>
+</tr>
+<tr class="error">
+<td>error</td>
+<td>91</td>
+<td>No short description for method getRouteMatch()</td>
+</tr>
+<tr class="error">
+<td>error</td>
+<td>99</td>
+<td>No short description for method setEventParam()</td>
+</tr>
+<tr class="error">
+<td>error</td>
+<td>111</td>
+<td>No short description for method getEventParam()</td>
+</tr>
+<tr class="error">
+<td>error</td>
+<td>427</td>
+<td>Name of argument $name does not match with the DocBlock's name $args in prepareEvent()</td>
+</tr>
+<tr class="error">
+<td>error</td>
+<td>427</td>
+<td>Argument $args is missing from the Docblock of prepareEvent()</td>
+</tr>
+</tbody>
+</table></div>
+</div>
+<div class="package-contents">
+<a name="Exception/UpdateException.php" id="Exception/UpdateException.php"></a><h3>
+<i class="icon-file"></i>Exception/UpdateException.php<small style="float: right;padding-right: 10px;">1</small>
+</h3>
+<div><table class="table markers table-bordered">
+<thead><tr>
+<th>Type</th>
+<th>Line</th>
+<th>Description</th>
+</tr></thead>
+<tbody><tr class="critical">
+<td>critical</td>
+<td>2</td>
+<td>No short description for file Exception/UpdateException.php</td>
+</tr></tbody>
+</table></div>
+</div>
+<div class="package-contents">
+<a name="Exception/PatchException.php" id="Exception/PatchException.php"></a><h3>
+<i class="icon-file"></i>Exception/PatchException.php<small style="float: right;padding-right: 10px;">1</small>
+</h3>
+<div><table class="table markers table-bordered">
+<thead><tr>
+<th>Type</th>
+<th>Line</th>
+<th>Description</th>
+</tr></thead>
+<tbody><tr class="critical">
+<td>critical</td>
+<td>2</td>
+<td>No short description for file Exception/PatchException.php</td>
+</tr></tbody>
+</table></div>
+</div>
+<div class="package-contents">
+<a name="Exception/DomainException.php" id="Exception/DomainException.php"></a><h3>
+<i class="icon-file"></i>Exception/DomainException.php<small style="float: right;padding-right: 10px;">11</small>
+</h3>
+<div><table class="table markers table-bordered">
+<thead><tr>
+<th>Type</th>
+<th>Line</th>
+<th>Description</th>
+</tr></thead>
+<tbody>
+<tr class="critical">
+<td>critical</td>
+<td>2</td>
+<td>No short description for file Exception/DomainException.php</td>
+</tr>
+<tr class="error">
+<td>error</td>
+<td>11</td>
+<td>No DocBlock was found for \PhlyRestfully\Exception\DomainException</td>
+</tr>
+<tr class="critical">
+<td>critical</td>
+<td>15</td>
+<td>No short description for property $describedBy</td>
+</tr>
+<tr class="critical">
+<td>critical</td>
+<td>20</td>
+<td>No short description for property $details</td>
+</tr>
+<tr class="critical">
+<td>critical</td>
+<td>25</td>
+<td>No short description for property $title</td>
+</tr>
+<tr class="error">
+<td>error</td>
+<td>30</td>
+<td>No short description for method setAdditionalDetails()</td>
+</tr>
+<tr class="error">
+<td>error</td>
+<td>40</td>
+<td>No short description for method setDescribedBy()</td>
+</tr>
+<tr class="error">
+<td>error</td>
+<td>50</td>
+<td>No short description for method setTitle()</td>
+</tr>
+<tr class="error">
+<td>error</td>
+<td>60</td>
+<td>No short description for method getAdditionalDetails()</td>
+</tr>
+<tr class="error">
+<td>error</td>
+<td>68</td>
+<td>No short description for method getDescribedBy()</td>
+</tr>
+<tr class="error">
+<td>error</td>
+<td>76</td>
+<td>No short description for method getTitle()</td>
+</tr>
+</tbody>
+</table></div>
+</div>
+<div class="package-contents">
+<a name="Exception/InvalidResourceException.php" id="Exception/InvalidResourceException.php"></a><h3>
+<i class="icon-file"></i>Exception/InvalidResourceException.php<small style="float: right;padding-right: 10px;">2</small>
+</h3>
+<div><table class="table markers table-bordered">
+<thead><tr>
+<th>Type</th>
+<th>Line</th>
+<th>Description</th>
+</tr></thead>
+<tbody>
+<tr class="critical">
+<td>critical</td>
+<td>2</td>
+<td>No short description for file Exception/InvalidResourceException.php</td>
+</tr>
+<tr class="error">
+<td>error</td>
+<td>11</td>
+<td>No DocBlock was found for \PhlyRestfully\Exception\InvalidResourceException</td>
+</tr>
+</tbody>
+</table></div>
+</div>
+<div class="package-contents">
+<a name="Exception/InvalidArgumentException.php" id="Exception/InvalidArgumentException.php"></a><h3>
+<i class="icon-file"></i>Exception/InvalidArgumentException.php<small style="float: right;padding-right: 10px;">2</small>
+</h3>
+<div><table class="table markers table-bordered">
+<thead><tr>
+<th>Type</th>
+<th>Line</th>
+<th>Description</th>
+</tr></thead>
+<tbody>
+<tr class="critical">
+<td>critical</td>
+<td>2</td>
+<td>No short description for file Exception/InvalidArgumentException.php</td>
+</tr>
+<tr class="error">
+<td>error</td>
+<td>11</td>
+<td>No DocBlock was found for \PhlyRestfully\Exception\InvalidArgumentException</td>
+</tr>
+</tbody>
+</table></div>
+</div>
+<div class="package-contents">
+<a name="Exception/ProblemExceptionInterface.php" id="Exception/ProblemExceptionInterface.php"></a><h3>
+<i class="icon-file"></i>Exception/ProblemExceptionInterface.php<small style="float: right;padding-right: 10px;">4</small>
+</h3>
+<div><table class="table markers table-bordered">
+<thead><tr>
+<th>Type</th>
+<th>Line</th>
+<th>Description</th>
+</tr></thead>
+<tbody>
+<tr class="critical">
+<td>critical</td>
+<td>2</td>
+<td>No short description for file Exception/ProblemExceptionInterface.php</td>
+</tr>
+<tr class="error">
+<td>error</td>
+<td>16</td>
+<td>No DocBlock was found for method getAdditionalDetails()</td>
+</tr>
+<tr class="error">
+<td>error</td>
+<td>17</td>
+<td>No DocBlock was found for method getDescribedBy()</td>
+</tr>
+<tr class="error">
+<td>error</td>
+<td>18</td>
+<td>No DocBlock was found for method getTitle()</td>
+</tr>
+</tbody>
+</table></div>
+</div>
+<div class="package-contents">
+<a name="Exception/ExceptionInterface.php" id="Exception/ExceptionInterface.php"></a><h3>
+<i class="icon-file"></i>Exception/ExceptionInterface.php<small style="float: right;padding-right: 10px;">1</small>
+</h3>
+<div><table class="table markers table-bordered">
+<thead><tr>
+<th>Type</th>
+<th>Line</th>
+<th>Description</th>
+</tr></thead>
+<tbody><tr class="critical">
+<td>critical</td>
+<td>2</td>
+<td>No short description for file Exception/ExceptionInterface.php</td>
+</tr></tbody>
+</table></div>
+</div>
+<div class="package-contents">
+<a name="Exception/RuntimeException.php" id="Exception/RuntimeException.php"></a><h3>
+<i class="icon-file"></i>Exception/RuntimeException.php<small style="float: right;padding-right: 10px;">2</small>
+</h3>
+<div><table class="table markers table-bordered">
+<thead><tr>
+<th>Type</th>
+<th>Line</th>
+<th>Description</th>
+</tr></thead>
+<tbody>
+<tr class="critical">
+<td>critical</td>
+<td>2</td>
+<td>No short description for file Exception/RuntimeException.php</td>
+</tr>
+<tr class="error">
+<td>error</td>
+<td>11</td>
+<td>No DocBlock was found for \PhlyRestfully\Exception\RuntimeException</td>
+</tr>
+</tbody>
+</table></div>
+</div>
+<div class="package-contents">
+<a name="Exception/CreationException.php" id="Exception/CreationException.php"></a><h3>
+<i class="icon-file"></i>Exception/CreationException.php<small style="float: right;padding-right: 10px;">1</small>
+</h3>
+<div><table class="table markers table-bordered">
+<thead><tr>
+<th>Type</th>
+<th>Line</th>
+<th>Description</th>
+</tr></thead>
+<tbody><tr class="critical">
+<td>critical</td>
+<td>2</td>
+<td>No short description for file Exception/CreationException.php</td>
+</tr></tbody>
+</table></div>
+</div>
+<div class="package-contents">
+<a name="Exception/InvalidCollectionException.php" id="Exception/InvalidCollectionException.php"></a><h3>
+<i class="icon-file"></i>Exception/InvalidCollectionException.php<small style="float: right;padding-right: 10px;">2</small>
+</h3>
+<div><table class="table markers table-bordered">
+<thead><tr>
+<th>Type</th>
+<th>Line</th>
+<th>Description</th>
+</tr></thead>
+<tbody>
+<tr class="critical">
+<td>critical</td>
+<td>2</td>
+<td>No short description for file Exception/InvalidCollectionException.php</td>
+</tr>
+<tr class="error">
+<td>error</td>
+<td>11</td>
+<td>No DocBlock was found for \PhlyRestfully\Exception\InvalidCollectionException</td>
+</tr>
+</tbody>
+</table></div>
+</div>
+<div class="package-contents">
+<a name="Metadata.php" id="Metadata.php"></a><h3>
+<i class="icon-file"></i>Metadata.php<small style="float: right;padding-right: 10px;">2</small>
+</h3>
+<div><table class="table markers table-bordered">
+<thead><tr>
+<th>Type</th>
+<th>Line</th>
+<th>Description</th>
+</tr></thead>
+<tbody>
+<tr class="critical">
+<td>critical</td>
+<td>2</td>
+<td>No short description for file Metadata.php</td>
+</tr>
+<tr class="error">
+<td>error</td>
+<td>13</td>
+<td>No DocBlock was found for \PhlyRestfully\Metadata</td>
+</tr>
+</tbody>
+</table></div>
+</div>
+<div class="package-contents">
+<a name="LinkCollection.php" id="LinkCollection.php"></a><h3>
+<i class="icon-file"></i>LinkCollection.php<small style="float: right;padding-right: 10px;">2</small>
+</h3>
+<div><table class="table markers table-bordered">
+<thead><tr>
+<th>Type</th>
+<th>Line</th>
+<th>Description</th>
+</tr></thead>
+<tbody>
+<tr class="critical">
+<td>critical</td>
+<td>2</td>
+<td>No short description for file LinkCollection.php</td>
+</tr>
+<tr class="critical">
+<td>critical</td>
+<td>20</td>
+<td>No short description for property $links</td>
+</tr>
+</tbody>
+</table></div>
+</div>
+<div class="package-contents">
+<a name="Factory/ResourceControllerFactory.php" id="Factory/ResourceControllerFactory.php"></a><h3>
+<i class="icon-file"></i>Factory/ResourceControllerFactory.php<small style="float: right;padding-right: 10px;">1</small>
+</h3>
+<div><table class="table markers table-bordered">
+<thead><tr>
+<th>Type</th>
+<th>Line</th>
+<th>Description</th>
+</tr></thead>
+<tbody><tr class="critical">
+<td>critical</td>
+<td>2</td>
+<td>No short description for file Factory/ResourceControllerFactory.php</td>
+</tr></tbody>
+</table></div>
+</div>
+<div class="package-contents">
+<a name="View/RestfulJsonModel.php" id="View/RestfulJsonModel.php"></a><h3>
+<i class="icon-file"></i>View/RestfulJsonModel.php<small style="float: right;padding-right: 10px;">1</small>
+</h3>
+<div><table class="table markers table-bordered">
+<thead><tr>
+<th>Type</th>
+<th>Line</th>
+<th>Description</th>
+</tr></thead>
+<tbody><tr class="critical">
+<td>critical</td>
+<td>2</td>
+<td>No short description for file View/RestfulJsonModel.php</td>
+</tr></tbody>
+</table></div>
+</div>
+<div class="package-contents">
+<a name="View/RestfulJsonStrategy.php" id="View/RestfulJsonStrategy.php"></a><h3>
+<i class="icon-file"></i>View/RestfulJsonStrategy.php<small style="float: right;padding-right: 10px;">3</small>
+</h3>
+<div><table class="table markers table-bordered">
+<thead><tr>
+<th>Type</th>
+<th>Line</th>
+<th>Description</th>
+</tr></thead>
+<tbody>
+<tr class="critical">
+<td>critical</td>
+<td>2</td>
+<td>No short description for file View/RestfulJsonStrategy.php</td>
+</tr>
+<tr class="error">
+<td>error</td>
+<td>27</td>
+<td>No DocBlock was found for property $contentType</td>
+</tr>
+<tr class="error">
+<td>error</td>
+<td>29</td>
+<td>No DocBlock was found for method __construct()</td>
+</tr>
+</tbody>
+</table></div>
+</div>
+<div class="package-contents">
+<a name="View/RestfulJsonRenderer.php" id="View/RestfulJsonRenderer.php"></a><h3>
+<i class="icon-file"></i>View/RestfulJsonRenderer.php<small style="float: right;padding-right: 10px;">4</small>
+</h3>
+<div><table class="table markers table-bordered">
+<thead><tr>
+<th>Type</th>
+<th>Line</th>
+<th>Description</th>
+</tr></thead>
+<tbody>
+<tr class="critical">
+<td>critical</td>
+<td>2</td>
+<td>No short description for file View/RestfulJsonRenderer.php</td>
+</tr>
+<tr class="critical">
+<td>critical</td>
+<td>31</td>
+<td>No short description for property $apiProblem</td>
+</tr>
+<tr class="critical">
+<td>critical</td>
+<td>43</td>
+<td>No short description for property $helpers</td>
+</tr>
+<tr class="error">
+<td>error</td>
+<td>98</td>
+<td>No short description for method getApiProblem()</td>
+</tr>
+</tbody>
+</table></div>
+</div>
+<div class="package-contents">
+<a name="HalCollection.php" id="HalCollection.php"></a><h3>
+<i class="icon-file"></i>HalCollection.php<small style="float: right;padding-right: 10px;">15</small>
+</h3>
+<div><table class="table markers table-bordered">
+<thead><tr>
+<th>Type</th>
+<th>Line</th>
+<th>Description</th>
+</tr></thead>
+<tbody>
+<tr class="critical">
+<td>critical</td>
+<td>2</td>
+<td>No short description for file HalCollection.php</td>
+</tr>
+<tr class="critical">
+<td>critical</td>
+<td>26</td>
+<td>No short description for property $collection</td>
+</tr>
+<tr class="critical">
+<td>critical</td>
+<td>38</td>
+<td>No short description for property $collectionRoute</td>
+</tr>
+<tr class="critical">
+<td>critical</td>
+<td>43</td>
+<td>No short description for property $collectionRouteOptions</td>
+</tr>
+<tr class="critical">
+<td>critical</td>
+<td>48</td>
+<td>No short description for property $collectionRouteParams</td>
+</tr>
+<tr class="critical">
+<td>critical</td>
+<td>61</td>
+<td>No short description for property $links</td>
+</tr>
+<tr class="critical">
+<td>critical</td>
+<td>80</td>
+<td>No short description for property $resourceLinks</td>
+</tr>
+<tr class="critical">
+<td>critical</td>
+<td>85</td>
+<td>No short description for property $resourceRoute</td>
+</tr>
+<tr class="critical">
+<td>critical</td>
+<td>90</td>
+<td>No short description for property $resourceRouteOptions</td>
+</tr>
+<tr class="critical">
+<td>critical</td>
+<td>95</td>
+<td>No short description for property $resourceRouteParams</td>
+</tr>
+<tr class="error">
+<td>error</td>
+<td>100</td>
+<td>No short description for method __construct()</td>
+</tr>
+<tr class="error">
+<td>error</td>
+<td>100</td>
+<td>Name of argument $resourceRoute does not match with the DocBlock's name $collectionRoute in __construct()</td>
+</tr>
+<tr class="error">
+<td>error</td>
+<td>100</td>
+<td>Name of argument $resourceRouteParams does not match with the DocBlock's name $resourceRoute in __construct()</td>
+</tr>
+<tr class="error">
+<td>error</td>
+<td>100</td>
+<td>Argument $resourceRouteOptions is missing from the Docblock of __construct()</td>
+</tr>
+<tr class="notice">
+<td>notice</td>
+<td>100</td>
+<td>Parameter $collectionRoute could not be found in __construct()</td>
+</tr>
+</tbody>
+</table></div>
+</div>
+<div class="package-contents">
+<a name="ResourceController.php" id="ResourceController.php"></a><h3>
+<i class="icon-file"></i>ResourceController.php<small style="float: right;padding-right: 10px;">4</small>
+</h3>
+<div><table class="table markers table-bordered">
+<thead><tr>
+<th>Type</th>
+<th>Line</th>
+<th>Description</th>
+</tr></thead>
+<tbody>
+<tr class="critical">
+<td>critical</td>
+<td>2</td>
+<td>No short description for file ResourceController.php</td>
+</tr>
+<tr class="critical">
+<td>critical</td>
+<td>88</td>
+<td>No short description for property $resource</td>
+</tr>
+<tr class="error">
+<td>error</td>
+<td>234</td>
+<td>No short description for method getIdentifierName()</td>
+</tr>
+<tr class="error">
+<td>error</td>
+<td>396</td>
+<td>No DocBlock was found for method deleteList()</td>
+</tr>
+</tbody>
+</table></div>
+</div>
+<div class="package-contents">
+<a name="Listener/ApiProblemListener.php" id="Listener/ApiProblemListener.php"></a><h3>
+<i class="icon-file"></i>Listener/ApiProblemListener.php<small style="float: right;padding-right: 10px;">4</small>
+</h3>
+<div><table class="table markers table-bordered">
+<thead><tr>
+<th>Type</th>
+<th>Line</th>
+<th>Description</th>
+</tr></thead>
+<tbody>
+<tr class="critical">
+<td>critical</td>
+<td>2</td>
+<td>No short description for file Listener/ApiProblemListener.php</td>
+</tr>
+<tr class="critical">
+<td>critical</td>
+<td>35</td>
+<td>No short description for property $listeners</td>
+</tr>
+<tr class="error">
+<td>error</td>
+<td>54</td>
+<td>No short description for method attach()</td>
+</tr>
+<tr class="error">
+<td>error</td>
+<td>62</td>
+<td>No short description for method detach()</td>
+</tr>
+</tbody>
+</table></div>
+</div>
+<div class="package-contents">
+<a name="Listener/ResourceParametersListener.php" id="Listener/ResourceParametersListener.php"></a><h3>
+<i class="icon-file"></i>Listener/ResourceParametersListener.php<small style="float: right;padding-right: 10px;">8</small>
+</h3>
+<div><table class="table markers table-bordered">
+<thead><tr>
+<th>Type</th>
+<th>Line</th>
+<th>Description</th>
+</tr></thead>
+<tbody>
+<tr class="critical">
+<td>critical</td>
+<td>2</td>
+<td>No short description for file Listener/ResourceParametersListener.php</td>
+</tr>
+<tr class="error">
+<td>error</td>
+<td>18</td>
+<td>No DocBlock was found for \PhlyRestfully\Listener\ResourceParametersListener</td>
+</tr>
+<tr class="critical">
+<td>critical</td>
+<td>22</td>
+<td>No short description for property $listeners</td>
+</tr>
+<tr class="critical">
+<td>critical</td>
+<td>27</td>
+<td>No short description for property $sharedListeners</td>
+</tr>
+<tr class="error">
+<td>error</td>
+<td>32</td>
+<td>No short description for method attach()</td>
+</tr>
+<tr class="error">
+<td>error</td>
+<td>40</td>
+<td>No short description for method detach()</td>
+</tr>
+<tr class="error">
+<td>error</td>
+<td>52</td>
+<td>No short description for method attachShared()</td>
+</tr>
+<tr class="error">
+<td>error</td>
+<td>60</td>
+<td>No short description for method detachShared()</td>
+</tr>
+</tbody>
+</table></div>
+</div>
+<div class="package-contents">
+<a name="Link.php" id="Link.php"></a><h3>
+<i class="icon-file"></i>Link.php<small style="float: right;padding-right: 10px;">6</small>
+</h3>
+<div><table class="table markers table-bordered">
+<thead><tr>
+<th>Type</th>
+<th>Line</th>
+<th>Description</th>
+</tr></thead>
+<tbody>
+<tr class="critical">
+<td>critical</td>
+<td>2</td>
+<td>No short description for file Link.php</td>
+</tr>
+<tr class="critical">
+<td>critical</td>
+<td>21</td>
+<td>No short description for property $relation</td>
+</tr>
+<tr class="critical">
+<td>critical</td>
+<td>26</td>
+<td>No short description for property $route</td>
+</tr>
+<tr class="critical">
+<td>critical</td>
+<td>31</td>
+<td>No short description for property $routeOptions</td>
+</tr>
+<tr class="critical">
+<td>critical</td>
+<td>36</td>
+<td>No short description for property $routeParams</td>
+</tr>
+<tr class="critical">
+<td>critical</td>
+<td>41</td>
+<td>No short description for property $url</td>
+</tr>
+</tbody>
+</table></div>
+</div>
+<div class="package-contents">
+<a name="ResourceEvent.php" id="ResourceEvent.php"></a><h3>
+<i class="icon-file"></i>ResourceEvent.php<small style="float: right;padding-right: 10px;">8</small>
+</h3>
+<div><table class="table markers table-bordered">
+<thead><tr>
+<th>Type</th>
+<th>Line</th>
+<th>Description</th>
+</tr></thead>
+<tbody>
+<tr class="critical">
+<td>critical</td>
+<td>2</td>
+<td>No short description for file ResourceEvent.php</td>
+</tr>
+<tr class="error">
+<td>error</td>
+<td>15</td>
+<td>No DocBlock was found for \PhlyRestfully\ResourceEvent</td>
+</tr>
+<tr class="critical">
+<td>critical</td>
+<td>17</td>
+<td>No short description for property $queryParams</td>
+</tr>
+<tr class="critical">
+<td>critical</td>
+<td>22</td>
+<td>No short description for property $routeMatch</td>
+</tr>
+<tr class="error">
+<td>error</td>
+<td>27</td>
+<td>No short description for method setQueryParams()</td>
+</tr>
+<tr class="error">
+<td>error</td>
+<td>37</td>
+<td>No short description for method getQueryParams()</td>
+</tr>
+<tr class="error">
+<td>error</td>
+<td>64</td>
+<td>No short description for method setRouteMatch()</td>
+</tr>
+<tr class="error">
+<td>error</td>
+<td>74</td>
+<td>No short description for method getRouteMatch()</td>
+</tr>
+</tbody>
+</table></div>
+</div>
+<div class="package-contents">
+<a name="Plugin/HalLinks.php" id="Plugin/HalLinks.php"></a><h3>
+<i class="icon-file"></i>Plugin/HalLinks.php<small style="float: right;padding-right: 10px;">12</small>
+</h3>
+<div><table class="table markers table-bordered">
+<thead><tr>
+<th>Type</th>
+<th>Line</th>
+<th>Description</th>
+</tr></thead>
+<tbody>
+<tr class="critical">
+<td>critical</td>
+<td>2</td>
+<td>No short description for file Plugin/HalLinks.php</td>
+</tr>
+<tr class="critical">
+<td>critical</td>
+<td>40</td>
+<td>No short description for property $controller</td>
+</tr>
+<tr class="critical">
+<td>critical</td>
+<td>52</td>
+<td>No short description for property $events</td>
+</tr>
+<tr class="critical">
+<td>critical</td>
+<td>64</td>
+<td>No short description for property $metadataMap</td>
+</tr>
+<tr class="critical">
+<td>critical</td>
+<td>69</td>
+<td>No short description for property $serverUrlHelper</td>
+</tr>
+<tr class="critical">
+<td>critical</td>
+<td>74</td>
+<td>No short description for property $urlHelper</td>
+</tr>
+<tr class="error">
+<td>error</td>
+<td>79</td>
+<td>No short description for method setController()</td>
+</tr>
+<tr class="error">
+<td>error</td>
+<td>87</td>
+<td>No short description for method getController()</td>
+</tr>
+<tr class="error">
+<td>error</td>
+<td>178</td>
+<td>No short description for method setServerUrlHelper()</td>
+</tr>
+<tr class="error">
+<td>error</td>
+<td>186</td>
+<td>No short description for method setUrlHelper()</td>
+</tr>
+<tr class="notice">
+<td>notice</td>
+<td>508</td>
+<td>Parameter $identiferName could not be found in createCollection()</td>
+</tr>
+<tr class="error">
+<td>error</td>
+<td>531</td>
+<td>No short description for method createCollectionFromMetadata()</td>
+</tr>
+</tbody>
+</table></div>
+</div>
+<div class="package-contents">
+<a name="HalResource.php" id="HalResource.php"></a><h3>
+<i class="icon-file"></i>HalResource.php<small style="float: right;padding-right: 10px;">6</small>
+</h3>
+<div><table class="table markers table-bordered">
+<thead><tr>
+<th>Type</th>
+<th>Line</th>
+<th>Description</th>
+</tr></thead>
+<tbody>
+<tr class="critical">
+<td>critical</td>
+<td>2</td>
+<td>No short description for file HalResource.php</td>
+</tr>
+<tr class="error">
+<td>error</td>
+<td>11</td>
+<td>No DocBlock was found for \PhlyRestfully\HalResource</td>
+</tr>
+<tr class="error">
+<td>error</td>
+<td>13</td>
+<td>No DocBlock was found for property $id</td>
+</tr>
+<tr class="critical">
+<td>critical</td>
+<td>15</td>
+<td>No short description for property $links</td>
+</tr>
+<tr class="error">
+<td>error</td>
+<td>20</td>
+<td>No DocBlock was found for property $resource</td>
+</tr>
+<tr class="error">
+<td>error</td>
+<td>22</td>
+<td>No short description for method __construct()</td>
+</tr>
+</tbody>
+</table></div>
+</div>
+<div class="package-contents">
+<a name="LinkCollectionAwareInterface.php" id="LinkCollectionAwareInterface.php"></a><h3>
+<i class="icon-file"></i>LinkCollectionAwareInterface.php<small style="float: right;padding-right: 10px;">3</small>
+</h3>
+<div><table class="table markers table-bordered">
+<thead><tr>
+<th>Type</th>
+<th>Line</th>
+<th>Description</th>
+</tr></thead>
+<tbody>
+<tr class="critical">
+<td>critical</td>
+<td>2</td>
+<td>No short description for file LinkCollectionAwareInterface.php</td>
+</tr>
+<tr class="error">
+<td>error</td>
+<td>13</td>
+<td>No DocBlock was found for method setLinks()</td>
+</tr>
+<tr class="error">
+<td>error</td>
+<td>14</td>
+<td>No DocBlock was found for method getLinks()</td>
+</tr>
+</tbody>
+</table></div>
+</div>
+</div>
+</div>
+<div class="row"><footer class="span12">
+            Template is built using <a href="http://twitter.github.com/bootstrap/">Twitter Bootstrap 2</a> and icons provided by <a href="http://glyphicons.com/">Glyphicons</a>.<br>
+            Documentation is powered by <a href="http://www.phpdoc.org/">phpDocumentor 2.0.0a12</a> and<br>
+            generated on 2013-05-17T09:43:13-05:00.<br></footer></div>
+</div>
+</body>
+</html>
