@@ -325,7 +325,7 @@ class ResourceController extends AbstractRestfulController
 
         try {
             $resource = $this->resource->create($data);
-        } catch (Exception\CreationException $e) {
+        } catch (\Exception $e) {
             $code = $e->getCode() ?: 500;
             return new ApiProblem($code, $e);
         }
@@ -571,7 +571,7 @@ class ResourceController extends AbstractRestfulController
 
         try {
             $resource = $this->resource->patch($id, $data);
-        } catch (Exception\PatchException $e) {
+        } catch (\Exception $e) {
             $code = $e->getCode() ?: 500;
             return new ApiProblem($code, $e);
         }
@@ -612,7 +612,7 @@ class ResourceController extends AbstractRestfulController
 
         try {
             $resource = $this->resource->update($id, $data);
-        } catch (Exception\UpdateException $e) {
+        } catch (\Exception $e) {
             $code = $e->getCode() ?: 500;
             return new ApiProblem($code, $e);
         }
@@ -645,7 +645,7 @@ class ResourceController extends AbstractRestfulController
 
         try {
             $collection = $this->resource->replaceList($data);
-        } catch (Exception\UpdateException $e) {
+        } catch (\Exception $e) {
             $code = $e->getCode() ?: 500;
             return new ApiProblem($code, $e);
         }
