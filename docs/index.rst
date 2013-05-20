@@ -57,7 +57,6 @@ Reference Guide
     * :doc:`ref/controller-events`
     * :doc:`ref/advanced-routing`
     * :doc:`ref/advanced-rendering`
-      In which I talk about the renderCollection.resource event.
     * :doc:`ref/hydrators`
     * :doc:`ref/collections-and-pagination`
       In which I talk both about returning paginators in order to have paginated
