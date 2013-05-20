@@ -61,8 +61,6 @@ Reference Guide
     * :doc:`ref/collections-and-pagination`
     * :doc:`ref/embedding-resources`
     * :doc:`ref/metadata-map`
-      In which I talk about the metadata map, and how it simplifies much of the
-      above.
     * :doc:`ref/api-problem-listener`
     * :doc:`ref/alternate-resource-return-values`
       In which I discuss returning HalResource, HalCollection, and ApiProblem
