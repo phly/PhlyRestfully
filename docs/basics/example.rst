@@ -1,4 +1,4 @@
-.. _phlyrestfully.basics.example:
+.. _basics.example:
 
 Example
 =======

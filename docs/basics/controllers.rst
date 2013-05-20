@@ -1,4 +1,4 @@
-.. _phlyrestfully.basics.controllers:
+.. _basics.controllers:
 
 ResourceControllers
 ===================

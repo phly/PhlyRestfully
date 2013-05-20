@@ -1,4 +1,4 @@
-.. _phlyrestfully.basics.resources:
+.. _basics.resources:
 
 Resources
 =========

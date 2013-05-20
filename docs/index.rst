@@ -31,7 +31,10 @@ RESTful JSON API Primer
 PhlyRestfully Walkthrough
 -------------------------
 
-    * :doc:`phlyrestfully.basics`
+    * :doc:`basics/index`
+    * :doc:`basics/resources`
+    * :doc:`basics/controllers`
+    * :doc:`basics/example`
 
 Api docs:
 ---------

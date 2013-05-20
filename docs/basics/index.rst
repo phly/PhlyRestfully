@@ -1,4 +1,4 @@
-.. _phlyrestfully.basics:
+.. _basics.index:
 
 PhlyRestfully Basics
 ====================
