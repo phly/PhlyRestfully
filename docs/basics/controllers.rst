@@ -161,3 +161,5 @@ Note that the above configuration assumes that you are defining a
 encapsulated, and allows you to have stateful listeners -- which is particularly
 useful as most often you will consume a mapper or similar within your listeners
 in order to persist resources or fetch resources from persistence.
+
+.. index:: controller, resource, resource controller, resource listener, options

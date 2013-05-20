@@ -50,6 +50,5 @@ Indices and tables
 
 * :doc:`index`
 * :ref:`genindex`
-* :ref:`modindex`
 * :ref:`search`
 

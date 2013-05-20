@@ -44,3 +44,5 @@ What happens if a malicious user tries something else? You should respond with a
 PhlyRestfully bakes this into its ``PhlyRestfully\ResourceController``
 implementation, allowing you to specify via configuration which methods are
 allowed both for collections and individual resources handled by the controller.
+
+.. index:: options, http, allow

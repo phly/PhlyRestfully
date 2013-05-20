@@ -133,3 +133,5 @@ if you are unfamiliar with them.
 
 In a later section, I will show you how to wire your listener aggregate to a
 resource and resource controller.
+
+.. index:: resource, resource listener

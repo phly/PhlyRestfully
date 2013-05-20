@@ -55,3 +55,5 @@ you start a project, you may not want to worry about this up front -- the HTTP
 status code may be enough to begin. As such, PhlyRestfully assumes that if you
 do not provide a "describedBy" field, it will link to the URI describing the
 HTTP status codes.
+
+.. index:: api-problem, error reporting, vnd.error, exception

@@ -206,3 +206,5 @@ immediately be able to access the API.
     content type ``application/json``, ``application/hal+json``, or
     ``text/json``; otherwise, it will try to deliver HTML to you, and, unless
     you have defined view scripts accordingly, you will see errors.
+
+.. index:: paste, example, resource listener, resource controller

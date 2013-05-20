@@ -273,3 +273,5 @@ The response would look like this:
     }
 
 ``PUT`` and ``PATCH`` operate similarly.
+
+.. index:: hypermedia application language, hal, mediatype, resource, collection
