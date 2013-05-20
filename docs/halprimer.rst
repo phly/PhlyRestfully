@@ -1,4 +1,4 @@
-.. _phlyrestfully.hal:
+.. _phlyrestfully.hal-primer:
 
 HAL Primer
 ==========
