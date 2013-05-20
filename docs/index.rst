@@ -59,9 +59,6 @@ Reference Guide
     * :doc:`ref/advanced-rendering`
     * :doc:`ref/hydrators`
     * :doc:`ref/collections-and-pagination`
-      In which I talk both about returning paginators in order to have paginated
-      collections, as well as how to pass query and route parameters to
-      resources. Additionally, will cover the renderCollection.resource method.
     * :doc:`ref/embedding-resources`
       In which I talk about embedded resources/collections.
     * :doc:`ref/metadata-map`
