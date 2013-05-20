@@ -26,6 +26,7 @@ Contents:
    ref/resource-event
    ref/controller-events
    ref/advanced-routing
+   ref/advanced-rendering
    ref/hydrators
    ref/collections-and-pagination
    ref/embedding-resources
@@ -53,19 +54,15 @@ Reference Guide
 ---------------
 
     * :doc:`ref/resource-event`
-      In which I talk about the methods available on the resource event, and how
-      to whitelist query parameters.
     * :doc:`ref/controller-events`
-      In which I detail all the controller events, and how and why you would tie
-      into them.
     * :doc:`ref/advanced-routing`
-      In which I talk about the renderCollection.resource event, how to specify
-      alternate identifiers for resources and collections, etc.
+    * :doc:`ref/advanced-rendering`
+      In which I talk about the renderCollection.resource event.
     * :doc:`ref/hydrators`
     * :doc:`ref/collections-and-pagination`
       In which I talk both about returning paginators in order to have paginated
       collections, as well as how to pass query and route parameters to
-      resources.
+      resources. Additionally, will cover the renderCollection.resource method.
     * :doc:`ref/embedding-resources`
       In which I talk about embedded resources/collections.
     * :doc:`ref/metadata-map`
