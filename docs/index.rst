@@ -19,7 +19,10 @@ Contents:
    halprimer
    problems
    options
-   phlyrestfully.basics
+   basics/index
+   basics/resources
+   basics/controllers
+   basics/example
 
 RESTful JSON API Primer
 -----------------------
