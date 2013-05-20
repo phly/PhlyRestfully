@@ -60,7 +60,6 @@ Reference Guide
     * :doc:`ref/hydrators`
     * :doc:`ref/collections-and-pagination`
     * :doc:`ref/embedding-resources`
-      In which I talk about embedded resources/collections.
     * :doc:`ref/metadata-map`
       In which I talk about the metadata map, and how it simplifies much of the
       above.

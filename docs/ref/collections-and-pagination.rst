@@ -55,7 +55,7 @@ our ``onFetchAll()`` method were to return a ``Paginator`` instance, the
 collection included 3000 records, we'd set the page size to 10, and the request
 indicated page 17, our response would include the following links:
 
-.. code-block:: javascript
+.. code-block:: json
 
     {
         "_links": {

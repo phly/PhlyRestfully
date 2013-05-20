@@ -37,7 +37,7 @@ Resources
 For JSON resources, the minimum you must do is provide a "_links" property
 containing a "self" relational link. As an example:
 
-.. code-block:: javascript
+.. code-block:: json
 
     {
         "_links": {
@@ -54,7 +54,7 @@ representing, you will provide an "_embedded" property, containing the named
 resources. Each resource will be structured as a HAL resource, and contain at
 least a "_links" property with a "self" relational link.
 
-.. code-block:: javascript
+.. code-block:: json
 
     {
         "_links": {
@@ -111,7 +111,7 @@ collection will include a "self" relational link, but also pagination links -
 indicate the total number of resources, how many are delivered in the current
 payload, and potentially other metadata about the collection.
 
-.. code-block:: javascript
+.. code-block:: json
 
     {
         "_links": {
