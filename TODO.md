@@ -1,6 +1,3 @@
 TODO
 ====
 
-Tasks:
-
-- [ ] Documentation
