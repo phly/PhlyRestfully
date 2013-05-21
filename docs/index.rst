@@ -34,6 +34,7 @@ Contents:
    ref/api-problem-listener
    ref/alternate-resource-return-values
    ref/child-resources
+   ref/classes
 
 RESTful JSON API Primer
 -----------------------
@@ -63,13 +64,9 @@ Reference Guide
     * :doc:`ref/metadata-map`
     * :doc:`ref/api-problem-listener`
     * :doc:`ref/alternate-resource-return-values`
-      In which I discuss returning HalResource, HalCollection, and ApiProblem
-      results from resource listeners in order to have full control over them.
-      Additionally, will show using custom exceptions in order to shape
-      ApiProblem results.
     * :doc:`ref/child-resources`
-      This can be heavily modified from the current README to instead show using
-      the metadata map.
+    * :doc:`ref/classes`
+      In which I list each class and link to its API documentation
 
 Api docs:
 ---------

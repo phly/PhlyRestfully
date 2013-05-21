@@ -26,10 +26,12 @@ definition poses a problem:
         ),
         'may_terminate' => true,
         'child_routes' => array(
-            'type' => 'Segment',
-            'options' => array(
-                'route' => '/addresses[/:id]',
-                'controller' => 'UserAddressResourceController',
+            'addresses' => array(
+                'type' => 'Segment',
+                'options' => array(
+                    'route' => '/addresses[/:id]',
+                    'controller' => 'UserAddressResourceController',
+                ),
             ),
         ),
     ),
