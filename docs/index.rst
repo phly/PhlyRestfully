@@ -66,7 +66,6 @@ Reference Guide
     * :doc:`ref/alternate-resource-return-values`
     * :doc:`ref/child-resources`
     * :doc:`ref/classes`
-      In which I list each class and link to its API documentation
 
 Api docs:
 ---------
