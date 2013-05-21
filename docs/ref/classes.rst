@@ -4,7 +4,7 @@ Classes Available
 =================
 
 This is a partial list of classes only; for a full list of classes, `visit the
-API documentation <_static/phpdoc/index.html>`_.
+API documentation <../_static/phpdoc/index.html>`_.
 
 Classes below are linked to their API documentation. The classes listed are
 chosen because they are either directly discussed in this documentation, or
