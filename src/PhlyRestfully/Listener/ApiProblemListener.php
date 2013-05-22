@@ -12,6 +12,7 @@ use PhlyRestfully\ApiProblem;
 use PhlyRestfully\View\RestfulJsonModel;
 use Zend\EventManager\EventManagerInterface;
 use Zend\EventManager\ListenerAggregateInterface;
+use Zend\Http\Request as HttpRequest;
 use Zend\Mvc\MvcEvent;
 use Zend\View\Model\ModelInterface;
 
@@ -85,6 +86,10 @@ class ApiProblemListener implements ListenerAggregateInterface
 
         // and then, only if we have an Accept header...
         $request = $e->getRequest();
+        if (!$request instanceof HttpRequest) {
+            return;
+        }
+
         $headers = $request->getHeaders();
         if (!$headers->has('Accept')) {
             return;
