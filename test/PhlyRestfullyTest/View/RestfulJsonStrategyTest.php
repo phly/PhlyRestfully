@@ -123,4 +123,30 @@ class RestfulJsonStrategyTest extends TestCase
         $header = $headers->get('Content-Type');
         $this->assertEquals('application/hal+json', $header->getFieldValue());
     }
+
+    public function invalidStatusCodes()
+    {
+        return array(
+            array(0),
+            array(1),
+            array(99),
+            array(600),
+            array(10081),
+        );
+    }
+
+    /**
+     * @dataProvider invalidStatusCodes
+     */
+    public function testUsesStatusCode500ForAnyStatusCodesAbove599OrBelow100($status)
+    {
+        $problem = new ApiProblem($status, 'whatever');
+        $model   = new RestfulJsonModel(array('payload' => $problem));
+        $this->event->setModel($model);
+        $this->event->setRenderer($this->renderer);
+        $this->event->setResult('{"foo":"bar"}');
+        $this->strategy->injectResponse($this->event);
+
+        $this->assertEquals(500, $this->response->getStatusCode());
+    }
 }

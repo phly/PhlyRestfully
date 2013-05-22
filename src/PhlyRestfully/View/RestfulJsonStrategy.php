@@ -8,6 +8,7 @@
 
 namespace PhlyRestfully\View;
 
+use PhlyRestfully\ApiProblem;
 use Zend\View\Strategy\JsonStrategy;
 use Zend\View\ViewEvent;
 
@@ -78,10 +79,12 @@ class RestfulJsonStrategy extends JsonStrategy
 
         if ($this->renderer->isApiProblem()) {
             $contentType = 'application/api-problem+json';
-            $response->setStatusCode($this->renderer->getApiProblem()->httpStatus);
+            $statusCode  = $this->getStatusCodeFromApiProblem($this->renderer->getApiProblem());
+            $response->setStatusCode($statusCode);
         } elseif ($model instanceof RestfulJsonModel && $model->isApiProblem()) {
             $contentType = 'application/api-problem+json';
-            $response->setStatusCode($model->getPayload()->httpStatus);
+            $statusCode  = $this->getStatusCodeFromApiProblem($model->getPayload());
+            $response->setStatusCode($statusCode);
         } elseif ($model instanceof RestfulJsonModel
             && ($model->isHalCollection() || $model->isHalResource())
         ) {
@@ -92,5 +95,22 @@ class RestfulJsonStrategy extends JsonStrategy
         $response->setContent($result);
         $headers = $response->getHeaders();
         $headers->addHeaderLine('content-type', $contentType);
+    }
+
+    /**
+     * Retrieve the HTTP status from an ApiProblem object
+     *
+     * Ensures that the status falls within the acceptable range (100 - 599).
+     *
+     * @param  ApiProblem $problem
+     * @return int
+     */
+    protected function getStatusCodeFromApiProblem(ApiProblem $problem)
+    {
+        $status = $problem->httpStatus;
+        if ($status < 100 || $status >= 600) {
+            return 500;
+        }
+        return $status;
     }
 }
