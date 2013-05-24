@@ -9,6 +9,7 @@
 namespace PhlyRestfullyTest;
 
 use ArrayIterator;
+use PhlyRestfully\ApiProblem;
 use PhlyRestfully\Resource;
 use PHPUnit_Framework_TestCase as TestCase;
 use stdClass;
@@ -385,6 +386,26 @@ class ResourceTest extends TestCase
             'fetch' => array('fetch', array($id), true),
             'fetchAll' => array('fetchAll', array(), false),
         );
+    }
+
+    /**
+     * @dataProvider eventsToTrigger
+     */
+    public function testEventTerminateIfApiProblemIsReturned($eventName, $args, $idIsPresent)
+    {
+        $called = false;
+
+        $this->events->attach($eventName, function() {
+            return new ApiProblem(400, 'Random error');
+        }, 10);
+
+        $this->events->attach($eventName, function() use (&$called) {
+            $called = true;
+        }, 0);
+
+        call_user_func_array(array($this->resource, $eventName), $args);
+
+        $this->assertFalse($called);
     }
 
     /**
