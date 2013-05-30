@@ -339,4 +339,26 @@ class HalLinksTest extends TestCase
             $this->assertLink('self', '/embedded/' . $contact['id'], $contact);
         }
     }
+
+    public function testWillNotAllowInjectingASelfRelationMultipleTimes()
+    {
+        $resource = new HalResource(array(
+            'id'  => 1,
+            'foo' => 'bar',
+        ), 1);
+        $links = $resource->getLinks();
+
+        $this->assertFalse($links->has('self'));
+
+        $this->plugin->injectSelfLink($resource, 'hostname/resource');
+
+        $this->assertTrue($links->has('self'));
+        $link = $links->get('self');
+        $this->assertInstanceof('PhlyRestfully\Link', $link);
+
+        $this->plugin->injectSelfLink($resource, 'hostname/resource');
+        $this->assertTrue($links->has('self'));
+        $link = $links->get('self');
+        $this->assertInstanceof('PhlyRestfully\Link', $link);
+    }
 }
