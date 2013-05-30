@@ -556,7 +556,7 @@ class HalLinks extends AbstractHelper implements
         if ($resource instanceof HalResource) {
             $self->setRouteParams(array($identifier => $resource->id));
         }
-        $resource->getLinks()->add($self);
+        $resource->getLinks()->add($self, true);
     }
 
     /**
