@@ -28,12 +28,12 @@ the :ref:`embedded resources section <ref/embedding-resources>`:
         'phlyrestfully' => array(
             'metadata_map' => array(
                 'User' => array(
-                    'hydrator'        => 'Zend\Stdlib\Hydrator\ObjectProperty',
+                    'hydrator'        => 'ObjectProperty',
                     'identifier_name' => 'id',
                     'route'           => 'api/user',
                 ),
                 'Url' => array(
-                    'hydrator'        => 'Zend\Stdlib\Hydrator\ObjectProperty',
+                    'hydrator'        => 'ObjectProperty',
                     'route'           => 'api/user/url',
                     'identifier_name' => 'url_id',
                 ),
@@ -42,7 +42,7 @@ the :ref:`embedded resources section <ref/embedding-resources>`:
                     'route'           => 'api/user/phone',
                 ),
                 'Phone' => array(
-                    'hydrator'        => 'Zend\Stdlib\Hydrator\ObjectProperty',
+                    'hydrator'        => 'ObjectProperty',
                     'route'           => 'api/user/phone',
                     'identifier_name' => 'phone_id',
                 ),
@@ -58,8 +58,9 @@ Metadata options
 
 The following options are available for metadata maps:
 
-- **hydrator**: the fully qualified class name of a hydrator to use to extract the
-  resource. (**OPTIONAL**)
+- **hydrator**: the fully qualified class name of a hydrator, or a service name
+  ``Zend\Stdlib\Hydrator\HydratorPluginManager`` recognizes,  to use to extract
+  the resource. (**OPTIONAL**)
 - **identifier_name**: the resource parameter corresponding to the identifier;
   defaults to "id". (**OPTIONAL**)
 - **is_collection**: boolean flag indicating whether or not the resource is a
@@ -74,10 +75,6 @@ The following options are available for metadata maps:
   generating the "self" relational link. (**OPTIONAL**)
 - **url**: the specific URL to use with this resource. (**OPTIONAL**; this or ``route``
   **MUST** be set, however)
-
-I recommend using the :ref:`hydrator maps <ref/hydrators>` instead of defining
-the hydrator in the metadata, as those hydrators are shared, while those in the
-metadata map are not.
 
 Collections
 -----------

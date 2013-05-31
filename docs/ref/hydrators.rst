@@ -75,6 +75,10 @@ Once you have the plugin, you can register class/hydrator pairs using the
     // Then register it:
     $halLinks->addHydrator('Paste\PasteResource', $hydrator);
 
+    // More succintly, since HalLinks composes the HydratorManager by default,
+    // you can use te short name of the hydrator service:
+    $halLinks->addHydrator('Paste\PasteResource', 'ClassMethods');
+
 All done!
 
 You can also specify a default hydrator to use, if ``HalLinks`` can't find the
@@ -100,27 +104,20 @@ consider the following `config/autoload/phlyrestfully.global.php` file:
     return array(
         'phlyrestfully' => array(
             'renderer' => array(
-                'default_hydrator' => 'Hydrator\ArraySerializable',
+                'default_hydrator' => 'ArraySerializable',
                 'hydrators' => array(
-                    'My\Resources\Foo' => 'Hydrator\ObjectProperty',
-                    'My\Resources\Bar' => 'Hydrator\Reflection',
+                    'My\Resources\Foo' => 'ObjectProperty',
+                    'My\Resources\Bar' => 'Reflection',
                 ),
-            ),
-        ),
-        'service_manager' => array(
-            'invokables' => array(
-                'Hydrator\ArraySerializable' => 'Zend\Stdlib\Hydrator\ArraySerializable',
-                'Hydrator\ObjectProperty'    => 'Zend\Stdlib\Hydrator\ObjectProperty',
-                'Hydrator\Reflection'        => 'Zend\Stdlib\Hydrator\Reflection',
             ),
         ),
     );
 
 The above specifies ``Zend\Stdlib\Hydrator\ArraySerializable`` as the default
-hydrator, and maps the ``ObjecProperty`` hydrator to the ``Foo`` resource, and the
-``Reflection`` hydrator to the ``Bar`` resource. Note that you need to define
-invokable services for the hydrators; otherwise, the service manager will be
-unable to resolve the hydrator services, and will not map any it cannot resolve.
+hydrator, and maps the ``ObjectProperty`` hydrator to the ``Foo`` resource, and the
+``Reflection`` hydrator to the ``Bar`` resource. Note that the short name for
+the hydrator is used; ``HalLinks`` composes the ``HydratorManager`` service by
+default, and pulls hydrators from there if provided by service name.
 
 This is a cheap and easy way to ensure that you can extract your resources to
 arrays to be used as JSON representations.

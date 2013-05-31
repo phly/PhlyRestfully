@@ -84,27 +84,16 @@ metadata and hydrator maps for our resources.
 
     return array(
         // ...
-        'service_manager' => array(
-            // ...
-            'invokables' => array(
-                'Hydrator\ClassMethods'   => 'Zend\Stdlib\Hydrator\ClassMethods',
-                'Hydrator\ObjectProperty' => 'Zend\Stdlib\Hydrator\ObjectProperty',
-            ),
-        ),
         'phlyrestfully' => array(
             // ...
-            'renderer' => array(
-                'hydrators' => array(
-                    'User'        => 'Hydrator\ClassMethods',
-                    'UserAddress' => 'Hydrator\ObjectProperty',
-                ),
-            ),
             'metadata_map' => array(
                 'User' => array(
+                    'hydrator'        => 'ClassMethods',
                     'identifier_name' => 'user_id',
                     'route'           => 'users',
                 ),
                 'UserAddress' => array(
+                    'hydrator'        => 'ObjectProperty',
                     'identifier_name' => 'address_id',
                     'route'           => 'users/addresses',
                 ),
