@@ -9,6 +9,7 @@
 namespace PhlyRestfully;
 
 use Zend\Stdlib\Hydrator\HydratorInterface;
+use Zend\Stdlib\Hydrator\HydratorPluginManager;
 
 /**
  * ZF2 module
@@ -68,6 +69,12 @@ class Module
                     $config = $services->get('config');
                 }
 
+                if ($services->has('HydratorManager')) {
+                    $hydrators = $services->get('HydratorManager');
+                } else {
+                    $hydrators = new HydratorPluginManager();
+                }
+
                 $map = array();
                 if (isset($config['phlyrestfully'])
                     && isset($config['phlyrestfully']['metadata_map'])
@@ -76,7 +83,7 @@ class Module
                     $map = $config['phlyrestfully']['metadata_map'];
                 }
 
-                return new MetadataMap($map);
+                return new MetadataMap($map, $hydrators);
             },
             'PhlyRestfully\JsonRenderer' => function ($services) {
                 $helpers  = $services->get('ViewHelperManager');

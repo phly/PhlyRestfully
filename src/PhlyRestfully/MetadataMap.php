@@ -34,7 +34,7 @@ class MetadataMap
     public function __construct(array $map = null, HydratorPluginManager $hydrators = null)
     {
         if (null !== $hydrators) {
-            $this->setHydrators($hydrators);
+            $this->setHydratorManager($hydrators);
         }
 
         if (!empty($map)) {
