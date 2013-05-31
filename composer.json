@@ -25,18 +25,18 @@
     ],
     "require": {
         "php": ">=5.3.3",
-        "zendframework/zend-eventmanager": ">=2.1.0",
-        "zendframework/zend-json": ">=2.1.0",
-        "zendframework/zend-loader": ">=2.1.0",
-        "zendframework/zend-mvc": ">=2.1.4",
-        "zendframework/zend-paginator": ">=2.1.0",
-        "zendframework/zend-uri": ">=2.1.0",
-        "zendframework/zend-view": ">=2.1.0",
-        "zendframework/zend-stdlib": ">=2.1.0"
+        "zendframework/zend-eventmanager": ">=2.2.0",
+        "zendframework/zend-json": ">=2.2.0",
+        "zendframework/zend-loader": ">=2.2.0",
+        "zendframework/zend-mvc": ">=2.2.0",
+        "zendframework/zend-paginator": ">=2.2.0",
+        "zendframework/zend-uri": ">=2.2.0",
+        "zendframework/zend-view": ">=2.2.0",
+        "zendframework/zend-stdlib": ">=2.2.0"
     },
     "require-dev": {
-        "zendframework/zend-navigation": ">=2.1.0",
-        "zendframework/zend-servicemanager": ">=2.1.0"
+        "zendframework/zend-navigation": ">=2.2.0",
+        "zendframework/zend-servicemanager": ">=2.2.0"
     },
     "autoload": {
         "psr-0": {
