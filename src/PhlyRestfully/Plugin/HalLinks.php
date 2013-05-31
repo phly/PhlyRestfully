@@ -325,6 +325,47 @@ class HalLinks extends AbstractHelper implements
     }
 
     /**
+     * Create a URL from a Link
+     *
+     * @param  Link $linkDefinition
+     * @return string
+     * @throws Exception\DomainException if Link is incomplete
+     */
+    public function fromLink(Link $linkDefinition)
+    {
+        if (!$linkDefinition->isComplete()) {
+            throw new Exception\DomainException(sprintf(
+                'Link from resource provided to %s was incomplete; must contain a URL or a route',
+                __METHOD__
+            ));
+        }
+
+        if ($linkDefinition->hasUrl()) {
+            return array(
+                'href' => $linkDefinition->getUrl(),
+            );
+        }
+
+        $path = call_user_func(
+            $this->urlHelper,
+            $linkDefinition->getRoute(),
+            $linkDefinition->getRouteParams(),
+            $linkDefinition->getRouteOptions(),
+            true
+        );
+
+        if (substr($path, 0, 4) == 'http') {
+            return array(
+                'href' => $path,
+            );
+        }
+
+        return array(
+            'href' => call_user_func($this->serverUrlHelper, $path),
+        );
+    }
+
+    /**
      * Generate HAL links from a LinkCollection
      *
      * @param  LinkCollection $collection
@@ -450,47 +491,6 @@ class HalLinks extends AbstractHelper implements
         }
 
         return true;
-    }
-
-    /**
-     * Create a URL from a Link
-     *
-     * @param  Link $linkDefinition
-     * @return string
-     * @throws Exception\DomainException if Link is incomplete
-     */
-    protected function fromLink(Link $linkDefinition)
-    {
-        if (!$linkDefinition->isComplete()) {
-            throw new Exception\DomainException(sprintf(
-                'Link from resource provided to %s was incomplete; must contain a URL or a route',
-                __METHOD__
-            ));
-        }
-
-        if ($linkDefinition->hasUrl()) {
-            return array(
-                'href' => $linkDefinition->getUrl(),
-            );
-        }
-
-        $path = call_user_func(
-            $this->urlHelper,
-            $linkDefinition->getRoute(),
-            $linkDefinition->getRouteParams(),
-            $linkDefinition->getRouteOptions(),
-            true
-        );
-
-        if (substr($path, 0, 4) == 'http') {
-            return array(
-                'href' => $path,
-            );
-        }
-
-        return array(
-            'href' => call_user_func($this->serverUrlHelper, $path),
-        );
     }
 
     /**
