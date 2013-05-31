@@ -29,7 +29,7 @@ class MetadataMap
      * If provided, will pass $hydrators to setHydratorManager().
      *
      * @param  null|array $map
-     * @param  null|HydratorPluginManager $hydrators 
+     * @param  null|HydratorPluginManager $hydrators
      */
     public function __construct(array $map = null, HydratorPluginManager $hydrators = null)
     {
@@ -43,7 +43,7 @@ class MetadataMap
     }
 
     /**
-     * @param  HydratorPluginManager $hydrators 
+     * @param  HydratorPluginManager $hydrators
      * @return self
      */
     public function setHydratorManager(HydratorPluginManager $hydrators)

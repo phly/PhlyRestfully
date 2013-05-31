@@ -57,7 +57,7 @@ class HalLinks extends AbstractHelper implements
 
     /**
      * Map of class name/(hydrator instance|name) pairs
-     * 
+     *
      * @var array
      */
     protected $hydratorMap = array();
@@ -83,7 +83,7 @@ class HalLinks extends AbstractHelper implements
     protected $urlHelper;
 
     /**
-     * @param null|HydratorPluginManager $hydrators 
+     * @param null|HydratorPluginManager $hydrators
      */
     public function __construct(HydratorPluginManager $hydrators = null)
     {
