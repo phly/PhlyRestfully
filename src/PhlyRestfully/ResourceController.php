@@ -347,13 +347,12 @@ class ResourceController extends AbstractRestfulController
         }
 
         $this->injectSelfLink($resource);
+        $self = $resource->getLinks()->get('self');
+        $self = $this->plugin('HalLinks')->fromLink($self);
 
         $response = $this->getResponse();
         $response->setStatusCode(201);
-        $response->getHeaders()->addHeaderLine(
-            'Location',
-            $this->halLinks()->createLink($this->route, $resource->id, $resource->resource)
-        );
+        $response->getHeaders()->addHeaderLine('Location', $self);
 
         $events->trigger('create.post', $this, array('data' => $data, 'resource' => $resource));
 
