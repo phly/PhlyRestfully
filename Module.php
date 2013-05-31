@@ -142,8 +142,9 @@ class Module
                 $services        = $helpers->getServiceLocator();
                 $config          = $services->get('Config');
                 $metadataMap     = $services->get('PhlyRestfully\MetadataMap');
+                $hydrators       = $metadataMap->getHydratorManager();
 
-                $helper          = new Plugin\HalLinks();
+                $helper          = new Plugin\HalLinks($hydrators);
                 $helper->setMetadataMap($metadataMap);
                 $helper->setServerUrlHelper($serverUrlHelper);
                 $helper->setUrlHelper($urlHelper);

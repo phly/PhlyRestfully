@@ -26,6 +26,7 @@ use Zend\Paginator\Paginator;
 use Zend\Stdlib\ArrayUtils;
 use Zend\Stdlib\DispatchableInterface;
 use Zend\Stdlib\Hydrator\HydratorInterface;
+use Zend\Stdlib\Hydrator\HydratorPluginManager;
 use Zend\View\Helper\AbstractHelper;
 use Zend\View\Helper\ServerUrl;
 use Zend\View\Helper\Url;
@@ -55,11 +56,16 @@ class HalLinks extends AbstractHelper implements
     protected $events;
 
     /**
-     * Map of resource classes => hydrators
-     *
-     * @var HydratorInterface[]
+     * Map of class name/(hydrator instance|name) pairs
+     * 
+     * @var array
      */
-    protected $hydrators = array();
+    protected $hydratorMap = array();
+
+    /**
+     * @var HydratorPluginManager
+     */
+    protected $hydrators;
 
     /**
      * @var MetadataMap
@@ -75,6 +81,17 @@ class HalLinks extends AbstractHelper implements
      * @var Url
      */
     protected $urlHelper;
+
+    /**
+     * @param null|HydratorPluginManager $hydrators 
+     */
+    public function __construct(HydratorPluginManager $hydrators = null)
+    {
+        if (null === $hydrators) {
+            $hydrators = new HydratorPluginManager();
+        }
+        $this->hydrators = $hydrators;
+    }
 
     /**
      * @param DispatchableInterface $controller
@@ -198,9 +215,19 @@ class HalLinks extends AbstractHelper implements
      * @param  HydratorInterface $hydrator
      * @return RestfulJsonRenderer
      */
-    public function addHydrator($class, HydratorInterface $hydrator)
+    public function addHydrator($class, $hydrator)
     {
-        $this->hydrators[strtolower($class)] = $hydrator;
+        if (!$hydrator instanceof HydratorInterface) {
+            if (!$this->hydrators->has((string) $hydrator)) {
+                throw new Exception\InvalidArgumentException(sprintf(
+                    'Invalid hydrator instance or name provided; received "%s"',
+                    (is_object($hydrator) ? get_class($hydrator) : (is_string($hydrator) ? $hydrator : gettype($hydrator)))
+                ));
+            }
+            $hydrator = $this->hydrators->get($hydrator);
+        }
+        $class = strtolower($class);
+        $this->hydratorMap[$class] = $hydrator;
         return $this;
     }
 
@@ -229,8 +256,8 @@ class HalLinks extends AbstractHelper implements
     public function getHydratorForResource($resource)
     {
         $class = strtolower(get_class($resource));
-        if (isset($this->hydrators[$class])) {
-            return $this->hydrators[$class];
+        if (isset($this->hydratorMap[$class])) {
+            return $this->hydratorMap[$class];
         }
 
         if ($this->defaultHydrator instanceof HydratorInterface) {

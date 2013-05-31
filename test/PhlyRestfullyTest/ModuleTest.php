@@ -118,7 +118,7 @@ class ModuleTest extends TestCase
         $plugin  = $helpers->get('HalLinks');
 
         $r             = new ReflectionObject($plugin);
-        $hydratorsProp = $r->getProperty('hydrators');
+        $hydratorsProp = $r->getProperty('hydratorMap');
         $hydratorsProp->setAccessible(true);
         $hydrators = $hydratorsProp->getValue($plugin);
 
