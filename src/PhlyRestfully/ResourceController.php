@@ -105,13 +105,6 @@ class ResourceController extends AbstractRestfulController
     );
 
     /**
-     * Route segment or query parameter name indicating resource identifer
-     *
-     * @var string
-     */
-    protected $identifierName = 'id';
-
-    /**
      * Route name that resolves to this resource; used to generate links.
      *
      * @var string
@@ -218,25 +211,6 @@ class ResourceController extends AbstractRestfulController
     public function setResourceHttpOptions(array $options)
     {
         $this->resourceHttpOptions = $options;
-    }
-
-    /**
-     * Set the route match segment or query string parameter indicating the
-     * resource identifier
-     *
-     * @param  string $name
-     */
-    public function setIdentifierName($name)
-    {
-        $this->identifierName = (string) $name;
-    }
-
-    /**
-     * @return string
-     */
-    public function getIdentifierName()
-    {
-        return $this->identifierName;
     }
 
     /**
