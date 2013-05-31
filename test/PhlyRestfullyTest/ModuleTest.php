@@ -27,13 +27,6 @@ class ModuleTest extends TestCase
     public function setupServiceManager()
     {
         $options = array('service_manager' => array(
-            'invokables' => array(
-                // Some hydrator services, so we have something to work with
-                'Hydrator\ArraySerializable' => 'Zend\Stdlib\Hydrator\ArraySerializable',
-                'Hydrator\ClassMethods'      => 'Zend\Stdlib\Hydrator\ClassMethods',
-                'Hydrator\ObjectProperty'    => 'Zend\Stdlib\Hydrator\ObjectProperty',
-                'Hydrator\Reflection'        => 'Zend\Stdlib\Hydrator\Reflection',
-            ),
             'factories' => array(
                 // Consumed by PhlyRestfully\JsonRenderer service
                 'ViewHelperManager'       => 'Zend\Mvc\Service\ViewHelperManagerFactory',
@@ -79,7 +72,7 @@ class ModuleTest extends TestCase
         $options = array(
             'phlyrestfully' => array(
                 'renderer' => array(
-                    'default_hydrator' => 'Hydrator\ObjectProperty',
+                    'default_hydrator' => 'ObjectProperty',
                 ),
             ),
         );
@@ -100,10 +93,10 @@ class ModuleTest extends TestCase
             'phlyrestfully' => array(
                 'renderer' => array(
                     'hydrators' => array(
-                        'Some\MadeUp\Component'            => 'Hydrator\ClassMethods',
-                        'Another\MadeUp\Component'         => 'Hydrator\Reflection',
-                        'StillAnother\MadeUp\Component'    => 'Hydrator\ArraySerializable',
-                        'A\Component\With\SharedHydrators' => 'Hydrator\Reflection',
+                        'Some\MadeUp\Component'            => 'ClassMethods',
+                        'Another\MadeUp\Component'         => 'Reflection',
+                        'StillAnother\MadeUp\Component'    => 'ArraySerializable',
+                        'A\Component\With\SharedHydrators' => 'Reflection',
                     ),
                 ),
             ),
@@ -120,15 +113,17 @@ class ModuleTest extends TestCase
         $r             = new ReflectionObject($plugin);
         $hydratorsProp = $r->getProperty('hydratorMap');
         $hydratorsProp->setAccessible(true);
-        $hydrators = $hydratorsProp->getValue($plugin);
+        $hydratorMap = $hydratorsProp->getValue($plugin);
 
-        $this->assertInternalType('array', $hydrators);
+        $hydrators   = $plugin->getHydratorManager();
+
+        $this->assertInternalType('array', $hydratorMap);
 
         foreach ($options['phlyrestfully']['renderer']['hydrators'] as $class => $serviceName) {
             $key = strtolower($class);
-            $this->assertArrayHasKey($key, $hydrators);
-            $hydrator = $hydrators[$key];
-            $this->assertSame($services->get($serviceName), $hydrator);
+            $this->assertArrayHasKey($key, $hydratorMap);
+            $hydrator = $hydratorMap[$key];
+            $this->assertSame(get_class($hydrators->get($serviceName)), get_class($hydrator));
         }
     }
 }

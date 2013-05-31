@@ -157,36 +157,23 @@ class Module
                     if (isset($config['default_hydrator'])) {
                         $hydratorServiceName = $config['default_hydrator'];
 
-                        $hydrator = $services->get($hydratorServiceName);
-
-                        if ($hydrator instanceof HydratorInterface) {
-                            $helper->setDefaultHydrator($hydrator);
-                        } else {
+                        if (!$hydrators->has($hydratorServiceName)) {
                             throw new Exception\DomainException(
                                 sprintf(
-                                    'Hydrator %s must implement the Zend\Stdlib\Hydrator\HydratorInterface' .
-                                        'to be used as the default hydrator.',
-                                    get_class($hydrator)
+                                    'Cannot locate default hydrator by name "%s" via the HydratorManager',
+                                    $hydratorServiceName
                                 )
                             );
                         }
+
+                        $hydrator = $hydrators->get($hydratorServiceName);
+                        $helper->setDefaultHydrator($hydrator);
                     }
 
                     if (isset($config['hydrators']) && is_array($config['hydrators'])) {
                         $hydratorMap = $config['hydrators'];
                         foreach ($hydratorMap as $class => $hydratorServiceName) {
-                            $hydrator = $services->get($hydratorServiceName);
-                            if ($hydrator instanceof HydratorInterface) {
-                                $helper->addHydrator($class, $hydrator);
-                            } else {
-                                throw new Exception\DomainException(
-                                    sprintf(
-                                        'Hydrator %s for class %s must implement the' .
-                                            'Zend\Stdlib\Hydrator\HydratorInterface',
-                                        get_class($hydrator), $class
-                                    )
-                                );
-                            }
+                            $helper->addHydrator($class, $hydratorServiceName);
                         }
                     }
                 }

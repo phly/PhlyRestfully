@@ -168,6 +168,14 @@ class HalLinks extends AbstractHelper implements
     }
 
     /**
+     * @return HydratorPluginManager
+     */
+    public function getHydratorManager()
+    {
+        return $this->hydrators;
+    }
+
+    /**
      * Retrieve the metadata map
      *
      * @return MetadataMap
