@@ -9,6 +9,7 @@
 namespace PhlyRestfully;
 
 use Zend\Stdlib\Hydrator\HydratorInterface;
+use Zend\Stdlib\Hydrator\HydratorPluginManager;
 
 class Metadata
 {
@@ -25,6 +26,11 @@ class Metadata
      * @var HydratorInterface
      */
     protected $hydrator;
+
+    /**
+     * @var HydratorPluginManager
+     */
+    protected $hydrators;
 
     /**
      * Name of the field representing the identifier
@@ -88,7 +94,7 @@ class Metadata
      * @param  array $options
      * @throws Exception\InvalidArgumentException
      */
-    public function __construct($class, array $options = array())
+    public function __construct($class, array $options = array(), HydratorPluginManager $hydrators = null)
     {
         if (!class_exists($class)) {
             throw new Exception\InvalidArgumentException(sprintf(
@@ -98,6 +104,10 @@ class Metadata
             ));
         }
         $this->class = $class;
+
+        if (null !== $hydrators) {
+            $this->hydrators = $hydrators;
+        }
 
         foreach ($options as $key => $value) {
             $key = strtolower($key);
@@ -253,18 +263,25 @@ class Metadata
     public function setHydrator($hydrator)
     {
         if (is_string($hydrator)) {
-            if (!class_exists($hydrator)) {
-                throw new Exception\InvalidArgumentException(sprintf(
-                    'Hydrator class must exist; received "%s"',
-                    $hydrator
-                ));
+            if (null !== $this->hydrators
+                && $this->hydrators->has($hydrator)
+            ) {
+                $hydrator = $this->hydrators->get($hydrator);
+            } elseif (class_exists($hydrator)) {
+                $hydrator = new $hydrator();
             }
-            $hydrator = new $hydrator();
         }
         if (!$hydrator instanceof HydratorInterface) {
+            if (is_object($hydrator)) {
+                $type = get_class($hydrator);
+            } elseif (is_string($hydrator)) {
+                $type = $hydrator;
+            } else {
+                $type = gettype($hydrator);
+            }
             throw new Exception\InvalidArgumentException(sprintf(
                 'Hydrator class must implement Zend\Stdlib\Hydrator\Hydrator; received "%s"',
-                $class
+                $type
             ));
         }
         $this->hydrator = $hydrator;

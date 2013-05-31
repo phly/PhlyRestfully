@@ -8,8 +8,15 @@
 
 namespace PhlyRestfully;
 
+use Zend\Stdlib\Hydrator\HydratorPluginManager;
+
 class MetadataMap
 {
+    /**
+     * @var HydratorPluginManager
+     */
+    protected $hydrators;
+
     /**
      * @var Metadata[]
      */
@@ -19,14 +26,41 @@ class MetadataMap
      * Constructor
      *
      * If provided, will pass $map to setMap().
+     * If provided, will pass $hydrators to setHydratorManager().
      *
      * @param  null|array $map
+     * @param  null|HydratorPluginManager $hydrators 
      */
-    public function __construct(array $map = null)
+    public function __construct(array $map = null, HydratorPluginManager $hydrators = null)
     {
+        if (null !== $hydrators) {
+            $this->setHydrators($hydrators);
+        }
+
         if (!empty($map)) {
             $this->setMap($map);
         }
+    }
+
+    /**
+     * @param  HydratorPluginManager $hydrators 
+     * @return self
+     */
+    public function setHydratorManager(HydratorPluginManager $hydrators)
+    {
+        $this->hydrators = $hydrators;
+        return $this;
+    }
+
+    /**
+     * @return HydratorPluginManager
+     */
+    public function getHydratorManager()
+    {
+        if (null === $this->hydrators) {
+            $this->setHydratorManager(new HydratorPluginManager());
+        }
+        return $this->hydrators;
     }
 
     /**
@@ -41,10 +75,11 @@ class MetadataMap
      */
     public function setMap(array $map)
     {
+        $hydrators = $this->getHydratorManager();
         foreach ($map as $class => $options) {
             $metadata = $options;
             if (is_array($metadata)) {
-                $metadata = new Metadata($class, $options);
+                $metadata = new Metadata($class, $options, $hydrators);
             }
 
             if (!$metadata instanceof Metadata) {
