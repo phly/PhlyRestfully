@@ -9,6 +9,7 @@
 namespace PhlyRestfully;
 
 use Zend\Stdlib\Hydrator\HydratorInterface;
+use Zend\Stdlib\Hydrator\HydratorPluginManager;
 
 /**
  * ZF2 module
@@ -68,6 +69,12 @@ class Module
                     $config = $services->get('config');
                 }
 
+                if ($services->has('HydratorManager')) {
+                    $hydrators = $services->get('HydratorManager');
+                } else {
+                    $hydrators = new HydratorPluginManager();
+                }
+
                 $map = array();
                 if (isset($config['phlyrestfully'])
                     && isset($config['phlyrestfully']['metadata_map'])
@@ -76,7 +83,7 @@ class Module
                     $map = $config['phlyrestfully']['metadata_map'];
                 }
 
-                return new MetadataMap($map);
+                return new MetadataMap($map, $hydrators);
             },
             'PhlyRestfully\JsonRenderer' => function ($services) {
                 $helpers  = $services->get('ViewHelperManager');
@@ -135,8 +142,9 @@ class Module
                 $services        = $helpers->getServiceLocator();
                 $config          = $services->get('Config');
                 $metadataMap     = $services->get('PhlyRestfully\MetadataMap');
+                $hydrators       = $metadataMap->getHydratorManager();
 
-                $helper          = new Plugin\HalLinks();
+                $helper          = new Plugin\HalLinks($hydrators);
                 $helper->setMetadataMap($metadataMap);
                 $helper->setServerUrlHelper($serverUrlHelper);
                 $helper->setUrlHelper($urlHelper);
@@ -149,36 +157,23 @@ class Module
                     if (isset($config['default_hydrator'])) {
                         $hydratorServiceName = $config['default_hydrator'];
 
-                        $hydrator = $services->get($hydratorServiceName);
-
-                        if ($hydrator instanceof HydratorInterface) {
-                            $helper->setDefaultHydrator($hydrator);
-                        } else {
+                        if (!$hydrators->has($hydratorServiceName)) {
                             throw new Exception\DomainException(
                                 sprintf(
-                                    'Hydrator %s must implement the Zend\Stdlib\Hydrator\HydratorInterface' .
-                                        'to be used as the default hydrator.',
-                                    get_class($hydrator)
+                                    'Cannot locate default hydrator by name "%s" via the HydratorManager',
+                                    $hydratorServiceName
                                 )
                             );
                         }
+
+                        $hydrator = $hydrators->get($hydratorServiceName);
+                        $helper->setDefaultHydrator($hydrator);
                     }
 
                     if (isset($config['hydrators']) && is_array($config['hydrators'])) {
                         $hydratorMap = $config['hydrators'];
                         foreach ($hydratorMap as $class => $hydratorServiceName) {
-                            $hydrator = $services->get($hydratorServiceName);
-                            if ($hydrator instanceof HydratorInterface) {
-                                $helper->addHydrator($class, $hydrator);
-                            } else {
-                                throw new Exception\DomainException(
-                                    sprintf(
-                                        'Hydrator %s for class %s must implement the' .
-                                            'Zend\Stdlib\Hydrator\HydratorInterface',
-                                        get_class($hydrator), $class
-                                    )
-                                );
-                            }
+                            $helper->addHydrator($class, $hydratorServiceName);
                         }
                     }
                 }
