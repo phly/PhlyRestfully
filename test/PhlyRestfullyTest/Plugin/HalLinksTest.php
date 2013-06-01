@@ -204,4 +204,39 @@ class HalLinksTest extends TestCase
         $contact = $rendered['_embedded']['contact'];
         $this->assertRelationalLinkContains('/contacts/foo', 'self', $contact);
     }
+
+    /**
+     * @group 71
+     */
+    public function testRenderingCollectionRendersAllLinksInEmbeddedResources()
+    {
+        $embedded = new HalResource((object) array('id' => 'foo', 'name' => 'foo'), 'foo');
+        $links = $embedded->getLinks();
+        $self = new Link('self');
+        $self->setRoute('hostname/users', array('id' => 'foo'));
+        $links->add($self);
+        $phones = new Link('phones');
+        $phones->setUrl('http://localhost.localdomain/users/foo/phones');
+        $links->add($phones);
+
+        $collection = new HalCollection(array($embedded));
+        $collection->setCollectionName('users');
+        $self = new Link('self');
+        $self->setRoute('hostname/users');
+        $collection->getLinks()->add($self);
+
+        $rendered = $this->plugin->renderCollection($collection);
+
+        $this->assertRelationalLinkContains('/users', 'self', $rendered);
+        $this->assertArrayHasKey('_embedded', $rendered);
+        $this->assertInternalType('array', $rendered['_embedded']);
+        $this->assertArrayHasKey('users', $rendered['_embedded']);
+
+        $users = $rendered['_embedded']['users'];
+        $this->assertInternalType('array', $users);
+        $user = array_shift($users);
+
+        $this->assertRelationalLinkContains('/users/foo', 'self', $user);
+        $this->assertRelationalLinkContains('/users/foo/phones', 'phones', $user);
+    }
 }

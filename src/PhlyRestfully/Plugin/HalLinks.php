@@ -562,6 +562,11 @@ class HalLinks extends AbstractHelper implements
 
             $resource = $eventParams['resource'];
 
+            if ($resource instanceof HalResource) {
+                $collection[] = $this->renderResource($resource);
+                continue;
+            }
+
             if (!is_array($resource)) {
                 $resource = $this->convertResourceToArray($resource);
             }
@@ -643,9 +648,6 @@ class HalLinks extends AbstractHelper implements
      */
     protected function convertResourceToArray($resource)
     {
-        if ($resource instanceof HalResource) {
-            $resource = $resource->resource;
-        }
         $hydrator = $this->getHydratorForResource($resource);
         if (!$hydrator) {
             return (array) $resource;
