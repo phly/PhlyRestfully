@@ -19,6 +19,7 @@ use PhlyRestfully\View\RestfulJsonRenderer;
 use PHPUnit_Framework_TestCase as TestCase;
 use ReflectionObject;
 use Zend\Http\Request;
+use Zend\Mvc\Controller\PluginManager as ControllerPluginManager;
 use Zend\Mvc\Router\Http\TreeRouteStack;
 use Zend\View\HelperPluginManager;
 use Zend\View\Helper\ServerUrl as ServerUrlHelper;
@@ -57,6 +58,9 @@ class ChildResourcesIntegrationTest extends TestCase
         $helpers->setService('url', $urlHelper);
         $helpers->setService('serverUrl', $serverUrlHelper);
         $helpers->setService('halLinks', $linksHelper);
+
+        $this->plugins = $plugins = new ControllerPluginManager();
+        $plugins->setService('halLinks', $linksHelper);
     }
 
     public function setupRenderer()
@@ -350,6 +354,7 @@ class ChildResourcesIntegrationTest extends TestCase
             );
         });
         $controller = new ResourceController();
+        $controller->setPluginManager($this->plugins);
         $controller->setResource($resource);
         $controller->setIdentifierName('child_id');
         $r = new ReflectionObject($controller);
@@ -398,6 +403,7 @@ class ChildResourcesIntegrationTest extends TestCase
             );
         });
         $controller = new ResourceController();
+        $controller->setPluginManager($this->plugins);
         $controller->setResource($resource);
         $controller->setRoute('parent/child');
         $controller->setIdentifierName('child_id');

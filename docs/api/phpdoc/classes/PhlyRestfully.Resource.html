@@ -1,0 +1,472 @@
+<!DOCTYPE html><html lang="en">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta name="viewport" content="width=device-width; initial-scale=1.0; maximum-scale=1.0; user-scalable=0;">
+<meta charset="utf-8">
+<title>PhlyRestfully » \PhlyRestfully\Resource</title>
+<meta name="author" content="Mike van Riel">
+<meta name="description" content="">
+<link href="../css/template.css" rel="stylesheet" media="all">
+<script src="../js/jquery-1.7.1.min.js" type="text/javascript"></script><script src="../js/jquery-ui-1.8.2.custom.min.js" type="text/javascript"></script><script src="../js/jquery.mousewheel.min.js" type="text/javascript"></script><script src="../js/bootstrap.js" type="text/javascript"></script><script src="../js/template.js" type="text/javascript"></script><script src="../js/prettify/prettify.min.js" type="text/javascript"></script><link rel="shortcut icon" href="../img/favicon.ico">
+<link rel="apple-touch-icon" href="../img/apple-touch-icon.png">
+<link rel="apple-touch-icon" sizes="72x72" href="../img/apple-touch-icon-72x72.png">
+<link rel="apple-touch-icon" sizes="114x114" href="../img/apple-touch-icon-114x114.png">
+</head>
+<body>
+<div class="navbar navbar-fixed-top">
+<div class="navbar-inner"><div class="container">
+<a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse"><span class="icon-bar"></span><span class="icon-bar"></span><span class="icon-bar"></span></a><a class="brand" href="../index.html">PhlyRestfully</a><div class="nav-collapse"><ul class="nav">
+<li class="dropdown">
+<a href="#api" class="dropdown-toggle" data-toggle="dropdown">
+                                    API Documentation <b class="caret"></b></a><ul class="dropdown-menu">
+<li><a>Namespaces</a></li>
+<li><a href="../namespaces/PhlyRestfully.html"><i class="icon-th"></i> PhlyRestfully</a></li>
+<li><a>Packages</a></li>
+<li><a href="../packages/Default.html"><i class="icon-folder-open"></i> Default</a></li>
+<li><a href="../packages/PhlyRestfully.html"><i class="icon-folder-open"></i> PhlyRestfully</a></li>
+</ul>
+</li>
+<li class="dropdown" id="charts-menu">
+<a href="#charts" class="dropdown-toggle" data-toggle="dropdown">
+                                    Charts <b class="caret"></b></a><ul class="dropdown-menu"><li><a href="../graph_class.html"><i class="icon-list-alt"></i> Class hierarchy diagram</a></li></ul>
+</li>
+<li class="dropdown" id="reports-menu">
+<a href="#reports" class="dropdown-toggle" data-toggle="dropdown">
+                                    Reports <b class="caret"></b></a><ul class="dropdown-menu">
+<li><a href="../errors.html"><i class="icon-remove-sign"></i> Errors 
+                <span class="label label-info">129</span></a></li>
+<li><a href="../markers.html"><i class="icon-map-marker"></i> Markers 
+                <ul><li>todo 
+                <span class="label label-info">1</span>
+</li></ul></a></li>
+<li><a href="../deprecated.html"><i class="icon-stop"></i> Deprecated elements 
+                <span class="label label-info">0</span></a></li>
+</ul>
+</li>
+</ul></div>
+</div></div>
+<div class="go_to_top"><a href="#___" style="color: inherit">Back to top  <i class="icon-upload icon-white"></i></a></div>
+</div>
+<div id="___" class="container">
+<noscript><div class="alert alert-warning">
+                            Javascript is disabled; several features are only available
+                            if Javascript is enabled.
+                        </div></noscript>
+<div class="row">
+<div class="span4">
+<span class="btn-group visibility" data-toggle="buttons-checkbox"><button class="btn public active" title="Show public elements">Public</button><button class="btn protected" title="Show protected elements">Protected</button><button class="btn private" title="Show private elements">Private</button><button class="btn inherited active" title="Show inherited elements">Inherited</button></span><div class="btn-group view pull-right" data-toggle="buttons-radio">
+<button class="btn details" title="Show descriptions and method names"><i class="icon-list"></i></button><button class="btn simple" title="Show only method names"><i class="icon-align-justify"></i></button>
+</div>
+<ul class="side-nav nav nav-list"><li class="nav-header">
+<i class="icon-custom icon-method"></i> Methods
+                    <ul>
+<li class="method public "><a href="#method_create" title="create :: Create a record in the resource"><span class="description">Create a record in the resource</span><pre>create()</pre></a></li>
+<li class="method public "><a href="#method_delete" title="delete :: Delete an existing item"><span class="description">Delete an existing item</span><pre>delete()</pre></a></li>
+<li class="method public "><a href="#method_deleteList" title="deleteList :: Delete an existing collection of records"><span class="description">Delete an existing collection of records</span><pre>deleteList()</pre></a></li>
+<li class="method public "><a href="#method_fetch" title="fetch :: Fetch an existing item"><span class="description">Fetch an existing item</span><pre>fetch()</pre></a></li>
+<li class="method public "><a href="#method_fetchAll" title="fetchAll :: Fetch a collection of items"><span class="description">Fetch a collection of items</span><pre>fetchAll()</pre></a></li>
+<li class="method public "><a href="#method_getEventManager" title="getEventManager :: Retrieve event manager"><span class="description">Retrieve event manager</span><pre>getEventManager()</pre></a></li>
+<li class="method public "><a href="#method_getEventParam" title="getEventParam :: "><span class="description">getEventParam()
+        </span><pre>getEventParam()</pre></a></li>
+<li class="method public "><a href="#method_getEventParams" title="getEventParams :: Get the event parameters"><span class="description">Get the event parameters</span><pre>getEventParams()</pre></a></li>
+<li class="method public "><a href="#method_getQueryParams" title="getQueryParams :: "><span class="description">getQueryParams()
+        </span><pre>getQueryParams()</pre></a></li>
+<li class="method public "><a href="#method_getRouteMatch" title="getRouteMatch :: "><span class="description">getRouteMatch()
+        </span><pre>getRouteMatch()</pre></a></li>
+<li class="method public "><a href="#method_patch" title="patch :: Partial update of an existing item"><span class="description">Partial update of an existing item</span><pre>patch()</pre></a></li>
+<li class="method public "><a href="#method_replaceList" title="replaceList :: Update (replace) an existing collection of items"><span class="description">Update (replace) an existing collection of items</span><pre>replaceList()</pre></a></li>
+<li class="method public "><a href="#method_setEventManager" title="setEventManager :: Set event manager instance"><span class="description">Set event manager instance</span><pre>setEventManager()</pre></a></li>
+<li class="method public "><a href="#method_setEventParam" title="setEventParam :: "><span class="description">setEventParam()
+        </span><pre>setEventParam()</pre></a></li>
+<li class="method public "><a href="#method_setEventParams" title="setEventParams :: Set the event parameters"><span class="description">Set the event parameters</span><pre>setEventParams()</pre></a></li>
+<li class="method public "><a href="#method_setQueryParams" title="setQueryParams :: "><span class="description">setQueryParams()
+        </span><pre>setQueryParams()</pre></a></li>
+<li class="method public "><a href="#method_setRouteMatch" title="setRouteMatch :: "><span class="description">setRouteMatch()
+        </span><pre>setRouteMatch()</pre></a></li>
+<li class="method public "><a href="#method_update" title="update :: Update (replace) an existing item"><span class="description">Update (replace) an existing item</span><pre>update()</pre></a></li>
+</ul>
+</li></ul>
+</div>
+<div class="span8">
+<a id="\PhlyRestfully\Resource"></a><ul class="breadcrumb">
+<li>
+<a href="../index.html"><i class="icon-custom icon-class"></i></a><span class="divider">\</span>
+</li>
+<li><a href="../namespaces/PhlyRestfully.html">PhlyRestfully</a></li>
+<li class="active">
+<span class="divider">\</span><a href="../classes/PhlyRestfully.Resource.html">Resource</a>
+</li>
+</ul>
+<div class="element class">
+<p class="short_description">Base resource class</p>
+<div class="details">
+<div class="long_description"><p>Essentially, simply marshalls arguments and triggers events; it is useless
+without listeners to do the actual work.</p></div>
+<h3>
+<i class="icon-custom icon-method"></i> Methods</h3>
+<a id="method_create"></a><div class="element clickable method public method_create" data-toggle="collapse" data-target=".method_create .collapse">
+<h2>Create a record in the resource</h2>
+<pre>create(array | object $data) : array | object</pre>
+<div class="labels"></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"><p>Expects either an array or object representing the item to create. If
+a non-array, non-object is provided, raises an exception.</p>
+
+<p>The value returned by the last listener to the "create" event will be
+returned as long as it is an array or object; otherwise, the original
+$data is returned. If you wish to indicate failure to create, raise a
+PhlyRestfully\Exception\CreationException from a listener.</p></div>
+<h3>Parameters</h3>
+<div class="subelement argument">
+<h4>$data</h4>
+<code>array</code><code>object</code>
+</div>
+<h3>Exceptions</h3>
+<table class="table table-bordered"><tr>
+<th><code><a href="../classes/PhlyRestfully.Exception.InvalidArgumentException.html">\PhlyRestfully\Exception\InvalidArgumentException</a></code></th>
+<td></td>
+</tr></table>
+<h3>Returns</h3>
+<div class="subelement response">
+<code>array</code><code>object</code>
+</div>
+</div></div>
+</div>
+<a id="method_delete"></a><div class="element clickable method public method_delete" data-toggle="collapse" data-target=".method_delete .collapse">
+<h2>Delete an existing item</h2>
+<pre>delete(string | int $id) : bool</pre>
+<div class="labels"></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"><p>Use to delete the item indicated by $id. The value returned by the last
+listener will be used, as long as it is a boolean; otherwise, a boolean
+false will be returned, indicating failure to delete.</p></div>
+<h3>Parameters</h3>
+<div class="subelement argument">
+<h4>$id</h4>
+<code>string</code><code>int</code>
+</div>
+<h3>Returns</h3>
+<div class="subelement response"><code>bool</code></div>
+</div></div>
+</div>
+<a id="method_deleteList"></a><div class="element clickable method public method_deleteList" data-toggle="collapse" data-target=".method_deleteList .collapse">
+<h2>Delete an existing collection of records</h2>
+<pre>deleteList(null | array $data) : bool</pre>
+<div class="labels"></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"></div>
+<h3>Parameters</h3>
+<div class="subelement argument">
+<h4>$data</h4>
+<code>null</code><code>array</code>
+</div>
+<h3>Returns</h3>
+<div class="subelement response"><code>bool</code></div>
+</div></div>
+</div>
+<a id="method_fetch"></a><div class="element clickable method public method_fetch" data-toggle="collapse" data-target=".method_fetch .collapse">
+<h2>Fetch an existing item</h2>
+<pre>fetch(string | int $id) : false | array | object</pre>
+<div class="labels"></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"><p>Retrieve an existing item indicated by $id. The value of the last
+listener will be returned, as long as it is an array or object;
+otherwise, a boolean false value will be returned, indicating a
+lookup failure.</p></div>
+<h3>Parameters</h3>
+<div class="subelement argument">
+<h4>$id</h4>
+<code>string</code><code>int</code>
+</div>
+<h3>Returns</h3>
+<div class="subelement response">
+<code>false</code><code>array</code><code>object</code>
+</div>
+</div></div>
+</div>
+<a id="method_fetchAll"></a><div class="element clickable method public method_fetchAll" data-toggle="collapse" data-target=".method_fetchAll .collapse">
+<h2>Fetch a collection of items</h2>
+<pre>fetchAll() : array | \Traversable</pre>
+<div class="labels"></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"><p>Use to retrieve a collection of items. The value of the last
+listener will be returned, as long as it is an array or Traversable;
+otherwise, an empty array will be returned.</p>
+
+<p>The recommendation is to return a \Zend\Paginator\Paginator instance,
+which will allow performing paginated sets, and thus allow the view
+layer to select the current page based on the query string or route.</p></div>
+<h3>Returns</h3>
+<div class="subelement response">
+<code>array</code><code>\Traversable</code>
+</div>
+</div></div>
+</div>
+<a id="method_getEventManager"></a><div class="element clickable method public method_getEventManager" data-toggle="collapse" data-target=".method_getEventManager .collapse">
+<h2>Retrieve event manager</h2>
+<pre>getEventManager() : \Zend\EventManager\EventManagerInterface</pre>
+<div class="labels"></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"><p>Lazy-instantiates an EM instance if none provided.</p></div>
+<h3>Returns</h3>
+<div class="subelement response"><code>\Zend\EventManager\EventManagerInterface</code></div>
+</div></div>
+</div>
+<a id="method_getEventParam"></a><div class="element clickable method public method_getEventParam" data-toggle="collapse" data-target=".method_getEventParam .collapse">
+<h2>getEventParam()
+        </h2>
+<pre>getEventParam(mixed $name, mixed $default) : mixed</pre>
+<div class="labels"></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"></div>
+<h3>Parameters</h3>
+<div class="subelement argument">
+<h4>$name</h4>
+<code>mixed</code>
+</div>
+<div class="subelement argument">
+<h4>$default</h4>
+<code>mixed</code>
+</div>
+<h3>Returns</h3>
+<div class="subelement response"><code>mixed</code></div>
+</div></div>
+</div>
+<a id="method_getEventParams"></a><div class="element clickable method public method_getEventParams" data-toggle="collapse" data-target=".method_getEventParams .collapse">
+<h2>Get the event parameters</h2>
+<pre>getEventParams() : array</pre>
+<div class="labels"></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"></div>
+<h3>Returns</h3>
+<div class="subelement response"><code>array</code></div>
+</div></div>
+</div>
+<a id="method_getQueryParams"></a><div class="element clickable method public method_getQueryParams" data-toggle="collapse" data-target=".method_getQueryParams .collapse">
+<h2>getQueryParams()
+        </h2>
+<pre>getQueryParams() : null | \Zend\Stdlib\Parameters</pre>
+<div class="labels"></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"></div>
+<h3>Returns</h3>
+<div class="subelement response">
+<code>null</code><code>\Zend\Stdlib\Parameters</code>
+</div>
+</div></div>
+</div>
+<a id="method_getRouteMatch"></a><div class="element clickable method public method_getRouteMatch" data-toggle="collapse" data-target=".method_getRouteMatch .collapse">
+<h2>getRouteMatch()
+        </h2>
+<pre>getRouteMatch() : null | \Zend\Mvc\Router\RouteMatch</pre>
+<div class="labels"></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"></div>
+<h3>Returns</h3>
+<div class="subelement response">
+<code>null</code><code>\Zend\Mvc\Router\RouteMatch</code>
+</div>
+</div></div>
+</div>
+<a id="method_patch"></a><div class="element clickable method public method_patch" data-toggle="collapse" data-target=".method_patch .collapse">
+<h2>Partial update of an existing item</h2>
+<pre>patch(string | int $id, array | object $data) : array | object</pre>
+<div class="labels"></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"><p>Update the item indicated by $id, using the information from $data;
+$data should be merged with the existing item in order to provide a
+partial update. Additionally, $data should be an array or object; any
+other value will raise an exception.</p>
+
+<p>Like create(), the return value of the last executed listener will be
+returned, as long as it is an array or object; otherwise, $data is
+returned. If you wish to indicate failure to update, raise a
+PhlyRestfully\Exception\PatchException.</p></div>
+<h3>Parameters</h3>
+<div class="subelement argument">
+<h4>$id</h4>
+<code>string</code><code>int</code>
+</div>
+<div class="subelement argument">
+<h4>$data</h4>
+<code>array</code><code>object</code>
+</div>
+<h3>Exceptions</h3>
+<table class="table table-bordered"><tr>
+<th><code><a href="../classes/PhlyRestfully.Exception.InvalidArgumentException.html">\PhlyRestfully\Exception\InvalidArgumentException</a></code></th>
+<td></td>
+</tr></table>
+<h3>Returns</h3>
+<div class="subelement response">
+<code>array</code><code>object</code>
+</div>
+</div></div>
+</div>
+<a id="method_replaceList"></a><div class="element clickable method public method_replaceList" data-toggle="collapse" data-target=".method_replaceList .collapse">
+<h2>Update (replace) an existing collection of items</h2>
+<pre>replaceList(array $data) : array | object</pre>
+<div class="labels"></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"><p>Replaces the collection with  the items contained in $data.
+$data should be a multidimensional array or array of objects; if
+otherwise, an exception will be raised.</p>
+
+<p>Like update(), the return value of the last executed listener will be
+returned, as long as it is an array or object; otherwise, $data is
+returned. If you wish to indicate failure to update, raise a
+PhlyRestfully\Exception\UpdateException.</p></div>
+<h3>Parameters</h3>
+<div class="subelement argument">
+<h4>$data</h4>
+<code>array</code>
+</div>
+<h3>Exceptions</h3>
+<table class="table table-bordered"><tr>
+<th><code><a href="../classes/PhlyRestfully.Exception.InvalidArgumentException.html">\PhlyRestfully\Exception\InvalidArgumentException</a></code></th>
+<td></td>
+</tr></table>
+<h3>Returns</h3>
+<div class="subelement response">
+<code>array</code><code>object</code>
+</div>
+</div></div>
+</div>
+<a id="method_setEventManager"></a><div class="element clickable method public method_setEventManager" data-toggle="collapse" data-target=".method_setEventManager .collapse">
+<h2>Set event manager instance</h2>
+<pre>setEventManager(\Zend\EventManager\EventManagerInterface $events) : Resource</pre>
+<div class="labels"></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"><p>Sets the event manager identifiers to the current class, this class, and
+the resource interface.</p></div>
+<h3>Parameters</h3>
+<div class="subelement argument">
+<h4>$events</h4>
+<code>\Zend\EventManager\EventManagerInterface</code>
+</div>
+<h3>Returns</h3>
+<div class="subelement response"><code>Resource</code></div>
+</div></div>
+</div>
+<a id="method_setEventParam"></a><div class="element clickable method public method_setEventParam" data-toggle="collapse" data-target=".method_setEventParam .collapse">
+<h2>setEventParam()
+        </h2>
+<pre>setEventParam(string $name, mixed $value) : mixed</pre>
+<div class="labels"></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"></div>
+<h3>Parameters</h3>
+<div class="subelement argument">
+<h4>$name</h4>
+<code>string</code>
+</div>
+<div class="subelement argument">
+<h4>$value</h4>
+<code>mixed</code>
+</div>
+<h3>Returns</h3>
+<div class="subelement response"><code>mixed</code></div>
+</div></div>
+</div>
+<a id="method_setEventParams"></a><div class="element clickable method public method_setEventParams" data-toggle="collapse" data-target=".method_setEventParams .collapse">
+<h2>Set the event parameters</h2>
+<pre>setEventParams(array $params) : <a href="../classes/PhlyRestfully.Resource.html">\PhlyRestfully\Resource</a></pre>
+<div class="labels"></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"></div>
+<table class="table table-bordered"><tr>
+<th>fluent</th>
+<td>This method is part of a fluent interface and will return the same instance</td>
+</tr></table>
+<h3>Parameters</h3>
+<div class="subelement argument">
+<h4>$params</h4>
+<code>array</code>
+</div>
+<h3>Returns</h3>
+<div class="subelement response"><code><a href="../classes/PhlyRestfully.Resource.html">\PhlyRestfully\Resource</a></code></div>
+</div></div>
+</div>
+<a id="method_setQueryParams"></a><div class="element clickable method public method_setQueryParams" data-toggle="collapse" data-target=".method_setQueryParams .collapse">
+<h2>setQueryParams()
+        </h2>
+<pre>setQueryParams(\Zend\Stdlib\Parameters $params) : <a href="../classes/PhlyRestfully.Resource.html">\PhlyRestfully\Resource</a></pre>
+<div class="labels"></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"></div>
+<table class="table table-bordered"><tr>
+<th>fluent</th>
+<td>This method is part of a fluent interface and will return the same instance</td>
+</tr></table>
+<h3>Parameters</h3>
+<div class="subelement argument">
+<h4>$params</h4>
+<code>\Zend\Stdlib\Parameters</code>
+</div>
+<h3>Returns</h3>
+<div class="subelement response"><code><a href="../classes/PhlyRestfully.Resource.html">\PhlyRestfully\Resource</a></code></div>
+</div></div>
+</div>
+<a id="method_setRouteMatch"></a><div class="element clickable method public method_setRouteMatch" data-toggle="collapse" data-target=".method_setRouteMatch .collapse">
+<h2>setRouteMatch()
+        </h2>
+<pre>setRouteMatch(\Zend\Mvc\Router\RouteMatch $matches) : <a href="../classes/PhlyRestfully.Resource.html">\PhlyRestfully\Resource</a></pre>
+<div class="labels"></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"></div>
+<table class="table table-bordered"><tr>
+<th>fluent</th>
+<td>This method is part of a fluent interface and will return the same instance</td>
+</tr></table>
+<h3>Parameters</h3>
+<div class="subelement argument">
+<h4>$matches</h4>
+<code>\Zend\Mvc\Router\RouteMatch</code>
+</div>
+<h3>Returns</h3>
+<div class="subelement response"><code><a href="../classes/PhlyRestfully.Resource.html">\PhlyRestfully\Resource</a></code></div>
+</div></div>
+</div>
+<a id="method_update"></a><div class="element clickable method public method_update" data-toggle="collapse" data-target=".method_update .collapse">
+<h2>Update (replace) an existing item</h2>
+<pre>update(string | int $id, array | object $data) : array | object</pre>
+<div class="labels"></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"><p>Updates the item indicated by $id, replacing it with the information
+in $data. $data should be a full representation of the item, and should
+be an array or object; if otherwise, an exception will be raised.</p>
+
+<p>Like create(), the return value of the last executed listener will be
+returned, as long as it is an array or object; otherwise, $data is
+returned. If you wish to indicate failure to update, raise a
+PhlyRestfully\Exception\UpdateException.</p></div>
+<h3>Parameters</h3>
+<div class="subelement argument">
+<h4>$id</h4>
+<code>string</code><code>int</code>
+</div>
+<div class="subelement argument">
+<h4>$data</h4>
+<code>array</code><code>object</code>
+</div>
+<h3>Exceptions</h3>
+<table class="table table-bordered"><tr>
+<th><code><a href="../classes/PhlyRestfully.Exception.InvalidArgumentException.html">\PhlyRestfully\Exception\InvalidArgumentException</a></code></th>
+<td></td>
+</tr></table>
+<h3>Returns</h3>
+<div class="subelement response">
+<code>array</code><code>object</code>
+</div>
+</div></div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="row"><footer class="span12">
+            Template is built using <a href="http://twitter.github.com/bootstrap/">Twitter Bootstrap 2</a> and icons provided by <a href="http://glyphicons.com/">Glyphicons</a>.<br>
+            Documentation is powered by <a href="http://www.phpdoc.org/">phpDocumentor 2.0.0a12</a> and<br>
+            generated on 2013-05-17T09:43:13-05:00.<br></footer></div>
+</div>
+</body>
+</html>

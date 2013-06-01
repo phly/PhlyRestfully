@@ -105,13 +105,6 @@ class ResourceController extends AbstractRestfulController
     );
 
     /**
-     * Route segment or query parameter name indicating resource identifer
-     *
-     * @var string
-     */
-    protected $identifierName = 'id';
-
-    /**
      * Route name that resolves to this resource; used to generate links.
      *
      * @var string
@@ -221,25 +214,6 @@ class ResourceController extends AbstractRestfulController
     }
 
     /**
-     * Set the route match segment or query string parameter indicating the
-     * resource identifier
-     *
-     * @param  string $name
-     */
-    public function setIdentifierName($name)
-    {
-        $this->identifierName = (string) $name;
-    }
-
-    /**
-     * @return string
-     */
-    public function getIdentifierName()
-    {
-        return $this->identifierName;
-    }
-
-    /**
      * Inject the route name for this resource.
      *
      * @param  string $route
@@ -330,25 +304,19 @@ class ResourceController extends AbstractRestfulController
             return new ApiProblem($code, $e);
         }
 
-        if (!$resource instanceof HalResource) {
-            if ($resource instanceof ApiProblem) {
-                return $resource;
-            }
-
-            $id = $this->getIdentifierFromResource($resource);
-            if (!$id) {
-                return new ApiProblem(
-                    422,
-                    'No resource identifier present following resource creation.'
-                );
-            }
-
-            $resource = new HalResource($resource, $id);
+        if ($resource instanceof ApiProblem) {
+            return $resource;
         }
 
-        $this->injectSelfLink($resource);
+        $plugin   = $this->plugin('HalLinks');
+        $resource = $plugin->createResource($resource, $this->route, $this->getIdentifierName());
+
+        if ($resource instanceof ApiProblem) {
+            return $resource;
+        }
+
         $self = $resource->getLinks()->get('self');
-        $self = $this->plugin('HalLinks')->fromLink($self);
+        $self = $plugin->fromLink($self);
 
         $response = $this->getResponse();
         $response->setStatusCode(201);
@@ -459,11 +427,13 @@ class ResourceController extends AbstractRestfulController
             return $resource;
         }
 
-        if (!$resource instanceof HalResource) {
-            $resource = new HalResource($resource, $id);
+        $plugin   = $this->plugin('HalLinks');
+        $resource = $plugin->createResource($resource, $this->route, $this->getIdentifierName());
+
+        if ($resource instanceof ApiProblem) {
+            return $resource;
         }
 
-        $this->injectSelfLink($resource);
         $events->trigger('get.post', $this, array('id' => $id, 'resource' => $resource));
         return $resource;
     }
@@ -494,10 +464,8 @@ class ResourceController extends AbstractRestfulController
             return $collection;
         }
 
-        if (!$collection instanceof HalCollection) {
-            $collection = new HalCollection($collection);
-        }
-        $this->injectSelfLink($collection);
+        $plugin     = $this->plugin('HalLinks');
+        $collection = $plugin->createCollection($collection, $this->route);
         $collection->setCollectionRoute($this->route);
         $collection->setIdentifierName($this->getIdentifierName());
         $collection->setResourceRoute($this->route);
@@ -586,11 +554,12 @@ class ResourceController extends AbstractRestfulController
             return $resource;
         }
 
-        if (!$resource instanceof HalResource) {
-            $resource = new HalResource($resource, $id);
-        }
+        $plugin   = $this->plugin('HalLinks');
+        $resource = $plugin->createResource($resource, $this->route, $this->getIdentifierName());
 
-        $this->injectSelfLink($resource);
+        if ($resource instanceof ApiProblem) {
+            return $resource;
+        }
 
         $events->trigger('patch.post', $this, array('id' => $id, 'data' => $data, 'resource' => $resource));
         return $resource;
@@ -626,11 +595,8 @@ class ResourceController extends AbstractRestfulController
             return $resource;
         }
 
-        if (!$resource instanceof HalResource) {
-            $resource = new HalResource($resource, $id);
-        }
-
-        $this->injectSelfLink($resource);
+        $plugin   = $this->plugin('HalLinks');
+        $resource = $plugin->createResource($resource, $this->route, $this->getIdentifierName());
 
         $events->trigger('update.post', $this, array('id' => $id, 'data' => $data, 'resource' => $resource));
         return $resource;
@@ -662,10 +628,8 @@ class ResourceController extends AbstractRestfulController
             return $collection;
         }
 
-        if (!$collection instanceof HalCollection) {
-            $collection = new HalCollection($collection);
-        }
-        $this->injectSelfLink($collection);
+        $plugin = $this->plugin('HalLinks');
+        $collection = $plugin->createCollection($collection, $this->route);
         $collection->setCollectionRoute($this->route);
         $collection->setIdentifierName($this->getIdentifierName());
         $collection->setResourceRoute($this->route);
@@ -700,38 +664,6 @@ class ResourceController extends AbstractRestfulController
             return $id;
         }
 
-        return false;
-    }
-
-    /**
-     * Retrieve an identifier from a resource
-     *
-     * @param  array|object $resource
-     * @return false|int|string
-     */
-    protected function getIdentifierFromResource($resource)
-    {
-        // Found id in array
-        if (is_array($resource) && array_key_exists('id', $resource)) {
-            return $resource['id'];
-        }
-
-        // No id in array, or not an object; return false
-        if (is_array($resource) || !is_object($resource)) {
-            return false;
-        }
-
-        // Found public id property on object
-        if (isset($resource->id)) {
-            return $resource->id;
-        }
-
-        // Found public id getter on object
-        if (method_exists($resource, 'getid')) {
-            return $resource->getId();
-        }
-
-        // not found
         return false;
     }
 
@@ -786,21 +718,5 @@ class ResourceController extends AbstractRestfulController
         $headers = $response->getHeaders();
         $headers->addHeaderLine('Allow', implode(', ', $options));
         return $response;
-    }
-
-    /**
-     * Inject the "self" relational link into a resource/collection
-     *
-     * @param  LinkCollectionAwareInterface $resource
-     */
-    protected function injectSelfLink(LinkCollectionAwareInterface $resource)
-    {
-        $self = new Link('self');
-        $self->setRoute($this->route);
-        if ($resource instanceof HalResource) {
-            $identifier = $this->getIdentifierName();
-            $self->setRouteParams(array($identifier => $resource->id));
-        }
-        $resource->getLinks()->add($self);
     }
 }

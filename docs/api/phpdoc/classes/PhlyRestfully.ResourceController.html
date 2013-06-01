@@ -1,0 +1,484 @@
+<!DOCTYPE html><html lang="en">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta name="viewport" content="width=device-width; initial-scale=1.0; maximum-scale=1.0; user-scalable=0;">
+<meta charset="utf-8">
+<title>PhlyRestfully » \PhlyRestfully\ResourceController</title>
+<meta name="author" content="Mike van Riel">
+<meta name="description" content="">
+<link href="../css/template.css" rel="stylesheet" media="all">
+<script src="../js/jquery-1.7.1.min.js" type="text/javascript"></script><script src="../js/jquery-ui-1.8.2.custom.min.js" type="text/javascript"></script><script src="../js/jquery.mousewheel.min.js" type="text/javascript"></script><script src="../js/bootstrap.js" type="text/javascript"></script><script src="../js/template.js" type="text/javascript"></script><script src="../js/prettify/prettify.min.js" type="text/javascript"></script><link rel="shortcut icon" href="../img/favicon.ico">
+<link rel="apple-touch-icon" href="../img/apple-touch-icon.png">
+<link rel="apple-touch-icon" sizes="72x72" href="../img/apple-touch-icon-72x72.png">
+<link rel="apple-touch-icon" sizes="114x114" href="../img/apple-touch-icon-114x114.png">
+</head>
+<body>
+<div class="navbar navbar-fixed-top">
+<div class="navbar-inner"><div class="container">
+<a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse"><span class="icon-bar"></span><span class="icon-bar"></span><span class="icon-bar"></span></a><a class="brand" href="../index.html">PhlyRestfully</a><div class="nav-collapse"><ul class="nav">
+<li class="dropdown">
+<a href="#api" class="dropdown-toggle" data-toggle="dropdown">
+                                    API Documentation <b class="caret"></b></a><ul class="dropdown-menu">
+<li><a>Namespaces</a></li>
+<li><a href="../namespaces/PhlyRestfully.html"><i class="icon-th"></i> PhlyRestfully</a></li>
+<li><a>Packages</a></li>
+<li><a href="../packages/Default.html"><i class="icon-folder-open"></i> Default</a></li>
+<li><a href="../packages/PhlyRestfully.html"><i class="icon-folder-open"></i> PhlyRestfully</a></li>
+</ul>
+</li>
+<li class="dropdown" id="charts-menu">
+<a href="#charts" class="dropdown-toggle" data-toggle="dropdown">
+                                    Charts <b class="caret"></b></a><ul class="dropdown-menu"><li><a href="../graph_class.html"><i class="icon-list-alt"></i> Class hierarchy diagram</a></li></ul>
+</li>
+<li class="dropdown" id="reports-menu">
+<a href="#reports" class="dropdown-toggle" data-toggle="dropdown">
+                                    Reports <b class="caret"></b></a><ul class="dropdown-menu">
+<li><a href="../errors.html"><i class="icon-remove-sign"></i> Errors 
+                <span class="label label-info">129</span></a></li>
+<li><a href="../markers.html"><i class="icon-map-marker"></i> Markers 
+                <ul><li>todo 
+                <span class="label label-info">1</span>
+</li></ul></a></li>
+<li><a href="../deprecated.html"><i class="icon-stop"></i> Deprecated elements 
+                <span class="label label-info">0</span></a></li>
+</ul>
+</li>
+</ul></div>
+</div></div>
+<div class="go_to_top"><a href="#___" style="color: inherit">Back to top  <i class="icon-upload icon-white"></i></a></div>
+</div>
+<div id="___" class="container">
+<noscript><div class="alert alert-warning">
+                            Javascript is disabled; several features are only available
+                            if Javascript is enabled.
+                        </div></noscript>
+<div class="row">
+<div class="span4">
+<span class="btn-group visibility" data-toggle="buttons-checkbox"><button class="btn public active" title="Show public elements">Public</button><button class="btn protected" title="Show protected elements">Protected</button><button class="btn private" title="Show private elements">Private</button><button class="btn inherited active" title="Show inherited elements">Inherited</button></span><div class="btn-group view pull-right" data-toggle="buttons-radio">
+<button class="btn details" title="Show descriptions and method names"><i class="icon-list"></i></button><button class="btn simple" title="Show only method names"><i class="icon-align-justify"></i></button>
+</div>
+<ul class="side-nav nav nav-list"><li class="nav-header">
+<i class="icon-custom icon-method"></i> Methods
+                    <ul>
+<li class="method public "><a href="#method___construct" title="__construct :: Constructor"><span class="description">Constructor</span><pre>__construct()</pre></a></li>
+<li class="method public "><a href="#method_create" title="create :: Create a new resource"><span class="description">Create a new resource</span><pre>create()</pre></a></li>
+<li class="method public "><a href="#method_delete" title="delete :: Delete an existing resource"><span class="description">Delete an existing resource</span><pre>delete()</pre></a></li>
+<li class="method public "><a href="#method_deleteList" title="deleteList :: "><span class="description">deleteList()
+        </span><pre>deleteList()</pre></a></li>
+<li class="method public "><a href="#method_get" title="get :: Return single resource"><span class="description">Return single resource</span><pre>get()</pre></a></li>
+<li class="method public "><a href="#method_getIdentifierName" title="getIdentifierName :: "><span class="description">getIdentifierName()
+        </span><pre>getIdentifierName()</pre></a></li>
+<li class="method public "><a href="#method_getList" title="getList :: Return collection of resources"><span class="description">Return collection of resources</span><pre>getList()</pre></a></li>
+<li class="method public "><a href="#method_getResource" title="getResource :: Returns the resource"><span class="description">Returns the resource</span><pre>getResource()</pre></a></li>
+<li class="method public "><a href="#method_head" title="head :: Retrieve HEAD metadata for the resource and/or collection"><span class="description">Retrieve HEAD metadata for the resource and/or collection</span><pre>head()</pre></a></li>
+<li class="method public "><a href="#method_onDispatch" title="onDispatch :: Handle the dispatch event"><span class="description">Handle the dispatch event</span><pre>onDispatch()</pre></a></li>
+<li class="method public "><a href="#method_options" title="options :: Respond to OPTIONS request"><span class="description">Respond to OPTIONS request</span><pre>options()</pre></a></li>
+<li class="method public "><a href="#method_patch" title="patch :: Respond to the PATCH method (partial update of existing resource)"><span class="description">Respond to the PATCH method (partial update of existing resource)</span><pre>patch()</pre></a></li>
+<li class="method public "><a href="#method_replaceList" title="replaceList :: Update an existing collection of resources"><span class="description">Update an existing collection of resources</span><pre>replaceList()</pre></a></li>
+<li class="method public "><a href="#method_setAcceptCriteria" title="setAcceptCriteria :: Set the Accept header criteria for use with the AcceptableViewModelSelector"><span class="description">Set the Accept header criteria for use with the AcceptableViewModelSelector</span><pre>setAcceptCriteria()</pre></a></li>
+<li class="method public "><a href="#method_setCollectionHttpOptions" title="setCollectionHttpOptions :: Set the allowed HTTP OPTIONS for the resource (collection)"><span class="description">Set the allowed HTTP OPTIONS for the resource (collection)</span><pre>setCollectionHttpOptions()</pre></a></li>
+<li class="method public "><a href="#method_setCollectionName" title="setCollectionName :: Set the name to which to assign a collection in a HalCollection"><span class="description">Set the name to which to assign a collection in a HalCollection</span><pre>setCollectionName()</pre></a></li>
+<li class="method public "><a href="#method_setContentTypes" title="setContentTypes :: Set the allowed content types for the resource (collection)"><span class="description">Set the allowed content types for the resource (collection)</span><pre>setContentTypes()</pre></a></li>
+<li class="method public "><a href="#method_setIdentifierName" title="setIdentifierName :: Set the route match segment or query string parameter indicating the
+resource identifier"><span class="description">Set the route match segment or query string parameter indicating the
+resource identifier</span><pre>setIdentifierName()</pre></a></li>
+<li class="method public "><a href="#method_setPageSize" title="setPageSize :: Set the default page size for paginated responses"><span class="description">Set the default page size for paginated responses</span><pre>setPageSize()</pre></a></li>
+<li class="method public "><a href="#method_setResource" title="setResource :: Inject the resource with which this controller will communicate."><span class="description">Inject the resource with which this controller will communicate.</span><pre>setResource()</pre></a></li>
+<li class="method public "><a href="#method_setResourceHttpOptions" title="setResourceHttpOptions :: Set the allowed HTTP OPTIONS for a resource"><span class="description">Set the allowed HTTP OPTIONS for a resource</span><pre>setResourceHttpOptions()</pre></a></li>
+<li class="method public "><a href="#method_setRoute" title="setRoute :: Inject the route name for this resource."><span class="description">Inject the route name for this resource.</span><pre>setRoute()</pre></a></li>
+<li class="method public "><a href="#method_update" title="update :: Update an existing resource"><span class="description">Update an existing resource</span><pre>update()</pre></a></li>
+</ul>
+</li></ul>
+</div>
+<div class="span8">
+<a id="\PhlyRestfully\ResourceController"></a><ul class="breadcrumb">
+<li>
+<a href="../index.html"><i class="icon-custom icon-class"></i></a><span class="divider">\</span>
+</li>
+<li><a href="../namespaces/PhlyRestfully.html">PhlyRestfully</a></li>
+<li class="active">
+<span class="divider">\</span><a href="../classes/PhlyRestfully.ResourceController.html">ResourceController</a>
+</li>
+</ul>
+<div class="element class">
+<p class="short_description">Controller for handling resources.</p>
+<div class="details">
+<div class="long_description"><p>Extends the base AbstractRestfulController in order to provide very specific
+semantics for building a RESTful JSON service. All operations return either</p>
+
+<ul>
+<li>a HAL-compliant response with appropriate hypermedia links</li>
+<li>a Problem API-compliant response for reporting an error condition</li>
+</ul>
+
+<p>You may specify what specific HTTP method types you wish to respond to, and
+OPTIONS will then report those; attempting any HTTP method falling outside
+that list will result in a 405 (Method Not Allowed) response.</p>
+
+<p>I recommend using resource-specific factories when using this controller,
+to allow injecting the specific resource you wish to use (and its listeners),
+which will also allow you to have multiple instances of the controller when
+desired.</p></div>
+<table class="table table-bordered">
+<tr>
+<th>see</th>
+<td><a href="">\PhlyRestfully\http://tools.ietf.org/html/draft-kelly-json-hal-03</a></td>
+</tr>
+<tr>
+<th>see</th>
+<td><a href="">\PhlyRestfully\http://tools.ietf.org/html/draft-nottingham-http-problem-02</a></td>
+</tr>
+</table>
+<h3>
+<i class="icon-custom icon-method"></i> Methods</h3>
+<a id="method___construct"></a><div class="element clickable method public method___construct" data-toggle="collapse" data-target=".method___construct .collapse">
+<h2>Constructor</h2>
+<pre>__construct(null | string $eventIdentifier) </pre>
+<div class="labels"></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"><p>Allows you to set the event identifier, which can be useful to allow multiple
+instances of this controller to react to different sets of shared events.</p></div>
+<h3>Parameters</h3>
+<div class="subelement argument">
+<h4>$eventIdentifier</h4>
+<code>null</code><code>string</code>
+</div>
+</div></div>
+</div>
+<a id="method_create"></a><div class="element clickable method public method_create" data-toggle="collapse" data-target=".method_create .collapse">
+<h2>Create a new resource</h2>
+<pre>create(array $data) : \Zend\Http\Response | <a href="../classes/PhlyRestfully.ApiProblem.html">\PhlyRestfully\ApiProblem</a> | <a href="../classes/PhlyRestfully.HalResource.html">\PhlyRestfully\HalResource</a></pre>
+<div class="labels"></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"></div>
+<h3>Parameters</h3>
+<div class="subelement argument">
+<h4>$data</h4>
+<code>array</code>
+</div>
+<h3>Returns</h3>
+<div class="subelement response">
+<code>\Zend\Http\Response</code><code><a href="../classes/PhlyRestfully.ApiProblem.html">\PhlyRestfully\ApiProblem</a></code><code><a href="../classes/PhlyRestfully.HalResource.html">\PhlyRestfully\HalResource</a></code>
+</div>
+</div></div>
+</div>
+<a id="method_delete"></a><div class="element clickable method public method_delete" data-toggle="collapse" data-target=".method_delete .collapse">
+<h2>Delete an existing resource</h2>
+<pre>delete(int | string $id) : \Zend\Http\Response | <a href="../classes/PhlyRestfully.ApiProblem.html">\PhlyRestfully\ApiProblem</a></pre>
+<div class="labels"></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"></div>
+<h3>Parameters</h3>
+<div class="subelement argument">
+<h4>$id</h4>
+<code>int</code><code>string</code>
+</div>
+<h3>Returns</h3>
+<div class="subelement response">
+<code>\Zend\Http\Response</code><code><a href="../classes/PhlyRestfully.ApiProblem.html">\PhlyRestfully\ApiProblem</a></code>
+</div>
+</div></div>
+</div>
+<a id="method_deleteList"></a><div class="element clickable method public method_deleteList" data-toggle="collapse" data-target=".method_deleteList .collapse">
+<h2>deleteList()
+        </h2>
+<pre>deleteList() </pre>
+<div class="labels"></div>
+<div class="row collapse"><div class="detail-description"><div class="long_description"></div></div></div>
+</div>
+<a id="method_get"></a><div class="element clickable method public method_get" data-toggle="collapse" data-target=".method_get .collapse">
+<h2>Return single resource</h2>
+<pre>get(int | string $id) : \Zend\Http\Response | <a href="../classes/PhlyRestfully.ApiProblem.html">\PhlyRestfully\ApiProblem</a> | <a href="../classes/PhlyRestfully.HalResource.html">\PhlyRestfully\HalResource</a></pre>
+<div class="labels"></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"></div>
+<h3>Parameters</h3>
+<div class="subelement argument">
+<h4>$id</h4>
+<code>int</code><code>string</code>
+</div>
+<h3>Returns</h3>
+<div class="subelement response">
+<code>\Zend\Http\Response</code><code><a href="../classes/PhlyRestfully.ApiProblem.html">\PhlyRestfully\ApiProblem</a></code><code><a href="../classes/PhlyRestfully.HalResource.html">\PhlyRestfully\HalResource</a></code>
+</div>
+</div></div>
+</div>
+<a id="method_getIdentifierName"></a><div class="element clickable method public method_getIdentifierName" data-toggle="collapse" data-target=".method_getIdentifierName .collapse">
+<h2>getIdentifierName()
+        </h2>
+<pre>getIdentifierName() : string</pre>
+<div class="labels"></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"></div>
+<h3>Returns</h3>
+<div class="subelement response"><code>string</code></div>
+</div></div>
+</div>
+<a id="method_getList"></a><div class="element clickable method public method_getList" data-toggle="collapse" data-target=".method_getList .collapse">
+<h2>Return collection of resources</h2>
+<pre>getList() : \Zend\Http\Response | <a href="../classes/PhlyRestfully.HalCollection.html">\PhlyRestfully\HalCollection</a></pre>
+<div class="labels"></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"></div>
+<h3>Returns</h3>
+<div class="subelement response">
+<code>\Zend\Http\Response</code><code><a href="../classes/PhlyRestfully.HalCollection.html">\PhlyRestfully\HalCollection</a></code>
+</div>
+</div></div>
+</div>
+<a id="method_getResource"></a><div class="element clickable method public method_getResource" data-toggle="collapse" data-target=".method_getResource .collapse">
+<h2>Returns the resource</h2>
+<pre>getResource() : <a href="../classes/PhlyRestfully.ResourceInterface.html">\PhlyRestfully\ResourceInterface</a></pre>
+<div class="labels"></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"></div>
+<h3>Exceptions</h3>
+<table class="table table-bordered"><tr>
+<th><code><a href="../classes/PhlyRestfully.Exception.DomainException.html">\PhlyRestfully\Exception\DomainException</a></code></th>
+<td>If no resource has been set</td>
+</tr></table>
+<h3>Returns</h3>
+<div class="subelement response"><code><a href="../classes/PhlyRestfully.ResourceInterface.html">\PhlyRestfully\ResourceInterface</a></code></div>
+</div></div>
+</div>
+<a id="method_head"></a><div class="element clickable method public method_head" data-toggle="collapse" data-target=".method_head .collapse">
+<h2>Retrieve HEAD metadata for the resource and/or collection</h2>
+<pre>head(null | mixed $id) : \Zend\Http\Response | <a href="../classes/PhlyRestfully.ApiProblem.html">\PhlyRestfully\ApiProblem</a> | <a href="../classes/PhlyRestfully.HalResource.html">\PhlyRestfully\HalResource</a> | <a href="../classes/PhlyRestfully.HalCollection.html">\PhlyRestfully\HalCollection</a></pre>
+<div class="labels"></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"></div>
+<h3>Parameters</h3>
+<div class="subelement argument">
+<h4>$id</h4>
+<code>null</code><code>mixed</code>
+</div>
+<h3>Returns</h3>
+<div class="subelement response">
+<code>\Zend\Http\Response</code><code><a href="../classes/PhlyRestfully.ApiProblem.html">\PhlyRestfully\ApiProblem</a></code><code><a href="../classes/PhlyRestfully.HalResource.html">\PhlyRestfully\HalResource</a></code><code><a href="../classes/PhlyRestfully.HalCollection.html">\PhlyRestfully\HalCollection</a></code>
+</div>
+</div></div>
+</div>
+<a id="method_onDispatch"></a><div class="element clickable method public method_onDispatch" data-toggle="collapse" data-target=".method_onDispatch .collapse">
+<h2>Handle the dispatch event</h2>
+<pre>onDispatch(\Zend\Mvc\MvcEvent $e) : mixed</pre>
+<div class="labels"></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"><p>Does several "pre-flight" checks:
+- Raises an exception if no resource is composed.
+- Raises an exception if no route is composed.
+- Returns a 405 response if the current HTTP request method is not in
+  $options</p>
+
+<p>When the dispatch is complete, it will check to see if an array was
+returned; if so, it will cast it to a view model using the
+AcceptableViewModelSelector plugin, and the $acceptCriteria property.</p></div>
+<h3>Parameters</h3>
+<div class="subelement argument">
+<h4>$e</h4>
+<code>\Zend\Mvc\MvcEvent</code>
+</div>
+<h3>Exceptions</h3>
+<table class="table table-bordered"><tr>
+<th><code><a href="../classes/PhlyRestfully.Exception.DomainException.html">\PhlyRestfully\Exception\DomainException</a></code></th>
+<td></td>
+</tr></table>
+<h3>Returns</h3>
+<div class="subelement response"><code>mixed</code></div>
+</div></div>
+</div>
+<a id="method_options"></a><div class="element clickable method public method_options" data-toggle="collapse" data-target=".method_options .collapse">
+<h2>Respond to OPTIONS request</h2>
+<pre>options() : \Zend\Http\Response</pre>
+<div class="labels"></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"><p>Uses $options to set the Allow header line and return an empty response.</p></div>
+<h3>Returns</h3>
+<div class="subelement response"><code>\Zend\Http\Response</code></div>
+</div></div>
+</div>
+<a id="method_patch"></a><div class="element clickable method public method_patch" data-toggle="collapse" data-target=".method_patch .collapse">
+<h2>Respond to the PATCH method (partial update of existing resource)</h2>
+<pre>patch(int | string $id, array $data) : \Zend\Http\Response | <a href="../classes/PhlyRestfully.ApiProblem.html">\PhlyRestfully\ApiProblem</a> | <a href="../classes/PhlyRestfully.HalResource.html">\PhlyRestfully\HalResource</a></pre>
+<div class="labels"></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"></div>
+<h3>Parameters</h3>
+<div class="subelement argument">
+<h4>$id</h4>
+<code>int</code><code>string</code>
+</div>
+<div class="subelement argument">
+<h4>$data</h4>
+<code>array</code>
+</div>
+<h3>Returns</h3>
+<div class="subelement response">
+<code>\Zend\Http\Response</code><code><a href="../classes/PhlyRestfully.ApiProblem.html">\PhlyRestfully\ApiProblem</a></code><code><a href="../classes/PhlyRestfully.HalResource.html">\PhlyRestfully\HalResource</a></code>
+</div>
+</div></div>
+</div>
+<a id="method_replaceList"></a><div class="element clickable method public method_replaceList" data-toggle="collapse" data-target=".method_replaceList .collapse">
+<h2>Update an existing collection of resources</h2>
+<pre>replaceList(array $data) : array</pre>
+<div class="labels"></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"></div>
+<h3>Parameters</h3>
+<div class="subelement argument">
+<h4>$data</h4>
+<code>array</code>
+</div>
+<h3>Returns</h3>
+<div class="subelement response"><code>array</code></div>
+</div></div>
+</div>
+<a id="method_setAcceptCriteria"></a><div class="element clickable method public method_setAcceptCriteria" data-toggle="collapse" data-target=".method_setAcceptCriteria .collapse">
+<h2>Set the Accept header criteria for use with the AcceptableViewModelSelector</h2>
+<pre>setAcceptCriteria(array $criteria) </pre>
+<div class="labels"></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"></div>
+<h3>Parameters</h3>
+<div class="subelement argument">
+<h4>$criteria</h4>
+<code>array</code>
+</div>
+</div></div>
+</div>
+<a id="method_setCollectionHttpOptions"></a><div class="element clickable method public method_setCollectionHttpOptions" data-toggle="collapse" data-target=".method_setCollectionHttpOptions .collapse">
+<h2>Set the allowed HTTP OPTIONS for the resource (collection)</h2>
+<pre>setCollectionHttpOptions(array $options) </pre>
+<div class="labels"></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"></div>
+<h3>Parameters</h3>
+<div class="subelement argument">
+<h4>$options</h4>
+<code>array</code>
+</div>
+</div></div>
+</div>
+<a id="method_setCollectionName"></a><div class="element clickable method public method_setCollectionName" data-toggle="collapse" data-target=".method_setCollectionName .collapse">
+<h2>Set the name to which to assign a collection in a HalCollection</h2>
+<pre>setCollectionName(string $name) </pre>
+<div class="labels"></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"></div>
+<h3>Parameters</h3>
+<div class="subelement argument">
+<h4>$name</h4>
+<code>string</code>
+</div>
+</div></div>
+</div>
+<a id="method_setContentTypes"></a><div class="element clickable method public method_setContentTypes" data-toggle="collapse" data-target=".method_setContentTypes .collapse">
+<h2>Set the allowed content types for the resource (collection)</h2>
+<pre>setContentTypes(array $contentTypes) </pre>
+<div class="labels"></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"></div>
+<h3>Parameters</h3>
+<div class="subelement argument">
+<h4>$contentTypes</h4>
+<code>array</code>
+</div>
+</div></div>
+</div>
+<a id="method_setIdentifierName"></a><div class="element clickable method public method_setIdentifierName" data-toggle="collapse" data-target=".method_setIdentifierName .collapse">
+<h2>Set the route match segment or query string parameter indicating the
+resource identifier</h2>
+<pre>setIdentifierName(string $name) </pre>
+<div class="labels"></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"></div>
+<h3>Parameters</h3>
+<div class="subelement argument">
+<h4>$name</h4>
+<code>string</code>
+</div>
+</div></div>
+</div>
+<a id="method_setPageSize"></a><div class="element clickable method public method_setPageSize" data-toggle="collapse" data-target=".method_setPageSize .collapse">
+<h2>Set the default page size for paginated responses</h2>
+<pre>setPageSize(int $count) </pre>
+<div class="labels"></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"></div>
+<h3>Parameters</h3>
+<div class="subelement argument">
+<h4>$count</h4>
+<code>int</code>
+</div>
+</div></div>
+</div>
+<a id="method_setResource"></a><div class="element clickable method public method_setResource" data-toggle="collapse" data-target=".method_setResource .collapse">
+<h2>Inject the resource with which this controller will communicate.</h2>
+<pre>setResource(\PhlyRestfully\ResourceInterface $resource) </pre>
+<div class="labels"></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"></div>
+<h3>Parameters</h3>
+<div class="subelement argument">
+<h4>$resource</h4>
+<code><a href="../classes/PhlyRestfully.ResourceInterface.html">\PhlyRestfully\ResourceInterface</a></code>
+</div>
+</div></div>
+</div>
+<a id="method_setResourceHttpOptions"></a><div class="element clickable method public method_setResourceHttpOptions" data-toggle="collapse" data-target=".method_setResourceHttpOptions .collapse">
+<h2>Set the allowed HTTP OPTIONS for a resource</h2>
+<pre>setResourceHttpOptions(array $options) </pre>
+<div class="labels"></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"></div>
+<h3>Parameters</h3>
+<div class="subelement argument">
+<h4>$options</h4>
+<code>array</code>
+</div>
+</div></div>
+</div>
+<a id="method_setRoute"></a><div class="element clickable method public method_setRoute" data-toggle="collapse" data-target=".method_setRoute .collapse">
+<h2>Inject the route name for this resource.</h2>
+<pre>setRoute(string $route) </pre>
+<div class="labels"></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"></div>
+<h3>Parameters</h3>
+<div class="subelement argument">
+<h4>$route</h4>
+<code>string</code>
+</div>
+</div></div>
+</div>
+<a id="method_update"></a><div class="element clickable method public method_update" data-toggle="collapse" data-target=".method_update .collapse">
+<h2>Update an existing resource</h2>
+<pre>update(int | string $id, array $data) : \Zend\Http\Response | <a href="../classes/PhlyRestfully.ApiProblem.html">\PhlyRestfully\ApiProblem</a> | <a href="../classes/PhlyRestfully.HalResource.html">\PhlyRestfully\HalResource</a></pre>
+<div class="labels"></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"></div>
+<h3>Parameters</h3>
+<div class="subelement argument">
+<h4>$id</h4>
+<code>int</code><code>string</code>
+</div>
+<div class="subelement argument">
+<h4>$data</h4>
+<code>array</code>
+</div>
+<h3>Returns</h3>
+<div class="subelement response">
+<code>\Zend\Http\Response</code><code><a href="../classes/PhlyRestfully.ApiProblem.html">\PhlyRestfully\ApiProblem</a></code><code><a href="../classes/PhlyRestfully.HalResource.html">\PhlyRestfully\HalResource</a></code>
+</div>
+</div></div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="row"><footer class="span12">
+            Template is built using <a href="http://twitter.github.com/bootstrap/">Twitter Bootstrap 2</a> and icons provided by <a href="http://glyphicons.com/">Glyphicons</a>.<br>
+            Documentation is powered by <a href="http://www.phpdoc.org/">phpDocumentor 2.0.0a12</a> and<br>
+            generated on 2013-05-17T09:43:13-05:00.<br></footer></div>
+</div>
+</body>
+</html>

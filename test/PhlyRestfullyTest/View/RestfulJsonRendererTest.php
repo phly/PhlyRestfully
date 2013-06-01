@@ -12,6 +12,7 @@ use PhlyRestfully\ApiProblem;
 use PhlyRestfully\HalCollection;
 use PhlyRestfully\HalResource;
 use PhlyRestfully\Link;
+use PhlyRestfully\MetadataMap;
 use PhlyRestfully\Plugin\HalLinks;
 use PhlyRestfully\View\RestfulJsonModel;
 use PhlyRestfully\View\RestfulJsonRenderer;
@@ -35,6 +36,41 @@ class RestfulJsonRendererTest extends TestCase
     public function setUp()
     {
         $this->renderer = new RestfulJsonRenderer();
+    }
+
+    public function assertIsHalResource($resource)
+    {
+        $this->assertInstanceOf('stdClass', $resource, 'Invalid HAL resource; not an object');
+        $this->assertObjectHasAttribute('_links', $resource, 'Invalid HAL resource; does not contain links');
+        $links = $resource->_links;
+        $this->assertInstanceOf('stdClass', $links, 'Invalid HAL resource; links are not an object');
+    }
+
+    public function assertHalResourceHasRelationalLink($relation, $resource)
+    {
+        $this->assertIsHalResource($resource);
+        $links = $resource->_links;
+        $this->assertObjectHasAttribute($relation, $links, sprintf('HAL links do not contain relation "%s"', $relation));
+        $link = $links->{$relation};
+        $this->assertInstanceOf('stdClass', $link, sprintf('Relational links for "%s" are malformed', $relation));
+    }
+
+    public function assertRelationalLinkContains($match, $relation, $resource)
+    {
+        $this->assertHalResourceHasRelationalLink($relation, $resource);
+        $link = $resource->_links->{$relation};
+        $this->assertObjectHasAttribute('href', $link, sprintf('%s relational link does not have an href attribute; received %s', $relation, var_export($link, 1)));
+        $href = $link->href;
+        $this->assertContains($match, $href);
+    }
+
+    public function assertRelationalLinkEquals($match, $relation, $resource)
+    {
+        $this->assertHalResourceHasRelationalLink($relation, $resource);
+        $link = $resource->_links->{$relation};
+        $this->assertObjectHasAttribute('href', $link, sprintf('%s relational link does not have an href attribute; received %s', $relation, var_export($link, 1)));
+        $href = $link->href;
+        $this->assertEquals($match, $href);
     }
 
     public function nonRestfulJsonModels()
@@ -109,12 +145,7 @@ class RestfulJsonRendererTest extends TestCase
         $test  = $this->renderer->render($model);
         $test  = json_decode($test);
 
-        $this->assertObjectHasAttribute('_links', $test);
-        $links = $test->_links;
-        $this->assertInstanceof('stdClass', $links, var_export($test, 1));
-        $this->assertObjectHasAttribute('self', $links);
-        $this->assertObjectHasAttribute('href', $links->self);
-        $this->assertEquals('http://localhost.localdomain/resource/identifier', $links->self->href);
+        $this->assertRelationalLinkEquals('http://localhost.localdomain/resource/identifier', 'self', $test);
         $this->assertObjectHasAttribute('foo', $test);
         $this->assertEquals('bar', $test->foo);
     }
@@ -138,12 +169,7 @@ class RestfulJsonRendererTest extends TestCase
         $test  = $this->renderer->render($model);
         $test  = json_decode($test);
 
-        $this->assertObjectHasAttribute('_links', $test);
-        $links = $test->_links;
-        $this->assertInstanceof('stdClass', $links, var_export($links, 1));
-        $this->assertObjectHasAttribute('self', $links);
-        $this->assertObjectHasAttribute('href', $links->self);
-        $this->assertEquals('http://localhost.localdomain/resource/identifier', $links->self->href);
+        $this->assertRelationalLinkEquals('http://localhost.localdomain/resource/identifier', 'self', $test);
         $this->assertObjectHasAttribute('foo', $test);
         $this->assertEquals('bar', $test->foo);
     }
@@ -167,12 +193,7 @@ class RestfulJsonRendererTest extends TestCase
         $test  = $this->renderer->render($model);
         $test  = json_decode($test);
 
-        $this->assertObjectHasAttribute('_links', $test);
-        $links = $test->_links;
-        $this->assertInstanceof('stdClass', $links, var_export($links, 1));
-        $this->assertObjectHasAttribute('self', $links);
-        $this->assertObjectHasAttribute('href', $links->self);
-        $this->assertEquals('http://localhost.localdomain/resource/identifier', $links->self->href);
+        $this->assertRelationalLinkEquals('http://localhost.localdomain/resource/identifier', 'self', $test);
         $this->assertObjectHasAttribute('foo', $test);
         $this->assertEquals('bar', $test->foo);
     }
@@ -195,12 +216,7 @@ class RestfulJsonRendererTest extends TestCase
         $test  = $this->renderer->render($model);
         $test  = json_decode($test);
 
-        $this->assertObjectHasAttribute('_links', $test);
-        $links = $test->_links;
-        $this->assertInstanceof('stdClass', $links, var_export($links, 1));
-        $this->assertObjectHasAttribute('self', $links);
-        $this->assertObjectHasAttribute('href', $links->self);
-        $this->assertEquals('http://localhost.localdomain/resource/identifier', $links->self->href);
+        $this->assertRelationalLinkEquals('http://localhost.localdomain/resource/identifier', 'self', $test);
         $this->assertObjectHasAttribute('foo', $test);
         $this->assertEquals('bar', $test->foo);
     }
@@ -230,13 +246,7 @@ class RestfulJsonRendererTest extends TestCase
         $test       = $this->renderer->render($model);
         $test       = json_decode($test);
 
-        $this->assertInstanceof('stdClass', $test, var_export($test, 1));
-        $this->assertObjectHasAttribute('_links', $test);
-        $links = $test->_links;
-        $this->assertInstanceof('stdClass', $links, var_export($links, 1));
-        $this->assertObjectHasAttribute('self', $links);
-        $this->assertObjectHasAttribute('href', $links->self);
-        $this->assertEquals('http://localhost.localdomain/resource', $links->self->href);
+        $this->assertRelationalLinkEquals('http://localhost.localdomain/resource', 'self', $test);
 
         $this->assertObjectHasAttribute('_embedded', $test);
         $this->assertInstanceof('stdClass', $test->_embedded);
@@ -247,12 +257,7 @@ class RestfulJsonRendererTest extends TestCase
         foreach ($test->_embedded->items as $key => $item) {
             $id = $key + 1;
 
-            $this->assertObjectHasAttribute('_links', $item);
-            $links = $item->_links;
-            $this->assertInstanceof('stdClass', $links, var_export($links, 1));
-            $this->assertObjectHasAttribute('self', $links);
-            $this->assertObjectHasAttribute('href', $links->self);
-            $this->assertEquals('http://localhost.localdomain/resource/' . $id, $links->self->href);
+            $this->assertRelationalLinkEquals('http://localhost.localdomain/resource/' . $id, 'self', $item);
             $this->assertObjectHasAttribute('id', $item, var_export($item, 1));
             $this->assertEquals($id, $item->id);
             $this->assertObjectHasAttribute('foo', $item);
@@ -290,24 +295,11 @@ class RestfulJsonRendererTest extends TestCase
         $test       = json_decode($test);
 
         $this->assertInstanceof('stdClass', $test, var_export($test, 1));
-        $this->assertObjectHasAttribute('_links', $test);
-        $links = $test->_links;
-        $this->assertInstanceof('stdClass', $links, var_export($links, 1));
-        $this->assertObjectHasAttribute('self', $links);
-        $this->assertObjectHasAttribute('href', $links->self);
-        $this->assertEquals('http://localhost.localdomain/resource?page=3', $links->self->href);
-        $this->assertObjectHasAttribute('first', $links);
-        $this->assertObjectHasAttribute('href', $links->first);
-        $this->assertEquals('http://localhost.localdomain/resource', $links->first->href);
-        $this->assertObjectHasAttribute('last', $links);
-        $this->assertObjectHasAttribute('href', $links->last);
-        $this->assertEquals('http://localhost.localdomain/resource?page=20', $links->last->href);
-        $this->assertObjectHasAttribute('prev', $links);
-        $this->assertObjectHasAttribute('href', $links->prev);
-        $this->assertEquals('http://localhost.localdomain/resource?page=2', $links->prev->href);
-        $this->assertObjectHasAttribute('next', $links);
-        $this->assertObjectHasAttribute('href', $links->next);
-        $this->assertEquals('http://localhost.localdomain/resource?page=4', $links->next->href);
+        $this->assertRelationalLinkEquals('http://localhost.localdomain/resource?page=3', 'self', $test);
+        $this->assertRelationalLinkEquals('http://localhost.localdomain/resource', 'first', $test);
+        $this->assertRelationalLinkEquals('http://localhost.localdomain/resource?page=20', 'last', $test);
+        $this->assertRelationalLinkEquals('http://localhost.localdomain/resource?page=2', 'prev', $test);
+        $this->assertRelationalLinkEquals('http://localhost.localdomain/resource?page=4', 'next', $test);
 
         $this->assertObjectHasAttribute('_embedded', $test);
         $this->assertInstanceof('stdClass', $test->_embedded);
@@ -318,12 +310,7 @@ class RestfulJsonRendererTest extends TestCase
         foreach ($test->_embedded->items as $key => $item) {
             $id = $key + 11;
 
-            $this->assertObjectHasAttribute('_links', $item);
-            $links = $item->_links;
-            $this->assertInstanceof('stdClass', $links, var_export($links, 1));
-            $this->assertObjectHasAttribute('self', $links);
-            $this->assertObjectHasAttribute('href', $links->self);
-            $this->assertEquals('http://localhost.localdomain/resource/' . $id, $links->self->href);
+            $this->assertRelationalLinkEquals('http://localhost.localdomain/resource/' . $id, 'self', $item);
             $this->assertObjectHasAttribute('id', $item, var_export($item, 1));
             $this->assertEquals($id, $item->id);
             $this->assertObjectHasAttribute('foo', $item);
@@ -499,17 +486,13 @@ class RestfulJsonRendererTest extends TestCase
         $this->assertObjectHasAttribute('_embedded', $test);
         $embedded = $test->_embedded;
         $this->assertObjectHasAttribute('user', $embedded);
-        $user = (array) $embedded->user;
+        $user = $embedded->user;
+        $this->assertRelationalLinkContains('/user/matthew', 'self', $user);
+        $user = (array) $user;
         foreach ($child->resource as $key => $value) {
             $this->assertArrayHasKey($key, $user);
             $this->assertEquals($value, $user[$key]);
         }
-        $this->assertArrayHasKey('_links', $user);
-        $this->assertInstanceof('stdClass', $user['_links']);
-        $links = $user['_links'];
-        $this->assertObjectHasAttribute('self', $links);
-        $this->assertObjectHasAttribute('href', $links->self);
-        $this->assertContains('/user/matthew', $links->self->href);
     }
 
     public function testRendersEmbeddedResourcesOfIndividualNonPaginatedCollectionResources()
@@ -553,17 +536,13 @@ class RestfulJsonRendererTest extends TestCase
             $this->assertObjectHasAttribute('_embedded', $item);
             $embedded = $item->_embedded;
             $this->assertObjectHasAttribute('user', $embedded);
-            $user = (array) $embedded->user;
+            $user = $embedded->user;
+            $this->assertRelationalLinkContains('/user/matthew', 'self', $user);
+            $user = (array) $user;
             foreach ($child->resource as $key => $value) {
                 $this->assertArrayHasKey($key, $user);
                 $this->assertEquals($value, $user[$key]);
             }
-            $this->assertArrayHasKey('_links', $user);
-            $this->assertInstanceof('stdClass', $user['_links']);
-            $links = $user['_links'];
-            $this->assertObjectHasAttribute('self', $links);
-            $this->assertObjectHasAttribute('href', $links->self);
-            $this->assertContains('/user/matthew', $links->self->href);
         }
     }
 
@@ -612,17 +591,13 @@ class RestfulJsonRendererTest extends TestCase
             $this->assertObjectHasAttribute('_embedded', $item, var_export($item, 1));
             $embedded = $item->_embedded;
             $this->assertObjectHasAttribute('user', $embedded);
-            $user = (array) $embedded->user;
+            $user = $embedded->user;
+            $this->assertRelationalLinkContains('/user/matthew', 'self', $user);
+            $user = (array) $user;
             foreach ($child->resource as $key => $value) {
                 $this->assertArrayHasKey($key, $user);
                 $this->assertEquals($value, $user[$key]);
             }
-            $this->assertArrayHasKey('_links', $user);
-            $this->assertInstanceof('stdClass', $user['_links']);
-            $links = $user['_links'];
-            $this->assertObjectHasAttribute('self', $links);
-            $this->assertObjectHasAttribute('href', $links->self);
-            $this->assertContains('/user/matthew', $links->self->href);
         }
     }
 
@@ -666,12 +641,7 @@ class RestfulJsonRendererTest extends TestCase
         $test       = json_decode($test);
 
         $this->assertInstanceof('stdClass', $test, var_export($test, 1));
-        $this->assertObjectHasAttribute('_links', $test);
-        $links = $test->_links;
-        $this->assertInstanceof('stdClass', $links, var_export($links, 1));
-        $this->assertObjectHasAttribute('self', $links);
-        $this->assertObjectHasAttribute('href', $links->self);
-        $this->assertEquals('http://localhost.localdomain/resource', $links->self->href);
+        $this->assertRelationalLinkEquals('http://localhost.localdomain/resource', 'self', $test);
 
         $this->assertObjectHasAttribute('_embedded', $test);
         $this->assertInstanceof('stdClass', $test->_embedded);
@@ -682,12 +652,7 @@ class RestfulJsonRendererTest extends TestCase
         foreach ($test->_embedded->items as $key => $item) {
             $id = $key + 1;
 
-            $this->assertObjectHasAttribute('_links', $item);
-            $links = $item->_links;
-            $this->assertInstanceof('stdClass', $links, var_export($links, 1));
-            $this->assertObjectHasAttribute('self', $links);
-            $this->assertObjectHasAttribute('href', $links->self);
-            $this->assertEquals('http://localhost.localdomain/resource/' . $id, $links->self->href);
+            $this->assertRelationalLinkEquals('http://localhost.localdomain/resource/' . $id, 'self', $item);
             $this->assertObjectHasAttribute('name', $item, var_export($item, 1));
             $this->assertEquals($id, $item->name);
             $this->assertObjectHasAttribute('foo', $item);

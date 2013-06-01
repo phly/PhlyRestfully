@@ -11,6 +11,7 @@ namespace PhlyRestfullyTest\Plugin;
 use PhlyRestfully\HalCollection;
 use PhlyRestfully\HalResource;
 use PhlyRestfully\Link;
+use PhlyRestfully\MetadataMap;
 use PhlyRestfully\Plugin\HalLinks;
 use PHPUnit_Framework_TestCase as TestCase;
 use Zend\Mvc\Router\Http\TreeRouteStack;
@@ -58,6 +59,18 @@ class HalLinksTest extends TestCase
                     'type' => 'segment',
                     'options' => array(
                         'route' => '/contacts[/:id]'
+                    )
+                ),
+                'embedded' => array(
+                    'type' => 'segment',
+                    'options' => array(
+                        'route' => '/embedded[/:id]'
+                    )
+                ),
+                'embedded_custom' => array(
+                    'type' => 'segment',
+                    'options' => array(
+                        'route' => '/embedded_custom[/:custom_id]'
                     )
                 ),
             )
@@ -166,6 +179,98 @@ class HalLinksTest extends TestCase
         $resource->getLinks()->add($self);
 
         $rendered = $this->plugin->renderResource($resource);
+        $this->assertRelationalLinkContains('/users/', 'self', $rendered);
+
+        $this->assertArrayHasKey('_embedded', $rendered);
+        $embed = $rendered['_embedded'];
+        $this->assertArrayHasKey('contacts', $embed);
+        $contacts = $embed['contacts'];
+        $this->assertInternalType('array', $contacts);
+        $this->assertEquals(3, count($contacts));
+        foreach ($contacts as $contact) {
+            $this->assertInternalType('array', $contact);
+            $this->assertRelationalLinkContains('/contacts/', 'self', $contact);
+        }
+    }
+
+    public function testRendersEmbeddedResourcesInsideResourcesBasedOnMetadataMap()
+    {
+        $object = new TestAsset\Resource('foo', 'Foo');
+        $object->first_child  = new TestAsset\EmbeddedResource('bar', 'Bar');
+        $object->second_child = new TestAsset\EmbeddedResourceWithCustomIdentifier('baz', 'Baz');
+        $resource = new HalResource($object, 'foo');
+        $self = new Link('self');
+        $self->setRoute('hostname/resource', array('id' => 'foo'));
+        $resource->getLinks()->add($self);
+
+        $metadata = new MetadataMap(array(
+            'PhlyRestfullyTest\Plugin\TestAsset\Resource' => array(
+                'hydrator' => 'Zend\Stdlib\Hydrator\ObjectProperty',
+                'route'    => 'hostname/resource',
+            ),
+            'PhlyRestfullyTest\Plugin\TestAsset\EmbeddedResource' => array(
+                'hydrator' => 'Zend\Stdlib\Hydrator\ObjectProperty',
+                'route'    => 'hostname/embedded',
+            ),
+            'PhlyRestfullyTest\Plugin\TestAsset\EmbeddedResourceWithCustomIdentifier' => array(
+                'hydrator'        => 'Zend\Stdlib\Hydrator\ObjectProperty',
+                'route'           => 'hostname/embedded_custom',
+                'identifier_name' => 'custom_id',
+            ),
+        ));
+
+        $this->plugin->setMetadataMap($metadata);
+
+        $rendered = $this->plugin->renderResource($resource);
+        $this->assertRelationalLinkContains('/resource/foo', 'self', $rendered);
+
+        $this->assertArrayHasKey('_embedded', $rendered);
+        $embed = $rendered['_embedded'];
+        $this->assertEquals(2, count($embed));
+        $this->assertArrayHasKey('first_child', $embed);
+        $this->assertArrayHasKey('second_child', $embed);
+
+        $first = $embed['first_child'];
+        $this->assertInternalType('array', $first);
+        $this->assertRelationalLinkContains('/embedded/bar', 'self', $first);
+
+        $second = $embed['second_child'];
+        $this->assertInternalType('array', $second);
+        $this->assertRelationalLinkContains('/embedded_custom/baz', 'self', $second);
+    }
+
+    public function testRendersEmbeddedCollectionsInsideResourcesBasedOnMetadataMap()
+    {
+        $collection = new TestAsset\Collection(
+            array(
+                (object) array('id' => 'foo', 'name' => 'foo'),
+                (object) array('id' => 'bar', 'name' => 'bar'),
+                (object) array('id' => 'baz', 'name' => 'baz'),
+            )
+        );
+
+        $metadata = new MetadataMap(array(
+            'PhlyRestfullyTest\Plugin\TestAsset\Collection' => array(
+                'is_collection'  => true,
+                'route'          => 'hostname/contacts',
+                'resource_route' => 'hostname/embedded',
+            ),
+        ));
+
+        $this->plugin->setMetadataMap($metadata);
+
+        $resource = new HalResource(
+            (object) array(
+                'id'       => 'user',
+                'contacts' => $collection,
+            ),
+            'user'
+        );
+        $self = new Link('self');
+        $self->setRoute('hostname/users', array('id' => 'user'));
+        $resource->getLinks()->add($self);
+
+        $rendered = $this->plugin->renderResource($resource);
 
         $this->assertRelationalLinkContains('/users/', 'self', $rendered);
 
@@ -176,8 +281,89 @@ class HalLinksTest extends TestCase
         $this->assertInternalType('array', $contacts);
         $this->assertEquals(3, count($contacts));
         foreach ($contacts as $contact) {
-            $this->assertRelationalLinkContains('/contacts/', 'self', $contact);
+            $this->assertInternalType('array', $contact);
+            $this->assertArrayHasKey('id', $contact);
+            $this->assertRelationalLinkContains('/embedded/' . $contact['id'], 'self', $contact);
         }
+    }
+
+    public function testRendersEmbeddedCollectionsInsideCollectionsBasedOnMetadataMap()
+    {
+        $childCollection = new TestAsset\Collection(
+            array(
+                (object) array('id' => 'foo', 'name' => 'foo'),
+                (object) array('id' => 'bar', 'name' => 'bar'),
+                (object) array('id' => 'baz', 'name' => 'baz'),
+            )
+        );
+        $resource = new TestAsset\Resource('spock', 'Spock');
+        $resource->first_child = $childCollection;
+
+        $metadata = new MetadataMap(array(
+            'PhlyRestfullyTest\Plugin\TestAsset\Collection' => array(
+                'is_collection'  => true,
+                'route'          => 'hostname/contacts',
+                'resource_route' => 'hostname/embedded',
+            ),
+            'PhlyRestfullyTest\Plugin\TestAsset\Resource' => array(
+                'hydrator' => 'Zend\Stdlib\Hydrator\ObjectProperty',
+                'route'    => 'hostname/resource',
+            ),
+        ));
+
+        $this->plugin->setMetadataMap($metadata);
+
+        $collection = new HalCollection(array($resource), 'hostname/resource');
+        $self = new Link('self');
+        $self->setRoute('hostname/resource');
+        $collection->getLinks()->add($self);
+        $collection->setCollectionName('resources');
+
+        $rendered = $this->plugin->renderCollection($collection);
+
+        $this->assertRelationalLinkContains('/resource', 'self', $rendered);
+
+        $this->assertArrayHasKey('_embedded', $rendered);
+        $embed = $rendered['_embedded'];
+        $this->assertArrayHasKey('resources', $embed);
+        $resources = $embed['resources'];
+        $this->assertInternalType('array', $resources);
+        $this->assertEquals(1, count($resources));
+
+        $resource = array_shift($resources);
+        $this->assertInternalType('array', $resource);
+        $this->assertArrayHasKey('_embedded', $resource);
+        $this->assertInternalType('array', $resource['_embedded']);
+        $this->assertArrayHasKey('first_child', $resource['_embedded']);
+        $this->assertInternalType('array', $resource['_embedded']['first_child']);
+
+        foreach ($resource['_embedded']['first_child'] as $contact) {
+            $this->assertInternalType('array', $contact);
+            $this->assertArrayHasKey('id', $contact);
+            $this->assertRelationalLinkContains('/embedded/' . $contact['id'], 'self', $contact);
+        }
+    }
+
+    public function testWillNotAllowInjectingASelfRelationMultipleTimes()
+    {
+        $resource = new HalResource(array(
+            'id'  => 1,
+            'foo' => 'bar',
+        ), 1);
+        $links = $resource->getLinks();
+
+        $this->assertFalse($links->has('self'));
+
+        $this->plugin->injectSelfLink($resource, 'hostname/resource');
+
+        $this->assertTrue($links->has('self'));
+        $link = $links->get('self');
+        $this->assertInstanceof('PhlyRestfully\Link', $link);
+
+        $this->plugin->injectSelfLink($resource, 'hostname/resource');
+        $this->assertTrue($links->has('self'));
+        $link = $links->get('self');
+        $this->assertInstanceof('PhlyRestfully\Link', $link);
     }
 
     /**
