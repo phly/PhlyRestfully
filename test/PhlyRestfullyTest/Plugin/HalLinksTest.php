@@ -425,4 +425,37 @@ class HalLinksTest extends TestCase
         $this->assertRelationalLinkContains('/users/foo', 'self', $user);
         $this->assertRelationalLinkContains('/users/foo/phones', 'phones', $user);
     }
+
+    public function testResourcesFromCollectionCanUseHydratorSetInMetadataMap()
+    {
+        $object   = new TestAsset\Resource('foo', 'Foo');
+        $resource = new HalResource($object, 'foo');
+
+        $metadata = new MetadataMap(array(
+            'PhlyRestfullyTest\Plugin\TestAsset\Resource' => array(
+                'hydrator' => 'ObjectProperty',
+                'route'    => 'hostname/resource',
+            ),
+        ));
+
+        $collection = new HalCollection(array($resource));
+        $collection->setCollectionName('resource');
+        $collection->setCollectionRoute('hostname/resource');
+
+        $this->plugin->setMetadataMap($metadata);
+
+        $test = $this->plugin->renderCollection($collection);
+
+        $this->assertInternalType('array', $test);
+        $this->assertArrayHasKey('_embedded', $test);
+        $this->assertInternalType('array', $test['_embedded']);
+        $this->assertArrayHasKey('resource', $test['_embedded']);
+        $this->assertInternalType('array', $test['_embedded']['resource']);
+
+        $resources = $test['_embedded']['resource'];
+        $testResource = array_shift($resources);
+        $this->assertInternalType('array', $testResource);
+        $this->assertArrayHasKey('id', $testResource);
+        $this->assertArrayHasKey('name', $testResource);
+    }
 }
