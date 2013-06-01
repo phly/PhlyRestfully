@@ -562,6 +562,11 @@ class HalLinks extends AbstractHelper implements
 
             $resource = $eventParams['resource'];
 
+            if ($resource instanceof HalResource) {
+                $collection[] = $this->renderResource($resource);
+                continue;
+            }
+
             if (!is_array($resource)) {
                 $resource = $this->convertResourceToArray($resource);
             }
