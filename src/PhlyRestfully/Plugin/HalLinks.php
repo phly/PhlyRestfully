@@ -263,6 +263,15 @@ class HalLinks extends AbstractHelper implements
      */
     public function getHydratorForResource($resource)
     {
+        $metadataMap = $this->getMetadataMap();
+        if ($metadataMap->has($resource)) {
+            $metadata = $metadataMap->get($resource);
+            $hydrator = $metadata->getHydrator();
+            if ($hydrator instanceof HydratorInterface) {
+                return $hydrator;
+            }
+        }
+
         $class = strtolower(get_class($resource));
         if (isset($this->hydratorMap[$class])) {
             return $this->hydratorMap[$class];
