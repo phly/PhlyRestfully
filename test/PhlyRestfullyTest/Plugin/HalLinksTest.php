@@ -428,12 +428,12 @@ class HalLinksTest extends TestCase
 
     public function testResourcesFromCollectionCanUseHydratorSetInMetadataMap()
     {
-        $object   = new TestAsset\Resource('foo', 'Foo');
+        $object   = new TestAsset\ResourceWithProtectedProperties('foo', 'Foo');
         $resource = new HalResource($object, 'foo');
 
         $metadata = new MetadataMap(array(
-            'PhlyRestfullyTest\Plugin\TestAsset\Resource' => array(
-                'hydrator' => 'ObjectProperty',
+            'PhlyRestfullyTest\Plugin\TestAsset\ResourceWithProtectedProperties' => array(
+                'hydrator' => 'ArraySerializable',
                 'route'    => 'hostname/resource',
             ),
         ));
