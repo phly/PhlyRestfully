@@ -119,8 +119,17 @@ class ResourceControllerFactory implements AbstractFactoryInterface
             $identifier = $config['identifier'];
         }
 
-        $events     = $services->get('EventManager');
-        $controller = new ResourceController($identifier);
+        $events          = $services->get('EventManager');
+        $controllerClass = isset($config['controller_class']) ? $config['controller_class'] : 'PhlyRestfully\ResourceController';
+        $controller      = new $controllerClass($identifier);
+
+        if (!$controller instanceof ResourceController) {
+            throw new ServiceNotCreatedException(sprintf(
+                '"%s" must be an implementation of PhlyRestfully\ResourceController',
+                $controllerClass
+            ));
+        }
+
         $controller->setEventManager($events);
         $controller->setResource($resource);
         $this->setControllerOptions($config, $controller);
