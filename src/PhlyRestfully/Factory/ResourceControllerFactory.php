@@ -83,7 +83,7 @@ class ResourceControllerFactory implements AbstractFactoryInterface
     {
         $services        = $controllers->getServiceLocator();
         $config          = $services->get('Config');
-        $controllerClass = $config['phlyrestfully']['controllerClass'];
+        $controllerClass = isset($config['phlyrestfully']['controller_class']) ? $config['phlyrestfully']['controller_class'] : 'PhlyRestfully\ResourceController';
         $config          = $config['phlyrestfully']['resources'][$requestedName];
 
         if ($services->has($config['listener'])) {
