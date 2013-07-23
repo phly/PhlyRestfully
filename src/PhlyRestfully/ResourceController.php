@@ -79,11 +79,23 @@ class ResourceController extends AbstractRestfulController
     );
 
     /**
-     * Number of resources to return per page
+     * Number of resources to return per page.  If $pageSizeParameter is
+     * specified, then it will override this when provided in a request.
      *
      * @var int
      */
     protected $pageSize = 30;
+
+    /**
+     * A query parameter to use to specify the number of records to return in
+     * each collection page.  If not provided, $pageSize will be used as a
+     * default value.
+     *
+     * Leave null to disable this functionality and always use $pageSize.
+     *
+     * @var string
+     */
+    protected $pageSizeParam;
 
     /**
      * @var ResourceInterface
@@ -174,6 +186,16 @@ class ResourceController extends AbstractRestfulController
     public function setPageSize($count)
     {
         $this->pageSize = (int) $count;
+    }
+
+    /**
+     * Set the page size parameter for paginated responses.
+     *
+     * @param string
+     */
+    public function setPageSizeParam($param)
+    {
+        $this->pageSizeParam = (string) $param;
     }
 
     /**
@@ -470,8 +492,12 @@ class ResourceController extends AbstractRestfulController
         $collection->setIdentifierName($this->getIdentifierName());
         $collection->setResourceRoute($this->route);
         $collection->setPage($this->getRequest()->getQuery('page', 1));
-        $collection->setPageSize($this->pageSize);
         $collection->setCollectionName($this->collectionName);
+
+        $pageSize = $this->pageSizeParam
+            ? $this->getRequest()->getQuery($this->pageSizeParam, $this->pageSize)
+            : $this->pageSize;
+        $collection->setPageSize($pageSize);
 
         $events->trigger('getList.post', $this, array('collection' => $collection));
         return $collection;

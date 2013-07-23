@@ -207,6 +207,10 @@ class ResourceControllerFactory implements AbstractFactoryInterface
                     $controller->setPageSize($value);
                     break;
 
+                case 'page_size_param':
+                    $controller->setPageSizeParam($value);
+                    break;
+
                 case 'resource_http_options':
                     $controller->setResourceHttpOptions($value);
                     break;
