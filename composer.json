@@ -35,6 +35,7 @@
         "zendframework/zend-stdlib": ">=2.2.0"
     },
     "require-dev": {
+        "zendframework/zend-http": ">=2.2.0",
         "zendframework/zend-navigation": ">=2.2.0",
         "zendframework/zend-servicemanager": ">=2.2.0"
     },
