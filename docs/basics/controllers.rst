@@ -77,7 +77,7 @@ example:
                 // Key is the service name for the controller; value is
                 // configuration
                 'MyApi\Controller\Contacts' => array(
-                    // Name of the controller class to use, if other than 
+                    // Name of the controller class to use, if other than
                     // PhlyRestfully\ResourceController. Must extend
                     // PhlyRestfully\ResourceController, however, to be valid.
                     // (OPTIONAL)
@@ -88,20 +88,20 @@ example:
                     // identifier via this key.
                     // (OPTIONAL)
                     'identifier' => 'Contacts',
-    
+
                     // Name of the service locator key OR the fully qualified
                     // class name of the resource listener (latter works only if
                     // the class has no required arguments in the constructor).
                     // (REQUIRED)
                     'listener'   => 'MyApi\Resource\Contacts',
-    
+
                     // Event identifiers for the composed resource. By default,
                     // the class name of the listener is used; you can add another
                     // identifier, or an array of identifiers, via this key.
                     // (OPTIONAL)
                     'resource_identifiers' => array('ContactsResource'),
-    
-                    // Accept criteria (which accept headers will be allowed) 
+
+                    // Accept criteria (which accept headers will be allowed)
                     // (OPTIONAL)
                     'accept_criteria' => array(
                         'PhlyRestfully\View\RestfulJsonModel' => array(
@@ -109,21 +109,21 @@ example:
                             'text/json',
                         ),
                     ),
-    
+
                     // HTTP options for resource collections
                     // (OPTIONAL)
                     'collection_http_options' => array('get', 'post'),
-    
+
                     // Collection name (OPTIONAL)
                     'collection_name' => 'contacts',
-    
+
                     // Query parameter or array of query parameters that should be
                     // injected into collection links if discovered in the request.
                     // By default, only the "page" query parameter will be present.
                     // (OPTIONAL)
                     'collection_query_whitelist' => 'sort',
-    
-                    // Content types to respond to 
+
+                    // Content types to respond to
                     // (OPTIONAL)
                     'content_type' => array(
                         ResourceController::CONTENT_TYPE_JSON => array(
@@ -132,19 +132,19 @@ example:
                             'text/json',
                         ),
                     ),
-    
-                    // If a custom identifier_name is used 
+
+                    // If a custom identifier_name is used
                     // (OPTIONAL)
                     'identifier_name'  => 'contact_id',
-    
-                    // Number of items to return per page of a collection 
+
+                    // Number of items to return per page of a collection
                     // (OPTIONAL)
                     'page_size'  => 30,
-    
+
                     // HTTP options for individual resources
                     // (OPTIONAL)
                     'resource_http_options'   => array('get', 'patch', 'put', 'delete'),
-    
+
                     // name of the route associated with this resource
                     // (REQUIRED)
                     'route_name' => 'api/contacts',
