@@ -141,6 +141,14 @@ example:
                     // (OPTIONAL)
                     'page_size'  => 30,
 
+                    // Query string parameter that will indicate number of items
+                    // per page of results. If this is set, and the parameter is
+                    // passed, it will be used in favor of the page_size.
+                    // Leaving it unset will disable the ability of the client
+                    // to set the page size via query string parameter.
+                    // (OPTIONAL)
+                    'page_size_param' => 'page_size',
+
                     // HTTP options for individual resources
                     // (OPTIONAL)
                     'resource_http_options'   => array('get', 'patch', 'put', 'delete'),
