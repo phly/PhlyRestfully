@@ -77,6 +77,12 @@ example:
                 // Key is the service name for the controller; value is
                 // configuration
                 'MyApi\Controller\Contacts' => array(
+                    // Name of the controller class to use, if other than 
+                    // PhlyRestfully\ResourceController. Must extend
+                    // PhlyRestfully\ResourceController, however, to be valid.
+                    // (OPTIONAL)
+                    'controller_class' => 'PhlyRestfully\ResourceController',
+
                     // Event identifier for the resource controller. By default,
                     // the resource name is used; you can use a different
                     // identifier via this key.
