@@ -47,7 +47,16 @@ class HalLinksTest extends TestCase
                     'type' => 'segment',
                     'options' => array(
                         'route' => '/resource[/:id]'
-                    )
+                    ),
+                    'may_terminate' => true,
+                    'child_routes' => array(
+                        'children' => array(
+                            'type' => 'literal',
+                            'options' => array(
+                                'route' => '/children',
+                            ),
+                        ),
+                    ),
                 ),
                 'users' => array(
                     'type' => 'segment',
@@ -457,5 +466,50 @@ class HalLinksTest extends TestCase
         $this->assertInternalType('array', $testResource);
         $this->assertArrayHasKey('id', $testResource);
         $this->assertArrayHasKey('name', $testResource);
+    }
+
+    /**
+     * @group 79
+     */
+    public function testInjectsLinksFromMetadataWhenCreatingResource()
+    {
+        $object = new TestAsset\Resource('foo', 'Foo');
+        $resource = new HalResource($object, 'foo');
+
+        $metadata = new MetadataMap(array(
+            'PhlyRestfullyTest\Plugin\TestAsset\Resource' => array(
+                'hydrator' => 'Zend\Stdlib\Hydrator\ObjectProperty',
+                'route'    => 'hostname/resource',
+                'links'    => array(
+                    array(
+                        array(
+                            'rel' => 'describedby',
+                            'url' => 'http://example.com/api/help/resource',
+                        ),
+                        array(
+                            'rel' => 'children',
+                            'route' => array(
+                                'name' => 'resource/children',
+                            ),
+                        ),
+                    ),
+                ),
+            ),
+        ));
+
+        $this->plugin->setMetadataMap($metadata);
+        $resource = $this->plugin->createResourceFromMetadata($object, $metadata->get('PhlyRestfullyTest\Plugin\TestAsset\Resource'));
+        $this->assertInstanceof('PhlyRestfully\HalResource', $resource);
+        $links = $resource->getLinks();
+        $this->assertTrue($links->has('describedby'));
+        $this->assertTrue($links->has('children'));
+
+        $describedby = $links->get('describedby');
+        $this->assertTrue($describedby->hasUrl());
+        $this->assertEquals('http://example.com/api/help/resource', $describedby->getUrl());
+
+        $children = $links->get('children');
+        $this->assertTrue($children->hasRoute());
+        $this->assertEquals('resource/children', $children->getRoute());
     }
 }
