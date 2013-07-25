@@ -47,7 +47,16 @@ class HalLinksTest extends TestCase
                     'type' => 'segment',
                     'options' => array(
                         'route' => '/resource[/:id]'
-                    )
+                    ),
+                    'may_terminate' => true,
+                    'child_routes' => array(
+                        'children' => array(
+                            'type' => 'literal',
+                            'options' => array(
+                                'route' => '/children',
+                            ),
+                        ),
+                    ),
                 ),
                 'users' => array(
                     'type' => 'segment',
@@ -118,7 +127,6 @@ class HalLinksTest extends TestCase
         $url = $this->plugin->createLink('hostname/resource');
         $this->assertEquals('http://localhost.localdomain/resource', $url);
     }
-
 
     public function testLinkCreationWithoutIdCreatesFullyQualifiedLink()
     {
@@ -457,5 +465,142 @@ class HalLinksTest extends TestCase
         $this->assertInternalType('array', $testResource);
         $this->assertArrayHasKey('id', $testResource);
         $this->assertArrayHasKey('name', $testResource);
+    }
+
+    /**
+     * @group 79
+     */
+    public function testInjectsLinksFromMetadataWhenCreatingResource()
+    {
+        $object = new TestAsset\Resource('foo', 'Foo');
+        $resource = new HalResource($object, 'foo');
+
+        $metadata = new MetadataMap(array(
+            'PhlyRestfullyTest\Plugin\TestAsset\Resource' => array(
+                'hydrator' => 'Zend\Stdlib\Hydrator\ObjectProperty',
+                'route'    => 'hostname/resource',
+                'links'    => array(
+                    array(
+                        'rel' => 'describedby',
+                        'url' => 'http://example.com/api/help/resource',
+                    ),
+                    array(
+                        'rel' => 'children',
+                        'route' => array(
+                            'name' => 'resource/children',
+                        ),
+                    ),
+                ),
+            ),
+        ));
+
+        $this->plugin->setMetadataMap($metadata);
+        $resource = $this->plugin->createResourceFromMetadata($object, $metadata->get('PhlyRestfullyTest\Plugin\TestAsset\Resource'));
+        $this->assertInstanceof('PhlyRestfully\HalResource', $resource);
+        $links = $resource->getLinks();
+        $this->assertTrue($links->has('describedby'));
+        $this->assertTrue($links->has('children'));
+
+        $describedby = $links->get('describedby');
+        $this->assertTrue($describedby->hasUrl());
+        $this->assertEquals('http://example.com/api/help/resource', $describedby->getUrl());
+
+        $children = $links->get('children');
+        $this->assertTrue($children->hasRoute());
+        $this->assertEquals('resource/children', $children->getRoute());
+    }
+
+    /**
+     * @group 79
+     */
+    public function testInjectsLinksFromMetadataWhenCreatingCollection()
+    {
+        $set = new TestAsset\Collection(
+            array(
+                (object) array('id' => 'foo', 'name' => 'foo'),
+                (object) array('id' => 'bar', 'name' => 'bar'),
+                (object) array('id' => 'baz', 'name' => 'baz'),
+            )
+        );
+
+        $metadata = new MetadataMap(array(
+            'PhlyRestfullyTest\Plugin\TestAsset\Collection' => array(
+                'is_collection'  => true,
+                'route'          => 'hostname/contacts',
+                'resource_route' => 'hostname/embedded',
+                'links'          => array(
+                    array(
+                        'rel' => 'describedby',
+                        'url' => 'http://example.com/api/help/collection',
+                    ),
+                ),
+            ),
+        ));
+
+        $this->plugin->setMetadataMap($metadata);
+
+        $collection = $this->plugin->createCollectionFromMetadata(
+            $set,
+            $metadata->get('PhlyRestfullyTest\Plugin\TestAsset\Collection'
+        ));
+        $this->assertInstanceof('PhlyRestfully\HalCollection', $collection);
+        $links = $collection->getLinks();
+        $this->assertTrue($links->has('describedby'));
+        $link = $links->get('describedby');
+        $this->assertTrue($link->hasUrl());
+        $this->assertEquals('http://example.com/api/help/collection', $link->getUrl());
+    }
+
+    /**
+     * @group 79
+     */
+    public function testRenderResourceTriggersEvent()
+    {
+        $resource = new HalResource(
+            (object) array(
+                'id'   => 'user',
+                'name' => 'matthew',
+            ),
+            'user'
+        );
+        $self = new Link('self');
+        $self->setRoute('hostname/users', array('id' => 'user'));
+        $resource->getLinks()->add($self);
+
+        $this->plugin->getEventManager()->attach('renderResource', function ($e) {
+            $resource = $e->getParam('resource');
+            $resource->getLinks()->get('self')->setRouteParams(array('id' => 'matthew'));
+        });
+
+        $rendered = $this->plugin->renderResource($resource);
+        $this->assertContains('/users/matthew', $rendered['_links']['self']['href']);
+    }
+
+    /**
+     * @group 79
+     */
+    public function testRenderCollectionTriggersEvent()
+    {
+        $collection = new HalCollection(
+            array(
+                (object) array('id' => 'foo', 'name' => 'foo'),
+                (object) array('id' => 'bar', 'name' => 'bar'),
+                (object) array('id' => 'baz', 'name' => 'baz'),
+            ),
+            'hostname/contacts'
+        );
+        $self = new Link('self');
+        $self->setRoute('hostname/contacts');
+        $collection->getLinks()->add($self);
+        $collection->setCollectionName('resources');
+
+        $this->plugin->getEventManager()->attach('renderCollection', function ($e) {
+            $collection = $e->getParam('collection');
+            $collection->setAttributes(array('injected' => true));
+        });
+
+        $rendered = $this->plugin->renderCollection($collection);
+        $this->assertArrayHasKey('injected', $rendered);
+        $this->assertTrue($rendered['injected']);
     }
 }

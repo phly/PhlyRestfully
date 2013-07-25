@@ -13,7 +13,7 @@ use PHPUnit_Framework_TestCase as TestCase;
 
 class LinkTest extends TestCase
 {
-    public function testConstructorTakesLinkReationName()
+    public function testConstructorTakesLinkRelationName()
     {
         $link = new Link('describedby');
         $this->assertEquals('describedby', $link->getRelation());
@@ -139,5 +139,46 @@ class LinkTest extends TestCase
         $link = new Link('describedby');
         $link->setRoute('api/docs');
         $this->assertTrue($link->isComplete());
+    }
+
+    /**
+     * @group 79
+     */
+    public function testFactoryCanGenerateLinkWithUrl()
+    {
+        $rel  = 'describedby';
+        $url  = 'http://example.com/docs.html';
+        $link = Link::factory(array(
+            'rel' => $rel,
+            'url' => $url,
+        ));
+        $this->assertInstanceOf('PhlyRestfully\Link', $link);
+        $this->assertEquals($rel, $link->getRelation());
+        $this->assertEquals($url, $link->getUrl());
+    }
+
+    /**
+     * @group 79
+     */
+    public function testFactoryCanGenerateLinkWithRouteInformation()
+    {
+        $rel     = 'describedby';
+        $route   = 'api/docs';
+        $params  = array('version' => '1.1');
+        $options = array('query' => 'version=1.1');
+        $link = Link::factory(array(
+            'rel'   => $rel,
+            'route' => array(
+                'name'    => $route,
+                'params'  => $params,
+                'options' => $options,
+            ),
+        ));
+
+        $this->assertInstanceOf('PhlyRestfully\Link', $link);
+        $this->assertEquals('describedby', $link->getRelation());
+        $this->assertEquals($route, $link->getRoute());
+        $this->assertEquals($params, $link->getRouteParams());
+        $this->assertEquals($options, $link->getRouteOptions());
     }
 }
