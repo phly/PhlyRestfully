@@ -65,6 +65,11 @@ The following options are available for metadata maps:
   defaults to "id". (**OPTIONAL**)
 - **is_collection**: boolean flag indicating whether or not the resource is a
   collection; defaults to "false". (**OPTIONAL**)
+- **links**: array of additional relational links to use with the resource or
+  collection. Each item in the array is itself an array, with the required key
+  "rel" (describing the relation), and one of either "url" (a string) or "route"
+  (an array with the members: "name", required; "params", an array, optional;
+  and "options", an array, optional). (**OPTIONAL**)
 - **resource_route**: the name of the route to use for resources embedded as part
   of a collection. If not set, the route for the resource is used. (**OPTIONAL**)
 - **route**: the name of the route to use for generating the "self" relational
