@@ -317,6 +317,7 @@ class HalLinks extends AbstractHelper implements
      */
     public function renderCollection(HalCollection $halCollection)
     {
+        $this->getEventManager()->trigger(__FUNCTION__, $this, array('collection' => $halCollection));
         $collection     = $halCollection->collection;
         $collectionName = $halCollection->collectionName;
 
@@ -349,6 +350,7 @@ class HalLinks extends AbstractHelper implements
      */
     public function renderResource(HalResource $halResource)
     {
+        $this->getEventManager()->trigger(__FUNCTION__, $this, array('resource' => $halResource));
         $resource = $halResource->resource;
         $id       = $halResource->id;
         $links    = $this->fromResource($halResource);
@@ -543,20 +545,13 @@ class HalLinks extends AbstractHelper implements
         $id = $data[$identiferName];
 
         $resource = new HalResource($data, $id);
-
-        $link = new Link('self');
-        if ($metadata->hasRoute()) {
-            $params = array_merge($metadata->getRouteParams(), array($identiferName => $id));
-            $link->setRoute($metadata->getRoute(), $params, $metadata->getRouteOptions());
-        } elseif ($metadata->hasUrl()) {
-            $link->setUrl($metadata->getUrl());
-        } else {
-            throw new Exception\RuntimeException(sprintf(
-                'Unable to create a self link for resource of type "%s"; metadata does not contain a route or a url',
-                get_class($object)
-            ));
+        $links    = $resource->getLinks();
+        $this->marshalMetadataLinks($metadata, $links);
+        if (!$links->has('self')) {
+            $link = $this->marshalSelfLinkFromMetadata($metadata, $object, $id, $identiferName);
+            $links->add($link);
         }
-        $resource->getLinks()->add($link);
+
         return $resource;
     }
 
@@ -624,6 +619,7 @@ class HalLinks extends AbstractHelper implements
         $collection->setCollectionRoute($metadata->getRoute());
         $collection->setResourceRoute($metadata->getResourceRoute());
         $collection->setIdentifierName($metadata->getIdentifierName());
+        $this->marshalMetadataLinks($metadata, $collection->getLinks());
         return $collection;
     }
 
@@ -893,4 +889,47 @@ class HalLinks extends AbstractHelper implements
         return $hydrator->extract($resource);
     }
 
+    /**
+     * Creates a link object, given metadata and a resource
+     *
+     * @param  Metadata $metadata
+     * @param  object $object
+     * @param  string $id
+     * @param  string $identifierName
+     * @return Link
+     * @throws Exception\RuntimeException
+     */
+    protected function marshalSelfLinkFromMetadata(Metadata $metadata, $object, $id, $identifierName)
+    {
+        $link = new Link('self');
+        if ($metadata->hasUrl()) {
+            $link->setUrl($metadata->getUrl());
+            return $link;
+        }
+
+        if (!$metadata->hasRoute()) {
+            throw new Exception\RuntimeException(sprintf(
+                'Unable to create a self link for resource of type "%s"; metadata does not contain a route or a url',
+                get_class($object)
+            ));
+        }
+
+        $params = array_merge($metadata->getRouteParams(), array($identifierName => $id));
+        $link->setRoute($metadata->getRoute(), $params, $metadata->getRouteOptions());
+        return $link;
+    }
+
+    /**
+     * Inject any links found in the metadata into the resource's link collection
+     *
+     * @param  Metadata $metadata
+     * @param  LinkCollection $links
+     */
+    protected function marshalMetadataLinks(Metadata $metadata, LinkCollection $links)
+    {
+        foreach ($metadata->getLinks() as $linkData) {
+            $link = Link::factory($linkData);
+            $links->add($link);
+        }
+    }
 }
