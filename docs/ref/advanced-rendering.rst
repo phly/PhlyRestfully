@@ -26,6 +26,7 @@ However, it does expose a few pieces of functionality that may be of interest:
   was detailed :ref:`in the previous section <ref/advanced-routing>`.
 - The ``getIdFromResource`` event (also detailed :ref:`in the previous section
   <ref/advanced-routing>`). 
+- The ``renderResource`` and ``renderCollection`` events.
 - The ``renderCollection.resource`` event.
 
 If in a controller, or interacting with a controller instance, you can access it
@@ -36,8 +37,53 @@ via the controller's ``plugin()`` method:
     $halLinks = $controller->plugin('HalLinks');
 
 For the purposes of this chapter, we'll look specifically at the
-``renderCollection.resource`` event, as it allows you, the developer, to fully
-customize how you extract your resource to an array.
+``renderResource``, ``renderCollection``, and ``renderCollection.resource``
+events, as they allow you, the developer, to fully customize how you extract
+your resource to an array as well as manipulate links.
+
+The renderResource and renderCollection events
+----------------------------------------------
+
+These events are triggered each time you render a resource or collection, even
+if they are embedded. As such, this allows you to introspect these items and
+manipulate them prior to extracting them to a representation.
+
+As an example, let's say we want to inject a "describedby" link into any
+``My\User`` resource and/or ``My\Users`` collection. We can do this as follows:
+
+.. code-block:: php
+    :linenos:
+
+    $sharedEvents->attach(
+        'PhlyRestfully\Plugin\HalLinks',
+        array('renderResource', 'renderCollection'),
+        function ($e) {
+            $resource   = $e->getParam('resource', false);
+            $collection = $e->getParam('collection', false);
+            if (!$resource && !$collection) {
+                return;
+            }
+            if ($resource && !$resource instanceof \My\User) {
+                return;
+            }
+            if ($collection && !$collection instanceof \My\Users) {
+                return;
+            }
+            if ($collection) {
+                $resource = $collection;
+            }
+            $links = $resource->getLinks();
+            $links->add(\PhlyRestfully\Link::factory(array(
+                'rel' => 'describedby',
+                'url' => 'http://example.com/api/help/resources/user',
+            )));
+        }
+    );
+
+The above attaches to both events, and then checks if we have a resource or
+collection we're interested in; if so, it creates a link and injects it into the
+composed link collection. This will ensure we have a "describedby" relational
+link in each one of these rendered resources.
 
 The renderCollection.resource event
 -----------------------------------
