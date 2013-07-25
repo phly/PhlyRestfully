@@ -128,7 +128,6 @@ class HalLinksTest extends TestCase
         $this->assertEquals('http://localhost.localdomain/resource', $url);
     }
 
-
     public function testLinkCreationWithoutIdCreatesFullyQualifiedLink()
     {
         $url = $this->plugin->createLink('resource');
@@ -550,5 +549,58 @@ class HalLinksTest extends TestCase
         $link = $links->get('describedby');
         $this->assertTrue($link->hasUrl());
         $this->assertEquals('http://example.com/api/help/collection', $link->getUrl());
+    }
+
+    /**
+     * @group 79
+     */
+    public function testRenderResourceTriggersEvent()
+    {
+        $resource = new HalResource(
+            (object) array(
+                'id'   => 'user',
+                'name' => 'matthew',
+            ),
+            'user'
+        );
+        $self = new Link('self');
+        $self->setRoute('hostname/users', array('id' => 'user'));
+        $resource->getLinks()->add($self);
+
+        $this->plugin->getEventManager()->attach('renderResource', function ($e) {
+            $resource = $e->getParam('resource');
+            $resource->getLinks()->get('self')->setRouteParams(array('id' => 'matthew'));
+        });
+
+        $rendered = $this->plugin->renderResource($resource);
+        $this->assertContains('/users/matthew', $rendered['_links']['self']['href']);
+    }
+
+    /**
+     * @group 79
+     */
+    public function testRenderCollectionTriggersEvent()
+    {
+        $collection = new HalCollection(
+            array(
+                (object) array('id' => 'foo', 'name' => 'foo'),
+                (object) array('id' => 'bar', 'name' => 'bar'),
+                (object) array('id' => 'baz', 'name' => 'baz'),
+            ),
+            'hostname/contacts'
+        );
+        $self = new Link('self');
+        $self->setRoute('hostname/contacts');
+        $collection->getLinks()->add($self);
+        $collection->setCollectionName('resources');
+
+        $this->plugin->getEventManager()->attach('renderCollection', function ($e) {
+            $collection = $e->getParam('collection');
+            $collection->setAttributes(array('injected' => true));
+        });
+
+        $rendered = $this->plugin->renderCollection($collection);
+        $this->assertArrayHasKey('injected', $rendered);
+        $this->assertTrue($rendered['injected']);
     }
 }
