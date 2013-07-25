@@ -25,7 +25,7 @@ However, it does expose a few pieces of functionality that may be of interest:
   URLs (i.e., contains schema, hostname, and port, in addition to path). This
   was detailed :ref:`in the previous section <ref/advanced-routing>`.
 - The ``getIdFromResource`` event (also detailed :ref:`in the previous section
-  <ref/advanced-routing>`). 
+  <ref/advanced-routing>`).
 - The ``renderResource`` and ``renderCollection`` events.
 - The ``renderCollection.resource`` event.
 
