@@ -317,6 +317,7 @@ class HalLinks extends AbstractHelper implements
      */
     public function renderCollection(HalCollection $halCollection)
     {
+        $this->getEventManager()->trigger(__FUNCTION__, $this, array('collection' => $halCollection));
         $collection     = $halCollection->collection;
         $collectionName = $halCollection->collectionName;
 
@@ -349,6 +350,7 @@ class HalLinks extends AbstractHelper implements
      */
     public function renderResource(HalResource $halResource)
     {
+        $this->getEventManager()->trigger(__FUNCTION__, $this, array('resource' => $halResource));
         $resource = $halResource->resource;
         $id       = $halResource->id;
         $links    = $this->fromResource($halResource);
