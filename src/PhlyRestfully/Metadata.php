@@ -48,7 +48,7 @@ class Metadata
 
     /**
      * Collection of additional relational links to inject in resource
-     * 
+     *
      * @var array
      */
     protected $links = array();
@@ -163,7 +163,7 @@ class Metadata
 
     /**
      * Retrieve set of relational links to inject, if any
-     * 
+     *
      * @return array
      */
     public function getLinks()
@@ -337,11 +337,11 @@ class Metadata
      * - rel - the link relation
      * - url - the URL to use for the link OR
      * - route - an array of route information for generating the link; this
-     *   should include the elements "name" (required; the route name), 
+     *   should include the elements "name" (required; the route name),
      *   "params" (optional; additional parameters to inject), and "options"
      *   (optional; additional options to pass to the router for assembly)
-     * 
-     * @param  array $links 
+     *
+     * @param  array $links
      * @return self
      */
     public function setLinks(array $links)

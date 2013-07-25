@@ -888,11 +888,11 @@ class HalLinks extends AbstractHelper implements
 
     /**
      * Creates a link object, given metadata and a resource
-     * 
-     * @param  Metadata $metadata 
-     * @param  object $object 
-     * @param  string $id 
-     * @param  string $identifierName 
+     *
+     * @param  Metadata $metadata
+     * @param  object $object
+     * @param  string $id
+     * @param  string $identifierName
      * @return Link
      * @throws Exception\RuntimeException
      */
@@ -918,9 +918,9 @@ class HalLinks extends AbstractHelper implements
 
     /**
      * Inject any links found in the metadata into the resource's link collection
-     * 
-     * @param  Metadata $metadata 
-     * @param  LinkCollection $links 
+     *
+     * @param  Metadata $metadata
+     * @param  LinkCollection $links
      */
     protected function marshalMetadataLinks(Metadata $metadata, LinkCollection $links)
     {

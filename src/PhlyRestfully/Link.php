@@ -56,8 +56,8 @@ class Link
 
     /**
      * Factory for creating links
-     * 
-     * @param  array $spec 
+     *
+     * @param  array $spec
      * @return self
      * @throws Exception\InvalidArgumentException if missing a "rel" or invalid route specifications
      */
