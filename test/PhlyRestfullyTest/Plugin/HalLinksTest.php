@@ -482,15 +482,13 @@ class HalLinksTest extends TestCase
                 'route'    => 'hostname/resource',
                 'links'    => array(
                     array(
-                        array(
-                            'rel' => 'describedby',
-                            'url' => 'http://example.com/api/help/resource',
-                        ),
-                        array(
-                            'rel' => 'children',
-                            'route' => array(
-                                'name' => 'resource/children',
-                            ),
+                        'rel' => 'describedby',
+                        'url' => 'http://example.com/api/help/resource',
+                    ),
+                    array(
+                        'rel' => 'children',
+                        'route' => array(
+                            'name' => 'resource/children',
                         ),
                     ),
                 ),

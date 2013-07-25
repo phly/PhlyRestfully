@@ -916,7 +916,17 @@ class HalLinks extends AbstractHelper implements
         return $link;
     }
 
+    /**
+     * Inject any links found in the metadata into the resource's link collection
+     * 
+     * @param  Metadata $metadata 
+     * @param  LinkCollection $links 
+     */
     protected function marshalMetadataLinks(Metadata $metadata, LinkCollection $links)
     {
+        foreach ($metadata->getLinks() as $linkData) {
+            $link = Link::factory($linkData);
+            $links->add($link);
+        }
     }
 }
