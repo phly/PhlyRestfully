@@ -617,6 +617,7 @@ class HalLinks extends AbstractHelper implements
         $collection->setCollectionRoute($metadata->getRoute());
         $collection->setResourceRoute($metadata->getResourceRoute());
         $collection->setIdentifierName($metadata->getIdentifierName());
+        $this->marshalMetadataLinks($metadata, $collection->getLinks());
         return $collection;
     }
 

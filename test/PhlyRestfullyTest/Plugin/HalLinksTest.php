@@ -510,4 +510,45 @@ class HalLinksTest extends TestCase
         $this->assertTrue($children->hasRoute());
         $this->assertEquals('resource/children', $children->getRoute());
     }
+
+    /**
+     * @group 79
+     */
+    public function testInjectsLinksFromMetadataWhenCreatingCollection()
+    {
+        $set = new TestAsset\Collection(
+            array(
+                (object) array('id' => 'foo', 'name' => 'foo'),
+                (object) array('id' => 'bar', 'name' => 'bar'),
+                (object) array('id' => 'baz', 'name' => 'baz'),
+            )
+        );
+
+        $metadata = new MetadataMap(array(
+            'PhlyRestfullyTest\Plugin\TestAsset\Collection' => array(
+                'is_collection'  => true,
+                'route'          => 'hostname/contacts',
+                'resource_route' => 'hostname/embedded',
+                'links'          => array(
+                    array(
+                        'rel' => 'describedby',
+                        'url' => 'http://example.com/api/help/collection',
+                    ),
+                ),
+            ),
+        ));
+
+        $this->plugin->setMetadataMap($metadata);
+
+        $collection = $this->plugin->createCollectionFromMetadata(
+            $set,
+            $metadata->get('PhlyRestfullyTest\Plugin\TestAsset\Collection'
+        ));
+        $this->assertInstanceof('PhlyRestfully\HalCollection', $collection);
+        $links = $collection->getLinks();
+        $this->assertTrue($links->has('describedby'));
+        $link = $links->get('describedby');
+        $this->assertTrue($link->hasUrl());
+        $this->assertEquals('http://example.com/api/help/collection', $link->getUrl());
+    }
 }
