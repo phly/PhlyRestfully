@@ -47,6 +47,13 @@ class Metadata
     protected $isCollection = false;
 
     /**
+     * Collection of additional relational links to inject in resource
+     *
+     * @var array
+     */
+    protected $links = array();
+
+    /**
      * Route for resources composed in a collection
      *
      * @var string
@@ -152,6 +159,16 @@ class Metadata
     public function getIdentifierName()
     {
         return $this->identifierName;
+    }
+
+    /**
+     * Retrieve set of relational links to inject, if any
+     *
+     * @return array
+     */
+    public function getLinks()
+    {
+        return $this->links;
     }
 
     /**
@@ -309,6 +326,27 @@ class Metadata
     public function setIsCollection($flag)
     {
         $this->isCollection = (bool) $flag;
+        return $this;
+    }
+
+    /**
+     * Set relational links.
+     *
+     * Each element in the array should be an array with the elements:
+     *
+     * - rel - the link relation
+     * - url - the URL to use for the link OR
+     * - route - an array of route information for generating the link; this
+     *   should include the elements "name" (required; the route name),
+     *   "params" (optional; additional parameters to inject), and "options"
+     *   (optional; additional options to pass to the router for assembly)
+     *
+     * @param  array $links
+     * @return self
+     */
+    public function setLinks(array $links)
+    {
+        $this->links = $links;
         return $this;
     }
 

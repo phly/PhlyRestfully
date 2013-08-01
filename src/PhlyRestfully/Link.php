@@ -55,6 +55,59 @@ class Link
     }
 
     /**
+     * Factory for creating links
+     *
+     * @param  array $spec
+     * @return self
+     * @throws Exception\InvalidArgumentException if missing a "rel" or invalid route specifications
+     */
+    public static function factory(array $spec)
+    {
+        if (!isset($spec['rel'])) {
+            throw new Exception\InvalidArgumentException(sprintf(
+                '%s requires that the specification array contain a "rel" element; none found',
+                __METHOD__
+            ));
+        }
+        $link = new static($spec['rel']);
+
+        if (isset($spec['url'])) {
+            $link->setUrl($spec['url']);
+            return $link;
+        }
+
+        if (isset($spec['route'])) {
+            $routeInfo = $spec['route'];
+            if (is_string($routeInfo)) {
+                $link->setRoute($routeInfo);
+                return $link;
+            }
+
+            if (!is_array($routeInfo)) {
+                throw new Exception\InvalidArgumentException(sprintf(
+                    '%s requires that the specification array\'s "route" element be a string or array; received "%s"',
+                    __METHOD__,
+                    (is_object($routeInfo) ? get_class($routeInfo) : gettype($routeInfo))
+                ));
+            }
+
+            if (!isset($routeInfo['name'])) {
+                throw new Exception\InvalidArgumentException(sprintf(
+                    '%s requires that the specification array\'s "route" array contain a "name" element; none found',
+                    __METHOD__
+                ));
+            }
+            $name    = $routeInfo['name'];
+            $params  = isset($routeInfo['params']) && is_array($routeInfo['params']) ? $routeInfo['params'] : array();
+            $options = isset($routeInfo['options']) && is_array($routeInfo['options']) ? $routeInfo['options'] : array();
+            $link->setRoute($name, $params, $options);
+            return $link;
+        }
+
+        return $link;
+    }
+
+    /**
      * Set the route to use when generating the relation URI
      *
      * If any params or options are passed, those will be passed to route assembly.

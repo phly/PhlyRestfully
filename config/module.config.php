@@ -7,10 +7,10 @@
  */
 
 return array(
-    'phlyrestfully'       => array(
-        'renderer'        => array(),
-        'resources'       => array(),
-        'controllerClass' => 'PhlyRestfully\ResourceController'
+    'phlyrestfully'        => array(
+        'renderer'         => array(),
+        'resources'        => array(),
+        'controller_class' => 'PhlyRestfully\ResourceController',
     ),
 
     'service_manager' => array(

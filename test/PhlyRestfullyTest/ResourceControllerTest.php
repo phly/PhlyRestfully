@@ -213,6 +213,33 @@ class ResourceControllerTest extends TestCase
         $this->assertEquals(1, $result->pageSize);
     }
 
+    public function testReturnsHalCollectionForPaginatedListUsingPassedPageSizeParameter()
+    {
+        $items = array(
+            array('id' => 'foo', 'bar' => 'baz'),
+            array('id' => 'bar', 'bar' => 'baz'),
+            array('id' => 'baz', 'bar' => 'baz'),
+        );
+        $adapter   = new ArrayPaginator($items);
+        $paginator = new Paginator($adapter);
+        $this->resource->getEventManager()->attach('fetchAll', function ($e) use ($paginator) {
+            return $paginator;
+        });
+
+        $this->controller->setPageSizeParam('page_size');
+        $request = $this->controller->getRequest();
+        $request->setQuery(new Parameters(array(
+            'page'      => 2,
+            'page_size' => 1,
+        )));
+
+        $result = $this->controller->getList();
+        $this->assertInstanceOf('PhlyRestfully\HalCollection', $result);
+        $this->assertSame($paginator, $result->collection);
+        $this->assertEquals(2, $result->page);
+        $this->assertEquals(1, $result->pageSize);
+    }
+
     /**
      * @depends testReturnsHalCollectionForNonPaginatedList
      */
