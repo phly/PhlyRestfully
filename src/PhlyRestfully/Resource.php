@@ -176,10 +176,7 @@ class Resource implements ResourceInterface
      */
     public function create($data)
     {
-        if (is_array($data)) {
-            $data = (object) $data;
-        }
-        if (!is_object($data)) {
+        if (!is_object($data) && !is_array($data)) {
             throw new Exception\InvalidArgumentException(sprintf(
                 'Data provided to create must be either an array or object; received "%s"',
                 gettype($data)
@@ -217,12 +214,9 @@ class Resource implements ResourceInterface
      */
     public function update($id, $data)
     {
-        if (is_array($data)) {
-            $data = (object) $data;
-        }
-        if (!is_object($data)) {
+        if (!is_object($data) && !is_array($data)) {
             throw new Exception\InvalidArgumentException(sprintf(
-                'Data provided to update must be either an array or object; received "%s"',
+                'Data provided to create must be either an array or object; received "%s"',
                 gettype($data)
             ));
         }
@@ -308,10 +302,7 @@ class Resource implements ResourceInterface
      */
     public function patch($id, $data)
     {
-        if (is_array($data)) {
-            $data = (object) $data;
-        }
-        if (!is_object($data)) {
+        if (!is_object($data) && !is_array($data)) {
             throw new Exception\InvalidArgumentException(sprintf(
                 'Data provided to create must be either an array or object; received "%s"',
                 gettype($data)
