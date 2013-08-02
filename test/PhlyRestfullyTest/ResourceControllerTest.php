@@ -110,6 +110,39 @@ class ResourceControllerTest extends TestCase
         $this->assertEquals($resource, $result->resource);
     }
 
+    public function testPatchListReturnsProblemResultOnUpdateException()
+    {
+        $this->resource->getEventManager()->attach('patchList', function ($e) {
+            throw new Exception\UpdateException('failed');
+        });
+
+        $result = $this->controller->patchList(array());
+        $this->assertProblemApiResult(500, 'failed', $result);
+    }
+
+    public function testPatchListReturnsHalCollectionOnSuccess()
+    {
+        $items = array(
+            array('id' => 'foo', 'bar' => 'baz'),
+            array('id' => 'bar', 'bar' => 'baz'));
+        $this->resource->getEventManager()->attach('patchList', function ($e) use ($items) {
+            return $items;
+        });
+
+        $result = $this->controller->patchList($items);
+        $this->assertInstanceOf('PhlyRestfully\HalCollection', $result);
+        return $result;
+    }
+
+    /**
+     * @depends testPatchListReturnsHalCollectionOnSuccess
+     */
+    public function testPatchListReturnsHalCollectionWithRoutesInjected($collection)
+    {
+        $this->assertEquals('resource', $collection->collectionRoute);
+        $this->assertEquals('resource', $collection->resourceRoute);
+    }
+
     public function testFalseFromDeleteResourceReturnsProblemApiResult()
     {
         $this->resource->getEventManager()->attach('delete', function ($e) {
@@ -550,6 +583,17 @@ class ResourceControllerTest extends TestCase
         $this->assertSame($resource, $result);
     }
 
+    public function testPatchListUsesHalCollectionReturnedByResource()
+    {
+        $collection = new HalCollection(array());
+        $this->resource->getEventManager()->attach('patchList', function ($e) use ($collection) {
+            return $collection;
+        });
+
+        $result = $this->controller->patchList(array());
+        $this->assertSame($collection, $result);
+    }
+
     public function testGetUsesHalResourceReturnedByResource()
     {
         $data     = array('id' => 'foo', 'data' => 'bar');
@@ -640,6 +684,40 @@ class ResourceControllerTest extends TestCase
         $this->assertTrue($test->post);
         $this->assertEquals($data, $test->post_data);
         $this->assertSame($resource, $test->resource);
+    }
+
+    public function testPatchListTriggersPreAndPostEvents()
+    {
+        $test = (object) array(
+            'pre'        => false,
+            'pre_data'   => false,
+            'post'       => false,
+            'post_data'  => false,
+            'collection' => false,
+        );
+
+        $this->controller->getEventManager()->attach('patchList.pre', function ($e) use ($test) {
+            $test->pre      = true;
+            $test->pre_data = $e->getParam('data');
+        });
+        $this->controller->getEventManager()->attach('patchList.post', function ($e) use ($test) {
+            $test->post = true;
+            $test->post_data = $e->getParam('data');
+            $test->collection = $e->getParam('collection');
+        });
+
+        $data       = array('foo' => array('id' => 'bar'));
+        $collection = new HalCollection($data);
+        $this->resource->getEventManager()->attach('patchList', function ($e) use ($collection) {
+            return $collection;
+        });
+
+        $result = $this->controller->patchList($data);
+        $this->assertTrue($test->pre);
+        $this->assertEquals($data, $test->pre_data);
+        $this->assertTrue($test->post);
+        $this->assertEquals($data, $test->post_data);
+        $this->assertSame($collection, $test->collection);
     }
 
     public function testDeleteTriggersPreAndPostEvents()
@@ -1034,6 +1112,20 @@ class ResourceControllerTest extends TestCase
         });
 
         $result = $this->controller->create(array());
+        $this->assertSame($problem, $result);
+    }
+
+    /**
+     * @group 44
+     */
+    public function testPatchListAllowsReturningApiProblemFromResource()
+    {
+        $problem = new ApiProblem(400, 'Validation error', null, null, array('email' => 'Invalid email address provided'));
+        $this->resource->getEventManager()->attach('patchList', function ($e) use ($problem) {
+            return $problem;
+        });
+
+        $result = $this->controller->patchList(array());
         $this->assertSame($problem, $result);
     }
 
