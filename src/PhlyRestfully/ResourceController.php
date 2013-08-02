@@ -350,7 +350,7 @@ class ResourceController extends AbstractRestfulController
     }
 
     /**
-     * Respond to the PATCH method (partial update of existing resource) on 
+     * Respond to the PATCH method (partial update of existing resource) on
      * a collection, i.e. create and/or update multiple resources in a collection.
      *
      * @param array $data
