@@ -14,7 +14,9 @@ use PhlyRestfully\Link;
 use PhlyRestfully\MetadataMap;
 use PhlyRestfully\Plugin\HalLinks;
 use PHPUnit_Framework_TestCase as TestCase;
+use Zend\Http\Request;
 use Zend\Mvc\Router\Http\TreeRouteStack;
+use Zend\Mvc\Router\RouteMatch;
 use Zend\Mvc\Router\SimpleRouteStack;
 use Zend\Mvc\Router\Http\Segment;
 use Zend\Mvc\MvcEvent;
@@ -602,5 +604,43 @@ class HalLinksTest extends TestCase
         $rendered = $this->plugin->renderCollection($collection);
         $this->assertArrayHasKey('injected', $rendered);
         $this->assertTrue($rendered['injected']);
+    }
+
+    public function matchUrl($url)
+    {
+        $url     = 'http://localhost.localdomain' . $url;
+        $request = new Request();
+        $request->setUri($url);
+
+        $match = $this->router->match($request);
+        if ($match instanceof RouteMatch) {
+            $this->urlHelper->setRouteMatch($match);
+        }
+
+        return $match;
+    }
+
+    /**
+     * @group 95
+     */
+    public function testPassingFalseReuseParamsOptionShouldOmitMatchedParametersInGeneratedLink()
+    {
+        $matches = $this->matchUrl('/resource/foo');
+        $this->assertEquals('foo', $matches->getParam('id', false));
+
+        $link = Link::factory(array(
+            'rel' => 'resource',
+            'route' => array(
+                'name' => 'hostname/resource',
+                'options' => array(
+                    'reuse_matched_params' => false,
+                ),
+            ),
+        ));
+        $result = $this->plugin->fromLink($link);
+        $expected = array(
+            'href' => 'http://localhost.localdomain/resource',
+        );
+        $this->assertEquals($expected, $result);
     }
 }

@@ -424,7 +424,7 @@ class HalLinks extends AbstractHelper implements
      * Create a URL from a Link
      *
      * @param  Link $linkDefinition
-     * @return string
+     * @return array
      * @throws Exception\DomainException if Link is incomplete
      */
     public function fromLink(Link $linkDefinition)
