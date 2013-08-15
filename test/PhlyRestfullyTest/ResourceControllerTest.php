@@ -1022,6 +1022,20 @@ class ResourceControllerTest extends TestCase
         $result = $getIdentifier->invoke($this->controller, $routeMatch, $request);
         $this->assertEquals('bar', $result);
     }
+    
+    public function testIdentifierMatchedAgainstParameter()
+    {
+        $r = new ReflectionObject($this->controller);
+        $getIdentifier = $r->getMethod('getIdentifier');
+        $getIdentifier->setAccessible(true);
+
+        $routeMatch = $this->event->getRouteMatch();
+        $request    = $this->controller->getRequest();
+
+        $routeMatch->setParam('id', '0');
+        $result = $getIdentifier->invoke($this->controller, $routeMatch, $request);
+        $this->assertEquals('0', $result);
+    }
 
     /**
      * @group 44
