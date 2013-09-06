@@ -63,7 +63,7 @@ class ResourceParametersListener implements
     public function detachShared(SharedEventManagerInterface $events)
     {
         foreach ($this->sharedListeners as $index => $listener) {
-            if ($events->detach($listener)) {
+            if ($events->detach(ResourceController::class, $listener)) {
                 unset($this->sharedListeners[$index]);
             }
         }
