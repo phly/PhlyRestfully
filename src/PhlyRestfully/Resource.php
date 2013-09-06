@@ -13,6 +13,7 @@ use Zend\EventManager\EventManager;
 use Zend\EventManager\EventManagerInterface;
 use Zend\Mvc\Router\RouteMatch;
 use Zend\Stdlib\Parameters;
+use ArrayObject;
 
 /**
  * Base resource class
@@ -194,6 +195,61 @@ class Resource implements ResourceInterface
         $last    = $results->last();
         if (!is_array($last) && !is_object($last)) {
             return $data;
+        }
+        return $last;
+    }
+
+    /**
+     * Patches the collection with  the items contained in $data.
+     * $data should be a multidimensional array or array of objects; if
+     * otherwise, an exception will be raised.
+     *
+     * Like update(), the return value of the last executed listener will be
+     * returned, as long as it is an array or object; otherwise, $data is
+     * returned.
+     *
+     * As this method can create and update resources, if you wish to indicate
+     * failure to update, raise a PhlyRestfully\Exception\UpdateException and
+     * if you wish to indicate a failure to create, raise a
+     * PhlyRestfully\Exception\CreationException.
+     *
+     * @param  array $data
+     * @return array|object
+     * @throws Exception\InvalidArgumentException
+     */
+    public function patchList($data)
+    {
+        if (!is_array($data)) {
+            throw new Exception\InvalidArgumentException(sprintf(
+                'Data provided to patchList must be either a multidimensional array or array of objects; received "%s"',
+                gettype($data)
+            ));
+        }
+
+        $original = $data;
+        array_walk($data, function($value, $key) use(&$data) {
+            if (is_array($value)) {
+                $data[$key] = new ArrayObject($value);
+                return;
+            }
+
+            if (!is_object($value)) {
+                throw new Exception\InvalidArgumentException(sprintf(
+                    'Data provided to patchList must contain only arrays or objects; received "%s"',
+                    gettype($value)
+                ));
+            }
+        });
+
+        $data     = new ArrayObject($data);
+        $events   = $this->getEventManager();
+        $event    = $this->prepareEvent(__FUNCTION__, array('data' => $data));
+        $results  = $events->triggerUntil($event, function($result) {
+            return $result instanceof ApiProblem;
+        });
+        $last     = $results->last();
+        if (!is_array($last) && !is_object($last)) {
+            return $original;
         }
         return $last;
     }

@@ -350,6 +350,46 @@ class ResourceController extends AbstractRestfulController
     }
 
     /**
+     * Respond to the PATCH method (partial update of existing resource) on
+     * a collection, i.e. create and/or update multiple resources in a collection.
+     *
+     * @param array $data
+     * @return array
+     */
+    public function patchList($data)
+    {
+        if (!$this->isMethodAllowedForCollection()) {
+            return $this->createMethodNotAllowedResponse($this->collectionHttpOptions);
+        }
+
+        $events = $this->getEventManager();
+        $events->trigger('patchList.pre', $this, array('data' => $data));
+
+        try {
+            $collection = $this->resource->patchList($data);
+        } catch (\Exception $e) {
+            $code = $e->getCode() ?: 500;
+            return new ApiProblem($code, $e);
+        }
+
+        if ($collection instanceof ApiProblem) {
+            return $collection;
+        }
+
+        $plugin = $this->plugin('HalLinks');
+        $collection = $plugin->createCollection($collection, $this->route);
+        $collection->setCollectionRoute($this->route);
+        $collection->setIdentifierName($this->getIdentifierName());
+        $collection->setResourceRoute($this->route);
+        $collection->setPage($this->getRequest()->getQuery('page', 1));
+        $collection->setPageSize($this->pageSize);
+        $collection->setCollectionName($this->collectionName);
+
+        $events->trigger('patchList.post', $this, array('data' => $data, 'collection' => $collection));
+        return $collection;
+    }
+
+    /**
      * Delete an existing resource
      *
      * @param  int|string $id
