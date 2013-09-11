@@ -156,7 +156,7 @@ class HalLinks extends AbstractHelper implements
             }
 
             // Found public id getter on object
-            if (method_exists($resource, 'getid')) {
+            if (method_exists($resource, 'getId')) {
                 return $resource->getId();
             }
 
