@@ -604,7 +604,6 @@ class HalLinks extends AbstractHelper implements
      *
      * @param  HalCollection|array|object $collection
      * @param  null|string $route
-     * @param  string $identiferName
      * @return HalCollection
      */
     public function createCollection($collection, $route = null)
