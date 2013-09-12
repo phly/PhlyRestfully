@@ -541,16 +541,16 @@ class HalLinks extends AbstractHelper implements
         }
         $data = $hydrator->extract($object);
 
-        $identiferName = $metadata->getIdentifierName();
+        $identifierName = $metadata->getIdentifierName();
         if($identifierName !== false){
-            if (!isset($data[$identiferName])) {
+            if (!isset($data[$identifierName])) {
                 throw new Exception\RuntimeException(sprintf(
                     'Unable to determine identifier for object of type "%s"; no fields matching "%s"',
                     get_class($object),
-                    $identiferName
+                    $identifierName
                 ));
             }
-            $id = $data[$identiferName];
+            $id = $data[$identifierName];
         }else{
             $id = null;
         }
@@ -558,7 +558,7 @@ class HalLinks extends AbstractHelper implements
         $links    = $resource->getLinks();
         $this->marshalMetadataLinks($metadata, $links);
         if (!$links->has('self')) {
-            $link = $this->marshalSelfLinkFromMetadata($metadata, $object, $id, $identiferName);
+            $link = $this->marshalSelfLinkFromMetadata($metadata, $object, $id, $identifierName);
             $links->add($link);
         }
 
@@ -600,7 +600,7 @@ class HalLinks extends AbstractHelper implements
      *
      * @param  HalCollection|array|object $collection
      * @param  null|string $route
-     * @param  string $identiferName
+     * @param  string $identifierName
      * @return HalCollection
      */
     public function createCollection($collection, $route = null)
