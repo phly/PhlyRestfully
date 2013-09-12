@@ -542,15 +542,18 @@ class HalLinks extends AbstractHelper implements
         $data = $hydrator->extract($object);
 
         $identiferName = $metadata->getIdentifierName();
-        if (!isset($data[$identiferName])) {
-            throw new Exception\RuntimeException(sprintf(
-                'Unable to determine identifier for object of type "%s"; no fields matching "%s"',
-                get_class($object),
-                $identiferName
-            ));
+        if($identifierName !== false){
+            if (!isset($data[$identiferName])) {
+                throw new Exception\RuntimeException(sprintf(
+                    'Unable to determine identifier for object of type "%s"; no fields matching "%s"',
+                    get_class($object),
+                    $identiferName
+                ));
+            }
+            $id = $data[$identiferName];
+        }else{
+            $id = null;
         }
-        $id = $data[$identiferName];
-
         $resource = new HalResource($data, $id);
         $links    = $resource->getLinks();
         $this->marshalMetadataLinks($metadata, $links);
