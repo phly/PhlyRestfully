@@ -33,7 +33,7 @@ following:
                 $resource    = new PhlyRestfully\Resource();
                 $resource->setEventManager($events);
 
-                $controller = new PhlyRestfully\ResourceController('PasteController`);
+                $controller = new PhlyRestfully\ResourceController('PasteController');
                 $controller->setResource($resource);
                 $controller->setRoute('paste/api');
                 $controller->setCollectionName('pastes');
