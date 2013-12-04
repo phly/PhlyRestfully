@@ -66,4 +66,25 @@ class ResourceControllerFactoryTest extends TestCase
         $controller = $this->controllers->get('ApiController');
         $this->assertInstanceOf('PhlyRestfullyTest\Factory\TestAsset\CustomController', $controller);
     }
+
+    public function testWillInstantiateDefaultResourceControllerWhenSpecified()
+    {
+        $config = $this->services->get('Config');
+        $config['phlyrestfully']['default_controller_class'] = 'PhlyRestfullyTest\Factory\TestAsset\CustomController';
+        $this->services->setAllowOverride(true);
+        $this->services->setService('Config', $config);
+        $controller = $this->controllers->get('ApiController');
+        $this->assertInstanceOf('PhlyRestfullyTest\Factory\TestAsset\CustomController', $controller);
+    }
+
+    public function testWillInstantiateAlternateResourceControllerWhenSpecifiedWithDefaultResourceController()
+    {
+        $config = $this->services->get('Config');
+        $config['phlyrestfully']['resources']['ApiController']['controller_class'] = 'PhlyRestfullyTest\Factory\TestAsset\CustomController';
+        $config['phlyrestfully']['default_controller_class'] = 'PhlyRestfully\ResourceController';
+        $this->services->setAllowOverride(true);
+        $this->services->setService('Config', $config);
+        $controller = $this->controllers->get('ApiController');
+        $this->assertInstanceOf('PhlyRestfullyTest\Factory\TestAsset\CustomController', $controller, 'The resource controller should be used instead of the global default controller.');
+    }
 }

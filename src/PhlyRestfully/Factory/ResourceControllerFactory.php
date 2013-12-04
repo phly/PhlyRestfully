@@ -81,9 +81,12 @@ class ResourceControllerFactory implements AbstractFactoryInterface
      */
     public function createServiceWithName(ServiceLocatorInterface $controllers, $name, $requestedName)
     {
-        $services = $controllers->getServiceLocator();
-        $config   = $services->get('Config');
-        $config   = $config['phlyrestfully']['resources'][$requestedName];
+        $services               = $controllers->getServiceLocator();
+        $config                 = $services->get('Config');
+        $defaultControllerClass = isset($config['phlyrestfully']['default_controller_class'])
+            ? $config['phlyrestfully']['default_controller_class']
+            : 'PhlyRestfully\ResourceController';
+        $config                 = $config['phlyrestfully']['resources'][$requestedName];
 
         if ($services->has($config['listener'])) {
             $listener = $services->get($config['listener']);
@@ -120,7 +123,7 @@ class ResourceControllerFactory implements AbstractFactoryInterface
         }
 
         $events          = $services->get('EventManager');
-        $controllerClass = isset($config['controller_class']) ? $config['controller_class'] : 'PhlyRestfully\ResourceController';
+        $controllerClass = isset($config['controller_class']) ? $config['controller_class'] : $defaultControllerClass;
         $controller      = new $controllerClass($identifier);
 
         if (!$controller instanceof ResourceController) {
