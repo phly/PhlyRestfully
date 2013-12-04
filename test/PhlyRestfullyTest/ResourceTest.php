@@ -51,6 +51,17 @@ class ResourceTest extends TestCase
         );
     }
 
+    public function badUpdateCollectionData()
+    {
+        return array_merge(
+            $this->badData(),
+            array(
+                'object'    => array(new StdClass),
+                'notnested' => array(array(null)),
+            )
+        );
+    }
+
     /**
      * @dataProvider badData
      */
@@ -115,6 +126,44 @@ class ResourceTest extends TestCase
     }
 
     /**
+     * @dataProvider badUpdateCollectionData
+     */
+    public function testPatchListListRaisesExceptionWithInvalidData($data)
+    {
+        $this->setExpectedException('PhlyRestfully\Exception\InvalidArgumentException');
+        $this->resource->patchList($data);
+    }
+
+    public function testPatchListReturnsResultOfLastListener()
+    {
+        $this->events->attach('patchList', function ($e) {
+            return;
+        });
+        $object = array(new stdClass);
+        $this->events->attach('patchList', function ($e) use ($object) {
+            return $object;
+        });
+
+        $test = $this->resource->patchList(array(array()));
+        $this->assertSame($object, $test);
+    }
+
+    public function testPatchListReturnsDataIfLastListenerDoesNotReturnResource()
+    {
+        $data = array(new stdClass);
+        $object = new stdClass;
+        $this->events->attach('patchList', function ($e) use ($object) {
+            return $object;
+        });
+        $this->events->attach('patchList', function ($e) {
+            return;
+        });
+
+        $test = $this->resource->patchList($data);
+        $this->assertSame($data, $test);
+    }
+
+    /**
      * @dataProvider badData
      */
     public function testUpdateRaisesExceptionWithInvalidData($data)
@@ -153,7 +202,7 @@ class ResourceTest extends TestCase
     }
 
     /**
-     * @dataProvider badData
+     * @dataProvider badUpdateCollectionData
      */
     public function testReplaceListRaisesExceptionWithInvalidData($data)
     {
@@ -378,6 +427,7 @@ class ResourceTest extends TestCase
 
         return array(
             'create' => array('create', array($resource), false),
+            'patchList' => array('patchList', array($collection), false),
             'update' => array('update', array($id, $resource), true),
             'replaceList' => array('replaceList', array($collection), false),
             'patch' => array('patch', array($id, $resource), true),

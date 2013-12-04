@@ -322,7 +322,9 @@ class ResourceController extends AbstractRestfulController
         try {
             $resource = $this->resource->create($data);
         } catch (\Exception $e) {
+            $events->trigger('create.exception', $this, array('data' => $e));
             $code = $e->getCode() ?: 500;
+
             return new ApiProblem($code, $e);
         }
 
@@ -350,6 +352,48 @@ class ResourceController extends AbstractRestfulController
     }
 
     /**
+     * Respond to the PATCH method (partial update of existing resource) on 
+     * a collection, i.e. create and/or update multiple resources in a collection.
+     *
+     * @param array $data
+     * @return array
+     */
+    public function patchList($data)
+    {
+        if (!$this->isMethodAllowedForCollection()) {
+            return $this->createMethodNotAllowedResponse($this->collectionHttpOptions);
+        }
+
+        $events = $this->getEventManager();
+        $events->trigger('patchList.pre', $this, array('data' => $data));
+
+        try {
+            $collection = $this->resource->patchList($data);
+        } catch (\Exception $e) {
+            $events->trigger('patchList.exception', $this, array('data' => $e));
+            $code = $e->getCode() ?: 500;
+
+            return new ApiProblem($code, $e);
+        }
+
+        if ($collection instanceof ApiProblem) {
+            return $collection;
+        }
+
+        $plugin = $this->plugin('HalLinks');
+        $collection = $plugin->createCollection($collection, $this->route);
+        $collection->setCollectionRoute($this->route);
+        $collection->setIdentifierName($this->getIdentifierName());
+        $collection->setResourceRoute($this->route);
+        $collection->setPage($this->getRequest()->getQuery('page', 1));
+        $collection->setPageSize($this->pageSize);
+        $collection->setCollectionName($this->collectionName);
+
+        $events->trigger('patchList.post', $this, array('data' => $data, 'collection' => $collection));
+        return $collection;
+    }
+
+    /**
      * Delete an existing resource
      *
      * @param  int|string $id
@@ -370,6 +414,7 @@ class ResourceController extends AbstractRestfulController
         try {
             $result = $this->resource->delete($id);
         } catch (\Exception $e) {
+            $events->trigger('delete.exception', $this, array('data' => $e));
             $code = $e->getCode() ?: 500;
 
             return new ApiProblem($code, $e);
@@ -401,6 +446,7 @@ class ResourceController extends AbstractRestfulController
         try {
             $result = $this->resource->deleteList();
         } catch (\Exception $e) {
+            $events->trigger('deleteList.exception', $this, array('data' => $e));
             $code = $e->getCode() ?: 500;
 
             return new ApiProblem($code, $e);
@@ -438,6 +484,7 @@ class ResourceController extends AbstractRestfulController
         try {
             $resource = $this->resource->fetch($id);
         } catch (\Exception $e) {
+            $events->trigger('get.exception', $this, array('data' => $e));
             $code = $e->getCode() ?: 500;
 
             return new ApiProblem($code, $e);
@@ -477,6 +524,7 @@ class ResourceController extends AbstractRestfulController
         try {
             $collection = $this->resource->fetchAll();
         } catch (\Exception $e) {
+            $events->trigger('getList.exception', $this, array('data' => $e));
             $code = $e->getCode() ?: 500;
 
             return new ApiProblem($code, $e);
@@ -572,7 +620,9 @@ class ResourceController extends AbstractRestfulController
         try {
             $resource = $this->resource->patch($id, $data);
         } catch (\Exception $e) {
+            $events->trigger('patch.exception', $this, array('data' => $e));
             $code = $e->getCode() ?: 500;
+
             return new ApiProblem($code, $e);
         }
 
@@ -613,7 +663,9 @@ class ResourceController extends AbstractRestfulController
         try {
             $resource = $this->resource->update($id, $data);
         } catch (\Exception $e) {
+            $events->trigger('update.exception', $this, array('data' => $e));
             $code = $e->getCode() ?: 500;
+
             return new ApiProblem($code, $e);
         }
 
@@ -646,7 +698,9 @@ class ResourceController extends AbstractRestfulController
         try {
             $collection = $this->resource->replaceList($data);
         } catch (\Exception $e) {
+            $events->trigger('replaceList.exception', $this, array('data' => $e));
             $code = $e->getCode() ?: 500;
+
             return new ApiProblem($code, $e);
         }
 
