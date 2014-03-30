@@ -349,8 +349,8 @@ class ChildResourcesIntegrationTest extends TestCase
         $resource = new Resource();
         $resource->getEventManager()->attach('fetch', function ($e) {
             return (object) array(
-                'id'   => 'luke',
-                'name' => 'Luke Skywalker',
+                'child_id'   => 'luke',
+                'name'       => 'Luke Skywalker',
             );
         });
         $controller = new ResourceController();
@@ -393,12 +393,12 @@ class ChildResourcesIntegrationTest extends TestCase
         $resource->getEventManager()->attach('fetchAll', function ($e) {
             return array(
                 (object) array(
-                    'id'   => 'luke',
-                    'name' => 'Luke Skywalker',
+                    'child_id'   => 'luke',
+                    'name'       => 'Luke Skywalker',
                 ),
                 (object) array(
-                    'id'   => 'leia',
-                    'name' => 'Leia Organa',
+                    'child_id'   => 'leia',
+                    'name'       => 'Leia Organa',
                 ),
             );
         });
