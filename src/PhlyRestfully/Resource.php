@@ -13,6 +13,7 @@ use Zend\EventManager\EventManager;
 use Zend\EventManager\EventManagerInterface;
 use Zend\Mvc\Router\RouteMatch;
 use Zend\Stdlib\Parameters;
+use ArrayObject;
 
 /**
  * Base resource class
@@ -176,8 +177,9 @@ class Resource implements ResourceInterface
      */
     public function create($data)
     {
+        $original = $data;
         if (is_array($data)) {
-            $data = (object) $data;
+            $data = new ArrayObject($data, ArrayObject::ARRAY_AS_PROPS);
         }
         if (!is_object($data)) {
             throw new Exception\InvalidArgumentException(sprintf(
@@ -193,7 +195,7 @@ class Resource implements ResourceInterface
         });
         $last    = $results->last();
         if (!is_array($last) && !is_object($last)) {
-            return $data;
+            return $original;
         }
         return $last;
     }
@@ -217,8 +219,9 @@ class Resource implements ResourceInterface
      */
     public function update($id, $data)
     {
+        $original = $data;
         if (is_array($data)) {
-            $data = (object) $data;
+            $data = new ArrayObject($data, ArrayObject::ARRAY_AS_PROPS);
         }
         if (!is_object($data)) {
             throw new Exception\InvalidArgumentException(sprintf(
@@ -234,7 +237,7 @@ class Resource implements ResourceInterface
         });
         $last    = $results->last();
         if (!is_array($last) && !is_object($last)) {
-            return $data;
+            return $original;
         }
         return $last;
     }
@@ -263,9 +266,10 @@ class Resource implements ResourceInterface
                 gettype($data)
             ));
         }
+        $original = $data;
         array_walk($data, function($value, $key) use(&$data) {
             if (is_array($value)) {
-                $data[$key] = (object) $value;
+                $data[$key] = new ArrayObject($value);
                 return;
             }
 
@@ -276,14 +280,15 @@ class Resource implements ResourceInterface
                 ));
             }
         });
-        $events  = $this->getEventManager();
-        $event   = $this->prepareEvent(__FUNCTION__, array('data' => $data));
-        $results = $events->triggerUntil($event, function($result) {
+        $data     = new ArrayObject($data, ArrayObject::ARRAY_AS_PROPS);
+        $events   = $this->getEventManager();
+        $event    = $this->prepareEvent(__FUNCTION__, array('data' => $data));
+        $results  = $events->triggerUntil($event, function($result) {
             return $result instanceof ApiProblem;
         });
         $last    = $results->last();
         if (!is_array($last) && !is_object($last)) {
-            return $data;
+            return $original;
         }
         return $last;
     }
@@ -308,8 +313,9 @@ class Resource implements ResourceInterface
      */
     public function patch($id, $data)
     {
+        $original = $data;
         if (is_array($data)) {
-            $data = (object) $data;
+            $data = new ArrayObject($data, ArrayObject::ARRAY_AS_PROPS);
         }
         if (!is_object($data)) {
             throw new Exception\InvalidArgumentException(sprintf(
@@ -325,7 +331,7 @@ class Resource implements ResourceInterface
         });
         $last    = $results->last();
         if (!is_array($last) && !is_object($last)) {
-            return $data;
+            return $original;
         }
         return $last;
     }
@@ -371,6 +377,11 @@ class Resource implements ResourceInterface
                 gettype($data)
             ));
         }
+
+        if (is_array($data)) {
+            $data = new ArrayObject($data, ArrayObject::ARRAY_AS_PROPS);
+        }
+
         $events  = $this->getEventManager();
         $event   = $this->prepareEvent(__FUNCTION__, array('data' => $data));
         $results = $events->triggerUntil($event, function($result) {
