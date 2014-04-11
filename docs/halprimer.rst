@@ -44,7 +44,7 @@ containing a "self" relational link. As an example:
             "self": {
                 "href": "http://example.org/api/user/matthew"
             }
-        }
+        },
         "id": "matthew",
         "name": "Matthew Weier O'Phinney"
     }
@@ -61,7 +61,7 @@ least a "_links" property with a "self" relational link.
             "self": {
                 "href": "http://example.org/api/user/matthew"
             }
-        }
+        },
         "id": "matthew",
         "name": "Matthew Weier O'Phinney",
         "_embedded": {
@@ -130,7 +130,7 @@ payload, and potentially other metadata about the collection.
             "last": {
                 "href": "http://example.org/api/user?page=133"
             }
-        }
+        },
         "count": 3,
         "total": 498,
         "_embedded": {
@@ -236,7 +236,7 @@ The response would look like this:
             "self": {
                 "href": "http://example.org/api/user/matthew"
             }
-        }
+        },
         "id": "matthew",
         "name": "Matthew Weier O'Phinney",
         "_embedded": {
