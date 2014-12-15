@@ -44,7 +44,7 @@ containing a "self" relational link. As an example:
             "self": {
                 "href": "http://example.org/api/user/matthew"
             }
-        }
+        },
         "id": "matthew",
         "name": "Matthew Weier O'Phinney"
     }
