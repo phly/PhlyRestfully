@@ -81,6 +81,21 @@ The following options are available for metadata maps:
 - **url**: the specific URL to use with this resource. (**OPTIONAL**; this or ``route``
   **MUST** be set, however)
 
+If you want the metadata to match descendants of the classes too, you can set
+that option as follows. This comes to hand when working with proxy classes, e.g.
+like Doctrine does.
+
+.. code-block:: php
+    :linenos:
+
+    return array(
+        'phlyrestfully' => array(
+            'metadata' => array(
+                'match_descendants' => true,
+            ),
+        ),
+    );
+
 Collections
 -----------
 
