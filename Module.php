@@ -82,8 +82,17 @@ class Module
                 ) {
                     $map = $config['phlyrestfully']['metadata_map'];
                 }
+                
+                $metadataMap = new MetadataMap($map, $hydrators);
+                
+                if (isset($config['phlyrestfully'])
+                    && isset($config['phlyrestfully']['metadata'])
+                    && isset($config['phlyrestfully']['metadata']['match_descendants'])
+                ) {
+                    $metadataMap->setMatchDescendants($config['phlyrestfully']['metadata']['match_descendants']);
+                }
 
-                return new MetadataMap($map, $hydrators);
+                return $metadataMap;
             },
             'PhlyRestfully\JsonRenderer' => function ($services) {
                 $helpers  = $services->get('ViewHelperManager');

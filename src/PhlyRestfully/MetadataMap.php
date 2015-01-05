@@ -21,6 +21,11 @@ class MetadataMap
      * @var Metadata[]
      */
     protected $map = array();
+    
+    /**
+     * @var boolean
+     */
+    protected $matchDescendants = false;
 
     /**
      * Constructor
@@ -95,6 +100,15 @@ class MetadataMap
 
         return $this;
     }
+    
+    /**
+     * Whether class meta information applies to descendants of that class too.
+     * @param boolean $value
+     */
+    public function setMatchDescendants($value)
+    {
+        $this->matchDescendants = (boolean) $value;
+    }
 
     /**
      * Does the map contain metadata for the given class?
@@ -104,10 +118,7 @@ class MetadataMap
      */
     public function has($class)
     {
-        if (is_object($class)) {
-            $class = get_class($class);
-        }
-        return array_key_exists($class, $this->map);
+        return null !== $this->get($class);
     }
 
     /**
@@ -121,6 +132,34 @@ class MetadataMap
         if (is_object($class)) {
             $class = get_class($class);
         }
-        return $this->map[$class];
+        
+        // Test all class names in the ancestry line of the given class.
+        // If that option was set.
+        $classLine = $this->matchDescendants ? $this->getClassLine($class) : array($class);
+        foreach ($classLine as $ancestorClass)
+        {
+            if (array_key_exists($ancestorClass, $this->map)) {
+                return $this->map[$ancestorClass];
+            }
+        }
+        
+        return null;
+    }
+
+    /**
+     * Creates the ancestry line of a class. Which is a list of (names of) its
+     *  ancestor classes ordered by closest one first. Includes the class itself.
+     * @param string $class
+     * @return string[]
+     */
+    protected function getClassLine($class)
+    {
+        $classLine = array($class);
+        
+        do {
+            $classLine[] = $class;
+        } while ($class = get_parent_class($class));
+        
+        return $classLine;
     }
 }
