@@ -389,7 +389,7 @@ class ResourceController extends AbstractRestfulController
         return $response;
     }
 
-    public function deleteList()
+    public function deleteList($data = null)
     {
         if (!$this->isMethodAllowedForCollection()) {
             return $this->createMethodNotAllowedResponse($this->collectionHttpOptions);
