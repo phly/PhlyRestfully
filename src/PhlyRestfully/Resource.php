@@ -188,7 +188,7 @@ class Resource implements ResourceInterface
 
         $events  = $this->getEventManager();
         $event   = $this->prepareEvent(__FUNCTION__, array('data' => $data));
-        $results = $events->triggerUntil($event, function($result) {
+        $results = $events->trigger($event, function($result) {
             return $result instanceof ApiProblem;
         });
         $last    = $results->last();
@@ -229,7 +229,7 @@ class Resource implements ResourceInterface
 
         $events  = $this->getEventManager();
         $event   = $this->prepareEvent(__FUNCTION__, compact('id', 'data'));
-        $results = $events->triggerUntil($event, function($result) {
+        $results = $events->trigger($event, function($result) {
             return $result instanceof ApiProblem;
         });
         $last    = $results->last();
@@ -278,7 +278,7 @@ class Resource implements ResourceInterface
         });
         $events  = $this->getEventManager();
         $event   = $this->prepareEvent(__FUNCTION__, array('data' => $data));
-        $results = $events->triggerUntil($event, function($result) {
+        $results = $events->trigger($event, function($result) {
             return $result instanceof ApiProblem;
         });
         $last    = $results->last();
@@ -320,7 +320,7 @@ class Resource implements ResourceInterface
 
         $events  = $this->getEventManager();
         $event   = $this->prepareEvent(__FUNCTION__, compact('id', 'data'));
-        $results = $events->triggerUntil($event, function($result) {
+        $results = $events->trigger($event, function($result) {
             return $result instanceof ApiProblem;
         });
         $last    = $results->last();
@@ -344,7 +344,7 @@ class Resource implements ResourceInterface
     {
         $events  = $this->getEventManager();
         $event   = $this->prepareEvent(__FUNCTION__, array('id' => $id));
-        $results = $events->triggerUntil($event, function($result) {
+        $results = $events->trigger($event, function($result) {
             return $result instanceof ApiProblem;
         });
         $last    = $results->last();
@@ -373,7 +373,7 @@ class Resource implements ResourceInterface
         }
         $events  = $this->getEventManager();
         $event   = $this->prepareEvent(__FUNCTION__, array('data' => $data));
-        $results = $events->triggerUntil($event, function($result) {
+        $results = $events->trigger($event, function($result) {
             return $result instanceof ApiProblem;
         });
         $last    = $results->last();
@@ -398,7 +398,7 @@ class Resource implements ResourceInterface
     {
         $events  = $this->getEventManager();
         $event   = $this->prepareEvent(__FUNCTION__, array('id' => $id));
-        $results = $events->triggerUntil($event, function($result) {
+        $results = $events->trigger($event, function($result) {
             return $result instanceof ApiProblem;
         });
         $last    = $results->last();
@@ -426,7 +426,7 @@ class Resource implements ResourceInterface
         $events  = $this->getEventManager();
         $params  = func_get_args();
         $event   = $this->prepareEvent(__FUNCTION__, $params);
-        $results = $events->triggerUntil($event, function($result) {
+        $results = $events->trigger($event, function($result) {
             return $result instanceof ApiProblem;
         });
         $last    = $results->last();
