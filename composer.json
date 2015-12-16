@@ -32,7 +32,7 @@
         "zendframework/zend-paginator": ">=2.2.0",
         "zendframework/zend-uri": ">=2.2.0",
         "zendframework/zend-view": ">=2.2.0",
-        "zendframework/zend-stdlib": ">=2.2.0"
+        "zendframework/zend-stdlib": ">=2.7.0"
     },
     "require-dev": {
         "phpunit/PHPUnit": "3.7.*",
