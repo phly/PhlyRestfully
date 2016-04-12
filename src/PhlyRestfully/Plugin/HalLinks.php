@@ -26,7 +26,7 @@ use Zend\Paginator\Paginator;
 use Zend\Stdlib\ArrayUtils;
 use Zend\Stdlib\DispatchableInterface;
 use Zend\Hydrator\HydratorInterface;
-use Zend\Stdlib\Hydrator\HydratorPluginManager;
+use Zend\Hydrator\HydratorPluginManager;
 use Zend\View\Helper\AbstractHelper;
 use Zend\View\Helper\ServerUrl;
 use Zend\View\Helper\Url;
