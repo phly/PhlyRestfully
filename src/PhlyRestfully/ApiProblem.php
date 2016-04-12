@@ -180,6 +180,18 @@ class ApiProblem
     }
 
     /**
+     * Get passed in exception if available
+     *
+     * @return \Exception
+     */
+    public function getException()
+    {
+        if ($this->detail instanceof \Exception) {
+            return $this->detail;
+        }
+    }
+
+    /**
      * Cast to an array
      *
      * @return array

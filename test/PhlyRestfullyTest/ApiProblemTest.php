@@ -194,4 +194,19 @@ class ApiProblemTest extends TestCase
         $this->assertArrayHasKey('foo', $payload);
         $this->assertEquals('bar', $payload['foo']);
     }
+
+    public function testGetExceptionReturnsExceptionIfPassedInAsDetail()
+    {
+        $exception  = new Exception\CreationException('exception message', 401);
+        $apiProblem = new ApiProblem('401', $exception);
+
+        $this->assertTrue($apiProblem->getException() instanceof Exception\CreationException);
+    }
+
+    public function testGetExceptionReturnsNullIfStringPassedInAsDetail()
+    {
+        $apiProblem = new ApiProblem('401', 'Bad error happened');
+
+        $this->assertNull($apiProblem->getException());
+    }
 }

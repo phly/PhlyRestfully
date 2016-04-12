@@ -220,7 +220,7 @@ class CollectionIntegrationTest extends TestCase
 
     public function getServiceManager()
     {
-        $controllers = new ControllerManager();
+        $controllers = new ControllerManager(null);
         $controllers->addAbstractFactory('PhlyRestfully\Factory\ResourceControllerFactory');
 
         $services    = new ServiceManager();

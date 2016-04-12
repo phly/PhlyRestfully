@@ -32,7 +32,7 @@ class ResourceParametersListener implements
     /**
      * @param EventManagerInterface $events
      */
-    public function attach(EventManagerInterface $events)
+    public function attach(EventManagerInterface $events, $priority = 1)
     {
         $this->listeners[] = $events->attach('dispatch', array($this, 'onDispatch'), 100);
     }
