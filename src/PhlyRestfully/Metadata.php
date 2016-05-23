@@ -8,8 +8,8 @@
 
 namespace PhlyRestfully;
 
-use Zend\Stdlib\Hydrator\HydratorInterface;
-use Zend\Stdlib\Hydrator\HydratorPluginManager;
+use Zend\Hydrator\HydratorInterface;
+use Zend\Hydrator\HydratorPluginManager;
 
 class Metadata
 {

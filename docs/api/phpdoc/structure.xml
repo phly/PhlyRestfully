@@ -1327,9 +1327,9 @@ underscores.&lt;/p&gt;
         <docblock line="127">
           <description>Retrieve the hydrator to associate with this class, if any</description>
           <long-description></long-description>
-          <tag line="127" name="return" description="" type="null|\Zend\Stdlib\Hydrator\HydratorInterface">
+          <tag line="127" name="return" description="" type="null|\Zend\Hydrator\HydratorInterface">
             <type by_reference="false">null</type>
-            <type by_reference="false">\Zend\Stdlib\Hydrator\HydratorInterface</type>
+            <type by_reference="false">\Zend\Hydrator\HydratorInterface</type>
           </tag>
         </docblock>
       </method>
@@ -1452,9 +1452,9 @@ underscores.&lt;/p&gt;
         <docblock line="246">
           <description>Set the hydrator to use with this class</description>
           <long-description></long-description>
-          <tag line="246" name="param" description="" type="string|\Zend\Stdlib\Hydrator\HydratorInterface" variable="$hydrator">
+          <tag line="246" name="param" description="" type="string|\Zend\Hydrator\HydratorInterface" variable="$hydrator">
             <type by_reference="false">string</type>
-            <type by_reference="false">\Zend\Stdlib\Hydrator\HydratorInterface</type>
+            <type by_reference="false">\Zend\Hydrator\HydratorInterface</type>
           </tag>
           <tag line="246" name="return" description="" type="self">
             <type by_reference="false">self</type>
@@ -3691,8 +3691,8 @@ replaced with a RestfulJsonModel containing an API-Problem payload.&lt;/p&gt;</l
           <tag line="194" name="param" description="" type="string" variable="$class">
             <type by_reference="false">string</type>
           </tag>
-          <tag line="194" name="param" description="" type="\Zend\Stdlib\Hydrator\HydratorInterface" variable="$hydrator">
-            <type by_reference="false">\Zend\Stdlib\Hydrator\HydratorInterface</type>
+          <tag line="194" name="param" description="" type="\Zend\Hydrator\HydratorInterface" variable="$hydrator">
+            <type by_reference="false">\Zend\Hydrator\HydratorInterface</type>
           </tag>
           <tag line="194" name="return" description="" type="\PhlyRestfully\Plugin\RestfulJsonRenderer">
             <type by_reference="false">\PhlyRestfully\Plugin\RestfulJsonRenderer</type>
@@ -3706,7 +3706,7 @@ replaced with a RestfulJsonModel containing an API-Problem payload.&lt;/p&gt;</l
         <argument line="201">
           <name>$hydrator</name>
           <default></default>
-          <type>\Zend\Stdlib\Hydrator\HydratorInterface</type>
+          <type>\Zend\Hydrator\HydratorInterface</type>
         </argument>
       </method>
       <method final="false" abstract="false" static="false" visibility="public" namespace="PhlyRestfully\Plugin" line="213" package="Default">
@@ -3715,8 +3715,8 @@ replaced with a RestfulJsonModel containing an API-Problem payload.&lt;/p&gt;</l
         <docblock line="207">
           <description>Set the default hydrator to use if none specified for a class.</description>
           <long-description></long-description>
-          <tag line="207" name="param" description="" type="\Zend\Stdlib\Hydrator\HydratorInterface" variable="$hydrator">
-            <type by_reference="false">\Zend\Stdlib\Hydrator\HydratorInterface</type>
+          <tag line="207" name="param" description="" type="\Zend\Hydrator\HydratorInterface" variable="$hydrator">
+            <type by_reference="false">\Zend\Hydrator\HydratorInterface</type>
           </tag>
           <tag line="207" name="return" description="" type="\PhlyRestfully\Plugin\RestfulJsonRenderer">
             <type by_reference="false">\PhlyRestfully\Plugin\RestfulJsonRenderer</type>
@@ -3725,7 +3725,7 @@ replaced with a RestfulJsonModel containing an API-Problem payload.&lt;/p&gt;</l
         <argument line="213">
           <name>$hydrator</name>
           <default></default>
-          <type>\Zend\Stdlib\Hydrator\HydratorInterface</type>
+          <type>\Zend\Hydrator\HydratorInterface</type>
         </argument>
       </method>
       <method final="false" abstract="false" static="false" visibility="public" namespace="PhlyRestfully\Plugin" line="229" package="Default">
@@ -3739,8 +3739,8 @@ Otherwise, a boolean false is returned.&lt;/p&gt;</long-description>
           <tag line="219" name="param" description="" type="object" variable="$resource">
             <type by_reference="false">object</type>
           </tag>
-          <tag line="219" name="return" description="" type="\Zend\Stdlib\Hydrator\HydratorInterface|false">
-            <type by_reference="false">\Zend\Stdlib\Hydrator\HydratorInterface</type>
+          <tag line="219" name="return" description="" type="\Zend\Hydrator\HydratorInterface|false">
+            <type by_reference="false">\Zend\Hydrator\HydratorInterface</type>
             <type by_reference="false">false</type>
           </tag>
         </docblock>
