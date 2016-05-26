@@ -105,7 +105,7 @@ creates a "prev" relational link based on some calculated offset.
 
 .. code-block:: php
 
-    $sharedEvents->attach('Paste\ApiController', 'getLinks.post', function ($e) {
+    $sharedEvents->attach('Paste\ApiController', 'getList.post', function ($e) {
         $collection = $e->getParam('collection');
 
         // ... calculate $someOffset ...
