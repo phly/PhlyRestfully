@@ -91,7 +91,7 @@ class Module
                 },
                 'PhlyRestfully\JsonRenderer' => function ($services) {
                     $helpers  = $services->get('ViewHelperManager');
-                    $config   = $services->get('Config');
+                    $config   = $services->get('config');
 
                     $displayExceptions = false;
                     if (isset($config['view_manager'])

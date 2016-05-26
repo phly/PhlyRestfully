@@ -24,7 +24,7 @@ class ResourceControllerFactoryTest extends TestCase
     public function setUp()
     {
         $this->services    = $services    = new ServiceManager();
-        $this->controllers = $controllers = new ControllerManager(new Config());
+        $this->controllers = $controllers = new ControllerManager($this->services);
         $this->factory     = $factory     = new ResourceControllerFactory();
 
         $controllers->addAbstractFactory($factory);

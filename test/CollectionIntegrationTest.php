@@ -233,10 +233,11 @@ class CollectionIntegrationTest extends TestCase
 
     public function getServiceManager()
     {
-        $controllers = new ControllerManager(new Config());
+        $services = new ServiceManager();
+
+        $controllers = new ControllerManager($services);
         $controllers->addAbstractFactory(Factory\ResourceControllerFactory::class);
 
-        $services    = new ServiceManager();
         $services->setService(ServiceLocatorInterface::class, $services);
         $services->setService('ControllerManager', $controllers);
         $services->setService('config', [

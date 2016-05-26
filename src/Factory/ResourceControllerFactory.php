@@ -34,12 +34,12 @@ class ResourceControllerFactory implements AbstractFactoryInterface
     {
         $services = $controllers->getServiceLocator();
 
-        if (!$services->has('Config') || !$services->has('EventManager')) {
+        if (!$services->has('config') || !$services->has('EventManager')) {
             // Config and EventManager are required
             return false;
         }
 
-        $config = $services->get('Config');
+        $config = $services->get('config');
         if (!isset($config['phlyrestfully'])
             || !isset($config['phlyrestfully']['resources'])
         ) {
@@ -82,7 +82,7 @@ class ResourceControllerFactory implements AbstractFactoryInterface
     public function createServiceWithName(ServiceLocatorInterface $controllers, $name, $requestedName)
     {
         $services = $controllers->getServiceLocator();
-        $config   = $services->get('Config');
+        $config   = $services->get('config');
         $config   = $config['phlyrestfully']['resources'][$requestedName];
 
         if ($services->has($config['listener'])) {

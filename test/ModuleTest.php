@@ -40,7 +40,7 @@ class ModuleTest extends TestCase
         $services       = new ServiceManager();
         $servicesConfig = new Config($config);
         $servicesConfig->configureServiceManager($services);
-        $services->setService('Config', $config);
+        $services->setService('config', $config);
 
         $event = new MvcEvent();
         $event->setRouteMatch(new RouteMatch([]));
