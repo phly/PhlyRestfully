@@ -30,3 +30,5 @@ All notable changes to this project will be documented in this file, in reverse 
 - [#97](https://github.com/phly/PhlyRestfully/pull/97) fixes the identifier
   comparison in `ResourceController::getIdentifier()` to use a strict comparison
   to boolean false, and thus allow identifiers of `0`.
+- [#104](https://github.com/phly/PhlyRestfully/pull/104) corrects the logic in
+  `ResourceParametersListener::detachShared` to pass the identifier.
