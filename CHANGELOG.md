@@ -27,3 +27,6 @@ All notable changes to this project will be documented in this file, in reverse 
   to `Zend\Stdlib\Hydrator` to instead use `Zend\Hydrator`.
 - [#135](https://github.com/phly/PhlyRestfully/pull/135) updates all
   `trigger()` and `triggerUntil()` usage with forwards-compatible variants.
+- [#97](https://github.com/phly/PhlyRestfully/pull/97) fixes the identifier
+  comparison in `ResourceController::getIdentifier()` to use a strict comparison
+  to boolean false, and thus allow identifiers of `0`.
