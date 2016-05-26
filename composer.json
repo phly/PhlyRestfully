@@ -43,6 +43,9 @@
         "zendframework/zend-navigation": "^2.5",
         "zendframework/zend-servicemanager": "^2.5"
     },
+    "suggest": {
+        "zfr/zfr-cors": "zfr/zfr-cors provides CORS support"
+    },
     "autoload": {
         "psr-4": {
             "PhlyRestfully\\": "src/"
