@@ -243,9 +243,9 @@ class Resource implements ResourceInterface
         $data     = new ArrayObject($data);
         $events   = $this->getEventManager();
         $event    = $this->prepareEvent(__FUNCTION__, ['data' => $data]);
-        $results  = $events->triggerUntil($event, function ($result) {
+        $results  = $events->triggerEventUntil(function ($result) {
             return $result instanceof ApiProblem;
-        });
+        }, $event);
         $last     = $results->last();
         if (!is_array($last) && !is_object($last)) {
             return $original;
