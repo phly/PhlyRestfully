@@ -11,8 +11,12 @@ namespace PhlyRestfullyTest;
 use PhlyRestfully\Module;
 use PHPUnit_Framework_TestCase as TestCase;
 use ReflectionObject;
+use Zend\Hydrator;
+use Zend\Mvc\Application;
 use Zend\Mvc\MvcEvent;
 use Zend\Mvc\Router\RouteMatch;
+use Zend\Mvc\Router\RouteStackInterface;
+use Zend\Mvc\Service;
 use Zend\ServiceManager\Config;
 use Zend\ServiceManager\ServiceManager;
 use Zend\Stdlib\ArrayUtils;
@@ -29,8 +33,8 @@ class ModuleTest extends TestCase
         $options = ['service_manager' => [
             'factories' => [
                 // Consumed by PhlyRestfully\JsonRenderer service
-                'ViewHelperManager'       => 'Zend\Mvc\Service\ViewHelperManagerFactory',
-                'ControllerPluginManager' => 'Zend\Mvc\Service\ControllerPluginManagerFactory',
+                'ViewHelperManager'       => Service\ViewHelperManagerFactory::class,
+                'ControllerPluginManager' => Service\ControllerPluginManagerFactory::class,
             ],
         ]];
         $config = ArrayUtils::merge($options['service_manager'], $this->module->getServiceConfig());
@@ -45,10 +49,10 @@ class ModuleTest extends TestCase
         $event = new MvcEvent();
         $event->setRouteMatch(new RouteMatch([]));
 
-        $router = $this->getMock('Zend\Mvc\Router\RouteStackInterface');
+        $router = $this->getMock(RouteStackInterface::class);
         $services->setService('HttpRouter', $router);
 
-        $app = $this->getMockBuilder('Zend\Mvc\Application')
+        $app = $this->getMockBuilder(Application::class)
                     ->disableOriginalConstructor()
                     ->getMock();
         $app->expects($this->once())
@@ -84,7 +88,7 @@ class ModuleTest extends TestCase
 
         $helpers = $services->get('ViewHelperManager');
         $plugin  = $helpers->get('HalLinks');
-        $this->assertAttributeInstanceOf('Zend\Hydrator\ObjectProperty', 'defaultHydrator', $plugin);
+        $this->assertAttributeInstanceOf(Hydrator\ObjectProperty::class, 'defaultHydrator', $plugin);
     }
 
     public function testJsonRendererFactoryInjectsHydratorMappingsIfPresentInConfig()
