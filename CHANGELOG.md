@@ -11,6 +11,8 @@ All notable changes to this project will be documented in this file, in reverse 
   with other methods.
 - [#135](https://github.com/phly/PhlyRestfully/pull/135) adds support for PHP 7
   and HHVM.
+- [#107](https://github.com/phly/PhlyRestfully/pull/107) suggests using
+  zfr/zfr-cors to provide CORS support for your API.
 
 ### Deprecated
 
