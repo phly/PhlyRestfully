@@ -140,10 +140,11 @@ class HalLinks extends AbstractHelper implements
 
         $events->attach('getIdFromResource', function ($e) {
             $resource = $e->getParam('resource');
+            $identifierName = $e->getParam('identifier_name', 'id');
 
             // Found id in array
-            if (is_array($resource) && array_key_exists('id', $resource)) {
-                return $resource['id'];
+            if (is_array($resource) && array_key_exists($identifierName, $resource)) {
+                return $resource[$identifierName];
             }
 
             // No id in array, or not an object; return false
@@ -152,13 +153,15 @@ class HalLinks extends AbstractHelper implements
             }
 
             // Found public id property on object
-            if (isset($resource->id)) {
-                return $resource->id;
+            if (isset($resource->{$identifierName})) {
+                return $resource->{$identifierName};
             }
 
+            $publicGetter = 'get' . ucfirst($identifierName);
+
             // Found public id getter on object
-            if (method_exists($resource, 'getId')) {
-                return $resource->getId();
+            if (method_exists($resource, $publicGetter)) {
+                return $resource->{$publicGetter}();
             }
 
             // not found
@@ -585,7 +588,7 @@ class HalLinks extends AbstractHelper implements
         }
 
         if (!$resource instanceof HalResource) {
-            $id = $this->getIdFromResource($resource);
+            $id = $this->getIdFromResource($resource, $identifierName);
             if (!$id) {
                 return new ApiProblem(
                     422,
@@ -822,7 +825,7 @@ class HalLinks extends AbstractHelper implements
                 }
             }
 
-            $id = $this->getIdFromResource($resource);
+            $id = $this->getIdFromResource($resource, $identifierName);
             if (!$id) {
                 // Cannot handle resources without an identifier
                 // Return as-is
@@ -855,18 +858,24 @@ class HalLinks extends AbstractHelper implements
     /**
      * Retrieve the identifier from a resource
      *
-     * Expects an "id" member to exist; if not, a boolean false is returned.
+     * Expects an "id" or $identifierName member to exist; if not, a boolean false is returned.
      *
      * Triggers the "getIdFromResource" event with the resource; listeners can
      * return a non-false, non-null value in order to specify the identifier
      * to use for URL assembly.
      *
      * @param  array|object $resource
+     * @param  null|string  $identifierName
      * @return mixed|false
      */
-    protected function getIdFromResource($resource)
+    protected function getIdFromResource($resource, $identifierName = null)
     {
-        $event = new Event(__FUNCTION__, $this, ['resource' => $resource]);
+        $params = ['resource' => $resource];
+        if ($identifierName) {
+            $params['identifier_name'] = $identifierName;
+        }
+
+        $event = new Event(__FUNCTION__, $this, $params);
         $results = $this->getEventManager()->triggerEventUntil(function ($r) {
             return (null !== $r && false !== $r);
         }, $event);
