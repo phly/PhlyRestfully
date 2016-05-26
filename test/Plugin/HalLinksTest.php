@@ -437,6 +437,33 @@ class HalLinksTest extends TestCase
         $this->assertRelationalLinkContains('/users/foo', 'self', $user);
         $this->assertRelationalLinkContains('/users/foo/phones', 'phones', $user);
     }
+    
+    public function testRenderingCollectionRendersAllLinksInEmbeddedArrayResourcesWithCustomIdentifier()
+    {
+        $embedded = array('custom_id' => 'foo', 'name' => 'foo');
+
+        $collection = new HalCollection(array($embedded));
+        $collection->setCollectionName('embedded_custom');
+        $collection->setCollectionRoute('hostname/embedded_custom');
+        $collection->setResourceRoute('hostname/embedded_custom');
+        $collection->setIdentifierName('custom_id');
+        $self = new Link('self');
+        $self->setRoute('hostname/embedded_custom');
+        $collection->getLinks()->add($self);
+
+        $rendered = $this->plugin->renderCollection($collection);
+
+        $this->assertRelationalLinkContains('/embedded_custom', 'self', $rendered);
+        $this->assertArrayHasKey('_embedded', $rendered);
+        $this->assertInternalType('array', $rendered['_embedded']);
+        $this->assertArrayHasKey('embedded_custom', $rendered['_embedded']);
+
+        $embeddedCustoms = $rendered['_embedded']['embedded_custom'];
+        $this->assertInternalType('array', $embeddedCustoms);
+        $embeddedCustom = array_shift($embeddedCustoms);
+
+        $this->assertRelationalLinkContains('/embedded_custom/foo', 'self', $embeddedCustom);
+    }
 
     public function testResourcesFromCollectionCanUseHydratorSetInMetadataMap()
     {
