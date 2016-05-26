@@ -833,13 +833,10 @@ class HalLinks extends AbstractHelper implements
                 continue;
             }
 
-
-
             if ($eventParams['resource'] instanceof LinkCollectionAwareInterface) {
                 $links = $eventParams['resource']->getLinks();
             } else {
                 $links = new LinkCollection();
-                var_dump($eventParams['route']);
             }
 
             $selfLink = new Link('self');

@@ -437,12 +437,12 @@ class HalLinksTest extends TestCase
         $this->assertRelationalLinkContains('/users/foo', 'self', $user);
         $this->assertRelationalLinkContains('/users/foo/phones', 'phones', $user);
     }
-    
+
     public function testRenderingCollectionRendersAllLinksInEmbeddedArrayResourcesWithCustomIdentifier()
     {
-        $embedded = array('custom_id' => 'foo', 'name' => 'foo');
+        $embedded = ['custom_id' => 'foo', 'name' => 'foo'];
 
-        $collection = new HalCollection(array($embedded));
+        $collection = new HalCollection([$embedded]);
         $collection->setCollectionName('embedded_custom');
         $collection->setCollectionRoute('hostname/embedded_custom');
         $collection->setResourceRoute('hostname/embedded_custom');
