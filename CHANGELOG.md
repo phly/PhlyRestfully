@@ -37,3 +37,6 @@ All notable changes to this project will be documented in this file, in reverse 
 - [#108](https://github.com/phly/PhlyRestfully/pull/108) fixes identifier
   detection in `HalLinks::createResourceFromMetadata()`, ensuring that if no
   identifier name is present in the metadata, a null identifier is used.
+- [#124](https://github.com/phly/PhlyRestfully/pull/124) fixes how HalLinks
+  retrieves the identifier from an object when it is not in an `id` field,
+  allowing for custom identifiers per entity.
