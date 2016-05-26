@@ -18,6 +18,7 @@ use PhlyRestfully\LinkCollection;
 use PhlyRestfully\LinkCollectionAwareInterface;
 use PhlyRestfully\Metadata;
 use PhlyRestfully\MetadataMap;
+use Zend\EventManager\Event;
 use Zend\EventManager\EventManager;
 use Zend\EventManager\EventManagerAwareInterface;
 use Zend\EventManager\EventManagerInterface;
@@ -864,14 +865,10 @@ class HalLinks extends AbstractHelper implements
      */
     protected function getIdFromResource($resource)
     {
-        $results = $this->getEventManager()->trigger(
-            __FUNCTION__,
-            $this,
-            ['resource' => $resource],
-            function ($r) {
-                return (null !== $r && false !== $r);
-            }
-        );
+        $event = new Event(__FUNCTION__, $this, ['resource' => $resource]);
+        $results = $this->getEventManager()->triggerEventUntil(function ($r) {
+            return (null !== $r && false !== $r);
+        }, $event);
 
         if ($results->stopped()) {
             return $results->last();
