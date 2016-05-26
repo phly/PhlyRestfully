@@ -41,11 +41,11 @@ class ResourceController extends AbstractRestfulController
      *
      * @var array
      */
-    protected $acceptCriteria = array(
-        'PhlyRestfully\View\RestfulJsonModel' => array(
+    protected $acceptCriteria = [
+        View\RestfulJsonModel::class => [
             '*/json',
-        ),
-    );
+        ],
+    ];
 
     /**
      * HTTP methods we allow for the resource (collection); used by options()
@@ -54,10 +54,10 @@ class ResourceController extends AbstractRestfulController
      *
      * @var array
      */
-    protected $collectionHttpOptions = array(
+    protected $collectionHttpOptions = [
         'GET',
         'POST',
-    );
+    ];
 
     /**
      * Name of the collections entry in a HalCollection
@@ -71,12 +71,12 @@ class ResourceController extends AbstractRestfulController
      *
      * @var array
      */
-    protected $contentTypes = array(
-        self::CONTENT_TYPE_JSON => array(
+    protected $contentTypes = [
+        self::CONTENT_TYPE_JSON => [
             'application/json',
             'application/hal+json',
-        ),
-    );
+        ],
+    ];
 
     /**
      * Number of resources to return per page.  If $pageSizeParameter is
@@ -109,12 +109,12 @@ class ResourceController extends AbstractRestfulController
      *
      * @var array
      */
-    protected $resourceHttpOptions = array(
+    protected $resourceHttpOptions = [
         'DELETE',
         'GET',
         'PATCH',
         'PUT',
-    );
+    ];
 
     /**
      * Route name that resolves to this resource; used to generate links.
@@ -218,7 +218,6 @@ class ResourceController extends AbstractRestfulController
     public function getResource()
     {
         if ($this->resource === null) {
-
             throw new Exception\DomainException('No resource has been set.');
         }
 
@@ -267,7 +266,8 @@ class ResourceController extends AbstractRestfulController
         if (!$this->resource) {
             throw new Exception\DomainException(sprintf(
                 '%s requires that a %s\ResourceInterface object is composed; none provided',
-                __CLASS__, __NAMESPACE__
+                __CLASS__,
+                __NAMESPACE__
             ));
         }
 
@@ -294,7 +294,7 @@ class ResourceController extends AbstractRestfulController
         }
 
         $viewModel = $this->acceptableViewModelSelector($this->acceptCriteria);
-        $viewModel->setVariables(array('payload' => $return));
+        $viewModel->setVariables(['payload' => $return]);
 
         if ($viewModel instanceof View\RestfulJsonModel) {
             $viewModel->setTerminal(true);
@@ -317,7 +317,7 @@ class ResourceController extends AbstractRestfulController
         }
 
         $events = $this->getEventManager();
-        $events->trigger('create.pre', $this, array('data' => $data));
+        $events->trigger('create.pre', $this, ['data' => $data]);
 
         try {
             $resource = $this->resource->create($data);
@@ -344,7 +344,7 @@ class ResourceController extends AbstractRestfulController
         $response->setStatusCode(201);
         $response->getHeaders()->addHeaderLine('Location', $self);
 
-        $events->trigger('create.post', $this, array('data' => $data, 'resource' => $resource));
+        $events->trigger('create.post', $this, ['data' => $data, 'resource' => $resource]);
 
         return $resource;
     }
@@ -363,7 +363,7 @@ class ResourceController extends AbstractRestfulController
         }
 
         $events = $this->getEventManager();
-        $events->trigger('patchList.pre', $this, array('data' => $data));
+        $events->trigger('patchList.pre', $this, ['data' => $data]);
 
         try {
             $collection = $this->resource->patchList($data);
@@ -385,7 +385,7 @@ class ResourceController extends AbstractRestfulController
         $collection->setPageSize($this->pageSize);
         $collection->setCollectionName($this->collectionName);
 
-        $events->trigger('patchList.post', $this, array('data' => $data, 'collection' => $collection));
+        $events->trigger('patchList.post', $this, ['data' => $data, 'collection' => $collection]);
         return $collection;
     }
 
@@ -405,7 +405,7 @@ class ResourceController extends AbstractRestfulController
         }
 
         $events = $this->getEventManager();
-        $events->trigger('delete.pre', $this, array('id' => $id));
+        $events->trigger('delete.pre', $this, ['id' => $id]);
 
         try {
             $result = $this->resource->delete($id);
@@ -424,7 +424,7 @@ class ResourceController extends AbstractRestfulController
         $response = $this->getResponse();
         $response->setStatusCode(204);
 
-        $events->trigger('delete.post', $this, array('id' => $id));
+        $events->trigger('delete.post', $this, ['id' => $id]);
 
         return $response;
     }
@@ -436,7 +436,7 @@ class ResourceController extends AbstractRestfulController
         }
 
         $events = $this->getEventManager();
-        $events->trigger('deleteList.pre', $this, array());
+        $events->trigger('deleteList.pre', $this, []);
 
         try {
             $result = $this->resource->deleteList();
@@ -455,7 +455,7 @@ class ResourceController extends AbstractRestfulController
         $response = $this->getResponse();
         $response->setStatusCode(204);
 
-        $events->trigger('deleteList.post', $this, array());
+        $events->trigger('deleteList.post', $this, []);
 
         return $response;
     }
@@ -473,7 +473,7 @@ class ResourceController extends AbstractRestfulController
         }
 
         $events = $this->getEventManager();
-        $events->trigger('get.pre', $this, array('id' => $id));
+        $events->trigger('get.pre', $this, ['id' => $id]);
 
         try {
             $resource = $this->resource->fetch($id);
@@ -496,7 +496,7 @@ class ResourceController extends AbstractRestfulController
             return $resource;
         }
 
-        $events->trigger('get.post', $this, array('id' => $id, 'resource' => $resource));
+        $events->trigger('get.post', $this, ['id' => $id, 'resource' => $resource]);
         return $resource;
     }
 
@@ -512,7 +512,7 @@ class ResourceController extends AbstractRestfulController
         }
 
         $events = $this->getEventManager();
-        $events->trigger('getList.pre', $this, array());
+        $events->trigger('getList.pre', $this, []);
 
         try {
             $collection = $this->resource->fetchAll();
@@ -539,7 +539,7 @@ class ResourceController extends AbstractRestfulController
             : $this->pageSize;
         $collection->setPageSize($pageSize);
 
-        $events->trigger('getList.post', $this, array('collection' => $collection));
+        $events->trigger('getList.post', $this, ['collection' => $collection]);
         return $collection;
     }
 
@@ -581,14 +581,14 @@ class ResourceController extends AbstractRestfulController
         });
 
         $events = $this->getEventManager();
-        $events->trigger('options.pre', $this, array('options' => $options));
+        $events->trigger('options.pre', $this, ['options' => $options]);
 
         $response = $this->getResponse();
         $response->setStatusCode(204);
         $headers  = $response->getHeaders();
         $headers->addHeaderLine('Allow', implode(', ', $options));
 
-        $events->trigger('options.post', $this, array('options' => $options));
+        $events->trigger('options.post', $this, ['options' => $options]);
 
         return $response;
     }
@@ -607,7 +607,7 @@ class ResourceController extends AbstractRestfulController
         }
 
         $events = $this->getEventManager();
-        $events->trigger('patch.pre', $this, array('id' => $id, 'data' => $data));
+        $events->trigger('patch.pre', $this, ['id' => $id, 'data' => $data]);
 
         try {
             $resource = $this->resource->patch($id, $data);
@@ -627,7 +627,7 @@ class ResourceController extends AbstractRestfulController
             return $resource;
         }
 
-        $events->trigger('patch.post', $this, array('id' => $id, 'data' => $data, 'resource' => $resource));
+        $events->trigger('patch.post', $this, ['id' => $id, 'data' => $data, 'resource' => $resource]);
         return $resource;
     }
 
@@ -648,7 +648,7 @@ class ResourceController extends AbstractRestfulController
         }
 
         $events = $this->getEventManager();
-        $events->trigger('update.pre', $this, array('id' => $id, 'data' => $data));
+        $events->trigger('update.pre', $this, ['id' => $id, 'data' => $data]);
 
         try {
             $resource = $this->resource->update($id, $data);
@@ -664,7 +664,7 @@ class ResourceController extends AbstractRestfulController
         $plugin   = $this->plugin('HalLinks');
         $resource = $plugin->createResource($resource, $this->route, $this->getIdentifierName());
 
-        $events->trigger('update.post', $this, array('id' => $id, 'data' => $data, 'resource' => $resource));
+        $events->trigger('update.post', $this, ['id' => $id, 'data' => $data, 'resource' => $resource]);
         return $resource;
     }
 
@@ -681,7 +681,7 @@ class ResourceController extends AbstractRestfulController
         }
 
         $events = $this->getEventManager();
-        $events->trigger('replaceList.pre', $this, array('data' => $data));
+        $events->trigger('replaceList.pre', $this, ['data' => $data]);
 
         try {
             $collection = $this->resource->replaceList($data);
@@ -703,7 +703,7 @@ class ResourceController extends AbstractRestfulController
         $collection->setPageSize($this->pageSize);
         $collection->setCollectionName($this->collectionName);
 
-        $events->trigger('replaceList.post', $this, array('data' => $data, 'collection' => $collection));
+        $events->trigger('replaceList.post', $this, ['data' => $data, 'collection' => $collection]);
         return $collection;
     }
 
@@ -743,7 +743,7 @@ class ResourceController extends AbstractRestfulController
         array_walk($this->resourceHttpOptions, function (&$method) {
             $method = strtoupper($method);
         });
-        $options = array_merge($this->resourceHttpOptions, array('OPTIONS', 'HEAD'));
+        $options = array_merge($this->resourceHttpOptions, ['OPTIONS', 'HEAD']);
         $request = $this->getRequest();
         $method  = strtoupper($request->getMethod());
         if (!in_array($method, $options)) {
@@ -762,7 +762,7 @@ class ResourceController extends AbstractRestfulController
         array_walk($this->collectionHttpOptions, function (&$method) {
             $method = strtoupper($method);
         });
-        $options = array_merge($this->collectionHttpOptions, array('OPTIONS', 'HEAD'));
+        $options = array_merge($this->collectionHttpOptions, ['OPTIONS', 'HEAD']);
         $request = $this->getRequest();
         $method  = strtoupper($request->getMethod());
         if (!in_array($method, $options)) {

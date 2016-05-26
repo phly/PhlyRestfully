@@ -79,7 +79,7 @@ class LinkCollectionTest extends TestCase
         $this->assertEquals(2, $this->links->count());
         $i = 0;
         foreach ($this->links as $link) {
-            $this->assertInstanceOf('PhlyRestfully\Link', $link);
+            $this->assertInstanceOf(Link::class, $link);
             $i += 1;
         }
         $this->assertEquals(2, $i);

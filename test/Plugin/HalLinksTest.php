@@ -13,8 +13,10 @@ use PhlyRestfully\HalResource;
 use PhlyRestfully\Link;
 use PhlyRestfully\MetadataMap;
 use PhlyRestfully\Plugin\HalLinks;
+use PhlyRestfully\ResourceController;
 use PHPUnit_Framework_TestCase as TestCase;
 use Zend\Http\Request;
+use Zend\Hydrator;
 use Zend\Mvc\Router\Http\TreeRouteStack;
 use Zend\Mvc\Router\RouteMatch;
 use Zend\Mvc\Router\SimpleRouteStack;
@@ -37,61 +39,61 @@ class HalLinksTest extends TestCase
         $router->addRoute('resource', $route);
         $route2 = new Segment('/help');
         $router->addRoute('docs', $route2);
-        $router->addRoute('hostname', array(
+        $router->addRoute('hostname', [
 
             'type' => 'hostname',
-            'options' => array(
+            'options' => [
                 'route' => 'localhost.localdomain',
-            ),
+            ],
 
-            'child_routes' => array(
-                'resource' => array(
+            'child_routes' => [
+                'resource' => [
                     'type' => 'segment',
-                    'options' => array(
+                    'options' => [
                         'route' => '/resource[/:id]'
-                    ),
+                    ],
                     'may_terminate' => true,
-                    'child_routes' => array(
-                        'children' => array(
+                    'child_routes' => [
+                        'children' => [
                             'type' => 'literal',
-                            'options' => array(
+                            'options' => [
                                 'route' => '/children',
-                            ),
-                        ),
-                    ),
-                ),
-                'users' => array(
+                            ],
+                        ],
+                    ],
+                ],
+                'users' => [
                     'type' => 'segment',
-                    'options' => array(
+                    'options' => [
                         'route' => '/users[/:id]'
-                    )
-                ),
-                'contacts' => array(
+                    ]
+                ],
+                'contacts' => [
                     'type' => 'segment',
-                    'options' => array(
+                    'options' => [
                         'route' => '/contacts[/:id]'
-                    )
-                ),
-                'embedded' => array(
+                    ]
+                ],
+                'embedded' => [
                     'type' => 'segment',
-                    'options' => array(
+                    'options' => [
                         'route' => '/embedded[/:id]'
-                    )
-                ),
-                'embedded_custom' => array(
+                    ]
+                ],
+                'embedded_custom' => [
                     'type' => 'segment',
-                    'options' => array(
+                    'options' => [
                         'route' => '/embedded_custom[/:custom_id]'
-                    )
-                ),
-            )
-        ));
+                    ]
+                ],
+            ]
+        ]);
 
         $this->event = $event = new MvcEvent();
         $event->setRouter($router);
         $router->setRequestUri(new Http('http://localhost.localdomain/resource'));
 
-        $controller = $this->controller = $this->getMock('PhlyRestfully\ResourceController');
+        $controller = $this->controller = $this->getMock(ResourceController::class);
         $controller->expects($this->any())
             ->method('getEvent')
             ->will($this->returnValue($event));
@@ -145,10 +147,10 @@ class HalLinksTest extends TestCase
     public function testLinkCreationFromHalResource()
     {
         $self = new Link('self');
-        $self->setRoute('resource', array('id' => 123));
+        $self->setRoute('resource', ['id' => 123]);
         $docs = new Link('describedby');
         $docs->setRoute('docs');
-        $resource = new HalResource(array(), 123);
+        $resource = new HalResource([], 123);
         $resource->getLinks()->add($self)->add($docs);
         $links = $this->plugin->fromResource($resource);
 
@@ -170,22 +172,22 @@ class HalLinksTest extends TestCase
     public function testRendersEmbeddedCollectionsInsideResources()
     {
         $collection = new HalCollection(
-            array(
-                (object) array('id' => 'foo', 'name' => 'foo'),
-                (object) array('id' => 'bar', 'name' => 'bar'),
-                (object) array('id' => 'baz', 'name' => 'baz'),
-            ),
+            [
+                (object) ['id' => 'foo', 'name' => 'foo'],
+                (object) ['id' => 'bar', 'name' => 'bar'],
+                (object) ['id' => 'baz', 'name' => 'baz'],
+            ],
             'hostname/contacts'
         );
         $resource = new HalResource(
-            (object) array(
+            (object) [
                 'id'       => 'user',
                 'contacts' => $collection,
-            ),
+            ],
             'user'
         );
         $self = new Link('self');
-        $self->setRoute('hostname/users', array('id' => 'user'));
+        $self->setRoute('hostname/users', ['id' => 'user']);
         $resource->getLinks()->add($self);
 
         $rendered = $this->plugin->renderResource($resource);
@@ -210,24 +212,24 @@ class HalLinksTest extends TestCase
         $object->second_child = new TestAsset\EmbeddedResourceWithCustomIdentifier('baz', 'Baz');
         $resource = new HalResource($object, 'foo');
         $self = new Link('self');
-        $self->setRoute('hostname/resource', array('id' => 'foo'));
+        $self->setRoute('hostname/resource', ['id' => 'foo']);
         $resource->getLinks()->add($self);
 
-        $metadata = new MetadataMap(array(
-            'PhlyRestfullyTest\Plugin\TestAsset\Resource' => array(
-                'hydrator' => 'Zend\Stdlib\Hydrator\ObjectProperty',
+        $metadata = new MetadataMap([
+            TestAsset\Resource::class => [
+                'hydrator' => Hydrator\ObjectProperty::class,
                 'route'    => 'hostname/resource',
-            ),
-            'PhlyRestfullyTest\Plugin\TestAsset\EmbeddedResource' => array(
-                'hydrator' => 'Zend\Stdlib\Hydrator\ObjectProperty',
+            ],
+            TestAsset\EmbeddedResource::class => [
+                'hydrator' => Hydrator\ObjectProperty::class,
                 'route'    => 'hostname/embedded',
-            ),
-            'PhlyRestfullyTest\Plugin\TestAsset\EmbeddedResourceWithCustomIdentifier' => array(
-                'hydrator'        => 'Zend\Stdlib\Hydrator\ObjectProperty',
+            ],
+            TestAsset\EmbeddedResourceWithCustomIdentifier::class => [
+                'hydrator'        => Hydrator\ObjectProperty::class,
                 'route'           => 'hostname/embedded_custom',
                 'identifier_name' => 'custom_id',
-            ),
-        ));
+            ],
+        ]);
 
         $this->plugin->setMetadataMap($metadata);
 
@@ -252,32 +254,32 @@ class HalLinksTest extends TestCase
     public function testRendersEmbeddedCollectionsInsideResourcesBasedOnMetadataMap()
     {
         $collection = new TestAsset\Collection(
-            array(
-                (object) array('id' => 'foo', 'name' => 'foo'),
-                (object) array('id' => 'bar', 'name' => 'bar'),
-                (object) array('id' => 'baz', 'name' => 'baz'),
-            )
+            [
+                (object) ['id' => 'foo', 'name' => 'foo'],
+                (object) ['id' => 'bar', 'name' => 'bar'],
+                (object) ['id' => 'baz', 'name' => 'baz'],
+            ]
         );
 
-        $metadata = new MetadataMap(array(
-            'PhlyRestfullyTest\Plugin\TestAsset\Collection' => array(
+        $metadata = new MetadataMap([
+            TestAsset\Collection::class => [
                 'is_collection'  => true,
                 'route'          => 'hostname/contacts',
                 'resource_route' => 'hostname/embedded',
-            ),
-        ));
+            ],
+        ]);
 
         $this->plugin->setMetadataMap($metadata);
 
         $resource = new HalResource(
-            (object) array(
+            (object) [
                 'id'       => 'user',
                 'contacts' => $collection,
-            ),
+            ],
             'user'
         );
         $self = new Link('self');
-        $self->setRoute('hostname/users', array('id' => 'user'));
+        $self->setRoute('hostname/users', ['id' => 'user']);
         $resource->getLinks()->add($self);
 
         $rendered = $this->plugin->renderResource($resource);
@@ -300,30 +302,30 @@ class HalLinksTest extends TestCase
     public function testRendersEmbeddedCollectionsInsideCollectionsBasedOnMetadataMap()
     {
         $childCollection = new TestAsset\Collection(
-            array(
-                (object) array('id' => 'foo', 'name' => 'foo'),
-                (object) array('id' => 'bar', 'name' => 'bar'),
-                (object) array('id' => 'baz', 'name' => 'baz'),
-            )
+            [
+                (object) ['id' => 'foo', 'name' => 'foo'],
+                (object) ['id' => 'bar', 'name' => 'bar'],
+                (object) ['id' => 'baz', 'name' => 'baz'],
+            ]
         );
         $resource = new TestAsset\Resource('spock', 'Spock');
         $resource->first_child = $childCollection;
 
-        $metadata = new MetadataMap(array(
-            'PhlyRestfullyTest\Plugin\TestAsset\Collection' => array(
+        $metadata = new MetadataMap([
+            TestAsset\Collection::class => [
                 'is_collection'  => true,
                 'route'          => 'hostname/contacts',
                 'resource_route' => 'hostname/embedded',
-            ),
-            'PhlyRestfullyTest\Plugin\TestAsset\Resource' => array(
-                'hydrator' => 'Zend\Stdlib\Hydrator\ObjectProperty',
+            ],
+            TestAsset\Resource::class => [
+                'hydrator' => Hydrator\ObjectProperty::class,
                 'route'    => 'hostname/resource',
-            ),
-        ));
+            ],
+        ]);
 
         $this->plugin->setMetadataMap($metadata);
 
-        $collection = new HalCollection(array($resource), 'hostname/resource');
+        $collection = new HalCollection([$resource], 'hostname/resource');
         $self = new Link('self');
         $self->setRoute('hostname/resource');
         $collection->getLinks()->add($self);
@@ -356,10 +358,10 @@ class HalLinksTest extends TestCase
 
     public function testWillNotAllowInjectingASelfRelationMultipleTimes()
     {
-        $resource = new HalResource(array(
+        $resource = new HalResource([
             'id'  => 1,
             'foo' => 'bar',
-        ), 1);
+        ], 1);
         $links = $resource->getLinks();
 
         $this->assertFalse($links->has('self'));
@@ -368,12 +370,12 @@ class HalLinksTest extends TestCase
 
         $this->assertTrue($links->has('self'));
         $link = $links->get('self');
-        $this->assertInstanceof('PhlyRestfully\Link', $link);
+        $this->assertInstanceof(Link::class, $link);
 
         $this->plugin->injectSelfLink($resource, 'hostname/resource');
         $this->assertTrue($links->has('self'));
         $link = $links->get('self');
-        $this->assertInstanceof('PhlyRestfully\Link', $link);
+        $this->assertInstanceof(Link::class, $link);
     }
 
     /**
@@ -381,14 +383,14 @@ class HalLinksTest extends TestCase
      */
     public function testRenderingEmbeddedHalResourceEmbedsResource()
     {
-        $embedded = new HalResource((object) array('id' => 'foo', 'name' => 'foo'), 'foo');
+        $embedded = new HalResource((object) ['id' => 'foo', 'name' => 'foo'], 'foo');
         $self = new Link('self');
-        $self->setRoute('hostname/contacts', array('id' => 'foo'));
+        $self->setRoute('hostname/contacts', ['id' => 'foo']);
         $embedded->getLinks()->add($self);
 
-        $resource = new HalResource((object) array('id' => 'user', 'contact' => $embedded), 'user');
+        $resource = new HalResource((object) ['id' => 'user', 'contact' => $embedded], 'user');
         $self = new Link('self');
-        $self->setRoute('hostname/users', array('id' => 'user'));
+        $self->setRoute('hostname/users', ['id' => 'user']);
         $resource->getLinks()->add($self);
 
         $rendered = $this->plugin->renderResource($resource);
@@ -406,16 +408,16 @@ class HalLinksTest extends TestCase
      */
     public function testRenderingCollectionRendersAllLinksInEmbeddedResources()
     {
-        $embedded = new HalResource((object) array('id' => 'foo', 'name' => 'foo'), 'foo');
+        $embedded = new HalResource((object) ['id' => 'foo', 'name' => 'foo'], 'foo');
         $links = $embedded->getLinks();
         $self = new Link('self');
-        $self->setRoute('hostname/users', array('id' => 'foo'));
+        $self->setRoute('hostname/users', ['id' => 'foo']);
         $links->add($self);
         $phones = new Link('phones');
         $phones->setUrl('http://localhost.localdomain/users/foo/phones');
         $links->add($phones);
 
-        $collection = new HalCollection(array($embedded));
+        $collection = new HalCollection([$embedded]);
         $collection->setCollectionName('users');
         $self = new Link('self');
         $self->setRoute('hostname/users');
@@ -441,14 +443,14 @@ class HalLinksTest extends TestCase
         $object   = new TestAsset\ResourceWithProtectedProperties('foo', 'Foo');
         $resource = new HalResource($object, 'foo');
 
-        $metadata = new MetadataMap(array(
-            'PhlyRestfullyTest\Plugin\TestAsset\ResourceWithProtectedProperties' => array(
+        $metadata = new MetadataMap([
+            TestAsset\ResourceWithProtectedProperties::class => [
                 'hydrator' => 'ArraySerializable',
                 'route'    => 'hostname/resource',
-            ),
-        ));
+            ],
+        ]);
 
-        $collection = new HalCollection(array($resource));
+        $collection = new HalCollection([$resource]);
         $collection->setCollectionName('resource');
         $collection->setCollectionRoute('hostname/resource');
 
@@ -477,28 +479,31 @@ class HalLinksTest extends TestCase
         $object = new TestAsset\Resource('foo', 'Foo');
         $resource = new HalResource($object, 'foo');
 
-        $metadata = new MetadataMap(array(
-            'PhlyRestfullyTest\Plugin\TestAsset\Resource' => array(
-                'hydrator' => 'Zend\Stdlib\Hydrator\ObjectProperty',
+        $metadata = new MetadataMap([
+            TestAsset\Resource::class => [
+                'hydrator' => Hydrator\ObjectProperty::class,
                 'route'    => 'hostname/resource',
-                'links'    => array(
-                    array(
+                'links'    => [
+                    [
                         'rel' => 'describedby',
                         'url' => 'http://example.com/api/help/resource',
-                    ),
-                    array(
+                    ],
+                    [
                         'rel' => 'children',
-                        'route' => array(
+                        'route' => [
                             'name' => 'resource/children',
-                        ),
-                    ),
-                ),
-            ),
-        ));
+                        ],
+                    ],
+                ],
+            ],
+        ]);
 
         $this->plugin->setMetadataMap($metadata);
-        $resource = $this->plugin->createResourceFromMetadata($object, $metadata->get('PhlyRestfullyTest\Plugin\TestAsset\Resource'));
-        $this->assertInstanceof('PhlyRestfully\HalResource', $resource);
+        $resource = $this->plugin->createResourceFromMetadata(
+            $object,
+            $metadata->get(TestAsset\Resource::class)
+        );
+        $this->assertInstanceof(HalResource::class, $resource);
         $links = $resource->getLinks();
         $this->assertTrue($links->has('describedby'));
         $this->assertTrue($links->has('children'));
@@ -518,39 +523,39 @@ class HalLinksTest extends TestCase
     public function testInjectsLinksFromMetadataWhenCreatingCollection()
     {
         $set = new TestAsset\Collection(
-            array(
-                (object) array('id' => 'foo', 'name' => 'foo'),
-                (object) array('id' => 'bar', 'name' => 'bar'),
-                (object) array('id' => 'baz', 'name' => 'baz'),
-            )
+            [
+                (object) ['id' => 'foo', 'name' => 'foo'],
+                (object) ['id' => 'bar', 'name' => 'bar'],
+                (object) ['id' => 'baz', 'name' => 'baz'],
+            ]
         );
 
-        $metadata = new MetadataMap(array(
-            'PhlyRestfullyTest\Plugin\TestAsset\Collection' => array(
+        $metadata = new MetadataMap([
+            TestAsset\Collection::class => [
                 'is_collection'  => true,
                 'route'          => 'hostname/contacts',
                 'resource_route' => 'hostname/embedded',
-                'links'          => array(
-                    array(
+                'links'          => [
+                    [
                         'rel' => 'describedby',
                         'url' => 'http://example.com/api/help/collection',
-                    ),
-                ),
-            ),
-        ));
+                    ],
+                ],
+            ],
+        ]);
 
         $this->plugin->setMetadataMap($metadata);
 
         $collection = $this->plugin->createCollectionFromMetadata(
             $set,
-            $metadata->get('PhlyRestfullyTest\Plugin\TestAsset\Collection'
-        ));
-        $this->assertInstanceof('PhlyRestfully\HalCollection', $collection);
-        $links = $collection->getLinks();
-        $this->assertTrue($links->has('describedby'));
-        $link = $links->get('describedby');
-        $this->assertTrue($link->hasUrl());
-        $this->assertEquals('http://example.com/api/help/collection', $link->getUrl());
+            $metadata->get(TestAsset\Collection::class)
+        );
+            $this->assertInstanceof(HalCollection::class, $collection);
+            $links = $collection->getLinks();
+            $this->assertTrue($links->has('describedby'));
+            $link = $links->get('describedby');
+            $this->assertTrue($link->hasUrl());
+            $this->assertEquals('http://example.com/api/help/collection', $link->getUrl());
     }
 
     /**
@@ -559,19 +564,19 @@ class HalLinksTest extends TestCase
     public function testRenderResourceTriggersEvent()
     {
         $resource = new HalResource(
-            (object) array(
+            (object) [
                 'id'   => 'user',
                 'name' => 'matthew',
-            ),
+            ],
             'user'
         );
         $self = new Link('self');
-        $self->setRoute('hostname/users', array('id' => 'user'));
+        $self->setRoute('hostname/users', ['id' => 'user']);
         $resource->getLinks()->add($self);
 
         $this->plugin->getEventManager()->attach('renderResource', function ($e) {
             $resource = $e->getParam('resource');
-            $resource->getLinks()->get('self')->setRouteParams(array('id' => 'matthew'));
+            $resource->getLinks()->get('self')->setRouteParams(['id' => 'matthew']);
         });
 
         $rendered = $this->plugin->renderResource($resource);
@@ -584,11 +589,11 @@ class HalLinksTest extends TestCase
     public function testRenderCollectionTriggersEvent()
     {
         $collection = new HalCollection(
-            array(
-                (object) array('id' => 'foo', 'name' => 'foo'),
-                (object) array('id' => 'bar', 'name' => 'bar'),
-                (object) array('id' => 'baz', 'name' => 'baz'),
-            ),
+            [
+                (object) ['id' => 'foo', 'name' => 'foo'],
+                (object) ['id' => 'bar', 'name' => 'bar'],
+                (object) ['id' => 'baz', 'name' => 'baz'],
+            ],
             'hostname/contacts'
         );
         $self = new Link('self');
@@ -598,7 +603,7 @@ class HalLinksTest extends TestCase
 
         $this->plugin->getEventManager()->attach('renderCollection', function ($e) {
             $collection = $e->getParam('collection');
-            $collection->setAttributes(array('injected' => true));
+            $collection->setAttributes(['injected' => true]);
         });
 
         $rendered = $this->plugin->renderCollection($collection);
@@ -628,19 +633,19 @@ class HalLinksTest extends TestCase
         $matches = $this->matchUrl('/resource/foo');
         $this->assertEquals('foo', $matches->getParam('id', false));
 
-        $link = Link::factory(array(
+        $link = Link::factory([
             'rel' => 'resource',
-            'route' => array(
+            'route' => [
                 'name' => 'hostname/resource',
-                'options' => array(
+                'options' => [
                     'reuse_matched_params' => false,
-                ),
-            ),
-        ));
+                ],
+            ],
+        ]);
         $result = $this->plugin->fromLink($link);
-        $expected = array(
+        $expected = [
             'href' => 'http://localhost.localdomain/resource',
-        );
+        ];
         $this->assertEquals($expected, $result);
     }
 }

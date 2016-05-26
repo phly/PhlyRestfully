@@ -17,6 +17,6 @@ class JsonSerializable implements JsonSerializableInterface
 {
     public function jsonSerialize()
     {
-        return array('foo' => 'bar');
+        return ['foo' => 'bar'];
     }
 }

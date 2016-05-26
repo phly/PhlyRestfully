@@ -49,9 +49,9 @@ class ResourceWithProtectedProperties implements ArraySerializableInterface
      */
     public function getArrayCopy()
     {
-        return array(
+        return [
             'id'   => $this->id,
             'name' => $this->name,
-        );
+        ];
     }
 }

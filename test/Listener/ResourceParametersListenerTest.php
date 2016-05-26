@@ -28,7 +28,7 @@ class ResourceParametersListenerTest extends TestCase
         $this->controller = $controller = new ResourceController();
         $controller->setResource($resource);
 
-        $this->matches    = $matches    = new RouteMatch(array());
+        $this->matches    = $matches    = new RouteMatch([]);
         $this->query      = $query      = new Parameters();
         $this->request    = $request    = new Request();
         $request->setQuery($query);

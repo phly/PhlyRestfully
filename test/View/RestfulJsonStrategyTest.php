@@ -57,7 +57,7 @@ class RestfulJsonStrategyTest extends TestCase
     public function testInjectResponseDoesNotSetContentTypeHeaderIfResultIsNotString()
     {
         $this->event->setRenderer($this->renderer);
-        $this->event->setResult(array('foo'));
+        $this->event->setResult(['foo']);
         $this->strategy->injectResponse($this->event);
         $headers = $this->response->getHeaders();
         $this->assertFalse($headers->has('Content-Type'));
@@ -77,7 +77,7 @@ class RestfulJsonStrategyTest extends TestCase
     public function testInjectResponseSetsContentTypeHeaderToApiProblemForApiProblemModel()
     {
         $problem = new ApiProblem(500, 'whatever', 'foo', 'bar');
-        $model   = new RestfulJsonModel(array('payload' => $problem));
+        $model   = new RestfulJsonModel(['payload' => $problem]);
         $this->event->setModel($model);
         $this->event->setRenderer($this->renderer);
         $this->event->setResult('{"foo":"bar"}');
@@ -90,21 +90,21 @@ class RestfulJsonStrategyTest extends TestCase
 
     public function halObjects()
     {
-        $resource = new HalResource(array(
+        $resource = new HalResource([
             'foo' => 'bar',
-        ), 'identifier', 'route');
+        ], 'identifier', 'route');
         $link = new Link('self');
-        $link->setRoute('resource/route')->setRouteParams(array('id' => 'identifier'));
+        $link->setRoute('resource/route')->setRouteParams(['id' => 'identifier']);
         $resource->getLinks()->add($link);
 
-        $collection = new HalCollection(array($resource));
+        $collection = new HalCollection([$resource]);
         $collection->setCollectionRoute('collection/route');
         $collection->setResourceRoute('resource/route');
 
-        return array(
-            'resource'   => array($resource),
-            'collection' => array($collection),
-        );
+        return [
+            'resource'   => [$resource],
+            'collection' => [$collection],
+        ];
     }
 
     /**
@@ -112,7 +112,7 @@ class RestfulJsonStrategyTest extends TestCase
      */
     public function testInjectResponseSetsContentTypeHeaderToHalForHalModel($hal)
     {
-        $model = new RestfulJsonModel(array('payload' => $hal));
+        $model = new RestfulJsonModel(['payload' => $hal]);
 
         $this->event->setModel($model);
         $this->event->setRenderer($this->renderer);
@@ -126,13 +126,13 @@ class RestfulJsonStrategyTest extends TestCase
 
     public function invalidStatusCodes()
     {
-        return array(
-            array(0),
-            array(1),
-            array(99),
-            array(600),
-            array(10081),
-        );
+        return [
+            [0],
+            [1],
+            [99],
+            [600],
+            [10081],
+        ];
     }
 
     /**
@@ -141,7 +141,7 @@ class RestfulJsonStrategyTest extends TestCase
     public function testUsesStatusCode500ForAnyStatusCodesAbove599OrBelow100($status)
     {
         $problem = new ApiProblem($status, 'whatever');
-        $model   = new RestfulJsonModel(array('payload' => $problem));
+        $model   = new RestfulJsonModel(['payload' => $problem]);
         $this->event->setModel($model);
         $this->event->setRenderer($this->renderer);
         $this->event->setResult('{"foo":"bar"}');

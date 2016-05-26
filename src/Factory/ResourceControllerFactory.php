@@ -93,13 +93,14 @@ class ResourceControllerFactory implements AbstractFactoryInterface
 
         if (!$listener instanceof ListenerAggregateInterface) {
             throw new ServiceNotCreatedException(sprintf(
-                '%s expects that the "listener" reference a service that implements Zend\EventManager\ListenerAggregateInterface; received %s',
+                '%s expects that the "listener" reference a service that '
+                . 'implements Zend\EventManager\ListenerAggregateInterface; received %s',
                 __METHOD__,
                 (is_object($listener) ? get_class($listener) : gettype($listener))
             ));
         }
 
-        $resourceIdentifiers = array(get_class($listener));
+        $resourceIdentifiers = [get_class($listener)];
         if (isset($config['resource_identifiers'])) {
             if (!is_array($config['resource_identifiers'])) {
                 $config['resource_identifiers'] = (array) $config['resource_identifiers'];
@@ -120,13 +121,16 @@ class ResourceControllerFactory implements AbstractFactoryInterface
         }
 
         $events          = $services->get('EventManager');
-        $controllerClass = isset($config['controller_class']) ? $config['controller_class'] : 'PhlyRestfully\ResourceController';
+        $controllerClass = isset($config['controller_class'])
+            ? $config['controller_class']
+            : ResourceController::class;
         $controller      = new $controllerClass($identifier);
 
         if (!$controller instanceof ResourceController) {
             throw new ServiceNotCreatedException(sprintf(
-                '"%s" must be an implementation of PhlyRestfully\ResourceController',
-                $controllerClass
+                '"%s" must be an implementation of %s',
+                $controllerClass,
+                ResourceController::class
             ));
         }
 
@@ -177,7 +181,7 @@ class ResourceControllerFactory implements AbstractFactoryInterface
                             return;
                         }
                         $query  = $request->getQuery();
-                        $params = array();
+                        $params = [];
                         foreach ($query as $key => $value) {
                             if (!in_array($key, $whitelist)) {
                                 continue;
@@ -189,9 +193,9 @@ class ResourceControllerFactory implements AbstractFactoryInterface
                         }
 
                         $collection = $e->getParam('collection');
-                        $collection->setCollectionRouteOptions(array(
+                        $collection->setCollectionRouteOptions([
                             'query' => $params,
-                        ));
+                        ]);
                     });
                     break;
 

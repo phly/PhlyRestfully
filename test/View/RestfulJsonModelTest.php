@@ -38,25 +38,25 @@ class RestfulJsonModelTest extends TestCase
 
     public function invalidPayloads()
     {
-        return array(
-            'null'       => array(null),
-            'true'       => array(true),
-            'false'      => array(false),
-            'zero-int'   => array(0),
-            'int'        => array(1),
-            'zero-float' => array(0.0),
-            'float'      => array(1.1),
-            'string'     => array('string'),
-            'array'      => array(array()),
-            'stdclass'   => array(new stdClass),
-        );
+        return [
+            'null'       => [null],
+            'true'       => [true],
+            'false'      => [false],
+            'zero-int'   => [0],
+            'int'        => [1],
+            'zero-float' => [0.0],
+            'float'      => [1.1],
+            'string'     => ['string'],
+            'array'      => [[]],
+            'stdclass'   => [new stdClass],
+        ];
     }
 
     public function invalidApiProblemPayloads()
     {
         $payloads = $this->invalidPayloads();
-        $payloads['hal-collection'] = array(new HalCollection(array(), 'item/route'));
-        $payloads['hal-item'] = array(new HalResource(array(), 'id', 'route'));
+        $payloads['hal-collection'] = [new HalCollection([], 'item/route')];
+        $payloads['hal-item'] = [new HalResource([], 'id', 'route')];
         return $payloads;
     }
 
@@ -79,8 +79,8 @@ class RestfulJsonModelTest extends TestCase
     public function invalidHalCollectionPayloads()
     {
         $payloads = $this->invalidPayloads();
-        $payloads['api-problem'] = array(new ApiProblem(401, 'unauthorized'));
-        $payloads['hal-item'] = array(new HalResource(array(), 'id', 'route'));
+        $payloads['api-problem'] = [new ApiProblem(401, 'unauthorized')];
+        $payloads['hal-item'] = [new HalResource([], 'id', 'route')];
         return $payloads;
     }
 
@@ -95,7 +95,7 @@ class RestfulJsonModelTest extends TestCase
 
     public function testIsHalCollectionReturnsTrueForHalCollectionPayload()
     {
-        $collection = new HalCollection(array(), 'item/route');
+        $collection = new HalCollection([], 'item/route');
         $this->model->setPayload($collection);
         $this->assertTrue($this->model->isHalCollection());
     }
@@ -103,8 +103,8 @@ class RestfulJsonModelTest extends TestCase
     public function invalidHalResourcePayloads()
     {
         $payloads = $this->invalidPayloads();
-        $payloads['api-problem'] = array(new ApiProblem(401, 'unauthorized'));
-        $payloads['hal-collection'] = array(new HalCollection(array(), 'item/route'));
+        $payloads['api-problem'] = [new ApiProblem(401, 'unauthorized')];
+        $payloads['hal-collection'] = [new HalCollection([], 'item/route')];
         return $payloads;
     }
 
@@ -119,7 +119,7 @@ class RestfulJsonModelTest extends TestCase
 
     public function testIsHalResourceReturnsTrueForHalResourcePayload()
     {
-        $item = new HalResource(array(), 'id', 'route');
+        $item = new HalResource([], 'id', 'route');
         $this->model->setPayload($item);
         $this->assertTrue($this->model->isHalResource());
     }

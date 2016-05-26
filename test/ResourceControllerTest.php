@@ -15,11 +15,13 @@ use PhlyRestfully\HalResource;
 use PhlyRestfully\Plugin;
 use PhlyRestfully\Resource;
 use PhlyRestfully\ResourceController;
+use PhlyRestfully\View\RestfulJsonModel;
 use PHPUnit_Framework_TestCase as TestCase;
 use ReflectionObject;
 use stdClass;
 use Zend\EventManager\EventManager;
 use Zend\EventManager\SharedEventManager;
+use Zend\Http;
 use Zend\Mvc\Controller\PluginManager;
 use Zend\Mvc\MvcEvent;
 use Zend\Mvc\Router\Http\Segment;
@@ -30,6 +32,7 @@ use Zend\Paginator\Paginator;
 use Zend\Stdlib\Parameters;
 use Zend\View\Helper\ServerUrl as ServerUrlHelper;
 use Zend\View\Helper\Url as UrlHelper;
+use Zend\View\Model\ModelInterface;
 
 /**
  * @subpackage UnitTest
@@ -45,7 +48,7 @@ class ResourceControllerTest extends TestCase
         $router->addRoute('resource', $route);
         $this->event = $event = new MvcEvent();
         $event->setRouter($router);
-        $event->setRouteMatch(new RouteMatch(array()));
+        $event->setRouteMatch(new RouteMatch([]));
         $controller->setEvent($event);
         $controller->setRoute('resource');
 
@@ -72,7 +75,7 @@ class ResourceControllerTest extends TestCase
 
     public function assertProblemApiResult($expectedHttpStatus, $expectedDetail, $result)
     {
-        $this->assertInstanceOf('PhlyRestfully\ApiProblem', $result);
+        $this->assertInstanceOf(ApiProblem::class, $result);
         $problem = $result->toArray();
         $this->assertEquals($expectedHttpStatus, $problem['httpStatus']);
         $this->assertContains($expectedDetail, $problem['detail']);
@@ -84,29 +87,29 @@ class ResourceControllerTest extends TestCase
             throw new Exception\CreationException('failed');
         });
 
-        $result = $this->controller->create(array());
+        $result = $this->controller->create([]);
         $this->assertProblemApiResult(500, 'failed', $result);
     }
 
     public function testCreateReturnsProblemResultOnBadResourceIdentifier()
     {
         $this->resource->getEventManager()->attach('create', function ($e) {
-            return array('foo' => 'bar');
+            return ['foo' => 'bar'];
         });
 
-        $result = $this->controller->create(array());
+        $result = $this->controller->create([]);
         $this->assertProblemApiResult(422, 'resource identifier', $result);
     }
 
     public function testCreateReturnsHalResourceOnSuccess()
     {
-        $resource = array('id' => 'foo', 'bar' => 'baz');
+        $resource = ['id' => 'foo', 'bar' => 'baz'];
         $this->resource->getEventManager()->attach('create', function ($e) use ($resource) {
             return $resource;
         });
 
-        $result = $this->controller->create(array());
-        $this->assertInstanceOf('PhlyRestfully\HalResource', $result);
+        $result = $this->controller->create([]);
+        $this->assertInstanceOf(HalResource::class, $result);
         $this->assertEquals($resource, $result->resource);
     }
 
@@ -116,21 +119,21 @@ class ResourceControllerTest extends TestCase
             throw new Exception\UpdateException('failed');
         });
 
-        $result = $this->controller->patchList(array());
+        $result = $this->controller->patchList([]);
         $this->assertProblemApiResult(500, 'failed', $result);
     }
 
     public function testPatchListReturnsHalCollectionOnSuccess()
     {
-        $items = array(
-            array('id' => 'foo', 'bar' => 'baz'),
-            array('id' => 'bar', 'bar' => 'baz'));
+        $items = [
+            ['id' => 'foo', 'bar' => 'baz'],
+            ['id' => 'bar', 'bar' => 'baz']];
         $this->resource->getEventManager()->attach('patchList', function ($e) use ($items) {
             return $items;
         });
 
         $result = $this->controller->patchList($items);
-        $this->assertInstanceOf('PhlyRestfully\HalCollection', $result);
+        $this->assertInstanceOf(HalCollection::class, $result);
         return $result;
     }
 
@@ -160,7 +163,7 @@ class ResourceControllerTest extends TestCase
         });
 
         $result = $this->controller->delete('foo');
-        $this->assertInstanceOf('Zend\Http\Response', $result);
+        $this->assertInstanceOf(Http\Response::class, $result);
         $this->assertEquals(204, $result->getStatusCode());
     }
 
@@ -181,7 +184,7 @@ class ResourceControllerTest extends TestCase
         });
 
         $result = $this->controller->deleteList();
-        $this->assertInstanceOf('Zend\Http\Response', $result);
+        $this->assertInstanceOf(Http\Response::class, $result);
         $this->assertEquals(204, $result->getStatusCode());
     }
 
@@ -197,38 +200,38 @@ class ResourceControllerTest extends TestCase
 
     public function testReturningResourceFromGetReturnsExpectedHalResource()
     {
-        $resource = array('id' => 'foo', 'bar' => 'baz');
+        $resource = ['id' => 'foo', 'bar' => 'baz'];
         $this->resource->getEventManager()->attach('fetch', function ($e) use ($resource) {
             return $resource;
         });
 
         $result = $this->controller->get('foo');
-        $this->assertInstanceOf('PhlyRestfully\HalResource', $result);
+        $this->assertInstanceOf(HalResource::class, $result);
         $this->assertEquals($resource, $result->resource);
     }
 
     public function testReturnsHalCollectionForNonPaginatedList()
     {
-        $items = array(
-            array('id' => 'foo', 'bar' => 'baz')
-        );
+        $items = [
+            ['id' => 'foo', 'bar' => 'baz']
+        ];
         $this->resource->getEventManager()->attach('fetchAll', function ($e) use ($items) {
             return $items;
         });
 
         $result = $this->controller->getList();
-        $this->assertInstanceOf('PhlyRestfully\HalCollection', $result);
+        $this->assertInstanceOf(HalCollection::class, $result);
         $this->assertEquals($items, $result->collection);
         return $result;
     }
 
     public function testReturnsHalCollectionForPaginatedList()
     {
-        $items = array(
-            array('id' => 'foo', 'bar' => 'baz'),
-            array('id' => 'bar', 'bar' => 'baz'),
-            array('id' => 'baz', 'bar' => 'baz'),
-        );
+        $items = [
+            ['id' => 'foo', 'bar' => 'baz'],
+            ['id' => 'bar', 'bar' => 'baz'],
+            ['id' => 'baz', 'bar' => 'baz'],
+        ];
         $adapter   = new ArrayPaginator($items);
         $paginator = new Paginator($adapter);
         $this->resource->getEventManager()->attach('fetchAll', function ($e) use ($paginator) {
@@ -237,10 +240,10 @@ class ResourceControllerTest extends TestCase
 
         $this->controller->setPageSize(1);
         $request = $this->controller->getRequest();
-        $request->setQuery(new Parameters(array('page' => 2)));
+        $request->setQuery(new Parameters(['page' => 2]));
 
         $result = $this->controller->getList();
-        $this->assertInstanceOf('PhlyRestfully\HalCollection', $result);
+        $this->assertInstanceOf(HalCollection::class, $result);
         $this->assertSame($paginator, $result->collection);
         $this->assertEquals(2, $result->page);
         $this->assertEquals(1, $result->pageSize);
@@ -248,11 +251,11 @@ class ResourceControllerTest extends TestCase
 
     public function testReturnsHalCollectionForPaginatedListUsingPassedPageSizeParameter()
     {
-        $items = array(
-            array('id' => 'foo', 'bar' => 'baz'),
-            array('id' => 'bar', 'bar' => 'baz'),
-            array('id' => 'baz', 'bar' => 'baz'),
-        );
+        $items = [
+            ['id' => 'foo', 'bar' => 'baz'],
+            ['id' => 'bar', 'bar' => 'baz'],
+            ['id' => 'baz', 'bar' => 'baz'],
+        ];
         $adapter   = new ArrayPaginator($items);
         $paginator = new Paginator($adapter);
         $this->resource->getEventManager()->attach('fetchAll', function ($e) use ($paginator) {
@@ -261,13 +264,13 @@ class ResourceControllerTest extends TestCase
 
         $this->controller->setPageSizeParam('page_size');
         $request = $this->controller->getRequest();
-        $request->setQuery(new Parameters(array(
+        $request->setQuery(new Parameters([
             'page'      => 2,
             'page_size' => 1,
-        )));
+        ]));
 
         $result = $this->controller->getList();
-        $this->assertInstanceOf('PhlyRestfully\HalCollection', $result);
+        $this->assertInstanceOf(HalCollection::class, $result);
         $this->assertSame($paginator, $result->collection);
         $this->assertEquals(2, $result->page);
         $this->assertEquals(1, $result->pageSize);
@@ -284,11 +287,11 @@ class ResourceControllerTest extends TestCase
 
     public function testHeadReturnsListResponseWhenNoIdProvided()
     {
-        $items = array(
-            array('id' => 'foo', 'bar' => 'baz'),
-            array('id' => 'bar', 'bar' => 'baz'),
-            array('id' => 'baz', 'bar' => 'baz'),
-        );
+        $items = [
+            ['id' => 'foo', 'bar' => 'baz'],
+            ['id' => 'bar', 'bar' => 'baz'],
+            ['id' => 'baz', 'bar' => 'baz'],
+        ];
         $adapter   = new ArrayPaginator($items);
         $paginator = new Paginator($adapter);
         $this->resource->getEventManager()->attach('fetchAll', function ($e) use ($paginator) {
@@ -297,22 +300,22 @@ class ResourceControllerTest extends TestCase
 
         $this->controller->setPageSize(1);
         $request = $this->controller->getRequest();
-        $request->setQuery(new Parameters(array('page' => 2)));
+        $request->setQuery(new Parameters(['page' => 2]));
 
         $result = $this->controller->head();
-        $this->assertInstanceOf('PhlyRestfully\HalCollection', $result);
+        $this->assertInstanceOf(HalCollection::class, $result);
         $this->assertSame($paginator, $result->collection);
     }
 
     public function testHeadReturnsResourceResponseWhenIdProvided()
     {
-        $resource = array('id' => 'foo', 'bar' => 'baz');
+        $resource = ['id' => 'foo', 'bar' => 'baz'];
         $this->resource->getEventManager()->attach('fetch', function ($e) use ($resource) {
             return $resource;
         });
 
         $result = $this->controller->head('foo');
-        $this->assertInstanceOf('PhlyRestfully\HalResource', $result);
+        $this->assertInstanceOf(HalResource::class, $result);
         $this->assertEquals($resource, $result->resource);
     }
 
@@ -325,7 +328,7 @@ class ResourceControllerTest extends TestCase
         sort($httpOptions);
 
         $result = $this->controller->options();
-        $this->assertInstanceOf('Zend\Http\Response', $result);
+        $this->assertInstanceOf(Http\Response::class, $result);
         $this->assertEquals(204, $result->getStatusCode());
         $headers = $result->getHeaders();
         $this->assertTrue($headers->has('allow'));
@@ -347,7 +350,7 @@ class ResourceControllerTest extends TestCase
         $this->event->getRouteMatch()->setParam('id', 'foo');
 
         $result = $this->controller->options();
-        $this->assertInstanceOf('Zend\Http\Response', $result);
+        $this->assertInstanceOf(Http\Response::class, $result);
         $this->assertEquals(204, $result->getStatusCode());
         $headers = $result->getHeaders();
         $this->assertTrue($headers->has('allow'));
@@ -365,19 +368,19 @@ class ResourceControllerTest extends TestCase
             throw new Exception\PatchException('failed');
         });
 
-        $result = $this->controller->patch('foo', array());
+        $result = $this->controller->patch('foo', []);
         $this->assertProblemApiResult(500, 'failed', $result);
     }
 
     public function testPatchReturnsHalResourceOnSuccess()
     {
-        $resource = array('id' => 'foo', 'bar' => 'baz');
+        $resource = ['id' => 'foo', 'bar' => 'baz'];
         $this->resource->getEventManager()->attach('patch', function ($e) use ($resource) {
             return $resource;
         });
 
         $result = $this->controller->patch('foo', $resource);
-        $this->assertInstanceOf('PhlyRestfully\HalResource', $result);
+        $this->assertInstanceOf(HalResource::class, $result);
         $this->assertEquals($resource, $result->resource);
     }
 
@@ -387,19 +390,19 @@ class ResourceControllerTest extends TestCase
             throw new Exception\UpdateException('failed');
         });
 
-        $result = $this->controller->update('foo', array());
+        $result = $this->controller->update('foo', []);
         $this->assertProblemApiResult(500, 'failed', $result);
     }
 
     public function testUpdateReturnsHalResourceOnSuccess()
     {
-        $resource = array('id' => 'foo', 'bar' => 'baz');
+        $resource = ['id' => 'foo', 'bar' => 'baz'];
         $this->resource->getEventManager()->attach('update', function ($e) use ($resource) {
             return $resource;
         });
 
         $result = $this->controller->update('foo', $resource);
-        $this->assertInstanceOf('PhlyRestfully\HalResource', $result);
+        $this->assertInstanceOf(HalResource::class, $result);
         $this->assertEquals($resource, $result->resource);
     }
 
@@ -409,21 +412,21 @@ class ResourceControllerTest extends TestCase
             throw new Exception\UpdateException('failed');
         });
 
-        $result = $this->controller->replaceList(array());
+        $result = $this->controller->replaceList([]);
         $this->assertProblemApiResult(500, 'failed', $result);
     }
 
     public function testReplaceListReturnsHalCollectionOnSuccess()
     {
-        $items = array(
-            array('id' => 'foo', 'bar' => 'baz'),
-            array('id' => 'bar', 'bar' => 'baz'));
+        $items = [
+            ['id' => 'foo', 'bar' => 'baz'],
+            ['id' => 'bar', 'bar' => 'baz']];
         $this->resource->getEventManager()->attach('replaceList', function ($e) use ($items) {
             return $items;
         });
 
         $result = $this->controller->replaceList($items);
-        $this->assertInstanceOf('PhlyRestfully\HalCollection', $result);
+        $this->assertInstanceOf(HalCollection::class, $result);
         return $result;
     }
 
@@ -439,7 +442,7 @@ class ResourceControllerTest extends TestCase
     public function testOnDispatchRaisesDomainExceptionOnMissingResource()
     {
         $controller = new ResourceController();
-        $this->setExpectedException('PhlyRestfully\Exception\DomainException', 'ResourceInterface');
+        $this->setExpectedException(Exception\DomainException::class, 'ResourceInterface');
         $controller->onDispatch($this->event);
     }
 
@@ -447,20 +450,20 @@ class ResourceControllerTest extends TestCase
     {
         $controller = new ResourceController();
         $controller->setResource($this->resource);
-        $this->setExpectedException('PhlyRestfully\Exception\DomainException', 'route');
+        $this->setExpectedException(Exception\DomainException::class, 'route');
         $controller->onDispatch($this->event);
     }
 
     public function testOnDispatchReturns405ResponseForInvalidCollectionMethod()
     {
-        $this->controller->setCollectionHttpOptions(array('GET'));
+        $this->controller->setCollectionHttpOptions(['GET']);
         $request = $this->controller->getRequest();
         $request->setMethod('POST');
         $this->event->setRequest($request);
         $this->event->setResponse($this->controller->getResponse());
 
         $result = $this->controller->onDispatch($this->event);
-        $this->assertInstanceOf('Zend\Http\Response', $result);
+        $this->assertInstanceOf(Http\Response::class, $result);
         $this->assertEquals(405, $result->getStatusCode());
         $headers = $result->getHeaders();
         $this->assertTrue($headers->has('allow'));
@@ -470,7 +473,7 @@ class ResourceControllerTest extends TestCase
 
     public function testOnDispatchReturns405ResponseForInvalidResourceMethod()
     {
-        $this->controller->setResourceHttpOptions(array('GET'));
+        $this->controller->setResourceHttpOptions(['GET']);
         $request = $this->controller->getRequest();
         $request->setMethod('PUT');
         $this->event->setRequest($request);
@@ -478,7 +481,7 @@ class ResourceControllerTest extends TestCase
         $this->event->getRouteMatch()->setParam('id', 'foo');
 
         $result = $this->controller->onDispatch($this->event);
-        $this->assertInstanceOf('Zend\Http\Response', $result);
+        $this->assertInstanceOf(Http\Response::class, $result);
         $this->assertEquals(405, $result->getStatusCode());
         $headers = $result->getHeaders();
         $this->assertTrue($headers->has('allow'));
@@ -488,12 +491,12 @@ class ResourceControllerTest extends TestCase
 
     public function testValidMethodReturningHalOrApiValueIsCastToViewModel()
     {
-        $resource = array('id' => 'foo', 'bar' => 'baz');
+        $resource = ['id' => 'foo', 'bar' => 'baz'];
         $this->resource->getEventManager()->attach('fetch', function ($e) use ($resource) {
             return $resource;
         });
 
-        $this->controller->setResourceHttpOptions(array('GET'));
+        $this->controller->setResourceHttpOptions(['GET']);
 
         $request = $this->controller->getRequest();
         $request->setMethod('GET');
@@ -501,17 +504,17 @@ class ResourceControllerTest extends TestCase
         $this->event->getRouteMatch()->setParam('id', 'foo');
 
         $result = $this->controller->onDispatch($this->event);
-        $this->assertInstanceof('Zend\View\Model\ModelInterface', $result);
+        $this->assertInstanceof(ModelInterface::class, $result);
     }
 
     public function testValidMethodReturningHalOrApiValueCastsReturnToRestfulJsonModelWhenAcceptHeaderIsJson()
     {
-        $resource = array('id' => 'foo', 'bar' => 'baz');
+        $resource = ['id' => 'foo', 'bar' => 'baz'];
         $this->resource->getEventManager()->attach('fetch', function ($e) use ($resource) {
             return $resource;
         });
 
-        $this->controller->setResourceHttpOptions(array('GET'));
+        $this->controller->setResourceHttpOptions(['GET']);
 
         $request = $this->controller->getRequest();
         $request->setMethod('GET');
@@ -520,7 +523,7 @@ class ResourceControllerTest extends TestCase
         $this->event->getRouteMatch()->setParam('id', 'foo');
 
         $result = $this->controller->onDispatch($this->event);
-        $this->assertInstanceof('PhlyRestfully\View\RestfulJsonModel', $result);
+        $this->assertInstanceof(RestfulJsonModel::class, $result);
     }
 
     public function testPassingIdentifierToConstructorAllowsListeningOnThatIdentifier()
@@ -537,15 +540,15 @@ class ResourceControllerTest extends TestCase
             $test->flag = true;
         });
 
-        $events->trigger('test', $controller, array());
+        $events->trigger('test', $controller, []);
         $this->assertTrue($test->flag);
     }
 
     public function testHalCollectionUsesControllerCollectionName()
     {
-        $items = array(
-            array('id' => 'foo', 'bar' => 'baz')
-        );
+        $items = [
+            ['id' => 'foo', 'bar' => 'baz']
+        ];
         $this->resource->getEventManager()->attach('fetchAll', function ($e) use ($items) {
             return $items;
         });
@@ -553,18 +556,18 @@ class ResourceControllerTest extends TestCase
         $this->controller->setCollectionName('resources');
 
         $result = $this->controller->getList();
-        $this->assertInstanceOf('PhlyRestfully\HalCollection', $result);
+        $this->assertInstanceOf(HalCollection::class, $result);
         $this->assertEquals('resources', $result->collectionName);
     }
 
     public function testAllowsInjectingContentTypesForRequestMarshalling()
     {
-        $types = array(
-            ResourceController::CONTENT_TYPE_JSON => array(
+        $types = [
+            ResourceController::CONTENT_TYPE_JSON => [
                 'application/api-problem+json',
                 'text/json',
-            ),
-        );
+            ],
+        ];
         $controller = new ResourceController();
         $controller->setContentTypes($types);
 
@@ -573,7 +576,7 @@ class ResourceControllerTest extends TestCase
 
     public function testCreateUsesHalResourceReturnedByResource()
     {
-        $data     = array('id' => 'foo', 'data' => 'bar');
+        $data     = ['id' => 'foo', 'data' => 'bar'];
         $resource = new HalResource($data, 'foo', 'resource');
         $this->resource->getEventManager()->attach('create', function ($e) use ($resource) {
             return $resource;
@@ -585,18 +588,18 @@ class ResourceControllerTest extends TestCase
 
     public function testPatchListUsesHalCollectionReturnedByResource()
     {
-        $collection = new HalCollection(array());
+        $collection = new HalCollection([]);
         $this->resource->getEventManager()->attach('patchList', function ($e) use ($collection) {
             return $collection;
         });
 
-        $result = $this->controller->patchList(array());
+        $result = $this->controller->patchList([]);
         $this->assertSame($collection, $result);
     }
 
     public function testGetUsesHalResourceReturnedByResource()
     {
-        $data     = array('id' => 'foo', 'data' => 'bar');
+        $data     = ['id' => 'foo', 'data' => 'bar'];
         $resource = new HalResource($data, 'foo', 'resource');
         $this->resource->getEventManager()->attach('fetch', function ($e) use ($resource) {
             return $resource;
@@ -608,7 +611,7 @@ class ResourceControllerTest extends TestCase
 
     public function testGetListUsesHalCollectionReturnedByResource()
     {
-        $collection = new HalCollection(array());
+        $collection = new HalCollection([]);
         $this->resource->getEventManager()->attach('fetchAll', function ($e) use ($collection) {
             return $collection;
         });
@@ -619,7 +622,7 @@ class ResourceControllerTest extends TestCase
 
     public function testPatchUsesHalResourceReturnedByResource()
     {
-        $data     = array('id' => 'foo', 'data' => 'bar');
+        $data     = ['id' => 'foo', 'data' => 'bar'];
         $resource = new HalResource($data, 'foo', 'resource');
         $this->resource->getEventManager()->attach('patch', function ($e) use ($resource) {
             return $resource;
@@ -631,7 +634,7 @@ class ResourceControllerTest extends TestCase
 
     public function testUpdateUsesHalResourceReturnedByResource()
     {
-        $data     = array('id' => 'foo', 'data' => 'bar');
+        $data     = ['id' => 'foo', 'data' => 'bar'];
         $resource = new HalResource($data, 'foo', 'resource');
         $this->resource->getEventManager()->attach('update', function ($e) use ($resource) {
             return $resource;
@@ -643,24 +646,24 @@ class ResourceControllerTest extends TestCase
 
     public function testReplaceListUsesHalCollectionReturnedByResource()
     {
-        $collection = new HalCollection(array());
+        $collection = new HalCollection([]);
         $this->resource->getEventManager()->attach('replaceList', function ($e) use ($collection) {
             return $collection;
         });
 
-        $result = $this->controller->replaceList(array());
+        $result = $this->controller->replaceList([]);
         $this->assertSame($collection, $result);
     }
 
     public function testCreateTriggersPreAndPostEvents()
     {
-        $test = (object) array(
+        $test = (object) [
             'pre'       => false,
             'pre_data'  => false,
             'post'      => false,
             'post_data' => false,
             'resource'  => false,
-        );
+        ];
 
         $this->controller->getEventManager()->attach('create.pre', function ($e) use ($test) {
             $test->pre      = true;
@@ -672,7 +675,7 @@ class ResourceControllerTest extends TestCase
             $test->resource = $e->getParam('resource');
         });
 
-        $data     = array('id' => 'foo', 'data' => 'bar');
+        $data     = ['id' => 'foo', 'data' => 'bar'];
         $resource = new HalResource($data, 'foo', 'resource');
         $this->resource->getEventManager()->attach('create', function ($e) use ($resource) {
             return $resource;
@@ -688,13 +691,13 @@ class ResourceControllerTest extends TestCase
 
     public function testPatchListTriggersPreAndPostEvents()
     {
-        $test = (object) array(
+        $test = (object) [
             'pre'        => false,
             'pre_data'   => false,
             'post'       => false,
             'post_data'  => false,
             'collection' => false,
-        );
+        ];
 
         $this->controller->getEventManager()->attach('patchList.pre', function ($e) use ($test) {
             $test->pre      = true;
@@ -706,7 +709,7 @@ class ResourceControllerTest extends TestCase
             $test->collection = $e->getParam('collection');
         });
 
-        $data       = array('foo' => array('id' => 'bar'));
+        $data       = ['foo' => ['id' => 'bar']];
         $collection = new HalCollection($data);
         $this->resource->getEventManager()->attach('patchList', function ($e) use ($collection) {
             return $collection;
@@ -722,12 +725,12 @@ class ResourceControllerTest extends TestCase
 
     public function testDeleteTriggersPreAndPostEvents()
     {
-        $test = (object) array(
+        $test = (object) [
             'pre'       => false,
             'pre_id'  => false,
             'post'      => false,
             'post_id' => false,
-        );
+        ];
 
         $this->controller->getEventManager()->attach('delete.pre', function ($e) use ($test) {
             $test->pre      = true;
@@ -751,10 +754,10 @@ class ResourceControllerTest extends TestCase
 
     public function testDeleteListTriggersPreAndPostEvents()
     {
-        $test = (object) array(
+        $test = (object) [
             'pre'       => false,
             'post'      => false,
-        );
+        ];
 
         $this->controller->getEventManager()->attach('deleteList.pre', function ($e) use ($test) {
             $test->pre      = true;
@@ -774,13 +777,13 @@ class ResourceControllerTest extends TestCase
 
     public function testGetTriggersPreAndPostEvents()
     {
-        $test = (object) array(
+        $test = (object) [
             'pre'       => false,
             'pre_id'    => false,
             'post'      => false,
             'post_id'   => false,
             'resource'  => false,
-        );
+        ];
 
         $this->controller->getEventManager()->attach('get.pre', function ($e) use ($test) {
             $test->pre    = true;
@@ -792,7 +795,7 @@ class ResourceControllerTest extends TestCase
             $test->resource = $e->getParam('resource');
         });
 
-        $data     = array('id' => 'foo', 'data' => 'bar');
+        $data     = ['id' => 'foo', 'data' => 'bar'];
         $resource = new HalResource($data, 'foo', 'resource');
         $this->resource->getEventManager()->attach('fetch', function ($e) use ($resource) {
             return $resource;
@@ -808,15 +811,15 @@ class ResourceControllerTest extends TestCase
 
     public function testOptionsTriggersPreAndPostEventsForCollection()
     {
-        $options = array('GET', 'POST');
+        $options = ['GET', 'POST'];
         $this->controller->setCollectionHttpOptions($options);
 
-        $test = (object) array(
+        $test = (object) [
             'pre'          => false,
             'post'         => false,
             'pre_options'  => false,
             'post_options' => false,
-        );
+        ];
 
         $this->controller->getEventManager()->attach('options.pre', function ($e) use ($test) {
             $test->pre = true;
@@ -836,15 +839,15 @@ class ResourceControllerTest extends TestCase
 
     public function testOptionsTriggersPreAndPostEventsForResource()
     {
-        $options = array('GET', 'PUT', 'PATCH');
+        $options = ['GET', 'PUT', 'PATCH'];
         $this->controller->setResourceHttpOptions($options);
 
-        $test = (object) array(
+        $test = (object) [
             'pre'          => false,
             'post'         => false,
             'pre_options'  => false,
             'post_options' => false,
-        );
+        ];
 
         $this->controller->getEventManager()->attach('options.pre', function ($e) use ($test) {
             $test->pre = true;
@@ -866,11 +869,11 @@ class ResourceControllerTest extends TestCase
 
     public function testGetListTriggersPreAndPostEvents()
     {
-        $test = (object) array(
+        $test = (object) [
             'pre'        => false,
             'post'       => false,
             'collection' => false,
-        );
+        ];
 
         $this->controller->getEventManager()->attach('getList.pre', function ($e) use ($test) {
             $test->pre    = true;
@@ -880,7 +883,7 @@ class ResourceControllerTest extends TestCase
             $test->collection = $e->getParam('collection');
         });
 
-        $collection = new HalCollection(array());
+        $collection = new HalCollection([]);
         $this->resource->getEventManager()->attach('fetchAll', function ($e) use ($collection) {
             return $collection;
         });
@@ -893,7 +896,7 @@ class ResourceControllerTest extends TestCase
 
     public function testPatchTriggersPreAndPostEvents()
     {
-        $test = (object) array(
+        $test = (object) [
             'pre'       => false,
             'pre_id'    => false,
             'pre_data'  => false,
@@ -901,7 +904,7 @@ class ResourceControllerTest extends TestCase
             'post_id'   => false,
             'post_data' => false,
             'resource'  => false,
-        );
+        ];
 
         $this->controller->getEventManager()->attach('patch.pre', function ($e) use ($test) {
             $test->pre      = true;
@@ -915,7 +918,7 @@ class ResourceControllerTest extends TestCase
             $test->resource  = $e->getParam('resource');
         });
 
-        $data     = array('id' => 'foo', 'data' => 'bar');
+        $data     = ['id' => 'foo', 'data' => 'bar'];
         $resource = new HalResource($data, 'foo', 'resource');
         $this->resource->getEventManager()->attach('patch', function ($e) use ($resource) {
             return $resource;
@@ -933,7 +936,7 @@ class ResourceControllerTest extends TestCase
 
     public function testUpdateTriggersPreAndPostEvents()
     {
-        $test = (object) array(
+        $test = (object) [
             'pre'       => false,
             'pre_id'    => false,
             'pre_data'  => false,
@@ -941,7 +944,7 @@ class ResourceControllerTest extends TestCase
             'post_id'   => false,
             'post_data' => false,
             'resource'  => false,
-        );
+        ];
 
         $this->controller->getEventManager()->attach('update.pre', function ($e) use ($test) {
             $test->pre      = true;
@@ -955,7 +958,7 @@ class ResourceControllerTest extends TestCase
             $test->resource  = $e->getParam('resource');
         });
 
-        $data     = array('id' => 'foo', 'data' => 'bar');
+        $data     = ['id' => 'foo', 'data' => 'bar'];
         $resource = new HalResource($data, 'foo', 'resource');
         $this->resource->getEventManager()->attach('update', function ($e) use ($resource) {
             return $resource;
@@ -973,13 +976,13 @@ class ResourceControllerTest extends TestCase
 
     public function testReplaceListTriggersPreAndPostEvents()
     {
-        $test = (object) array(
+        $test = (object) [
             'pre'        => false,
             'pre_data'   => false,
             'post'       => false,
             'post_data'  => false,
             'collection' => false,
-        );
+        ];
 
         $this->controller->getEventManager()->attach('replaceList.pre', function ($e) use ($test) {
             $test->pre      = true;
@@ -991,7 +994,7 @@ class ResourceControllerTest extends TestCase
             $test->collection = $e->getParam('collection');
         });
 
-        $data       = array('foo' => array('id' => 'bar'));
+        $data       = ['foo' => ['id' => 'bar']];
         $collection = new HalCollection($data);
         $this->resource->getEventManager()->attach('replaceList', function ($e) use ($collection) {
             return $collection;
@@ -1019,7 +1022,7 @@ class ResourceControllerTest extends TestCase
 
         $result = $this->controller->dispatch($request, $this->controller->getResponse());
 
-        $this->assertInstanceOf('PhlyRestfully\View\RestfulJsonModel', $result);
+        $this->assertInstanceOf(RestfulJsonModel::class, $result);
         $this->assertSame($problem, $result->getPayload());
     }
 
@@ -1039,20 +1042,20 @@ class ResourceControllerTest extends TestCase
 
     public function eventsProducingApiProblems()
     {
-        return array(
-            'delete' => array(
+        return [
+            'delete' => [
                 'delete', 'delete', 'foo',
-            ),
-            'deleteList' => array(
+            ],
+            'deleteList' => [
                 'deleteList', 'deleteList', null,
-            ),
-            'get' => array(
+            ],
+            'get' => [
                 'fetch', 'get', 'foo',
-            ),
-            'getList' => array(
+            ],
+            'getList' => [
                 'fetchAll', 'getList', null,
-            ),
-        );
+            ],
+        ];
     }
 
     /**
@@ -1106,12 +1109,12 @@ class ResourceControllerTest extends TestCase
      */
     public function testCreateAllowsReturningApiProblemFromResource()
     {
-        $problem = new ApiProblem(400, 'Validation error', null, null, array('email' => 'Invalid email address provided'));
+        $problem = new ApiProblem(400, 'Validation error', null, null, ['email' => 'Invalid email address provided']);
         $this->resource->getEventManager()->attach('create', function ($e) use ($problem) {
             return $problem;
         });
 
-        $result = $this->controller->create(array());
+        $result = $this->controller->create([]);
         $this->assertSame($problem, $result);
     }
 
@@ -1120,12 +1123,12 @@ class ResourceControllerTest extends TestCase
      */
     public function testPatchListAllowsReturningApiProblemFromResource()
     {
-        $problem = new ApiProblem(400, 'Validation error', null, null, array('email' => 'Invalid email address provided'));
+        $problem = new ApiProblem(400, 'Validation error', null, null, ['email' => 'Invalid email address provided']);
         $this->resource->getEventManager()->attach('patchList', function ($e) use ($problem) {
             return $problem;
         });
 
-        $result = $this->controller->patchList(array());
+        $result = $this->controller->patchList([]);
         $this->assertSame($problem, $result);
     }
 
@@ -1134,7 +1137,7 @@ class ResourceControllerTest extends TestCase
      */
     public function testDeleteAllowsReturningApiProblemFromResource()
     {
-        $problem = new ApiProblem(400, 'Invalid identifier', null, null, array('delete' => 'Invalid identifier provided'));
+        $problem = new ApiProblem(400, 'Invalid identifier', null, null, ['delete' => 'Invalid identifier provided']);
         $this->resource->getEventManager()->attach('delete', function ($e) use ($problem) {
             return $problem;
         });
@@ -1148,7 +1151,7 @@ class ResourceControllerTest extends TestCase
      */
     public function testDeleteListAllowsReturningApiProblemFromResource()
     {
-        $problem = new ApiProblem(400, 'Invalid list', null, null, array('delete' => 'Invalid collection'));
+        $problem = new ApiProblem(400, 'Invalid list', null, null, ['delete' => 'Invalid collection']);
         $this->resource->getEventManager()->attach('deleteList', function ($e) use ($problem) {
             return $problem;
         });
@@ -1162,7 +1165,7 @@ class ResourceControllerTest extends TestCase
      */
     public function testGetAllowsReturningApiProblemFromResource()
     {
-        $problem = new ApiProblem(400, 'Invalid identifier', null, null, array('get' => 'Invalid identifier provided'));
+        $problem = new ApiProblem(400, 'Invalid identifier', null, null, ['get' => 'Invalid identifier provided']);
         $this->resource->getEventManager()->attach('fetch', function ($e) use ($problem) {
             return $problem;
         });
@@ -1176,7 +1179,7 @@ class ResourceControllerTest extends TestCase
      */
     public function testGetListAllowsReturningApiProblemFromResource()
     {
-        $problem = new ApiProblem(400, 'Invalid collection', null, null, array('fetchAll' => 'Invalid collection'));
+        $problem = new ApiProblem(400, 'Invalid collection', null, null, ['fetchAll' => 'Invalid collection']);
         $this->resource->getEventManager()->attach('fetchAll', function ($e) use ($problem) {
             return $problem;
         });
@@ -1190,12 +1193,12 @@ class ResourceControllerTest extends TestCase
      */
     public function testPatchAllowsReturningApiProblemFromResource()
     {
-        $problem = new ApiProblem(400, 'Validation error', null, null, array('email' => 'Invalid email address provided'));
+        $problem = new ApiProblem(400, 'Validation error', null, null, ['email' => 'Invalid email address provided']);
         $this->resource->getEventManager()->attach('patch', function ($e) use ($problem) {
             return $problem;
         });
 
-        $result = $this->controller->patch('foo', array());
+        $result = $this->controller->patch('foo', []);
         $this->assertSame($problem, $result);
     }
 
@@ -1204,12 +1207,12 @@ class ResourceControllerTest extends TestCase
      */
     public function testUpdateAllowsReturningApiProblemFromResource()
     {
-        $problem = new ApiProblem(400, 'Validation error', null, null, array('email' => 'Invalid email address provided'));
+        $problem = new ApiProblem(400, 'Validation error', null, null, ['email' => 'Invalid email address provided']);
         $this->resource->getEventManager()->attach('update', function ($e) use ($problem) {
             return $problem;
         });
 
-        $result = $this->controller->update('foo', array());
+        $result = $this->controller->update('foo', []);
         $this->assertSame($problem, $result);
     }
 
@@ -1218,12 +1221,12 @@ class ResourceControllerTest extends TestCase
      */
     public function testReplaceListAllowsReturningApiProblemFromResource()
     {
-        $problem = new ApiProblem(400, 'Validation error', null, null, array('email' => 'Invalid email address provided'));
+        $problem = new ApiProblem(400, 'Validation error', null, null, ['email' => 'Invalid email address provided']);
         $this->resource->getEventManager()->attach('replaceList', function ($e) use ($problem) {
             return $problem;
         });
 
-        $result = $this->controller->replaceList(array());
+        $result = $this->controller->replaceList([]);
         $this->assertSame($problem, $result);
     }
 }

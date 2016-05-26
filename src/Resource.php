@@ -31,7 +31,7 @@ class Resource implements ResourceInterface
     /**
      * @var array
      */
-    protected $params = array();
+    protected $params = [];
 
     /**
      * @var null|Parameters
@@ -117,8 +117,7 @@ class Resource implements ResourceInterface
      */
     public function getEventParam($name, $default = null)
     {
-        if (isSet($this->params[$name])) {
-
+        if (isset($this->params[$name])) {
             return $this->params[$name];
         }
 
@@ -136,11 +135,11 @@ class Resource implements ResourceInterface
      */
     public function setEventManager(EventManagerInterface $events)
     {
-        $events->setIdentifiers(array(
+        $events->setIdentifiers([
             get_class($this),
             __CLASS__,
-            'PhlyRestfully\ResourceInterface',
-        ));
+            ResourceInterface::class,
+        ]);
         $this->events = $events;
         return $this;
     }
@@ -188,7 +187,7 @@ class Resource implements ResourceInterface
         }
 
         $events  = $this->getEventManager();
-        $event   = $this->prepareEvent(__FUNCTION__, array('data' => $data));
+        $event   = $this->prepareEvent(__FUNCTION__, ['data' => $data]);
         $results = $events->triggerEventUntil(function ($result) {
             return $result instanceof ApiProblem;
         }, $event);
@@ -227,7 +226,7 @@ class Resource implements ResourceInterface
         }
 
         $original = $data;
-        array_walk($data, function($value, $key) use(&$data) {
+        array_walk($data, function ($value, $key) use (&$data) {
             if (is_array($value)) {
                 $data[$key] = new ArrayObject($value);
                 return;
@@ -243,8 +242,8 @@ class Resource implements ResourceInterface
 
         $data     = new ArrayObject($data);
         $events   = $this->getEventManager();
-        $event    = $this->prepareEvent(__FUNCTION__, array('data' => $data));
-        $results  = $events->triggerUntil($event, function($result) {
+        $event    = $this->prepareEvent(__FUNCTION__, ['data' => $data]);
+        $results  = $events->triggerUntil($event, function ($result) {
             return $result instanceof ApiProblem;
         });
         $last     = $results->last();
@@ -315,7 +314,8 @@ class Resource implements ResourceInterface
     {
         if (!is_array($data)) {
             throw new Exception\InvalidArgumentException(sprintf(
-                'Data provided to replaceList must be either a multidimensional array or array of objects; received "%s"',
+                'Data provided to replaceList must be either a multidimensional array '
+                . 'or array of objects; received "%s"',
                 gettype($data)
             ));
         }
@@ -333,7 +333,7 @@ class Resource implements ResourceInterface
             }
         });
         $events  = $this->getEventManager();
-        $event   = $this->prepareEvent(__FUNCTION__, array('data' => $data));
+        $event   = $this->prepareEvent(__FUNCTION__, ['data' => $data]);
         $results = $events->triggerEventUntil(function ($result) {
             return $result instanceof ApiProblem;
         }, $event);
@@ -399,7 +399,7 @@ class Resource implements ResourceInterface
     public function delete($id)
     {
         $events  = $this->getEventManager();
-        $event   = $this->prepareEvent(__FUNCTION__, array('id' => $id));
+        $event   = $this->prepareEvent(__FUNCTION__, ['id' => $id]);
         $results = $events->triggerEventUntil(function ($result) {
             return $result instanceof ApiProblem;
         }, $event);
@@ -428,7 +428,7 @@ class Resource implements ResourceInterface
             ));
         }
         $events  = $this->getEventManager();
-        $event   = $this->prepareEvent(__FUNCTION__, array('data' => $data));
+        $event   = $this->prepareEvent(__FUNCTION__, ['data' => $data]);
         $results = $events->triggerEventUntil(function ($result) {
             return $result instanceof ApiProblem;
         }, $event);
@@ -453,7 +453,7 @@ class Resource implements ResourceInterface
     public function fetch($id)
     {
         $events  = $this->getEventManager();
-        $event   = $this->prepareEvent(__FUNCTION__, array('id' => $id));
+        $event   = $this->prepareEvent(__FUNCTION__, ['id' => $id]);
         $results = $events->triggerEventUntil(function ($result) {
             return $result instanceof ApiProblem;
         }, $event);
@@ -491,7 +491,7 @@ class Resource implements ResourceInterface
             && !$last instanceof ApiProblem
             && !$last instanceof Traversable
         ) {
-            return array();
+            return [];
         }
         return $last;
     }

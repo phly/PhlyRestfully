@@ -36,7 +36,7 @@ class ApiProblemListener implements ListenerAggregateInterface
     /**
      * @var \Zend\Stdlib\CallbackHandler[]
      */
-    protected $listeners = array();
+    protected $listeners = [];
 
     /**
      * Constructor
@@ -121,7 +121,7 @@ class ApiProblemListener implements ListenerAggregateInterface
 
         // Create a new model with the API-Problem payload, and reset
         // the result and view model in the event using it.
-        $model = new RestfulJsonModel(array('payload' => $apiProblem));
+        $model = new RestfulJsonModel(['payload' => $apiProblem]);
         $model->setTerminal(true);
         $e->setResult($model);
         $e->setViewModel($model);

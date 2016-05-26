@@ -17,14 +17,14 @@ class ResourceEventTest extends TestCase
 {
     public function setUp()
     {
-        $this->matches = new RouteMatch(array(
+        $this->matches = new RouteMatch([
             'foo' => 'bar',
             'baz' => 'inga',
-        ));
-        $this->query = new Parameters(array(
+        ]);
+        $this->query = new Parameters([
             'foo' => 'bar',
             'baz' => 'inga',
-        ));
+        ]);
 
         $this->event = new ResourceEvent();
     }
@@ -78,7 +78,7 @@ class ResourceEventTest extends TestCase
         $this->assertEquals('inga', $this->event->getRouteParam('baz'));
     }
 
-    public function testCanFetchIndividualQueryParameter(/* ResourceEvent $event */)
+    public function testCanFetchIndividualQueryParameter()
     {
         $this->event->setQueryParams($this->query);
         $this->assertEquals('bar', $this->event->getQueryParam('foo'));

@@ -8,9 +8,14 @@
 
 namespace PhlyRestfullyTest\Factory;
 
+use PhlyRestfully\ResourceController;
 use PhlyRestfully\Factory\ResourceControllerFactory;
 use PHPUnit_Framework_TestCase as TestCase;
+use Zend\EventManager\EventManager;
+use Zend\EventManager\SharedEventManager;
 use Zend\Mvc\Controller\ControllerManager;
+use Zend\Mvc\Service;
+use Zend\ServiceManager\ServiceLocatorInterface;
 use Zend\ServiceManager\ServiceManager;
 use Zend\ServiceManager\Config;
 
@@ -25,27 +30,27 @@ class ResourceControllerFactoryTest extends TestCase
         $controllers->addAbstractFactory($factory);
         $controllers->setServiceLocator($services);
 
-        $services->setService('Zend\ServiceManager\ServiceLocatorInterface', $services);
-        $services->setService('Config', $this->getConfig());
-        $services->setService('ControllerLoader', $controllers);
-        $services->setFactory('ControllerPluginManager', 'Zend\Mvc\Service\ControllerPluginManagerFactory');
-        $services->setInvokableClass('EventManager', 'Zend\EventManager\EventManager');
-        $services->setInvokableClass('SharedEventManager', 'Zend\EventManager\SharedEventManager');
+        $services->setService(ServiceLocatorInterface::class, $services);
+        $services->setService('config', $this->getConfig());
+        $services->setService('ControllerManager', $controllers);
+        $services->setFactory('ControllerPluginManager', Service\ControllerPluginManagerFactory::class);
+        $services->setInvokableClass('EventManager', EventManager::class);
+        $services->setInvokableClass('SharedEventManager', SharedEventManager::class);
         $services->setShared('EventManager', false);
     }
 
     public function getConfig()
     {
-        return array(
-            'phlyrestfully' => array(
-                'resources' => array(
-                    'ApiController' => array(
-                        'listener'   => 'PhlyRestfullyTest\Factory\TestAsset\Listener',
+        return [
+            'phlyrestfully' => [
+                'resources' => [
+                    'ApiController' => [
+                        'listener'   => TestAsset\Listener::class,
                         'route_name' => 'api',
-                    ),
-                ),
-            ),
-        );
+                    ],
+                ],
+            ],
+        ];
     }
 
     /**
@@ -55,16 +60,16 @@ class ResourceControllerFactoryTest extends TestCase
     {
         $this->assertTrue($this->controllers->has('ApiController'));
         $controller = $this->controllers->get('ApiController');
-        $this->assertInstanceOf('PhlyRestfully\ResourceController', $controller);
+        $this->assertInstanceOf(ResourceController::class, $controller);
     }
 
     public function testWillInstantiateAlternateResourceControllerWhenSpecified()
     {
         $config = $this->services->get('Config');
-        $config['phlyrestfully']['resources']['ApiController']['controller_class'] = 'PhlyRestfullyTest\Factory\TestAsset\CustomController';
+        $config['phlyrestfully']['resources']['ApiController']['controller_class'] = TestAsset\CustomController::class;
         $this->services->setAllowOverride(true);
         $this->services->setService('Config', $config);
         $controller = $this->controllers->get('ApiController');
-        $this->assertInstanceOf('PhlyRestfullyTest\Factory\TestAsset\CustomController', $controller);
+        $this->assertInstanceOf(TestAsset\CustomController::class, $controller);
     }
 }

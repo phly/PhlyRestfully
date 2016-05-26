@@ -21,7 +21,7 @@ class HalCollection implements LinkCollectionAwareInterface
      *
      * @var array
      */
-    protected $attributes = array();
+    protected $attributes = [];
 
     /**
      * @var array|Traversable|\Zend\Paginator\Paginator
@@ -43,12 +43,12 @@ class HalCollection implements LinkCollectionAwareInterface
     /**
      * @var array
      */
-    protected $collectionRouteOptions = array();
+    protected $collectionRouteOptions = [];
 
     /**
      * @var array
      */
-    protected $collectionRouteParams = array();
+    protected $collectionRouteParams = [];
 
     /**
      * Resource key indicating the identifier; used for generating URIs to
@@ -90,12 +90,12 @@ class HalCollection implements LinkCollectionAwareInterface
     /**
      * @var array
      */
-    protected $resourceRouteOptions = array();
+    protected $resourceRouteOptions = [];
 
     /**
      * @var array
      */
-    protected $resourceRouteParams = array();
+    protected $resourceRouteParams = [];
 
     /**
      * @param  array|Traversable|\Zend\Paginator\Paginator $collection
@@ -103,8 +103,12 @@ class HalCollection implements LinkCollectionAwareInterface
      * @param  string $resourceRoute
      * @throws Exception\InvalidCollectionException
      */
-    public function __construct($collection, $resourceRoute = null, $resourceRouteParams = null, $resourceRouteOptions = null)
-    {
+    public function __construct(
+        $collection,
+        $resourceRoute = null,
+        $resourceRouteParams = null,
+        $resourceRouteOptions = null
+    ) {
         if (!is_array($collection) && !$collection instanceof Traversable) {
             throw new Exception\InvalidCollectionException(sprintf(
                 '%s expects an array or Traversable; received "%s"',
@@ -134,7 +138,7 @@ class HalCollection implements LinkCollectionAwareInterface
      */
     public function __get($name)
     {
-        $names = array(
+        $names = [
             'attributes'               => 'attributes',
             'collection'               => 'collection',
             'collectionname'           => 'collectionName',
@@ -159,7 +163,7 @@ class HalCollection implements LinkCollectionAwareInterface
             'page'                     => 'page',
             'pagesize'                 => 'pageSize',
             'page_size'                => 'pageSize',
-        );
+        ];
         $name = strtolower($name);
         if (!in_array($name, array_keys($names))) {
             throw new Exception\InvalidArgumentException(sprintf(

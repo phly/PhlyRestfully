@@ -8,6 +8,7 @@
 
 namespace PhlyRestfullyTest;
 
+use PhlyRestfully\Exception;
 use PhlyRestfully\Link;
 use PHPUnit_Framework_TestCase as TestCase;
 
@@ -38,7 +39,7 @@ class LinkTest extends TestCase
     public function testCanSetRouteParamsWhenSpecifyingRoute()
     {
         $route  = 'api/docs';
-        $params = array('version' => '1.1');
+        $params = ['version' => '1.1'];
         $link = new Link('describedby');
         $link->setRoute($route, $params);
         $this->assertEquals($route, $link->getRoute());
@@ -48,7 +49,7 @@ class LinkTest extends TestCase
     public function testCanSetRouteOptionsWhenSpecifyingRoute()
     {
         $route   = 'api/docs';
-        $options = array('query' => 'version=1.1');
+        $options = ['query' => 'version=1.1'];
         $link = new Link('describedby');
         $link->setRoute($route, null, $options);
         $this->assertEquals($route, $link->getRoute());
@@ -58,7 +59,7 @@ class LinkTest extends TestCase
     public function testCanSetRouteParamsSeparately()
     {
         $route  = 'api/docs';
-        $params = array('version' => '1.1');
+        $params = ['version' => '1.1'];
         $link = new Link('describedby');
         $link->setRoute($route);
         $link->setRouteParams($params);
@@ -69,7 +70,7 @@ class LinkTest extends TestCase
     public function testCanSetRouteOptionsSeparately()
     {
         $route   = 'api/docs';
-        $options = array('query' => 'version=1.1');
+        $options = ['query' => 'version=1.1'];
         $link = new Link('describedby');
         $link->setRoute($route);
         $link->setRouteOptions($options);
@@ -82,7 +83,7 @@ class LinkTest extends TestCase
         $link = new Link('describedby');
         $link->setRoute('api/docs');
 
-        $this->setExpectedException('PhlyRestfully\Exception\DomainException');
+        $this->setExpectedException(Exception\DomainException::class);
         $link->setUrl('http://example.com/api/docs.html');
     }
 
@@ -91,7 +92,7 @@ class LinkTest extends TestCase
         $link = new Link('describedby');
         $link->setUrl('http://example.com/api/docs.html');
 
-        $this->setExpectedException('PhlyRestfully\Exception\DomainException');
+        $this->setExpectedException(Exception\DomainException::class);
         $link->setRoute('api/docs');
     }
 
@@ -148,11 +149,11 @@ class LinkTest extends TestCase
     {
         $rel  = 'describedby';
         $url  = 'http://example.com/docs.html';
-        $link = Link::factory(array(
+        $link = Link::factory([
             'rel' => $rel,
             'url' => $url,
-        ));
-        $this->assertInstanceOf('PhlyRestfully\Link', $link);
+        ]);
+        $this->assertInstanceOf(Link::class, $link);
         $this->assertEquals($rel, $link->getRelation());
         $this->assertEquals($url, $link->getUrl());
     }
@@ -164,18 +165,18 @@ class LinkTest extends TestCase
     {
         $rel     = 'describedby';
         $route   = 'api/docs';
-        $params  = array('version' => '1.1');
-        $options = array('query' => 'version=1.1');
-        $link = Link::factory(array(
+        $params  = ['version' => '1.1'];
+        $options = ['query' => 'version=1.1'];
+        $link = Link::factory([
             'rel'   => $rel,
-            'route' => array(
+            'route' => [
                 'name'    => $route,
                 'params'  => $params,
                 'options' => $options,
-            ),
-        ));
+            ],
+        ]);
 
-        $this->assertInstanceOf('PhlyRestfully\Link', $link);
+        $this->assertInstanceOf(Link::class, $link);
         $this->assertEquals('describedby', $link->getRelation());
         $this->assertEquals($route, $link->getRoute());
         $this->assertEquals($params, $link->getRouteParams());

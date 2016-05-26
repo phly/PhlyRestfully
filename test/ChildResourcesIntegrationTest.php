@@ -21,6 +21,7 @@ use ReflectionObject;
 use Zend\Http\Request;
 use Zend\Mvc\Controller\PluginManager as ControllerPluginManager;
 use Zend\Mvc\Router\Http\TreeRouteStack;
+use Zend\Mvc\Router\RouteMatch;
 use Zend\View\HelperPluginManager;
 use Zend\View\Helper\ServerUrl as ServerUrlHelper;
 use Zend\View\Helper\Url as UrlHelper;
@@ -74,44 +75,44 @@ class ChildResourcesIntegrationTest extends TestCase
 
     public function setupRouter()
     {
-        $routes = array(
-            'parent' => array(
+        $routes = [
+            'parent' => [
                 'type' => 'Segment',
-                'options' => array(
+                'options' => [
                     'route' => '/api/parent[/:parent]',
-                    'defaults' => array(
+                    'defaults' => [
                         'controller' => 'Api\ParentController',
-                    ),
-                ),
+                    ],
+                ],
                 'may_terminate' => true,
-                'child_routes' => array(
-                    'child' => array(
+                'child_routes' => [
+                    'child' => [
                         'type' => 'Segment',
-                        'options' => array(
+                        'options' => [
                             'route' => '/child[/:child]',
-                            'defaults' => array(
+                            'defaults' => [
                                 'controller' => 'Api\ChildController',
-                            ),
-                        ),
-                    ),
-                ),
-            ),
-        );
+                            ],
+                        ],
+                    ],
+                ],
+            ],
+        ];
         $this->router = $router = new TreeRouteStack();
         $router->addRoutes($routes);
     }
 
     public function setUpParentResource()
     {
-        $this->parent = (object) array(
+        $this->parent = (object) [
             'id'   => 'anakin',
             'name' => 'Anakin Skywalker',
-        );
+        ];
         $resource = new HalResource($this->parent, 'anakin');
 
         $link = new Link('self');
         $link->setRoute('parent');
-        $link->setRouteParams(array('parent'=> 'anakin'));
+        $link->setRouteParams(['parent'=> 'anakin']);
         $resource->getLinks()->add($link);
 
         return $resource;
@@ -119,15 +120,15 @@ class ChildResourcesIntegrationTest extends TestCase
 
     public function setUpChildResource($id, $name)
     {
-        $this->child = (object) array(
+        $this->child = (object) [
             'id'   => $id,
             'name' => $name,
-        );
+        ];
         $resource = new HalResource($this->child, $id);
 
         $link = new Link('self');
         $link->setRoute('parent/child');
-        $link->setRouteParams(array('child'=> $id));
+        $link->setRouteParams(['child'=> $id]);
         $resource->getLinks()->add($link);
 
         return $resource;
@@ -135,13 +136,13 @@ class ChildResourcesIntegrationTest extends TestCase
 
     public function setUpChildCollection()
     {
-        $children = array(
-            array('luke', 'Luke Skywalker'),
-            array('leia', 'Leia Organa'),
-        );
-        $this->collection = array();
+        $children = [
+            ['luke', 'Luke Skywalker'],
+            ['leia', 'Leia Organa'],
+        ];
+        $this->collection = [];
         foreach ($children as $info) {
-            $collection[] = call_user_func_array(array($this, 'setUpChildResource'), $info);
+            $collection[] = call_user_func_array([$this, 'setUpChildResource'], $info);
         }
         $collection = new HalCollection($this->collection);
         $collection->setCollectionRoute('parent/child');
@@ -163,7 +164,7 @@ class ChildResourcesIntegrationTest extends TestCase
         $request = new Request();
         $request->setUri($uri);
         $matches = $this->router->match($request);
-        $this->assertInstanceOf('Zend\Mvc\Router\RouteMatch', $matches);
+        $this->assertInstanceOf(RouteMatch::class, $matches);
         $this->assertEquals('anakin', $matches->getParam('parent'));
         $this->assertEquals('parent', $matches->getMatchedRouteName());
 
@@ -188,7 +189,7 @@ class ChildResourcesIntegrationTest extends TestCase
         $request = new Request();
         $request->setUri($uri);
         $matches = $this->router->match($request);
-        $this->assertInstanceOf('Zend\Mvc\Router\RouteMatch', $matches);
+        $this->assertInstanceOf(RouteMatch::class, $matches);
         $this->assertEquals('anakin', $matches->getParam('parent'));
         $this->assertEquals('luke', $matches->getParam('child'));
         $this->assertEquals('parent/child', $matches->getMatchedRouteName());
@@ -214,7 +215,7 @@ class ChildResourcesIntegrationTest extends TestCase
         $request = new Request();
         $request->setUri($uri);
         $matches = $this->router->match($request);
-        $this->assertInstanceOf('Zend\Mvc\Router\RouteMatch', $matches);
+        $this->assertInstanceOf(RouteMatch::class, $matches);
         $this->assertEquals('anakin', $matches->getParam('parent'));
         $this->assertNull($matches->getParam('child'));
         $this->assertEquals('parent/child', $matches->getMatchedRouteName());
@@ -241,35 +242,38 @@ class ChildResourcesIntegrationTest extends TestCase
             $this->assertObjectHasAttribute('_links', $child);
             $this->assertObjectHasAttribute('self', $child->_links);
             $this->assertObjectHasAttribute('href', $child->_links->self);
-            $this->assertRegex('#^http://localhost.localdomain/api/parent/anakin/child/[^/]+$#', $child->_links->self->href);
+            $this->assertRegex(
+                '#^http://localhost.localdomain/api/parent/anakin/child/[^/]+$#',
+                $child->_links->self->href
+            );
         }
     }
 
     public function setUpAlternateRouter()
     {
-        $routes = array(
-            'parent' => array(
+        $routes = [
+            'parent' => [
                 'type' => 'Segment',
-                'options' => array(
+                'options' => [
                     'route' => '/api/parent[/:id]',
-                    'defaults' => array(
+                    'defaults' => [
                         'controller' => 'Api\ParentController',
-                    ),
-                ),
+                    ],
+                ],
                 'may_terminate' => true,
-                'child_routes' => array(
-                    'child' => array(
+                'child_routes' => [
+                    'child' => [
                         'type' => 'Segment',
-                        'options' => array(
+                        'options' => [
                             'route' => '/child[/:child_id]',
-                            'defaults' => array(
+                            'defaults' => [
                                 'controller' => 'Api\ChildController',
-                            ),
-                        ),
-                    ),
-                ),
-            ),
-        );
+                            ],
+                        ],
+                    ],
+                ],
+            ],
+        ];
         $this->router = $router = new TreeRouteStack();
         $router->addRoutes($routes);
         $this->helpers->get('url')->setRouter($router);
@@ -283,7 +287,7 @@ class ChildResourcesIntegrationTest extends TestCase
         $request = new Request();
         $request->setUri($uri);
         $matches = $this->router->match($request);
-        $this->assertInstanceOf('Zend\Mvc\Router\RouteMatch', $matches);
+        $this->assertInstanceOf(RouteMatch::class, $matches);
         $this->assertEquals('anakin', $matches->getParam('id'));
         $this->assertEquals('luke', $matches->getParam('child_id'));
         $this->assertEquals('parent/child', $matches->getMatchedRouteName());
@@ -311,7 +315,7 @@ class ChildResourcesIntegrationTest extends TestCase
         $request = new Request();
         $request->setUri($uri);
         $matches = $this->router->match($request);
-        $this->assertInstanceOf('Zend\Mvc\Router\RouteMatch', $matches);
+        $this->assertInstanceOf(RouteMatch::class, $matches);
         $this->assertEquals('anakin', $matches->getParam('id'));
         $this->assertNull($matches->getParam('child_id'));
         $this->assertEquals('parent/child', $matches->getMatchedRouteName());
@@ -338,7 +342,10 @@ class ChildResourcesIntegrationTest extends TestCase
             $this->assertObjectHasAttribute('_links', $child);
             $this->assertObjectHasAttribute('self', $child->_links);
             $this->assertObjectHasAttribute('href', $child->_links->self);
-            $this->assertRegex('#^http://localhost.localdomain/api/parent/anakin/child/[^/]+$#', $child->_links->self->href);
+            $this->assertRegex(
+                '#^http://localhost.localdomain/api/parent/anakin/child/[^/]+$#',
+                $child->_links->self->href
+            );
         }
     }
 
@@ -348,10 +355,10 @@ class ChildResourcesIntegrationTest extends TestCase
 
         $resource = new Resource();
         $resource->getEventManager()->attach('fetch', function ($e) {
-            return (object) array(
+            return (object) [
                 'id'   => 'luke',
                 'name' => 'Luke Skywalker',
-            );
+            ];
         });
         $controller = new ResourceController();
         $controller->setPluginManager($this->plugins);
@@ -365,7 +372,7 @@ class ChildResourcesIntegrationTest extends TestCase
         $request = new Request();
         $request->setUri($uri);
         $matches = $this->router->match($request);
-        $this->assertInstanceOf('Zend\Mvc\Router\RouteMatch', $matches);
+        $this->assertInstanceOf(RouteMatch::class, $matches);
         $this->assertEquals('anakin', $matches->getParam('id'));
         $this->assertEquals('luke', $matches->getParam('child_id'));
         $this->assertEquals('parent/child', $matches->getMatchedRouteName());
@@ -378,7 +385,7 @@ class ChildResourcesIntegrationTest extends TestCase
         $this->assertEquals('luke', $id);
 
         $result = $controller->get('luke');
-        $this->assertInstanceOf('PhlyRestfully\HalResource', $result);
+        $this->assertInstanceOf(HalResource::class, $result);
         $self = $result->getLinks()->get('self');
         $params = $self->getRouteParams();
         $this->assertArrayHasKey('child_id', $params);
@@ -391,16 +398,16 @@ class ChildResourcesIntegrationTest extends TestCase
 
         $resource = new Resource();
         $resource->getEventManager()->attach('fetchAll', function ($e) {
-            return array(
-                (object) array(
+            return [
+                (object) [
                     'id'   => 'luke',
                     'name' => 'Luke Skywalker',
-                ),
-                (object) array(
+                ],
+                (object) [
                     'id'   => 'leia',
                     'name' => 'Leia Organa',
-                ),
-            );
+                ],
+            ];
         });
         $controller = new ResourceController();
         $controller->setPluginManager($this->plugins);
@@ -416,7 +423,7 @@ class ChildResourcesIntegrationTest extends TestCase
         $request = new Request();
         $request->setUri($uri);
         $matches = $this->router->match($request);
-        $this->assertInstanceOf('Zend\Mvc\Router\RouteMatch', $matches);
+        $this->assertInstanceOf(RouteMatch::class, $matches);
         $this->assertEquals('anakin', $matches->getParam('id'));
         $this->assertNull($matches->getParam('child_id'));
         $this->assertEquals('parent/child', $matches->getMatchedRouteName());
@@ -425,7 +432,7 @@ class ChildResourcesIntegrationTest extends TestCase
         $this->helpers->get('url')->setRouteMatch($matches);
 
         $result = $controller->getList();
-        $this->assertInstanceOf('PhlyRestfully\HalCollection', $result);
+        $this->assertInstanceOf(HalCollection::class, $result);
 
         // Now, what happens if we render this?
         $model = new RestfulJsonModel();
@@ -446,7 +453,10 @@ class ChildResourcesIntegrationTest extends TestCase
             $this->assertObjectHasAttribute('_links', $child);
             $this->assertObjectHasAttribute('self', $child->_links);
             $this->assertObjectHasAttribute('href', $child->_links->self);
-            $this->assertRegexp('#^http://localhost.localdomain/api/parent/anakin/child/[^/]+$#', $child->_links->self->href);
+            $this->assertRegexp(
+                '#^http://localhost.localdomain/api/parent/anakin/child/[^/]+$#',
+                $child->_links->self->href
+            );
         }
     }
 }

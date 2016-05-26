@@ -20,6 +20,6 @@ class ArraySerializable
 
     public function getArrayCopy()
     {
-        return array('foo' => 'bar');
+        return ['foo' => 'bar'];
     }
 }

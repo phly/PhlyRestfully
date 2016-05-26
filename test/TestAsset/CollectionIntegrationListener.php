@@ -15,11 +15,11 @@ class CollectionIntegrationListener implements ListenerAggregateInterface
 {
     public $collection;
 
-    protected $listeners = array();
+    protected $listeners = [];
 
     public function attach(EventManagerInterface $events)
     {
-        $this->listeners[] = $events->attach('fetchAll', array($this, 'onFetchAll'));
+        $this->listeners[] = $events->attach('fetchAll', [$this, 'onFetchAll']);
     }
 
     public function detach(EventManagerInterface $events)

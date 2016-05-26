@@ -22,9 +22,9 @@ class Module
      */
     public function getAutoloaderConfig()
     {
-        return array('Zend\Loader\StandardAutoloader' => array('namespaces' => array(
+        return ['Zend\Loader\StandardAutoloader' => ['namespaces' => [
             __NAMESPACE__ => __DIR__ . '/src/' . __NAMESPACE__,
-        )));
+        ]]];
     }
 
     /**
@@ -46,66 +46,72 @@ class Module
      */
     public function getServiceConfig()
     {
-        return array('factories' => array(
-            'PhlyRestfully\ApiProblemListener' => function ($services) {
-                $config = array();
-                if ($services->has('config')) {
-                    $config = $services->get('config');
-                }
+        return [
+            'aliases' => [
+                View\JsonRenderer::class        => 'PhlyRestfully\JsonRenderer',
+                View\RestfulJsonStrategy::class => 'PhlyRestfully\RestfulJsonStrategy',
+            ],
+            'factories' => [
+                ApiProblemListener::class => function ($services) {
+                    $config = [];
+                    if ($services->has('config')) {
+                        $config = $services->get('config');
+                    }
 
-                $filter = null;
-                if (isset($config['phlyrestfully'])
-                    && isset($config['phlyrestfully']['accept_filter'])
-                ) {
-                    $filter = $config['phlyrestfully']['accept_filter'];
-                }
+                    $filter = null;
+                    if (isset($config['phlyrestfully'])
+                        && isset($config['phlyrestfully']['accept_filter'])
+                    ) {
+                        $filter = $config['phlyrestfully']['accept_filter'];
+                    }
 
-                return new Listener\ApiProblemListener($filter);
-            },
-            'PhlyRestfully\MetadataMap' => function ($services) {
-                $config = array();
-                if ($services->has('config')) {
-                    $config = $services->get('config');
-                }
+                    return new Listener\ApiProblemListener($filter);
+                },
+                MetadataMap::class => function ($services) {
+                    $config = [];
+                    if ($services->has('config')) {
+                        $config = $services->get('config');
+                    }
 
-                if ($services->has('HydratorManager')) {
-                    $hydrators = $services->get('HydratorManager');
-                } else {
-                    $hydrators = new HydratorPluginManager();
-                }
+                    if ($services->has('HydratorManager')) {
+                        $hydrators = $services->get('HydratorManager');
+                    } else {
+                        $hydrators = new HydratorPluginManager();
+                    }
 
-                $map = array();
-                if (isset($config['phlyrestfully'])
-                    && isset($config['phlyrestfully']['metadata_map'])
-                    && is_array($config['phlyrestfully']['metadata_map'])
-                ) {
-                    $map = $config['phlyrestfully']['metadata_map'];
-                }
+                    $map = [];
+                    if (isset($config['phlyrestfully'])
+                        && isset($config['phlyrestfully']['metadata_map'])
+                        && is_array($config['phlyrestfully']['metadata_map'])
+                    ) {
+                        $map = $config['phlyrestfully']['metadata_map'];
+                    }
 
-                return new MetadataMap($map, $hydrators);
-            },
-            'PhlyRestfully\JsonRenderer' => function ($services) {
-                $helpers  = $services->get('ViewHelperManager');
-                $config   = $services->get('Config');
+                    return new MetadataMap($map, $hydrators);
+                },
+                'PhlyRestfully\JsonRenderer' => function ($services) {
+                    $helpers  = $services->get('ViewHelperManager');
+                    $config   = $services->get('Config');
 
-                $displayExceptions = false;
-                if (isset($config['view_manager'])
-                    && isset($config['view_manager']['display_exceptions'])
-                ) {
-                    $displayExceptions = (bool) $config['view_manager']['display_exceptions'];
-                }
+                    $displayExceptions = false;
+                    if (isset($config['view_manager'])
+                        && isset($config['view_manager']['display_exceptions'])
+                    ) {
+                        $displayExceptions = (bool) $config['view_manager']['display_exceptions'];
+                    }
 
-                $renderer = new View\RestfulJsonRenderer();
-                $renderer->setHelperPluginManager($helpers);
-                $renderer->setDisplayExceptions($displayExceptions);
+                    $renderer = new View\RestfulJsonRenderer();
+                    $renderer->setHelperPluginManager($helpers);
+                    $renderer->setDisplayExceptions($displayExceptions);
 
-                return $renderer;
-            },
-            'PhlyRestfully\RestfulJsonStrategy' => function ($services) {
-                $renderer = $services->get('PhlyRestfully\JsonRenderer');
-                return new View\RestfulJsonStrategy($renderer);
-            },
-        ));
+                    return $renderer;
+                },
+                'PhlyRestfully\RestfulJsonStrategy' => function ($services) {
+                    $renderer = $services->get('PhlyRestfully\JsonRenderer');
+                    return new View\RestfulJsonStrategy($renderer);
+                },
+            ],
+        ];
     }
 
     /**
@@ -117,13 +123,13 @@ class Module
      */
     public function getControllerPluginConfig()
     {
-        return array('factories' => array(
+        return ['factories' => [
             'HalLinks' => function ($plugins) {
                 $services = $plugins->getServiceLocator();
                 $helpers  = $services->get('ViewHelperManager');
                 return $helpers->get('HalLinks');
             },
-        ));
+        ]];
     }
 
     /**
@@ -133,14 +139,14 @@ class Module
      */
     public function getViewHelperConfig()
     {
-        return array('factories' => array(
+        return ['factories' => [
             'HalLinks' => function ($helpers) {
                 $serverUrlHelper = $helpers->get('ServerUrl');
                 $urlHelper       = $helpers->get('Url');
 
                 $services        = $helpers->getServiceLocator();
-                $config          = $services->get('Config');
-                $metadataMap     = $services->get('PhlyRestfully\MetadataMap');
+                $config          = $services->get('config');
+                $metadataMap     = $services->get(MetadataMap::class);
                 $hydrators       = $metadataMap->getHydratorManager();
 
                 $helper          = new Plugin\HalLinks($hydrators);
@@ -179,7 +185,7 @@ class Module
 
                 return $helper;
             }
-        ));
+        ]];
     }
 
     /**
@@ -194,11 +200,11 @@ class Module
         $app      = $e->getTarget();
         $services = $app->getServiceManager();
         $events   = $app->getEventManager();
-        $events->attach('render', array($this, 'onRender'), 100);
+        $events->attach('render', [$this, 'onRender'], 100);
         $sharedEvents = $events->getSharedManager();
-        $sharedEvents->attach('PhlyRestfully\ResourceController', 'dispatch', function ($e) use ($services) {
+        $sharedEvents->attach(ResourceController::class, 'dispatch', function ($e) use ($services) {
             $eventManager = $e->getApplication()->getEventManager();
-            $eventManager->attach($services->get('PhlyRestfully\ApiProblemListener'));
+            $eventManager->attach($services->get(ApiProblemListener::class));
         }, 300);
         $sharedEvents->attachAggregate($services->get('PhlyRestfully\ResourceParametersListener'));
     }

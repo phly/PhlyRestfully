@@ -18,7 +18,7 @@ class ApiProblem
      *
      * @var array
      */
-    protected $additionalDetails = array();
+    protected $additionalDetails = [];
 
     /**
      * URL describing the problem type; defaults to HTTP status codes
@@ -52,21 +52,21 @@ class ApiProblem
      *
      * @var array
      */
-    protected $normalizedProperties = array(
+    protected $normalizedProperties = [
         'describedby'  => 'describedBy',
         'described_by' => 'describedBy',
         'httpstatus'   => 'httpStatus',
         'http_status'  => 'httpStatus',
         'title'        => 'title',
         'detail'       => 'detail',
-    );
+    ];
 
     /**
      * Status titles for common problems
      *
      * @var array
      */
-    protected $problemStatusTitles = array(
+    protected $problemStatusTitles = [
         // CLIENT ERROR
         400 => 'Bad Request',
         401 => 'Unauthorized',
@@ -106,7 +106,7 @@ class ApiProblem
         507 => 'Insufficient Storage',
         508 => 'Loop Detected',
         511 => 'Network Authentication Required',
-    );
+    ];
 
     /**
      * Title of the error.
@@ -128,7 +128,7 @@ class ApiProblem
      * @param  string $describedBy
      * @param  string $title
      */
-    public function __construct($httpStatus, $detail, $describedBy = null, $title = null, array $additional = array())
+    public function __construct($httpStatus, $detail, $describedBy = null, $title = null, array $additional = [])
     {
         if ($detail instanceof Exception\ProblemExceptionInterface) {
             if (null === $describedBy) {
@@ -186,12 +186,12 @@ class ApiProblem
      */
     public function toArray()
     {
-        $problem = array(
+        $problem = [
             'describedBy' => $this->describedBy,
             'title'       => $this->getTitle(),
             'httpStatus'  => $this->getHttpStatus(),
             'detail'      => $this->getDetail(),
-        );
+        ];
         // Required fields should always overwrite additional fields
         return array_merge($this->additionalDetails, $problem);
     }

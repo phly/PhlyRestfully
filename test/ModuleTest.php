@@ -26,13 +26,13 @@ class ModuleTest extends TestCase
 
     public function setupServiceManager()
     {
-        $options = array('service_manager' => array(
-            'factories' => array(
+        $options = ['service_manager' => [
+            'factories' => [
                 // Consumed by PhlyRestfully\JsonRenderer service
                 'ViewHelperManager'       => 'Zend\Mvc\Service\ViewHelperManagerFactory',
                 'ControllerPluginManager' => 'Zend\Mvc\Service\ControllerPluginManagerFactory',
-            ),
-        ));
+            ],
+        ]];
         $config = ArrayUtils::merge($options['service_manager'], $this->module->getServiceConfig());
         $config['view_helpers']       = $this->module->getViewHelperConfig();
         $config['controller_plugins'] = $this->module->getControllerPluginConfig();
@@ -43,7 +43,7 @@ class ModuleTest extends TestCase
         $services->setService('Config', $config);
 
         $event = new MvcEvent();
-        $event->setRouteMatch(new RouteMatch(array()));
+        $event->setRouteMatch(new RouteMatch([]));
 
         $router = $this->getMock('Zend\Mvc\Router\RouteStackInterface');
         $services->setService('HttpRouter', $router);
@@ -69,13 +69,13 @@ class ModuleTest extends TestCase
 
     public function testJsonRendererFactoryInjectsDefaultHydratorIfPresentInConfig()
     {
-        $options = array(
-            'phlyrestfully' => array(
-                'renderer' => array(
+        $options = [
+            'phlyrestfully' => [
+                'renderer' => [
                     'default_hydrator' => 'ObjectProperty',
-                ),
-            ),
-        );
+                ],
+            ],
+        ];
 
         $services = $this->setupServiceManager();
         $config   = $services->get('Config');
@@ -89,18 +89,18 @@ class ModuleTest extends TestCase
 
     public function testJsonRendererFactoryInjectsHydratorMappingsIfPresentInConfig()
     {
-        $options = array(
-            'phlyrestfully' => array(
-                'renderer' => array(
-                    'hydrators' => array(
+        $options = [
+            'phlyrestfully' => [
+                'renderer' => [
+                    'hydrators' => [
                         'Some\MadeUp\Component'            => 'ClassMethods',
                         'Another\MadeUp\Component'         => 'Reflection',
                         'StillAnother\MadeUp\Component'    => 'ArraySerializable',
                         'A\Component\With\SharedHydrators' => 'Reflection',
-                    ),
-                ),
-            ),
-        );
+                    ],
+                ],
+            ],
+        ];
 
         $services = $this->setupServiceManager();
         $config   = $services->get('Config');

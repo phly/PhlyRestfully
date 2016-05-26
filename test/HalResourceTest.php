@@ -8,6 +8,7 @@
 
 namespace PhlyRestfullyTest;
 
+use PhlyRestfully\Exception;
 use PhlyRestfully\HalResource;
 use PhlyRestfully\LinkCollection;
 use PHPUnit_Framework_TestCase as TestCase;
@@ -17,16 +18,16 @@ class HalResourceTest extends TestCase
 {
     public function invalidResources()
     {
-        return array(
-            'null'       => array(null),
-            'true'       => array(true),
-            'false'      => array(false),
-            'zero-int'   => array(0),
-            'int'        => array(1),
-            'zero-float' => array(0.0),
-            'float'      => array(1.1),
-            'string'     => array('string'),
-        );
+        return [
+            'null'       => [null],
+            'true'       => [true],
+            'false'      => [false],
+            'zero-int'   => [0],
+            'int'        => [1],
+            'zero-float' => [0.0],
+            'float'      => [1.1],
+            'string'     => ['string'],
+        ];
     }
 
     /**
@@ -34,7 +35,7 @@ class HalResourceTest extends TestCase
      */
     public function testConstructorRaisesExceptionForNonObjectNonArrayResource($resource)
     {
-        $this->setExpectedException('PhlyRestfully\Exception\InvalidResourceException');
+        $this->setExpectedException(Exception\InvalidResourceException::class);
         $hal = new HalResource($resource, 'id');
     }
 
@@ -49,14 +50,14 @@ class HalResourceTest extends TestCase
     public function testComposesLinkCollectionByDefault()
     {
         $resource = new stdClass;
-        $hal      = new HalResource($resource, 'id', 'route', array('foo' => 'bar'));
-        $this->assertInstanceOf('PhlyRestfully\LinkCollection', $hal->getLinks());
+        $hal      = new HalResource($resource, 'id', 'route', ['foo' => 'bar']);
+        $this->assertInstanceOf(LinkCollection::class, $hal->getLinks());
     }
 
     public function testLinkCollectionMayBeInjected()
     {
         $resource = new stdClass;
-        $hal      = new HalResource($resource, 'id', 'route', array('foo' => 'bar'));
+        $hal      = new HalResource($resource, 'id', 'route', ['foo' => 'bar']);
         $links    = new LinkCollection();
         $hal->setLinks($links);
         $this->assertSame($links, $hal->getLinks());

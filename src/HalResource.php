@@ -42,10 +42,10 @@ class HalResource implements LinkCollectionAwareInterface
      */
     public function __get($name)
     {
-        $names = array(
+        $names = [
             'resource'     => 'resource',
             'id'           => 'id',
-        );
+        ];
         $name = strtolower($name);
         if (!in_array($name, array_keys($names))) {
             throw new Exception\InvalidArgumentException(sprintf(

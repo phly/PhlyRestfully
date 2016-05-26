@@ -17,17 +17,17 @@ class ApiProblemTest extends TestCase
 {
     public function httpStatusCodes()
     {
-        return array(
-            '200' => array(200),
-            '201' => array(201),
-            '300' => array(300),
-            '301' => array(301),
-            '302' => array(302),
-            '400' => array(400),
-            '401' => array(401),
-            '404' => array(404),
-            '500' => array(500),
-        );
+        return [
+            '200' => [200],
+            '201' => [201],
+            '300' => [300],
+            '301' => [301],
+            '302' => [302],
+            '400' => [400],
+            '401' => [401],
+            '404' => [404],
+            '500' => [500],
+        ];
     }
 
     /**
@@ -103,12 +103,12 @@ class ApiProblemTest extends TestCase
 
     public function knownHttpStatusCodes()
     {
-        return array(
-            '404' => array(404),
-            '409' => array(409),
-            '422' => array(422),
-            '500' => array(500),
-        );
+        return [
+            '404' => [404],
+            '409' => [409],
+            '422' => [422],
+            '500' => [500],
+        ];
     }
 
     /**
@@ -145,13 +145,25 @@ class ApiProblemTest extends TestCase
 
     public function testCanPassArbitraryDetailsToConstructor()
     {
-        $problem = new ApiProblem(400, 'Invalid input', 'http://example.com/api/problem/400', 'Invalid entity', array('foo' => 'bar'));
+        $problem = new ApiProblem(
+            400,
+            'Invalid input',
+            'http://example.com/api/problem/400',
+            'Invalid entity',
+            ['foo' => 'bar']
+        );
         $this->assertEquals('bar', $problem->foo);
     }
 
     public function testArraySerializationIncludesArbitraryDetails()
     {
-        $problem = new ApiProblem(400, 'Invalid input', 'http://example.com/api/problem/400', 'Invalid entity', array('foo' => 'bar'));
+        $problem = new ApiProblem(
+            400,
+            'Invalid input',
+            'http://example.com/api/problem/400',
+            'Invalid entity',
+            ['foo' => 'bar']
+        );
         $array   = $problem->toArray();
         $this->assertArrayHasKey('foo', $array);
         $this->assertEquals('bar', $array['foo']);
@@ -159,7 +171,13 @@ class ApiProblemTest extends TestCase
 
     public function testArbitraryDetailsShouldNotOverwriteRequiredFieldsInArraySerialization()
     {
-        $problem = new ApiProblem(400, 'Invalid input', 'http://example.com/api/problem/400', 'Invalid entity', array('title' => 'SHOULD NOT GET THIS'));
+        $problem = new ApiProblem(
+            400,
+            'Invalid input',
+            'http://example.com/api/problem/400',
+            'Invalid entity',
+            ['title' => 'SHOULD NOT GET THIS']
+        );
         $array   = $problem->toArray();
         $this->assertArrayHasKey('title', $array);
         $this->assertEquals('Invalid entity', $array['title']);
@@ -188,7 +206,7 @@ class ApiProblemTest extends TestCase
     public function testUsesAdditionalDetailsFromExceptionWhenProvided()
     {
         $exception  = new Exception\CreationException('exception message', 401);
-        $exception->setAdditionalDetails(array('foo' => 'bar'));
+        $exception->setAdditionalDetails(['foo' => 'bar']);
         $apiProblem = new ApiProblem('401', $exception);
         $payload    = $apiProblem->toArray();
         $this->assertArrayHasKey('foo', $payload);

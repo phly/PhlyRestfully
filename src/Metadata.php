@@ -51,7 +51,7 @@ class Metadata
      *
      * @var array
      */
-    protected $links = array();
+    protected $links = [];
 
     /**
      * Route for resources composed in a collection
@@ -72,14 +72,14 @@ class Metadata
      *
      * @var array
      */
-    protected $routeOptions = array();
+    protected $routeOptions = [];
 
     /**
      * Additional route parameters to use when generating a self link for this resource
      *
      * @var array
      */
-    protected $routeParams = array();
+    protected $routeParams = [];
 
     /**
      * URL to use for this resource (instead of a route)
@@ -101,7 +101,7 @@ class Metadata
      * @param  array $options
      * @throws Exception\InvalidArgumentException
      */
-    public function __construct($class, array $options = array(), HydratorPluginManager $hydrators = null)
+    public function __construct($class, array $options = [], HydratorPluginManager $hydrators = null)
     {
         if (!class_exists($class)) {
             throw new Exception\InvalidArgumentException(sprintf(

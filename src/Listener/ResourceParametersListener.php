@@ -22,19 +22,19 @@ class ResourceParametersListener implements
     /**
      * @var \Zend\Stdlib\CallbackHandler[]
      */
-    protected $listeners = array();
+    protected $listeners = [];
 
     /**
      * @var \Zend\Stdlib\CallbackHandler[]
      */
-    protected $sharedListeners = array();
+    protected $sharedListeners = [];
 
     /**
      * @param EventManagerInterface $events
      */
     public function attach(EventManagerInterface $events)
     {
-        $this->listeners[] = $events->attach('dispatch', array($this, 'onDispatch'), 100);
+        $this->listeners[] = $events->attach('dispatch', [$this, 'onDispatch'], 100);
     }
 
     /**
@@ -54,7 +54,7 @@ class ResourceParametersListener implements
      */
     public function attachShared(SharedEventManagerInterface $events)
     {
-        $this->sharedListeners[] = $events->attach('PhlyRestfully\ResourceController', 'dispatch', array($this, 'onDispatch'), 100);
+        $this->sharedListeners[] = $events->attach(ResourceController::class, 'dispatch', [$this, 'onDispatch'], 100);
     }
 
     /**

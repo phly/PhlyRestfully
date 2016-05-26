@@ -60,7 +60,7 @@ class HalLinks extends AbstractHelper implements
      *
      * @var array
      */
-    protected $hydratorMap = array();
+    protected $hydratorMap = [];
 
     /**
      * @var HydratorPluginManager
@@ -131,10 +131,10 @@ class HalLinks extends AbstractHelper implements
      */
     public function setEventManager(EventManagerInterface $events)
     {
-        $events->setIdentifiers(array(
+        $events->setIdentifiers([
             __CLASS__,
             get_class($this),
-        ));
+        ]);
         $this->events = $events;
 
         $events->attach('getIdFromResource', function ($e) {
@@ -229,7 +229,10 @@ class HalLinks extends AbstractHelper implements
             if (!$this->hydrators->has((string) $hydrator)) {
                 throw new Exception\InvalidArgumentException(sprintf(
                     'Invalid hydrator instance or name provided; received "%s"',
-                    (is_object($hydrator) ? get_class($hydrator) : (is_string($hydrator) ? $hydrator : gettype($hydrator)))
+                    (is_object($hydrator)
+                        ? get_class($hydrator)
+                        : (is_string($hydrator) ? $hydrator : gettype($hydrator))
+                    )
                 ));
             }
             $hydrator = $this->hydrators->get($hydrator);
@@ -313,11 +316,12 @@ class HalLinks extends AbstractHelper implements
      * </code>
      *
      * @param  HalCollection $halCollection
-     * @return array|ApiProblem Associative array representing the payload to render; returns ApiProblem if error in pagination occurs
+     * @return array|ApiProblem Associative array representing the payload to
+     *     render; returns ApiProblem if error in pagination occurs
      */
     public function renderCollection(HalCollection $halCollection)
     {
-        $this->getEventManager()->trigger(__FUNCTION__, $this, array('collection' => $halCollection));
+        $this->getEventManager()->trigger(__FUNCTION__, $this, ['collection' => $halCollection]);
         $collection     = $halCollection->collection;
         $collectionName = $halCollection->collectionName;
 
@@ -330,9 +334,9 @@ class HalLinks extends AbstractHelper implements
 
         $payload = $halCollection->attributes;
         $payload['_links']    = $this->fromResource($halCollection);
-        $payload['_embedded'] = array(
+        $payload['_embedded'] = [
             $collectionName => $this->extractCollection($halCollection),
-        );
+        ];
 
         return $payload;
     }
@@ -350,7 +354,7 @@ class HalLinks extends AbstractHelper implements
      */
     public function renderResource(HalResource $halResource)
     {
-        $this->getEventManager()->trigger(__FUNCTION__, $this, array('resource' => $halResource));
+        $this->getEventManager()->trigger(__FUNCTION__, $this, ['resource' => $halResource]);
         $resource = $halResource->resource;
         $id       = $halResource->id;
         $links    = $this->fromResource($halResource);
@@ -402,12 +406,12 @@ class HalLinks extends AbstractHelper implements
         }
 
         $events      = $this->getEventManager();
-        $eventParams = $events->prepareArgs(array(
+        $eventParams = $events->prepareArgs([
             'route'    => $route,
             'id'       => $id,
             'resource' => $resource,
             'params'   => $params,
-        ));
+        ]);
         $events->trigger(__FUNCTION__, $this, $eventParams);
         $route = $eventParams['route'];
 
@@ -437,9 +441,9 @@ class HalLinks extends AbstractHelper implements
         }
 
         if ($linkDefinition->hasUrl()) {
-            return array(
+            return [
                 'href' => $linkDefinition->getUrl(),
-            );
+            ];
         }
 
         $reuseMatchedParams = true;
@@ -458,14 +462,14 @@ class HalLinks extends AbstractHelper implements
         );
 
         if (substr($path, 0, 4) == 'http') {
-            return array(
+            return [
                 'href' => $path,
-            );
+            ];
         }
 
-        return array(
+        return [
             'href' => call_user_func($this->serverUrlHelper, $path),
-        );
+        ];
     }
 
     /**
@@ -476,8 +480,8 @@ class HalLinks extends AbstractHelper implements
      */
     public function fromLinkCollection(LinkCollection $collection)
     {
-        $links = array();
-        foreach($collection as $rel => $linkDefinition) {
+        $links = [];
+        foreach ($collection as $rel => $linkDefinition) {
             if ($linkDefinition instanceof Link) {
                 $links[$rel] = $this->fromLink($linkDefinition);
                 continue;
@@ -489,7 +493,7 @@ class HalLinks extends AbstractHelper implements
                 ));
             }
 
-            $aggregate = array();
+            $aggregate = [];
             foreach ($linkDefinition as $subLink) {
                 if (!$subLink instanceof Link) {
                     throw new Exception\DomainException(sprintf(
@@ -642,7 +646,7 @@ class HalLinks extends AbstractHelper implements
         $self = new Link('self');
         $self->setRoute($route);
         if ($resource instanceof HalResource) {
-            $self->setRouteParams(array($identifier => $resource->id));
+            $self->setRouteParams([$identifier => $resource->id]);
         }
         $resource->getLinks()->add($self, true);
     }
@@ -682,9 +686,8 @@ class HalLinks extends AbstractHelper implements
         $link = new Link('self');
         $link->setRoute($route);
         $link->setRouteParams($params);
-        $link->setRouteOptions(ArrayUtils::merge($options, array(
-            'query' => array('page' => $page))
-        ));
+        $link->setRouteOptions(ArrayUtils::merge($options, [
+            'query' => ['page' => $page]]));
         $links->add($link, true);
 
         // first link
@@ -698,9 +701,8 @@ class HalLinks extends AbstractHelper implements
         $link = new Link('last');
         $link->setRoute($route);
         $link->setRouteParams($params);
-        $link->setRouteOptions(ArrayUtils::merge($options, array(
-            'query' => array('page' => $count))
-        ));
+        $link->setRouteOptions(ArrayUtils::merge($options, [
+            'query' => ['page' => $count]]));
         $links->add($link);
 
         // prev link
@@ -708,9 +710,8 @@ class HalLinks extends AbstractHelper implements
             $link = new Link('prev');
             $link->setRoute($route);
             $link->setRouteParams($params);
-            $link->setRouteOptions(ArrayUtils::merge($options, array(
-                'query' => array('page' => $prev))
-            ));
+            $link->setRouteOptions(ArrayUtils::merge($options, [
+                'query' => ['page' => $prev]]));
             $links->add($link);
         }
 
@@ -719,9 +720,8 @@ class HalLinks extends AbstractHelper implements
             $link = new Link('next');
             $link->setRoute($route);
             $link->setRouteParams($params);
-            $link->setRouteOptions(ArrayUtils::merge($options, array(
-                'query' => array('page' => $next))
-            ));
+            $link->setRouteOptions(ArrayUtils::merge($options, [
+                'query' => ['page' => $next]]));
             $links->add($link);
         }
 
@@ -743,7 +743,7 @@ class HalLinks extends AbstractHelper implements
     {
         $rendered = $this->renderResource($resource);
         if (!isset($parent['_embedded'])) {
-            $parent['_embedded'] = array();
+            $parent['_embedded'] = [];
         }
         $parent['_embedded'][$key] = $rendered;
         unset($parent[$key]);
@@ -764,7 +764,7 @@ class HalLinks extends AbstractHelper implements
     {
         $rendered = $this->extractCollection($collection);
         if (!isset($parent['_embedded'])) {
-            $parent['_embedded'] = array();
+            $parent['_embedded'] = [];
         }
         $parent['_embedded'][$key] = $rendered;
         unset($parent[$key]);
@@ -778,7 +778,7 @@ class HalLinks extends AbstractHelper implements
      */
     protected function extractCollection(HalCollection $halCollection)
     {
-        $collection           = array();
+        $collection           = [];
         $events               = $this->getEventManager();
         $identifierName       = $halCollection->identifierName;
         $resourceRoute        = $halCollection->resourceRoute;
@@ -787,13 +787,13 @@ class HalLinks extends AbstractHelper implements
         $metadataMap          = $this->getMetadataMap();
 
         foreach ($halCollection->collection as $resource) {
-            $eventParams = new ArrayObject(array(
+            $eventParams = new ArrayObject([
                 'collection'   => $halCollection,
                 'resource'     => $resource,
                 'route'        => $resourceRoute,
                 'routeParams'  => $resourceRouteParams,
                 'routeOptions' => $resourceRouteOptions,
-            ));
+            ]);
             $events->trigger('renderCollection.resource', $this, $eventParams);
 
             $resource = $eventParams['resource'];
@@ -837,7 +837,7 @@ class HalLinks extends AbstractHelper implements
             $selfLink = new Link('self');
             $selfLink->setRoute(
                 $eventParams['route'],
-                array_merge($eventParams['routeParams'], array($identifierName => $id)),
+                array_merge($eventParams['routeParams'], [$identifierName => $id]),
                 $eventParams['routeOptions']
             );
             $links->add($selfLink);
@@ -867,7 +867,7 @@ class HalLinks extends AbstractHelper implements
         $results = $this->getEventManager()->trigger(
             __FUNCTION__,
             $this,
-            array('resource' => $resource),
+            ['resource' => $resource],
             function ($r) {
                 return (null !== $r && false !== $r);
             }
@@ -921,7 +921,7 @@ class HalLinks extends AbstractHelper implements
             ));
         }
 
-        $params = array_merge($metadata->getRouteParams(), array($identifierName => $id));
+        $params = array_merge($metadata->getRouteParams(), [$identifierName => $id]);
         $link->setRoute($metadata->getRoute(), $params, $metadata->getRouteOptions());
         return $link;
     }

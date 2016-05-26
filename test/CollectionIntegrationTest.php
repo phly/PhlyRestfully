@@ -8,12 +8,14 @@
 
 namespace PhlyRestfullyTest;
 
+use PhlyRestfully\Factory;
 use PhlyRestfully\Plugin\HalLinks;
 use PhlyRestfully\Resource;
 use PhlyRestfully\ResourceController;
 use PhlyRestfully\View\RestfulJsonModel;
 use PhlyRestfully\View\RestfulJsonRenderer;
 use PHPUnit_Framework_TestCase as TestCase;
+use Zend\EventManager\SharedEventManager;
 use Zend\Http\PhpEnvironment\Request;
 use Zend\Http\PhpEnvironment\Response;
 use Zend\Mvc\Controller\ControllerManager;
@@ -21,8 +23,10 @@ use Zend\Mvc\Controller\PluginManager as ControllerPluginManager;
 use Zend\Mvc\MvcEvent;
 use Zend\Mvc\Router\Http\TreeRouteStack;
 use Zend\Mvc\Router\RouteMatch;
+use Zend\Mvc\Service;
 use Zend\Paginator\Adapter\ArrayAdapter as ArrayPaginator;
 use Zend\Paginator\Paginator;
+use Zend\ServiceManager\ServiceLocatorInterface;
 use Zend\ServiceManager\ServiceManager;
 use Zend\Stdlib\Parameters;
 use Zend\Uri;
@@ -81,17 +85,17 @@ class CollectionIntegrationTest extends TestCase
 
         $this->setUpRequest();
 
-        $routes = array(
-            'resource' => array(
+        $routes = [
+            'resource' => [
                 'type' => 'Segment',
-                'options' => array(
+                'options' => [
                     'route' => '/api/resource[/:id]',
-                    'defaults' => array(
+                    'defaults' => [
                         'controller' => 'Api\ResourceController',
-                    ),
-                ),
-            ),
-        );
+                    ],
+                ],
+            ],
+        ];
         $this->router = $router = new TreeRouteStack();
         $router->addRoutes($routes);
 
@@ -105,12 +109,12 @@ class CollectionIntegrationTest extends TestCase
 
     public function setUpCollection()
     {
-        $collection = array();
+        $collection = [];
         for ($i = 1; $i <= 10; $i += 1) {
-            $collection[] = (object) array(
+            $collection[] = (object) [
                 'id'   => $i,
                 'name' => "$i of 10",
-            );
+            ];
         }
 
         $collection = new Paginator(new ArrayPaginator($collection));
@@ -158,10 +162,10 @@ class CollectionIntegrationTest extends TestCase
         $uri = Uri\UriFactory::factory('http://localhost.localdomain/api/resource?query=foo&page=2');
 
         $request = $this->request = new Request();
-        $request->setQuery(new Parameters(array(
+        $request->setQuery(new Parameters([
             'query' => 'foo',
             'page'  => 2,
-        )));
+        ]));
         $request->setUri($uri);
         $headers = $request->getHeaders();
         $headers->addHeaderLine('Accept', 'application/json');
@@ -197,14 +201,14 @@ class CollectionIntegrationTest extends TestCase
             }
 
             $collection = $e->getParam('collection');
-            $collection->setCollectionRouteOptions(array(
-                'query' => array(
+            $collection->setCollectionRouteOptions([
+                'query' => [
                     'query' => $query,
-                ),
-            ));
+                ],
+            ]);
         });
         $result = $this->controller->dispatch($this->request, $this->response);
-        $this->assertInstanceOf('PhlyRestfully\View\RestfulJsonModel', $result);
+        $this->assertInstanceOf(RestfulJsonModel::class, $result);
 
         $json = $this->renderer->render($result);
         $payload = json_decode($json, true);
@@ -213,38 +217,46 @@ class CollectionIntegrationTest extends TestCase
         foreach ($links as $name => $link) {
             $this->assertArrayHasKey('href', $link);
             if ('first' !== $name) {
-                $this->assertContains('page=', $link['href'], "Link $name ('{$link['href']}') is missing page query param");
+                $this->assertContains(
+                    'page=',
+                    $link['href'],
+                    "Link $name ('{$link['href']}') is missing page query param"
+                );
             }
-            $this->assertContains('query=foo', $link['href'], "Link $name ('{$link['href']}') is missing query query param");
+            $this->assertContains(
+                'query=foo',
+                $link['href'],
+                "Link $name ('{$link['href']}') is missing query query param"
+            );
         }
     }
 
     public function getServiceManager()
     {
         $controllers = new ControllerManager(new Config());
-        $controllers->addAbstractFactory('PhlyRestfully\Factory\ResourceControllerFactory');
+        $controllers->addAbstractFactory(Factory\ResourceControllerFactory::class);
 
         $services    = new ServiceManager();
-        $services->setService('Zend\ServiceManager\ServiceLocatorInterface', $services);
-        $services->setService('ControllerLoader', $controllers);
-        $services->setService('Config', array(
-            'phlyrestfully' => array(
-                'resources' => array(
-                    'Api\ResourceController' => array(
+        $services->setService(ServiceLocatorInterface::class, $services);
+        $services->setService('ControllerManager', $controllers);
+        $services->setService('config', [
+            'phlyrestfully' => [
+                'resources' => [
+                    'Api\ResourceController' => [
                         'listener'                   => 'CollectionIntegrationListener',
                         'page_size'                  => 3,
                         'route_name'                 => 'resource',
                         'identifier_name'            => 'id',
                         'collection_name'            => 'items',
                         'collection_query_whitelist' => 'query',
-                    ),
-                ),
-            ),
-        ));
-        $services->setInvokableClass('SharedEventManager', 'Zend\EventManager\SharedEventManager');
-        $services->setInvokableClass('CollectionIntegrationListener', 'PhlyRestfullyTest\TestAsset\CollectionIntegrationListener');
-        $services->setFactory('EventManager', 'Zend\Mvc\Service\EventManagerFactory');
-        $services->setFactory('ControllerPluginManager', 'Zend\Mvc\Service\ControllerPluginManagerFactory');
+                    ],
+                ],
+            ],
+        ]);
+        $services->setInvokableClass('SharedEventManager', SharedEventManager::class);
+        $services->setInvokableClass('CollectionIntegrationListener', TestAsset\CollectionIntegrationListener::class);
+        $services->setFactory('EventManager', Service\EventManagerFactory::class);
+        $services->setFactory('ControllerPluginManager', Service\ControllerPluginManagerFactory::class);
         $services->setShared('EventManager', false);
 
         $collection = $this->setUpCollection();
@@ -266,11 +278,11 @@ class CollectionIntegrationTest extends TestCase
     public function testFactoryEnabledListenerCreatesQueryStringWhitelist()
     {
         $services = $this->getServiceManager();
-        $controller = $services->get('ControllerLoader')->get('Api\ResourceController');
+        $controller = $services->get('ControllerManager')->get('Api\ResourceController');
         $controller->setEvent($this->getEvent());
 
         $result = $controller->dispatch($this->request, $this->response);
-        $this->assertInstanceOf('PhlyRestfully\View\RestfulJsonModel', $result);
+        $this->assertInstanceOf(RestfulJsonModel::class, $result);
 
         $json = $this->renderer->render($result);
         $payload = json_decode($json, true);
@@ -279,9 +291,17 @@ class CollectionIntegrationTest extends TestCase
         foreach ($links as $name => $link) {
             $this->assertArrayHasKey('href', $link);
             if ('first' !== $name) {
-                $this->assertContains('page=', $link['href'], "Link $name ('{$link['href']}') is missing page query param");
+                $this->assertContains(
+                    'page=',
+                    $link['href'],
+                    "Link $name ('{$link['href']}') is missing page query param"
+                );
             }
-            $this->assertContains('query=foo', $link['href'], "Link $name ('{$link['href']}') is missing query query param");
+            $this->assertContains(
+                'query=foo',
+                $link['href'],
+                "Link $name ('{$link['href']}') is missing query query param"
+            );
         }
     }
 }
