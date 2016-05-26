@@ -52,5 +52,14 @@
         "psr-4": {
             "PhlyRestfullyTest\\": "test/"
         }
+    },
+    "scripts": {
+        "check": [
+            "@cs",
+            "@test"
+        ],
+        "cs": "phpcs",
+        "cs-fix": "phpcbf",
+        "test": "phpunit"
     }
 }
