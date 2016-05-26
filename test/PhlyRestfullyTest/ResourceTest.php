@@ -395,11 +395,11 @@ class ResourceTest extends TestCase
     {
         $called = false;
 
-        $this->events->attach($eventName, function() {
+        $this->events->attach($eventName, function () {
             return new ApiProblem(400, 'Random error');
         }, 10);
 
-        $this->events->attach($eventName, function() use (&$called) {
+        $this->events->attach($eventName, function () use (&$called) {
             $called = true;
         }, 0);
 
