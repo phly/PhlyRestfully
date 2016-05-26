@@ -13,6 +13,9 @@ All notable changes to this project will be documented in this file, in reverse 
   and HHVM.
 - [#107](https://github.com/phly/PhlyRestfully/pull/107) suggests using
   zfr/zfr-cors to provide CORS support for your API.
+- [#126](https://github.com/phly/PhlyRestfully/pull/126) adds an `__isset()`
+  method to `HalResource`, ensuring you can test for the identifier and/or
+  resource (e.g., via `isset($halResource->id)`).
 
 ### Deprecated
 
