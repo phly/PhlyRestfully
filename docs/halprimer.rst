@@ -187,7 +187,7 @@ Interacting with HAL is usually quite straight-forward:
 - Make a request, using the Accept header with a value of ``application/json`` or
   ``application/hal+json`` (the latter really isn't necessary, though).
 
-- If ``POST``ing, ``PUT``ting, ``PATCH``ing, or ``DELETE``ing a resource, you
+- If ``POST``-ing, ``PUT``-ting, ``PATCH``-ing, or ``DELETE``-ing a resource, you
   will usually use a Content-Type header of either ``application/json``, or some
   vendor-specific mediatype you define for your API; this mediatype would be
   used to describe the particular structure of your resources _without_ any HAL

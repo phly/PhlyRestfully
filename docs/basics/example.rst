@@ -106,7 +106,9 @@ First, let's create a route. In our module's configuration file, usually
             'type' => 'Literal',
             'options' => array(
                 'route' => '/paste',
-                'controller' => 'Paste\PasteController', // for the web UI
+                'defaults' => array(
+                    'controller' => 'Paste\PasteController', // for the web UI
+                ),
             ),
             'may_terminate' => true,
             'child_routes' => array(
@@ -114,7 +116,9 @@ First, let's create a route. In our module's configuration file, usually
                     'type' => 'Segment',
                     'options' => array(
                         'route'      => '/api/pastes[/:id]',
-                        'controller' => 'Paste\ApiController',
+                        'defaults' => array(
+                            'controller' => 'Paste\ApiController',
+                        ),
                     ),
                 ),
             ),

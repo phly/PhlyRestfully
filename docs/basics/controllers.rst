@@ -27,13 +27,13 @@ following:
 
                 $persistence = $services->get('PastePersistenceListener');
                 $events      = $services->get('EventManager');
-                $events->setIdentifiers('PasteResource`);
+                $events->setIdentifiers('PasteResource');
                 $events->attach($persistence);
 
                 $resource    = new PhlyRestfully\Resource();
                 $resource->setEventManager($events);
 
-                $controller = new PhlyRestfully\ResourceController('PasteController`);
+                $controller = new PhlyRestfully\ResourceController('PasteController');
                 $controller->setResource($resource);
                 $controller->setRoute('paste/api');
                 $controller->setCollectionName('pastes');
