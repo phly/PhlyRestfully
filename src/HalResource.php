@@ -43,17 +43,19 @@ class HalResource implements LinkCollectionAwareInterface
      */
     public function __isset($name)
     {
-        $names = array(
-            'resource'     => 'resource',
-            'id'           => 'id',
-        );
+        $names = [
+            'resource' => 'resource',
+            'id'       => 'id',
+        ];
+
         $name = strtolower($name);
-        if (!in_array($name, array_keys($names))) {
+        if (! in_array($name, array_keys($names))) {
             throw new Exception\InvalidArgumentException(sprintf(
                 'Invalid property name "%s"',
                 $name
             ));
         }
+
         $prop = $names[$name];
         return $this->{$prop};
     }
