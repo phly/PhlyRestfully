@@ -2,7 +2,9 @@
 
 All notable changes to this project will be documented in this file, in reverse chronological order by release.
 
-## 2.3.0 - TBD
+## 2.3.0 - 2016-05-26
+
+Final release. Please use [Apigility](https://apigility.org) instead.
 
 ### Added
 
