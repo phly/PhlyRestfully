@@ -12,12 +12,9 @@ use PhlyRestfully\ResourceController;
 use Zend\EventManager\EventManagerInterface;
 use Zend\EventManager\ListenerAggregateInterface;
 use Zend\EventManager\SharedEventManagerInterface;
-use Zend\EventManager\SharedListenerAggregateInterface;
 use Zend\Mvc\MvcEvent;
 
-class ResourceParametersListener implements
-    ListenerAggregateInterface,
-    SharedListenerAggregateInterface
+class ResourceParametersListener implements ListenerAggregateInterface
 {
     /**
      * @var \Zend\Stdlib\CallbackHandler[]
@@ -62,8 +59,17 @@ class ResourceParametersListener implements
      */
     public function detachShared(SharedEventManagerInterface $events)
     {
+        // Vary detachment based on zend-eventmanager version.
+        $detach = method_exists($events, 'attachAggregate')
+            ? function ($listener) use ($events) {
+                return $events->detach(ResourceController::class, $listener);
+            }
+            : function ($listener) use ($events) {
+                return $events->detach($listener, ResourceController::class);
+            };
+
         foreach ($this->sharedListeners as $index => $listener) {
-            if ($events->detach(ResourceController::class, $listener)) {
+            if ($detach($listener)) {
                 unset($this->sharedListeners[$index]);
             }
         }
