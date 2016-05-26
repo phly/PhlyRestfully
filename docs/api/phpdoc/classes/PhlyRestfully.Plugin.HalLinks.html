@@ -110,7 +110,7 @@
 <i class="icon-custom icon-method"></i> Methods</h3>
 <a id="method_addHydrator"></a><div class="element clickable method public method_addHydrator" data-toggle="collapse" data-target=".method_addHydrator .collapse">
 <h2>Map a resource class to a specific hydrator instance</h2>
-<pre>addHydrator(string $class, \Zend\Stdlib\Hydrator\HydratorInterface $hydrator) : \PhlyRestfully\Plugin\RestfulJsonRenderer</pre>
+<pre>addHydrator(string $class, \Zend\Hydrator\HydratorInterface $hydrator) : \PhlyRestfully\Plugin\RestfulJsonRenderer</pre>
 <div class="labels"></div>
 <div class="row collapse"><div class="detail-description">
 <div class="long_description"></div>
@@ -121,7 +121,7 @@
 </div>
 <div class="subelement argument">
 <h4>$hydrator</h4>
-<code>\Zend\Stdlib\Hydrator\HydratorInterface</code>
+<code>\Zend\Hydrator\HydratorInterface</code>
 </div>
 <h3>Returns</h3>
 <div class="subelement response"><code>\PhlyRestfully\Plugin\RestfulJsonRenderer</code></div>
@@ -288,7 +288,7 @@ arguments, which will then be used by the method to generate the url.</p></div>
 </div>
 <a id="method_getHydratorForResource"></a><div class="element clickable method public method_getHydratorForResource" data-toggle="collapse" data-target=".method_getHydratorForResource .collapse">
 <h2>Retrieve a hydrator for a given resource</h2>
-<pre>getHydratorForResource(object $resource) : \Zend\Stdlib\Hydrator\HydratorInterface | false</pre>
+<pre>getHydratorForResource(object $resource) : \Zend\Hydrator\HydratorInterface | false</pre>
 <div class="labels"></div>
 <div class="row collapse"><div class="detail-description">
 <div class="long_description"><p>If the resource has a mapped hydrator, returns that hydrator. If not, and
@@ -301,7 +301,7 @@ Otherwise, a boolean false is returned.</p></div>
 </div>
 <h3>Returns</h3>
 <div class="subelement response">
-<code>\Zend\Stdlib\Hydrator\HydratorInterface</code><code>false</code>
+<code>\Zend\Hydrator\HydratorInterface</code><code>false</code>
 </div>
 </div></div>
 </div>
@@ -410,14 +410,14 @@ HalResource objects, they are extracted into an "_embedded" hash.</p></div>
 </div>
 <a id="method_setDefaultHydrator"></a><div class="element clickable method public method_setDefaultHydrator" data-toggle="collapse" data-target=".method_setDefaultHydrator .collapse">
 <h2>Set the default hydrator to use if none specified for a class.</h2>
-<pre>setDefaultHydrator(\Zend\Stdlib\Hydrator\HydratorInterface $hydrator) : \PhlyRestfully\Plugin\RestfulJsonRenderer</pre>
+<pre>setDefaultHydrator(\Zend\Hydrator\HydratorInterface $hydrator) : \PhlyRestfully\Plugin\RestfulJsonRenderer</pre>
 <div class="labels"></div>
 <div class="row collapse"><div class="detail-description">
 <div class="long_description"></div>
 <h3>Parameters</h3>
 <div class="subelement argument">
 <h4>$hydrator</h4>
-<code>\Zend\Stdlib\Hydrator\HydratorInterface</code>
+<code>\Zend\Hydrator\HydratorInterface</code>
 </div>
 <h3>Returns</h3>
 <div class="subelement response"><code>\PhlyRestfully\Plugin\RestfulJsonRenderer</code></div>

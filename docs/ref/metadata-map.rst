@@ -59,7 +59,7 @@ Metadata options
 The following options are available for metadata maps:
 
 - **hydrator**: the fully qualified class name of a hydrator, or a service name
-  ``Zend\Stdlib\Hydrator\HydratorPluginManager`` recognizes,  to use to extract
+  ``Zend\Hydrator\HydratorPluginManager`` recognizes,  to use to extract
   the resource. (**OPTIONAL**)
 - **identifier_name**: the resource parameter corresponding to the identifier;
   defaults to "id". (**OPTIONAL**)

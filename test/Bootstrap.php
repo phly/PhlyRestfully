@@ -6,7 +6,7 @@
  * @package   PhlyRestfully
  */
 
-namespace PhlyRestfullyTest;
+namespace PhlyRestfullytest;
 
 use Zend\Loader\AutoloaderFactory;
 use RuntimeException;

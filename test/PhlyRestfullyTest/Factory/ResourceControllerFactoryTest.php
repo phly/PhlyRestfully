@@ -12,13 +12,14 @@ use PhlyRestfully\Factory\ResourceControllerFactory;
 use PHPUnit_Framework_TestCase as TestCase;
 use Zend\Mvc\Controller\ControllerManager;
 use Zend\ServiceManager\ServiceManager;
+use Zend\ServiceManager\Config;
 
 class ResourceControllerFactoryTest extends TestCase
 {
     public function setUp()
     {
         $this->services    = $services    = new ServiceManager();
-        $this->controllers = $controllers = new ControllerManager();
+        $this->controllers = $controllers = new ControllerManager(new Config());
         $this->factory     = $factory     = new ResourceControllerFactory();
 
         $controllers->addAbstractFactory($factory);
