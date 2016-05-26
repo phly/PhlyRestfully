@@ -188,9 +188,9 @@ class Resource implements ResourceInterface
 
         $events  = $this->getEventManager();
         $event   = $this->prepareEvent(__FUNCTION__, array('data' => $data));
-        $results = $events->triggerUntil($event, function($result) {
+        $results = $events->triggerEventUntil(function($result) {
             return $result instanceof ApiProblem;
-        });
+        }, $event);
         $last    = $results->last();
         if (!is_array($last) && !is_object($last)) {
             return $data;
@@ -229,9 +229,9 @@ class Resource implements ResourceInterface
 
         $events  = $this->getEventManager();
         $event   = $this->prepareEvent(__FUNCTION__, compact('id', 'data'));
-        $results = $events->triggerUntil($event, function($result) {
+        $results = $events->triggerEventUntil(function($result) {
             return $result instanceof ApiProblem;
-        });
+        }, $event);
         $last    = $results->last();
         if (!is_array($last) && !is_object($last)) {
             return $data;
@@ -278,9 +278,9 @@ class Resource implements ResourceInterface
         });
         $events  = $this->getEventManager();
         $event   = $this->prepareEvent(__FUNCTION__, array('data' => $data));
-        $results = $events->triggerUntil($event, function($result) {
+        $results = $events->triggerEventUntil(function($result) {
             return $result instanceof ApiProblem;
-        });
+        }, $event);
         $last    = $results->last();
         if (!is_array($last) && !is_object($last)) {
             return $data;
@@ -320,9 +320,9 @@ class Resource implements ResourceInterface
 
         $events  = $this->getEventManager();
         $event   = $this->prepareEvent(__FUNCTION__, compact('id', 'data'));
-        $results = $events->triggerUntil($event, function($result) {
+        $results = $events->triggerEventUntil(function($result) {
             return $result instanceof ApiProblem;
-        });
+        }, $event);
         $last    = $results->last();
         if (!is_array($last) && !is_object($last)) {
             return $data;
@@ -344,9 +344,9 @@ class Resource implements ResourceInterface
     {
         $events  = $this->getEventManager();
         $event   = $this->prepareEvent(__FUNCTION__, array('id' => $id));
-        $results = $events->triggerUntil($event, function($result) {
+        $results = $events->triggerEventUntil(function($result) {
             return $result instanceof ApiProblem;
-        });
+        }, $event);
         $last    = $results->last();
         if (!is_bool($last) && !$last instanceof ApiProblem) {
             return false;
@@ -373,9 +373,9 @@ class Resource implements ResourceInterface
         }
         $events  = $this->getEventManager();
         $event   = $this->prepareEvent(__FUNCTION__, array('data' => $data));
-        $results = $events->triggerUntil($event, function($result) {
+        $results = $events->triggerEventUntil(function($result) {
             return $result instanceof ApiProblem;
-        });
+        }, $event);
         $last    = $results->last();
         if (!is_bool($last) && !$last instanceof ApiProblem) {
             return false;
@@ -398,9 +398,9 @@ class Resource implements ResourceInterface
     {
         $events  = $this->getEventManager();
         $event   = $this->prepareEvent(__FUNCTION__, array('id' => $id));
-        $results = $events->triggerUntil($event, function($result) {
+        $results = $events->triggerEventUntil(function($result) {
             return $result instanceof ApiProblem;
-        });
+        }, $event);
         $last    = $results->last();
         if (!is_array($last) && !is_object($last)) {
             return false;
@@ -426,9 +426,9 @@ class Resource implements ResourceInterface
         $events  = $this->getEventManager();
         $params  = func_get_args();
         $event   = $this->prepareEvent(__FUNCTION__, $params);
-        $results = $events->triggerUntil($event, function($result) {
+        $results = $events->triggerEventUntil(function($result) {
             return $result instanceof ApiProblem;
-        });
+        }, $event);
         $last    = $results->last();
         if (!is_array($last)
             && !$last instanceof HalCollection
