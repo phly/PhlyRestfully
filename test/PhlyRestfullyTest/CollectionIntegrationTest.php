@@ -29,6 +29,7 @@ use Zend\Uri;
 use Zend\View\HelperPluginManager;
 use Zend\View\Helper\ServerUrl as ServerUrlHelper;
 use Zend\View\Helper\Url as UrlHelper;
+use Zend\ServiceManager\Config;
 
 /**
  * @subpackage UnitTest
@@ -220,7 +221,7 @@ class CollectionIntegrationTest extends TestCase
 
     public function getServiceManager()
     {
-        $controllers = new ControllerManager();
+        $controllers = new ControllerManager(new Config());
         $controllers->addAbstractFactory('PhlyRestfully\Factory\ResourceControllerFactory');
 
         $services    = new ServiceManager();

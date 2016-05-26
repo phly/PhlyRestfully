@@ -84,7 +84,7 @@ class ModuleTest extends TestCase
 
         $helpers = $services->get('ViewHelperManager');
         $plugin  = $helpers->get('HalLinks');
-        $this->assertAttributeInstanceOf('Zend\Stdlib\Hydrator\ObjectProperty', 'defaultHydrator', $plugin);
+        $this->assertAttributeInstanceOf('Zend\Hydrator\ObjectProperty', 'defaultHydrator', $plugin);
     }
 
     public function testJsonRendererFactoryInjectsHydratorMappingsIfPresentInConfig()

@@ -24,22 +24,23 @@
         }
     ],
     "require": {
-        "php": ">=5.3.3",
-        "zendframework/zend-eventmanager": ">=2.2.0",
-        "zendframework/zend-json": ">=2.2.0",
-        "zendframework/zend-loader": ">=2.2.0",
-        "zendframework/zend-mvc": ">=2.2.0",
-        "zendframework/zend-paginator": ">=2.2.0",
-        "zendframework/zend-uri": ">=2.2.0",
-        "zendframework/zend-view": ">=2.2.0",
-        "zendframework/zend-stdlib": ">=2.2.0"
+        "php": "^5.5 || ^7.0",
+        "zendframework/zend-eventmanager": "^2.5",
+        "zendframework/zend-json": "^2.5",
+        "zendframework/zend-loader": "^2.5",
+        "zendframework/zend-mvc": "^2.5",
+        "zendframework/zend-paginator": "^2.5",
+        "zendframework/zend-uri": "^2.5",
+        "zendframework/zend-view": "^2.5",
+        "zendframework/zend-stdlib": "^2.5",
+        "zendframework/zend-hydrator": "^1.1"
     },
     "require-dev": {
-        "phpunit/PHPUnit": "3.7.*",
-        "zendframework/zend-console": ">=2.2.0",
-        "zendframework/zend-http": ">=2.2.0",
-        "zendframework/zend-navigation": ">=2.2.0",
-        "zendframework/zend-servicemanager": ">=2.2.0"
+        "phpunit/PHPUnit": "^4.8",
+        "zendframework/zend-console": "^2.5",
+        "zendframework/zend-http": "^2.5",
+        "zendframework/zend-navigation": "^2.5",
+        "zendframework/zend-servicemanager": "^2.5"
     },
     "autoload": {
         "psr-0": {

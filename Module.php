@@ -8,8 +8,7 @@
 
 namespace PhlyRestfully;
 
-use Zend\Stdlib\Hydrator\HydratorInterface;
-use Zend\Stdlib\Hydrator\HydratorPluginManager;
+use Zend\Hydrator\HydratorPluginManager;
 
 /**
  * ZF2 module
@@ -197,7 +196,7 @@ class Module
         $events   = $app->getEventManager();
         $events->attach('render', array($this, 'onRender'), 100);
         $sharedEvents = $events->getSharedManager();
-        $sharedEvents->attach('PhlyRestfully\ResourceController', 'dispatch', function($e) use ($services) {
+        $sharedEvents->attach('PhlyRestfully\ResourceController', 'dispatch', function ($e) use ($services) {
             $eventManager = $e->getApplication()->getEventManager();
             $eventManager->attach($services->get('PhlyRestfully\ApiProblemListener'));
         }, 300);

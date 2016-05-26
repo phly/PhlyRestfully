@@ -15,7 +15,7 @@ use PhlyRestfully\Link;
 use PhlyRestfully\LinkCollection;
 use PhlyRestfully\Plugin\HalLinks;
 use Zend\Paginator\Paginator;
-use Zend\Stdlib\Hydrator\HydratorInterface;
+use Zend\Hydrator\HydratorInterface;
 use Zend\View\HelperPluginManager;
 use Zend\View\Renderer\JsonRenderer;
 
