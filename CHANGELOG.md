@@ -34,3 +34,6 @@ All notable changes to this project will be documented in this file, in reverse 
   to boolean false, and thus allow identifiers of `0`.
 - [#104](https://github.com/phly/PhlyRestfully/pull/104) corrects the logic in
   `ResourceParametersListener::detachShared` to pass the identifier.
+- [#108](https://github.com/phly/PhlyRestfully/pull/108) fixes identifier
+  detection in `HalLinks::createResourceFromMetadata()`, ensuring that if no
+  identifier name is present in the metadata, a null identifier is used.

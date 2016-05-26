@@ -721,12 +721,12 @@ class ResourceController extends AbstractRestfulController
     {
         $identifier = $this->getIdentifierName();
         $id = $routeMatch->getParam($identifier, false);
-        if ($id) {
+        if ($id !== false) {
             return $id;
         }
 
         $id = $request->getQuery()->get($identifier, false);
-        if ($id) {
+        if ($id !== false) {
             return $id;
         }
 
