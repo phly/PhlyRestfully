@@ -2,6 +2,28 @@
 
 All notable changes to this project will be documented in this file, in reverse chronological order by release.
 
+## 2.3.1 - 2016-05-31
+
+Final release. Please use [Apigility](https://apigility.org) instead.
+
+### Added
+
+- Nothing.
+
+### Deprecated
+
+- Nothing.
+
+### Removed
+
+- Nothing.
+
+### Fixed
+
+- [#136](https://github.com/phly/PhlyRestfully/pull/136) fixes autoloading and
+  configuration paths in the `Module` class, due to having moved into the source
+  tree.
+
 ## 2.3.0 - 2016-05-26
 
 Final release. Please use [Apigility](https://apigility.org) instead.
