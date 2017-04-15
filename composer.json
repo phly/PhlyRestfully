@@ -46,6 +46,9 @@
     "suggest": {
         "zfr/zfr-cors": "zfr/zfr-cors provides CORS support"
     },
+    "suggest": {
+        "zf-fr/zfr-cors": "Allows simple management of CORS"
+    },
     "autoload": {
         "psr-4": {
             "PhlyRestfully\\": "src/"
