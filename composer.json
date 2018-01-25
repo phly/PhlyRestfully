@@ -1,5 +1,5 @@
 {
-    "name": "phly/phly-restfully",
+    "name": "diablomedia/phly-restfully",
     "description": "ZF2 Module providing structure for RESTful resources",
     "type": "library",
     "license": "BSD-2-Clause",
