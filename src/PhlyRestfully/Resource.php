@@ -116,8 +116,7 @@ class Resource implements ResourceInterface
      */
     public function getEventParam($name, $default = null)
     {
-        if (isSet($this->params[$name])) {
-
+        if (isset($this->params[$name])) {
             return $this->params[$name];
         }
 

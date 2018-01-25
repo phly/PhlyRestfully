@@ -218,7 +218,6 @@ class ResourceController extends AbstractRestfulController
     public function getResource()
     {
         if ($this->resource === null) {
-
             throw new Exception\DomainException('No resource has been set.');
         }
 
@@ -267,7 +266,8 @@ class ResourceController extends AbstractRestfulController
         if (!$this->resource) {
             throw new Exception\DomainException(sprintf(
                 '%s requires that a %s\ResourceInterface object is composed; none provided',
-                __CLASS__, __NAMESPACE__
+                __CLASS__,
+                __NAMESPACE__
             ));
         }
 

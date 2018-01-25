@@ -45,7 +45,7 @@ class ModuleTest extends TestCase
         $event = new MvcEvent();
         $event->setRouteMatch(new RouteMatch(array()));
 
-        $router = $this->getMock('Zend\Mvc\Router\RouteStackInterface');
+        $router = $this->getMockBuilder('Zend\Mvc\Router\RouteStackInterface')->getMock();
         $services->setService('HttpRouter', $router);
 
         $app = $this->getMockBuilder('Zend\Mvc\Application')

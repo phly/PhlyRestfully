@@ -43,7 +43,7 @@ class ResourceParametersListenerTest extends TestCase
 
     public function testIgnoresNonResourceControllers()
     {
-        $controller = $this->getMock('Zend\Mvc\Controller\AbstractRestfulController');
+        $controller = $this->getMockBuilder('Zend\Mvc\Controller\AbstractRestfulController')->getMock();
         $this->event->setTarget($controller);
         $this->listener->onDispatch($this->event);
         $this->assertNull($this->resource->getRouteMatch());

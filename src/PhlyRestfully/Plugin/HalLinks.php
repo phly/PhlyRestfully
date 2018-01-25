@@ -477,7 +477,7 @@ class HalLinks extends AbstractHelper implements
     public function fromLinkCollection(LinkCollection $collection)
     {
         $links = array();
-        foreach($collection as $rel => $linkDefinition) {
+        foreach ($collection as $rel => $linkDefinition) {
             if ($linkDefinition instanceof Link) {
                 $links[$rel] = $this->fromLink($linkDefinition);
                 continue;
@@ -682,7 +682,9 @@ class HalLinks extends AbstractHelper implements
         $link = new Link('self');
         $link->setRoute($route);
         $link->setRouteParams($params);
-        $link->setRouteOptions(ArrayUtils::merge($options, array(
+        $link->setRouteOptions(ArrayUtils::merge(
+            $options,
+            array(
             'query' => array('page' => $page))
         ));
         $links->add($link, true);
@@ -698,7 +700,9 @@ class HalLinks extends AbstractHelper implements
         $link = new Link('last');
         $link->setRoute($route);
         $link->setRouteParams($params);
-        $link->setRouteOptions(ArrayUtils::merge($options, array(
+        $link->setRouteOptions(ArrayUtils::merge(
+            $options,
+            array(
             'query' => array('page' => $count))
         ));
         $links->add($link);
@@ -708,7 +712,9 @@ class HalLinks extends AbstractHelper implements
             $link = new Link('prev');
             $link->setRoute($route);
             $link->setRouteParams($params);
-            $link->setRouteOptions(ArrayUtils::merge($options, array(
+            $link->setRouteOptions(ArrayUtils::merge(
+                $options,
+                array(
                 'query' => array('page' => $prev))
             ));
             $links->add($link);
@@ -719,7 +725,9 @@ class HalLinks extends AbstractHelper implements
             $link = new Link('next');
             $link->setRoute($route);
             $link->setRouteParams($params);
-            $link->setRouteOptions(ArrayUtils::merge($options, array(
+            $link->setRouteOptions(ArrayUtils::merge(
+                $options,
+                array(
                 'query' => array('page' => $next))
             ));
             $links->add($link);

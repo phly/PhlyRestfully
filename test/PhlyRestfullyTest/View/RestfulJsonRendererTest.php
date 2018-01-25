@@ -231,7 +231,6 @@ class RestfulJsonRendererTest extends TestCase
             $item       = $prototype;
             $item['id'] = $id;
             $items[]    = $item;
-
         }
 
         $collection = new HalCollection($items);
@@ -275,7 +274,6 @@ class RestfulJsonRendererTest extends TestCase
             $item       = $prototype;
             $item['id'] = $id;
             $items[]    = $item;
-
         }
         $adapter   = new ArrayAdapter($items);
         $paginator = new Paginator($adapter);
@@ -339,7 +337,6 @@ class RestfulJsonRendererTest extends TestCase
             $item       = $prototype;
             $item['id'] = $id;
             $items[]    = $item;
-
         }
         $adapter   = new ArrayAdapter($items);
         $paginator = new Paginator($adapter);
@@ -396,7 +393,6 @@ class RestfulJsonRendererTest extends TestCase
             $item       = $prototype;
             $item['id'] = $id;
             $items[]    = $item;
-
         }
 
         $collection = new HalCollection($items, 'resource');
@@ -428,7 +424,6 @@ class RestfulJsonRendererTest extends TestCase
             $item       = $prototype;
             $item['id'] = $id;
             $items[]    = $item;
-
         }
         $adapter   = new ArrayAdapter($items);
         $paginator = new Paginator($adapter);
@@ -515,7 +510,6 @@ class RestfulJsonRendererTest extends TestCase
             $item       = $prototype;
             $item['id'] = $id;
             $items[]    = $item;
-
         }
 
         $collection = new HalCollection($items);
@@ -566,7 +560,6 @@ class RestfulJsonRendererTest extends TestCase
             $item       = $prototype;
             $item['id'] = $id;
             $items[]    = $item;
-
         }
         $adapter   = new ArrayAdapter($items);
         $paginator = new Paginator($adapter);
