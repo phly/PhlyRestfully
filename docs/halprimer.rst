@@ -44,7 +44,7 @@ containing a "self" relational link. As an example:
             "self": {
                 "href": "http://example.org/api/user/matthew"
             }
-        }
+        },
         "id": "matthew",
         "name": "Matthew Weier O'Phinney"
     }
@@ -61,7 +61,7 @@ least a "_links" property with a "self" relational link.
             "self": {
                 "href": "http://example.org/api/user/matthew"
             }
-        }
+        },
         "id": "matthew",
         "name": "Matthew Weier O'Phinney",
         "_embedded": {
@@ -130,7 +130,7 @@ payload, and potentially other metadata about the collection.
             "last": {
                 "href": "http://example.org/api/user?page=133"
             }
-        }
+        },
         "count": 3,
         "total": 498,
         "_embedded": {
@@ -187,7 +187,7 @@ Interacting with HAL is usually quite straight-forward:
 - Make a request, using the Accept header with a value of ``application/json`` or
   ``application/hal+json`` (the latter really isn't necessary, though).
 
-- If ``POST``ing, ``PUT``ting, ``PATCH``ing, or ``DELETE``ing a resource, you
+- If ``POST``-ing, ``PUT``-ting, ``PATCH``-ing, or ``DELETE``-ing a resource, you
   will usually use a Content-Type header of either ``application/json``, or some
   vendor-specific mediatype you define for your API; this mediatype would be
   used to describe the particular structure of your resources _without_ any HAL
@@ -236,7 +236,7 @@ The response would look like this:
             "self": {
                 "href": "http://example.org/api/user/matthew"
             }
-        }
+        },
         "id": "matthew",
         "name": "Matthew Weier O'Phinney",
         "_embedded": {

@@ -2,6 +2,19 @@ PhlyRestfully: ZF2 Module for JSON REST Services
 ================================================
 [![Build Status](https://travis-ci.org/diablomedia/PhlyRestfully.svg?branch=master)](https://travis-ci.org/diablomedia/PhlyRestfully) [![codecov](https://codecov.io/gh/diablomedia/PhlyRestfully/branch/master/graph/badge.svg)](https://codecov.io/gh/diablomedia/PhlyRestfully)
 
+> ## ABANDONED
+>
+> As of the 2.3.0 release, I have marked this module as abandoned.
+>
+> The module very quickly proved that the approach was worthwhile and useful,
+> and became the seed for [Apigility](https://apigility.org/). That project has
+> far surpassed its origins in this module, and added a ton of functionality
+> this module never managed to create, such as content negotiation, file upload
+> handling, entity and collection hydration, and more.
+>
+> As such, I recommend using Apigility in favor of PhlyRestfully for new
+> projects, and that existing projects migrate to Apigility when possible.
+
 This module provides structure and code for quickly implementing RESTful APIs
 that use JSON as a transport.
 
