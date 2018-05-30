@@ -29,7 +29,7 @@ use Zend\View\Renderer\JsonRenderer;
 class RestfulJsonRenderer extends JsonRenderer
 {
     /**
-     * @var ApiProblem
+     * @var ApiProblem|null
      */
     protected $apiProblem;
 
@@ -51,6 +51,7 @@ class RestfulJsonRenderer extends JsonRenderer
      * Also ensures that the 'HalLinks' helper is present.
      *
      * @param  HelperPluginManager $helpers
+     * @return void
      */
     public function setHelperPluginManager(HelperPluginManager $helpers)
     {
@@ -96,7 +97,7 @@ class RestfulJsonRenderer extends JsonRenderer
     }
 
     /**
-     * @return null|ApiProblem
+     * @return ApiProblem|null
      */
     public function getApiProblem()
     {
@@ -129,12 +130,14 @@ class RestfulJsonRenderer extends JsonRenderer
         }
 
         if ($nameOrModel->isHalResource()) {
+            /** @var \PhlyRestfully\Plugin\HalLinks $helper */
             $helper  = $this->helpers->get('HalLinks');
             $payload = $helper->renderResource($nameOrModel->getPayload());
             return parent::render($payload);
         }
 
         if ($nameOrModel->isHalCollection()) {
+            /** @var \PhlyRestfully\Plugin\HalLinks $helper */
             $helper  = $this->helpers->get('HalLinks');
             $payload = $helper->renderCollection($nameOrModel->getPayload());
             if ($payload instanceof ApiProblem) {
@@ -167,13 +170,18 @@ class RestfulJsonRenderer extends JsonRenderer
      * Inject the helper manager with the HalLinks helper
      *
      * @param  HelperPluginManager $helpers
+     * @return void
      */
     protected function injectHalLinksHelper(HelperPluginManager $helpers)
     {
         $helper = new HalLinks();
         $helper->setView($this);
-        $helper->setServerUrlHelper($helpers->get('ServerUrl'));
-        $helper->setUrlHelper($helpers->get('Url'));
+        /** @var \Zend\View\Helper\ServerUrl $serverUrlHelper */
+        $serverUrlHelper = $helpers->get('ServerUrl');
+        $helper->setServerUrlHelper($serverUrlHelper);
+        /** @var \Zend\View\Helper\Url $urlHelper */
+        $urlHelper = $helpers->get('Url');
+        $helper->setUrlHelper($urlHelper);
         $helpers->setService('HalLinks', $helper);
     }
 }

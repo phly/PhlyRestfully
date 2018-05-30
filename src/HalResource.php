@@ -8,8 +8,16 @@
 
 namespace PhlyRestfully;
 
+/**
+ * Provided by __get
+ * @property mixed $id
+ * @property object|array $resource
+ */
 class HalResource implements LinkCollectionAwareInterface
 {
+    /**
+     * @var mixed
+     */
     protected $id;
 
     /**
@@ -17,6 +25,9 @@ class HalResource implements LinkCollectionAwareInterface
      */
     protected $links;
 
+    /**
+     * @var object|array
+     */
     protected $resource;
 
     /**

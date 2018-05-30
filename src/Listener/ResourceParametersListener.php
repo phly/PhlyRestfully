@@ -28,6 +28,7 @@ class ResourceParametersListener implements ListenerAggregateInterface
 
     /**
      * @param EventManagerInterface $events
+     * @param int $priority
      */
     public function attach(EventManagerInterface $events, $priority = 1)
     {
@@ -48,6 +49,8 @@ class ResourceParametersListener implements ListenerAggregateInterface
 
     /**
      * @param SharedEventManagerInterface $events
+     *
+     * @return void
      */
     public function attachShared(SharedEventManagerInterface $events)
     {
@@ -56,15 +59,25 @@ class ResourceParametersListener implements ListenerAggregateInterface
 
     /**
      * @param SharedEventManagerInterface $events
+     *
+     * @return void
      */
     public function detachShared(SharedEventManagerInterface $events)
     {
         // Vary detachment based on zend-eventmanager version.
         $detach = method_exists($events, 'attachAggregate')
-            ? function ($listener) use ($events) {
+            ? /**
+             * @param \Zend\Stdlib\CallbackHandler $listener
+             * @return bool
+             */
+            function ($listener) use ($events) {
                 return $events->detach(ResourceController::class, $listener);
             }
-        : function ($listener) use ($events) {
+        : /**
+         * @param \Zend\Stdlib\CallbackHandler $listener
+         * @return bool
+         */
+        function ($listener) use ($events) {
             return $events->detach($listener, ResourceController::class);
         };
 
@@ -79,6 +92,8 @@ class ResourceParametersListener implements ListenerAggregateInterface
      * Listen to the dispatch event
      *
      * @param MvcEvent $e
+     *
+     * @return void
      */
     public function onDispatch(MvcEvent $e)
     {
@@ -87,6 +102,7 @@ class ResourceParametersListener implements ListenerAggregateInterface
             return;
         }
 
+        /** @var \Zend\Http\Request $request */
         $request  = $e->getRequest();
         $query    = $request->getQuery();
         $matches  = $e->getRouteMatch();

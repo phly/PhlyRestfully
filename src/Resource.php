@@ -131,7 +131,7 @@ class Resource implements ResourceInterface
      * the resource interface.
      *
      * @param  EventManagerInterface $events
-     * @return Resource
+     * @return $this
      */
     public function setEventManager(EventManagerInterface $events)
     {
@@ -186,6 +186,7 @@ class Resource implements ResourceInterface
             ));
         }
 
+        /** @var \Zend\EventManager\EventManager $events */
         $events  = $this->getEventManager();
         $event   = $this->prepareEvent(__FUNCTION__, ['data' => $data]);
         $results = $events->triggerEventUntil(function ($result) {
@@ -241,6 +242,7 @@ class Resource implements ResourceInterface
         });
 
         $data     = new ArrayObject($data);
+        /** @var \Zend\EventManager\EventManager $events */
         $events   = $this->getEventManager();
         $event    = $this->prepareEvent(__FUNCTION__, ['data' => $data]);
         $results  = $events->triggerEventUntil(function ($result) {
@@ -282,6 +284,7 @@ class Resource implements ResourceInterface
             ));
         }
 
+        /** @var \Zend\EventManager\EventManager $events */
         $events  = $this->getEventManager();
         $event   = $this->prepareEvent(__FUNCTION__, compact('id', 'data'));
         $results = $events->triggerEventUntil(function ($result) {
@@ -332,6 +335,7 @@ class Resource implements ResourceInterface
                 ));
             }
         });
+        /** @var \Zend\EventManager\EventManager $events */
         $events  = $this->getEventManager();
         $event   = $this->prepareEvent(__FUNCTION__, ['data' => $data]);
         $results = $events->triggerEventUntil(function ($result) {
@@ -374,6 +378,7 @@ class Resource implements ResourceInterface
             ));
         }
 
+        /** @var \Zend\EventManager\EventManager $events */
         $events  = $this->getEventManager();
         $event   = $this->prepareEvent(__FUNCTION__, compact('id', 'data'));
         $results = $events->triggerEventUntil(function ($result) {
@@ -394,10 +399,11 @@ class Resource implements ResourceInterface
      * false will be returned, indicating failure to delete.
      *
      * @param  string|int $id
-     * @return bool
+     * @return bool|ApiProblem
      */
     public function delete($id)
     {
+        /** @var \Zend\EventManager\EventManager $events */
         $events  = $this->getEventManager();
         $event   = $this->prepareEvent(__FUNCTION__, ['id' => $id]);
         $results = $events->triggerEventUntil(function ($result) {
@@ -414,7 +420,7 @@ class Resource implements ResourceInterface
      * Delete an existing collection of records
      *
      * @param  null|array $data
-     * @return bool
+     * @return bool|ApiProblem
      */
     public function deleteList($data = null)
     {
@@ -427,6 +433,7 @@ class Resource implements ResourceInterface
                 gettype($data)
             ));
         }
+        /** @var \Zend\EventManager\EventManager $events */
         $events  = $this->getEventManager();
         $event   = $this->prepareEvent(__FUNCTION__, ['data' => $data]);
         $results = $events->triggerEventUntil(function ($result) {
@@ -452,6 +459,7 @@ class Resource implements ResourceInterface
      */
     public function fetch($id)
     {
+        /** @var \Zend\EventManager\EventManager $events */
         $events  = $this->getEventManager();
         $event   = $this->prepareEvent(__FUNCTION__, ['id' => $id]);
         $results = $events->triggerEventUntil(function ($result) {
@@ -475,10 +483,11 @@ class Resource implements ResourceInterface
      * which will allow performing paginated sets, and thus allow the view
      * layer to select the current page based on the query string or route.
      *
-     * @return array|Traversable
+     * @return array|Traversable|HalCollection|ApiProblem
      */
     public function fetchAll()
     {
+        /** @var \Zend\EventManager\EventManager $events */
         $events  = $this->getEventManager();
         $params  = func_get_args();
         $event   = $this->prepareEvent(__FUNCTION__, $params);
@@ -504,7 +513,7 @@ class Resource implements ResourceInterface
      * event manager.
      *
      * @param  array $args
-     * @return ArrayObject
+     * @return ResourceEvent
      */
     protected function prepareEvent($name, array $args)
     {
@@ -530,6 +539,9 @@ class Resource implements ResourceInterface
         if (empty($params)) {
             return $params;
         }
-        return $this->getEventManager()->prepareArgs($params);
+        /** @var \Zend\EventManager\EventManager $events */
+        $events = $this->getEventManager();
+
+        return $events->prepareArgs($params);
     }
 }

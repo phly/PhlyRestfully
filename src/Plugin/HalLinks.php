@@ -85,6 +85,7 @@ class HalLinks extends AbstractHelper implements
 
     /**
      * @param null|HydratorPluginManager $hydrators
+     * @return void
      */
     public function __construct(HydratorPluginManager $hydrators = null)
     {
@@ -96,6 +97,7 @@ class HalLinks extends AbstractHelper implements
 
     /**
      * @param DispatchableInterface $controller
+     * @return void
      */
     public function setController(DispatchableInterface $controller)
     {
@@ -129,6 +131,7 @@ class HalLinks extends AbstractHelper implements
      * Set the event manager instance
      *
      * @param  EventManagerInterface $events
+     * @return void
      */
     public function setEventManager(EventManagerInterface $events)
     {
@@ -138,37 +141,42 @@ class HalLinks extends AbstractHelper implements
         ]);
         $this->events = $events;
 
-        $events->attach('getIdFromResource', function ($e) {
-            $resource = $e->getParam('resource');
-            $identifierName = $e->getParam('identifier_name', 'id');
+        $events->attach(
+            'getIdFromResource',
+            /**
+             * @param \Zend\Mvc\MvcEvent $e
+             * @return mixed|false
+             */
+            function ($e) {
+                $resource = $e->getParam('resource');
+                $identifierName = $e->getParam('identifier_name', 'id');
 
-            // Found id in array
-            if (is_array($resource) && array_key_exists($identifierName, $resource)) {
-                return $resource[$identifierName];
-            }
+                // Found id in array
+                if (is_array($resource) && array_key_exists($identifierName, $resource)) {
+                    return $resource[$identifierName];
+                }
 
-            // No id in array, or not an object; return false
-            if (is_array($resource) || !is_object($resource)) {
+                // No id in array, or not an object; return false
+                if (is_array($resource) || !is_object($resource)) {
+                    return false;
+                }
+
+                // Found public id property on object
+                if (isset($resource->{$identifierName})) {
+                    return $resource->{$identifierName};
+                }
+
+                $publicGetter = 'get' . ucfirst($identifierName);
+
+                // Found public id getter on object
+                if (method_exists($resource, $publicGetter)) {
+                    return $resource->{$publicGetter}();
+                }
+
+                // not found
                 return false;
             }
-
-            // Found public id property on object
-            if (isset($resource->{$identifierName})) {
-                return $resource->{$identifierName};
-            }
-
-            $publicGetter = 'get' . ucfirst($identifierName);
-
-            // Found public id getter on object
-            if (method_exists($resource, $publicGetter)) {
-                return $resource->{$publicGetter}();
-            }
-
-            // not found
-            return false;
-        });
-
-        return $this;
+        );
     }
 
     /**
@@ -206,6 +214,7 @@ class HalLinks extends AbstractHelper implements
 
     /**
      * @param ServerUrl $helper
+     * @return void
      */
     public function setServerUrlHelper(ServerUrl $helper)
     {
@@ -214,6 +223,7 @@ class HalLinks extends AbstractHelper implements
 
     /**
      * @param Url $helper
+     * @return void
      */
     public function setUrlHelper(Url $helper)
     {
@@ -224,8 +234,8 @@ class HalLinks extends AbstractHelper implements
      * Map a resource class to a specific hydrator instance
      *
      * @param  string $class
-     * @param  HydratorInterface $hydrator
-     * @return RestfulJsonRenderer
+     * @param  HydratorInterface|string $hydrator
+     * @return $this
      */
     public function addHydrator($class, $hydrator)
     {
@@ -251,7 +261,7 @@ class HalLinks extends AbstractHelper implements
      * Set the default hydrator to use if none specified for a class.
      *
      * @param  HydratorInterface $hydrator
-     * @return RestfulJsonRenderer
+     * @return $this
      */
     public function setDefaultHydrator(HydratorInterface $hydrator)
     {
@@ -361,7 +371,6 @@ class HalLinks extends AbstractHelper implements
     {
         $this->getEventManager()->trigger(__FUNCTION__, $this, ['resource' => $halResource]);
         $resource = $halResource->resource;
-        $id       = $halResource->id;
         $links    = $this->fromResource($halResource);
 
         if (!is_array($resource)) {
@@ -410,6 +419,7 @@ class HalLinks extends AbstractHelper implements
             $params['id'] = $id;
         }
 
+        /** @var \Zend\EventManager\EventManager $events */
         $events      = $this->getEventManager();
         $eventParams = $events->prepareArgs([
             'route'    => $route,
@@ -432,9 +442,13 @@ class HalLinks extends AbstractHelper implements
     /**
      * Create a URL from a Link
      *
-     * @param  Link $linkDefinition
+     * @param Link $linkDefinition
+     *
      * @return array
+     *
      * @throws Exception\DomainException if Link is incomplete
+     *
+     * @psalm-return array{href:mixed}
      */
     public function fromLink(Link $linkDefinition)
     {
@@ -480,8 +494,11 @@ class HalLinks extends AbstractHelper implements
     /**
      * Generate HAL links from a LinkCollection
      *
-     * @param  LinkCollection $collection
-     * @return array
+     * @param LinkCollection $collection
+     *
+     * @return array[]
+     *
+     * @psalm-return array<mixed, array>
      */
     public function fromLinkCollection(LinkCollection $collection)
     {
@@ -576,10 +593,11 @@ class HalLinks extends AbstractHelper implements
     /**
      * Create a HalResource instance and inject it with a self relational link
      *
-     * @param  HalResource|array|object $resource
-     * @param  string $route
-     * @param  string $identifierName
-     * @return HalResource
+     * @param HalResource|array|object $resource
+     * @param string $route
+     * @param string $identifierName
+     *
+     * @return HalResource|ApiProblem
      */
     public function createResource($resource, $route, $identifierName)
     {
@@ -607,10 +625,10 @@ class HalLinks extends AbstractHelper implements
      * Creates a HalCollection instance with a self relational link
      *
      * @param  HalCollection|array|object $collection
-     * @param  null|string $route
+     * @param  string $route
      * @return HalCollection
      */
-    public function createCollection($collection, $route = null)
+    public function createCollection($collection, $route)
     {
         $metadataMap = $this->getMetadataMap();
         if (is_object($collection) && $metadataMap->has($collection)) {
@@ -646,6 +664,7 @@ class HalLinks extends AbstractHelper implements
      * @param  LinkCollectionAwareInterface $resource
      * @param  string $route
      * @param  string $identifier
+     * @return void
      */
     public function injectSelfLink(LinkCollectionAwareInterface $resource, $route, $identifier = 'id')
     {
@@ -660,8 +679,9 @@ class HalLinks extends AbstractHelper implements
     /**
      * Generate HAL links for a paginated collection
      *
-     * @param  HalCollection $halCollection
-     * @return array
+     * @param HalCollection $halCollection
+     *
+     * @return true|ApiProblem
      */
     protected function injectPaginationLinks(HalCollection $halCollection)
     {
@@ -756,6 +776,7 @@ class HalLinks extends AbstractHelper implements
      * @param  array $parent
      * @param  string $key
      * @param  HalResource $resource
+     * @return void
      */
     protected function extractEmbeddedHalResource(array &$parent, $key, HalResource $resource)
     {
@@ -777,6 +798,7 @@ class HalLinks extends AbstractHelper implements
      * @param  array $parent
      * @param  string $key
      * @param  HalCollection $collection
+     * @return void
      */
     protected function extractEmbeddedHalCollection(array &$parent, $key, HalCollection $collection)
     {
@@ -791,8 +813,11 @@ class HalLinks extends AbstractHelper implements
     /**
      * Extract a collection as an array
      *
-     * @param  HalCollection $halCollection
+     * @param HalCollection $halCollection
+     *
      * @return array
+     *
+     * @psalm-return array<int, mixed>
      */
     protected function extractCollection(HalCollection $halCollection)
     {
@@ -889,9 +914,18 @@ class HalLinks extends AbstractHelper implements
         }
 
         $event = new Event(__FUNCTION__, $this, $params);
-        $results = $this->getEventManager()->triggerEventUntil(function ($r) {
-            return (null !== $r && false !== $r);
-        }, $event);
+        /** @var \Zend\EventManager\EventManager $em */
+        $em = $this->getEventManager();
+        $results = $em->triggerEventUntil(
+            /**
+             * @param mixed $r
+             * @return bool
+             */
+            function ($r) {
+                return (null !== $r && false !== $r);
+            },
+            $event
+        );
 
         if ($results->stopped()) {
             return $results->last();
@@ -951,6 +985,7 @@ class HalLinks extends AbstractHelper implements
      *
      * @param  Metadata $metadata
      * @param  LinkCollection $links
+     * @return void
      */
     protected function marshalMetadataLinks(Metadata $metadata, LinkCollection $links)
     {

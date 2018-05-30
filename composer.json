@@ -41,7 +41,8 @@
         "zendframework/zend-http": "^2.5",
         "zendframework/zend-navigation": "^2.5",
         "zendframework/zend-servicemanager": "^2.5,<3.0.0",
-        "friendsofphp/php-cs-fixer": "^2.10"
+        "friendsofphp/php-cs-fixer": "^2.10",
+        "vimeo/psalm": "1.1.4"
     },
     "suggest": {
         "zfr/zfr-cors": "zfr/zfr-cors provides CORS support"

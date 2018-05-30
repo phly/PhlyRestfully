@@ -1,0 +1,111 @@
+<?xml version="1.0"?>
+<psalm
+    totallyTyped="false"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns="https://getpsalm.org/schema/config"
+    xsi:schemaLocation="https://getpsalm.org/schema/config ./vendor/vimeo/psalm/config.xsd"
+>
+    <projectFiles>
+        <directory name="./src" />
+    </projectFiles>
+
+    <issueHandlers>
+        <PropertyNotSetInConstructor errorLevel="info" />
+
+        <InvalidCatch>
+            <errorLevel type="info">
+                <!-- All of the Zend\Uri exceptions extend InvalidArgumentException and implement this interface, so
+                this is technically allowed -->
+                <file name="src/Link.php" />
+            </errorLevel>
+        </InvalidCatch>
+
+        <ReservedWord>
+            <errorLevel type="info">
+                <!-- "resource" is a "soft" reserved word as of PHP 7.0: https://secure.php.net/manual/en/reserved.other-reserved-words.php -->
+                <file name="src/Resource.php" />
+                <file name="src/Factory/ResourceControllerFactory.php" />
+            </errorLevel>
+        </ReservedWord>
+
+        <InvalidArgument>
+            <errorLevel type="info">
+                <!-- There is a version check here to use the opposite parameter order depending on which version of
+                the SharedEventManager is being used -->
+                <file name="src/Listener/ResourceParametersListener.php" />
+                <!-- ZF2's View\Renderer\JsonRenderer has incorrect docblock for this method -->
+                <file name="src/View/RestfulJsonRenderer.php" />
+            </errorLevel>
+        </InvalidArgument>
+
+        <InvalidPropertyAssignmentValue>
+            <errorLevel type="info">
+                <file name="src/Listener/ResourceParametersListener.php" />
+            </errorLevel>
+        </InvalidPropertyAssignmentValue>
+
+        <UndefinedClass>
+            <errorLevel type="info">
+                <!-- type-o in Zend\Http\Header\AcceptAbstract docblock for match method -->
+                <file name="src/Listener/ApiProblemListener.php" />
+            </errorLevel>
+        </UndefinedClass>
+
+        <TypeCoercion>
+            <errorLevel type="info">
+                <!-- This one doesn't make any sense to me:
+                $this->collection expects 'array<mixed, mixed>|Traversable|Zend\Paginator\Paginator',  parent type 'array<mixed, mixed>|Traversable|Zend\Paginator\Paginator' provided -->
+                <file name="src/HalCollection.php" />
+                <!-- This comes from a config definition, could inline type it, but maybe hides an error -->
+                <file name="src/Module.php" />
+                <!-- object most likely gets turned into a HalCollection, but isn't guaranteed in the code -->
+                <file name="src/Plugin/HalLinks.php" />
+            </errorLevel>
+        </TypeCoercion>
+
+        <RedundantCondition>
+            <errorLevel type="info">
+                <!-- Can't type-hint this (union type), so this check is done to prevent invalid type coming in -->
+                <file name="src/HalResource.php" />
+                <file name="src/Plugin/HalLinks.php" />
+            </errorLevel>
+        </RedundantCondition>
+
+        <PossiblyNullArgument>
+            <errorLevel type="info">
+                <!-- this has a check before it that would return false if apiProblem is null -->
+                <file name="src/View/RestfulJsonStrategy.php" />
+            </errorLevel>
+        </PossiblyNullArgument>
+
+        <MissingConstructor>
+            <errorLevel type="info">
+                <file name="src/View/RestfulJsonRenderer.php" />
+            </errorLevel>
+        </MissingConstructor>
+
+        <PossiblyInvalidMethodCall>
+            <errorLevel type="info">
+                <file name="src/Plugin/HalLinks.php" />
+            </errorLevel>
+        </PossiblyInvalidMethodCall>
+
+        <PossiblyUndefinedMethod>
+            <errorLevel type="info">
+                <file name="src/Plugin/HalLinks.php" />
+            </errorLevel>
+        </PossiblyUndefinedMethod>
+
+        <PossiblyInvalidArgument>
+            <errorLevel type="info">
+                <file name="src/Plugin/HalLinks.php" />
+            </errorLevel>
+        </PossiblyInvalidArgument>
+
+        <MoreSpecificImplementedParamType errorLevel="info" />
+        <ImplementedReturnTypeMismatch errorLevel="info" />
+        <!-- These are all defensive checks since the parameters aren't php type-hinted -->
+        <RedundantConditionGivenDocblockType errorLevel="info" />
+        <DocblockTypeContradiction errorLevel="info" />
+    </issueHandlers>
+</psalm>

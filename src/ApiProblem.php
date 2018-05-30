@@ -10,6 +10,14 @@ namespace PhlyRestfully;
 
 /**
  * Object describing an API-Problem payload
+ *
+ * Properties provided by __get
+ * @property string|int $httpStatus
+ * @property string $describedby
+ * @property string $described_by
+ * @property string|int $http_status
+ * @property string $title
+ * @property string|\Exception $detail
  */
 class ApiProblem
 {
@@ -28,7 +36,7 @@ class ApiProblem
 
     /**
      * Description of the specific problem.
-     * @var string
+     * @var string|\Exception
      */
     protected $detail = '';
 
@@ -124,7 +132,7 @@ class ApiProblem
      * from $problemStatusTitles as a result.
      *
      * @param  int $httpStatus
-     * @param  string $detail
+     * @param  string|\Exception $detail
      * @param  string $describedBy
      * @param  string $title
      */
@@ -182,7 +190,7 @@ class ApiProblem
     /**
      * Get passed in exception if available
      *
-     * @return \Exception
+     * @return \Exception|null
      */
     public function getException()
     {
@@ -243,7 +251,7 @@ class ApiProblem
      * If an exception was provided, creates the status code from it;
      * otherwise, code as provided is used.
      *
-     * @return string
+     * @return int|string
      */
     protected function getHttpStatus()
     {
@@ -295,31 +303,39 @@ class ApiProblem
      */
     protected function createDetailFromException()
     {
-        $e = $this->detail;
+        if ($this->detail instanceof \Exception) {
+            $e = $this->detail;
 
-        if (!$this->detailIncludesStackTrace) {
-            return $e->getMessage();
+            if (!$this->detailIncludesStackTrace) {
+                return $e->getMessage();
+            }
+            $message = '';
+            do {
+                $message .= $e->getMessage() . "\n";
+                $message .= $e->getTraceAsString() . "\n";
+                $e = $e->getPrevious();
+            } while ($e instanceof \Exception);
+            return trim($message);
         }
-        $message = '';
-        do {
-            $message .= $e->getMessage() . "\n";
-            $message .= $e->getTraceAsString() . "\n";
-            $e = $e->getPrevious();
-        } while ($e instanceof \Exception);
-        return trim($message);
+
+        return '';
     }
 
     /**
      * Create HTTP status from an exception.
      *
-     * @return string
+     * @return int
      */
     protected function createStatusFromException()
     {
-        $e = $this->detail;
-        $httpStatus = $e->getCode();
-        if (!empty($httpStatus)) {
-            return $httpStatus;
+        if ($this->detail instanceof \Exception) {
+            $e = $this->detail;
+            $httpStatus = $e->getCode();
+            if (!empty($httpStatus)) {
+                return $httpStatus;
+            } else {
+                return 500;
+            }
         } else {
             return 500;
         }

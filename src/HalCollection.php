@@ -13,6 +13,41 @@ use Zend\Stdlib\ArrayUtils;
 
 /**
  * Model a collection for use with HAL payloads
+ *
+ * Provided by __get
+ * @property array $attributes
+ * @property array|Traversable|\Zend\Paginator\Paginator $collection
+ * @property string $collectionname
+ * @property string $collection_name
+ * @property string $collectionName
+ * @property string $collectionroute
+ * @property string $collection_route
+ * @property string $collectionRoute
+ * @property array $collectionrouteoptions
+ * @property array $collection_route_options
+ * @property array $collectionRouteOptions
+ * @property array $collectionrouteparams
+ * @property array $collection_route_params
+ * @property array $collectionRouteParams
+ * @property string $identifiername
+ * @property string $identifier_name
+ * @property string $identifierName
+ * @property LinkCollection $links
+ * @property LinkCollection $resourcelinks
+ * @property LinkCollection $resource_links
+ * @property string $resourceroute
+ * @property string $resource_route
+ * @property string $resourceRoute
+ * @property array $resourcerouteoptions
+ * @property array $resource_route_options
+ * @property array $resourceRouteOptions
+ * @property array $resourcerouteparams
+ * @property array $resource_route_params
+ * @property array $resourceRouteParams
+ * @property int $page
+ * @property int $pagesize
+ * @property int $page_size
+ * @property int $pageSize
  */
 class HalCollection implements LinkCollectionAwareInterface
 {
@@ -99,8 +134,9 @@ class HalCollection implements LinkCollectionAwareInterface
 
     /**
      * @param  array|Traversable|\Zend\Paginator\Paginator $collection
-     * @param  string $collectionRoute
      * @param  string $resourceRoute
+     * @param  array $resourceRouteParams
+     * @param  array $resourceRouteOptions
      * @throws Exception\InvalidCollectionException
      */
     public function __construct(
@@ -423,7 +459,7 @@ class HalCollection implements LinkCollectionAwareInterface
     /**
      * Retrieve default resource links, if any
      *
-     * @return null|LinkCollection
+     * @return LinkCollection
      */
     public function getResourceLinks()
     {

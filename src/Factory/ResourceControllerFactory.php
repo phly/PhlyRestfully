@@ -25,9 +25,10 @@ class ResourceControllerFactory implements AbstractFactoryInterface
     /**
      * Determine if we can create a service with name
      *
-     * @param ServiceLocatorInterface $controllers
+     * @param \Zend\ServiceManager\AbstractPluginManager $controllers
      * @param string                  $name
      * @param string                  $requestedName
+     *
      * @return bool
      */
     public function canCreateServiceWithName(ServiceLocatorInterface $controllers, $name, $requestedName)
@@ -39,6 +40,7 @@ class ResourceControllerFactory implements AbstractFactoryInterface
             return false;
         }
 
+        /** @var array $config */
         $config = $services->get('config');
         if (!isset($config['phlyrestfully'])
             || !isset($config['phlyrestfully']['resources'])
@@ -73,15 +75,18 @@ class ResourceControllerFactory implements AbstractFactoryInterface
     /**
      * Create service with name
      *
-     * @param ServiceLocatorInterface $controllers
+     * @param \Zend\ServiceManager\AbstractPluginManager $controllers
      * @param string                  $name
      * @param string                  $requestedName
+     *
      * @return ResourceController
+     *
      * @throws ServiceNotCreatedException if listener specified is not a ListenerAggregate
      */
     public function createServiceWithName(ServiceLocatorInterface $controllers, $name, $requestedName)
     {
         $services = $controllers->getServiceLocator();
+        /** @var array $config */
         $config   = $services->get('config');
         $config   = $config['phlyrestfully']['resources'][$requestedName];
 
@@ -108,6 +113,7 @@ class ResourceControllerFactory implements AbstractFactoryInterface
             $resourceIdentifiers = array_merge($resourceIdentifiers, $config['resource_identifiers']);
         }
 
+        /** @var \Zend\EventManager\EventManager $events */
         $events = $services->get('EventManager');
         $events->attach($listener);
         $events->setIdentifiers($resourceIdentifiers);
@@ -120,6 +126,7 @@ class ResourceControllerFactory implements AbstractFactoryInterface
             $identifier = $config['identifier'];
         }
 
+        /** @var \Zend\EventManager\EventManagerInterface $events */
         $events          = $services->get('EventManager');
         $controllerClass = isset($config['controller_class'])
             ? $config['controller_class']
@@ -144,8 +151,10 @@ class ResourceControllerFactory implements AbstractFactoryInterface
     /**
      * Loop through configuration to discover and set controller options.
      *
-     * @param  array $config
-     * @param  ResourceController $controller
+     * @param array $config
+     * @param ResourceController $controller
+     *
+     * @return void
      */
     protected function setControllerOptions(array $config, ResourceController $controller)
     {
@@ -175,28 +184,38 @@ class ResourceControllerFactory implements AbstractFactoryInterface
                     // the whitelisted query parameters in order to seed the
                     // collection route options.
                     $whitelist = $value;
-                    $controller->getEventManager()->attach('getList.post', function ($e) use ($whitelist) {
-                        $request = $e->getTarget()->getRequest();
-                        if (!method_exists($request, 'getQuery')) {
-                            return;
-                        }
-                        $query  = $request->getQuery();
-                        $params = [];
-                        foreach ($query as $key => $value) {
-                            if (!in_array($key, $whitelist)) {
-                                continue;
+                    $controller->getEventManager()->attach(
+                        'getList.post',
+                        /**
+                         * @param \Zend\Mvc\MvcEvent $e
+                         * @return void
+                         */
+                        function ($e) use ($whitelist) {
+                            /** @var \Zend\Mvc\Controller\AbstractController $target */
+                            $target = $e->getTarget();
+                            /** @var \Zend\Http\Request $request */
+                            $request = $target->getRequest();
+                            if (!method_exists($request, 'getQuery')) {
+                                return;
                             }
-                            $params[$key] = $value;
-                        }
-                        if (empty($params)) {
-                            return;
-                        }
+                            $query  = $request->getQuery();
+                            $params = [];
+                            foreach ($query as $key => $value) {
+                                if (!in_array($key, $whitelist)) {
+                                    continue;
+                                }
+                                $params[$key] = $value;
+                            }
+                            if (empty($params)) {
+                                return;
+                            }
 
-                        $collection = $e->getParam('collection');
-                        $collection->setCollectionRouteOptions([
-                            'query' => $params,
-                        ]);
-                    });
+                            $collection = $e->getParam('collection');
+                            $collection->setCollectionRouteOptions([
+                                'query' => $params,
+                            ]);
+                        }
+                    );
                     break;
 
                 case 'content_types':

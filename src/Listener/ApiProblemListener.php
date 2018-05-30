@@ -54,6 +54,7 @@ class ApiProblemListener implements ListenerAggregateInterface
 
     /**
      * @param EventManagerInterface $events
+     * @param int $priority
      */
     public function attach(EventManagerInterface $events, $priority = 1)
     {
@@ -76,6 +77,8 @@ class ApiProblemListener implements ListenerAggregateInterface
      * Listen to the render event
      *
      * @param MvcEvent $e
+     *
+     * @return void
      */
     public static function onRender(MvcEvent $e)
     {
@@ -90,12 +93,14 @@ class ApiProblemListener implements ListenerAggregateInterface
             return;
         }
 
+        /** @var \Zend\Http\Headers $headers */
         $headers = $request->getHeaders();
         if (!$headers->has('Accept')) {
             return;
         }
 
         // ... that matches certain criteria
+        /** @var \Zend\Http\Header\AbstractAccept $accept */
         $accept = $headers->get('Accept');
         $match  = $accept->match(self::$acceptFilter);
         if (!$match || $match->getTypeString() == '*/*') {
@@ -110,7 +115,9 @@ class ApiProblemListener implements ListenerAggregateInterface
         }
 
         // Marshall the information we need for the API-Problem response
-        $httpStatus       = $e->getResponse()->getStatusCode();
+        /** @var \Zend\Http\Response $response */
+        $response = $e->getResponse();
+        $httpStatus       = $response->getStatusCode();
         $exception        = $model->getVariable('exception');
 
         if ($exception instanceof \Exception) {

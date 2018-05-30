@@ -144,7 +144,7 @@ class Metadata
     /**
      * Retrieve the hydrator to associate with this class, if any
      *
-     * @return null|HydratorInterface
+     * @return HydratorInterface
      */
     public function getHydrator()
     {
@@ -176,7 +176,7 @@ class Metadata
      *
      * If not set, uses the route or url, depending on which is present.
      *
-     * @return null|string
+     * @return string
      */
     public function getResourceRoute()
     {
@@ -193,7 +193,7 @@ class Metadata
     /**
      * Retrieve the route to use for URL generation
      *
-     * @return null|string
+     * @return string
      */
     public function getRoute()
     {
@@ -223,7 +223,7 @@ class Metadata
     /**
      * Retrieve the URL to use for this resource, if present
      *
-     * @return null|string
+     * @return string
      */
     public function getUrl()
     {

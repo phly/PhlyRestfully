@@ -9,6 +9,8 @@
 namespace PhlyRestfully;
 
 use Zend\EventManager\EventManagerAwareInterface;
+use Zend\Stdlib\Parameters;
+use Zend\Mvc\Router\RouteMatch;
 
 /**
  * Interface describing operations for a given resource.
@@ -48,6 +50,18 @@ interface ResourceInterface extends EventManagerAwareInterface
     public function getEventParam($name, $default = null);
 
     /**
+     * @param Parameters $params
+     * @return self
+     */
+    public function setQueryParams(Parameters $params);
+
+    /**
+     * @param RouteMatch $matches
+     * @return self
+     */
+    public function setRouteMatch(RouteMatch $matches);
+
+    /**
      * Create a record in the resource
      *
      * @param  array|object $data
@@ -82,6 +96,12 @@ interface ResourceInterface extends EventManagerAwareInterface
     public function patch($id, $data);
 
     /**
+     * @param  array $data
+     * @return array|object
+     */
+    public function patchList($data);
+
+    /**
      * Delete an existing record
      *
      * @param  string|int $id
@@ -108,7 +128,7 @@ interface ResourceInterface extends EventManagerAwareInterface
     /**
      * Fetch a collection of records
      *
-     * @return \Zend\Paginator\Paginator
+     * @return \Zend\Paginator\Paginator|ApiProblem
      */
     public function fetchAll();
 }

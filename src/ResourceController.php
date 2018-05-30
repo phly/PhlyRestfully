@@ -142,6 +142,7 @@ class ResourceController extends AbstractRestfulController
      * Set the Accept header criteria for use with the AcceptableViewModelSelector
      *
      * @param  array $criteria
+     * @return void
      */
     public function setAcceptCriteria(array $criteria)
     {
@@ -152,6 +153,7 @@ class ResourceController extends AbstractRestfulController
      * Set the allowed HTTP OPTIONS for the resource (collection)
      *
      * @param  array $options
+     * @return void
      */
     public function setCollectionHttpOptions(array $options)
     {
@@ -162,6 +164,7 @@ class ResourceController extends AbstractRestfulController
      * Set the name to which to assign a collection in a HalCollection
      *
      * @param  string $name
+     * @return void
      */
     public function setCollectionName($name)
     {
@@ -172,6 +175,7 @@ class ResourceController extends AbstractRestfulController
      * Set the allowed content types for the resource (collection)
      *
      * @param  array $contentTypes
+     * @return void
      */
     public function setContentTypes(array $contentTypes)
     {
@@ -181,7 +185,8 @@ class ResourceController extends AbstractRestfulController
     /**
      * Set the default page size for paginated responses
      *
-     * @param  int
+     * @param  int $count
+     * @return void
      */
     public function setPageSize($count)
     {
@@ -191,7 +196,8 @@ class ResourceController extends AbstractRestfulController
     /**
      * Set the page size parameter for paginated responses.
      *
-     * @param string
+     * @param string $param
+     * @return void
      */
     public function setPageSizeParam($param)
     {
@@ -202,6 +208,7 @@ class ResourceController extends AbstractRestfulController
      * Inject the resource with which this controller will communicate.
      *
      * @param  ResourceInterface $resource
+     * @return void
      */
     public function setResource(ResourceInterface $resource)
     {
@@ -228,6 +235,7 @@ class ResourceController extends AbstractRestfulController
      * Set the allowed HTTP OPTIONS for a resource
      *
      * @param  array $options
+     * @return void
      */
     public function setResourceHttpOptions(array $options)
     {
@@ -238,6 +246,7 @@ class ResourceController extends AbstractRestfulController
      * Inject the route name for this resource.
      *
      * @param  string $route
+     * @return void
      */
     public function setRoute($route)
     {
@@ -340,6 +349,7 @@ class ResourceController extends AbstractRestfulController
         $self = $resource->getLinks()->get('self');
         $self = $plugin->fromLink($self);
 
+        /** @var \Zend\Http\Response $response */
         $response = $this->getResponse();
         $response->setStatusCode(201);
         $response->getHeaders()->addHeaderLine('Location', $self);
@@ -354,7 +364,7 @@ class ResourceController extends AbstractRestfulController
      * a collection, i.e. create and/or update multiple resources in a collection.
      *
      * @param array $data
-     * @return array
+     * @return array|Response|ApiProblem
      */
     public function patchList($data)
     {
@@ -377,11 +387,13 @@ class ResourceController extends AbstractRestfulController
         }
 
         $plugin = $this->plugin('HalLinks');
+        /** @var \Zend\Http\Request $request */
+        $request = $this->getRequest();
         $collection = $plugin->createCollection($collection, $this->route);
         $collection->setCollectionRoute($this->route);
         $collection->setIdentifierName($this->getIdentifierName());
         $collection->setResourceRoute($this->route);
-        $collection->setPage($this->getRequest()->getQuery('page', 1));
+        $collection->setPage($request->getQuery('page', 1));
         $collection->setPageSize($this->pageSize);
         $collection->setCollectionName($this->collectionName);
 
@@ -421,6 +433,7 @@ class ResourceController extends AbstractRestfulController
             return $result;
         }
 
+        /** @var \Zend\Http\Response $response */
         $response = $this->getResponse();
         $response->setStatusCode(204);
 
@@ -429,6 +442,9 @@ class ResourceController extends AbstractRestfulController
         return $response;
     }
 
+    /**
+     * @param array $data
+     */
     public function deleteList($data = [])
     {
         if (!$this->isMethodAllowedForCollection()) {
@@ -452,6 +468,7 @@ class ResourceController extends AbstractRestfulController
             return $result;
         }
 
+        /** @var \Zend\Http\Response $response */
         $response = $this->getResponse();
         $response->setStatusCode(204);
 
@@ -503,7 +520,7 @@ class ResourceController extends AbstractRestfulController
     /**
      * Return collection of resources
      *
-     * @return Response|HalCollection
+     * @return Response|HalCollection|ApiProblem
      */
     public function getList()
     {
@@ -527,15 +544,17 @@ class ResourceController extends AbstractRestfulController
         }
 
         $plugin     = $this->plugin('HalLinks');
+        /** @var \Zend\Http\Request $request */
+        $request = $this->getRequest();
         $collection = $plugin->createCollection($collection, $this->route);
         $collection->setCollectionRoute($this->route);
         $collection->setIdentifierName($this->getIdentifierName());
         $collection->setResourceRoute($this->route);
-        $collection->setPage($this->getRequest()->getQuery('page', 1));
+        $collection->setPage($request->getQuery('page', 1));
         $collection->setCollectionName($this->collectionName);
 
         $pageSize = $this->pageSizeParam
-            ? $this->getRequest()->getQuery($this->pageSizeParam, $this->pageSize)
+            ? $request->getQuery($this->pageSizeParam, $this->pageSize)
             : $this->pageSize;
         $collection->setPageSize($pageSize);
 
@@ -576,13 +595,21 @@ class ResourceController extends AbstractRestfulController
             $options = $this->collectionHttpOptions;
         }
 
-        array_walk($options, function (&$method) {
-            $method = strtoupper($method);
-        });
+        array_walk(
+            $options,
+            /**
+             * @param string $method
+             * @return void
+             */
+            function (&$method) {
+                $method = strtoupper($method);
+            }
+        );
 
         $events = $this->getEventManager();
         $events->trigger('options.pre', $this, ['options' => $options]);
 
+        /** @var \Zend\Http\Response $response */
         $response = $this->getResponse();
         $response->setStatusCode(204);
         $headers  = $response->getHeaders();
@@ -672,7 +699,7 @@ class ResourceController extends AbstractRestfulController
      * Update an existing collection of resources
      *
      * @param array $data
-     * @return array
+     * @return array|ApiProblem|Response
      */
     public function replaceList($data)
     {
@@ -695,11 +722,13 @@ class ResourceController extends AbstractRestfulController
         }
 
         $plugin = $this->plugin('HalLinks');
+        /** @var \Zend\Http\Request $request */
+        $request = $this->getRequest();
         $collection = $plugin->createCollection($collection, $this->route);
         $collection->setCollectionRoute($this->route);
         $collection->setIdentifierName($this->getIdentifierName());
         $collection->setResourceRoute($this->route);
-        $collection->setPage($this->getRequest()->getQuery('page', 1));
+        $collection->setPage($request->getQuery('page', 1));
         $collection->setPageSize($this->pageSize);
         $collection->setCollectionName($this->collectionName);
 
@@ -740,10 +769,18 @@ class ResourceController extends AbstractRestfulController
      */
     protected function isMethodAllowedForResource()
     {
-        array_walk($this->resourceHttpOptions, function (&$method) {
-            $method = strtoupper($method);
-        });
+        array_walk(
+            $this->resourceHttpOptions,
+            /**
+             * @param string $method
+             * @return void
+             */
+            function (&$method) {
+                $method = strtoupper($method);
+            }
+        );
         $options = array_merge($this->resourceHttpOptions, ['OPTIONS', 'HEAD']);
+        /** @var \Zend\Http\Request $request */
         $request = $this->getRequest();
         $method  = strtoupper($request->getMethod());
         if (!in_array($method, $options)) {
@@ -759,10 +796,18 @@ class ResourceController extends AbstractRestfulController
      */
     protected function isMethodAllowedForCollection()
     {
-        array_walk($this->collectionHttpOptions, function (&$method) {
-            $method = strtoupper($method);
-        });
+        array_walk(
+            $this->collectionHttpOptions,
+            /**
+             * @param string $method
+             * @return void
+             */
+            function (&$method) {
+                $method = strtoupper($method);
+            }
+        );
         $options = array_merge($this->collectionHttpOptions, ['OPTIONS', 'HEAD']);
+        /** @var \Zend\Http\Request $request */
         $request = $this->getRequest();
         $method  = strtoupper($request->getMethod());
         if (!in_array($method, $options)) {
@@ -779,6 +824,7 @@ class ResourceController extends AbstractRestfulController
      */
     protected function createMethodNotAllowedResponse(array $options)
     {
+        /** @var \Zend\Http\Response $response */
         $response = $this->getResponse();
         $response->setStatusCode(405);
         $headers = $response->getHeaders();

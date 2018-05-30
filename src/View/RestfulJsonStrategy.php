@@ -25,11 +25,19 @@ use Zend\View\ViewEvent;
  */
 class RestfulJsonStrategy extends JsonStrategy
 {
+    /**
+     * @var string
+     */
     protected $contentType = 'application/json';
+
+    /**
+     * @var RestfulJsonRenderer
+     */
+    protected $renderer;
 
     public function __construct(RestfulJsonRenderer $renderer)
     {
-        $this->renderer = $renderer;
+        parent::__construct($renderer);
     }
 
     /**
@@ -44,7 +52,7 @@ class RestfulJsonStrategy extends JsonStrategy
 
         if (!$model instanceof RestfulJsonModel) {
             // unrecognized model; do nothing
-            return;
+            return null;
         }
 
         // JsonModel found
@@ -75,16 +83,17 @@ class RestfulJsonStrategy extends JsonStrategy
 
         $model       = $e->getModel();
         $contentType = $this->contentType;
+        /** @var \Zend\Http\Response $response */
         $response    = $e->getResponse();
 
         if ($this->renderer->isApiProblem()) {
             $contentType = 'application/api-problem+json';
             $statusCode  = $this->getStatusCodeFromApiProblem($this->renderer->getApiProblem());
-            $response->setStatusCode($statusCode);
+            $response->setStatusCode((int) $statusCode);
         } elseif ($model instanceof RestfulJsonModel && $model->isApiProblem()) {
             $contentType = 'application/api-problem+json';
             $statusCode  = $this->getStatusCodeFromApiProblem($model->getPayload());
-            $response->setStatusCode($statusCode);
+            $response->setStatusCode((int) $statusCode);
         } elseif ($model instanceof RestfulJsonModel
             && ($model->isHalCollection() || $model->isHalResource())
         ) {
@@ -103,7 +112,7 @@ class RestfulJsonStrategy extends JsonStrategy
      * Ensures that the status falls within the acceptable range (100 - 599).
      *
      * @param  ApiProblem $problem
-     * @return int
+     * @return int|string
      */
     protected function getStatusCodeFromApiProblem(ApiProblem $problem)
     {

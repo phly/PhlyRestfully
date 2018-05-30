@@ -48,13 +48,19 @@ class Module
     {
         return [
             'aliases' => [
-                View\JsonRenderer::class        => 'PhlyRestfully\JsonRenderer',
+                View\RestfulJsonRenderer::class => 'PhlyRestfully\JsonRenderer',
                 View\RestfulJsonStrategy::class => 'PhlyRestfully\RestfulJsonStrategy',
             ],
             'factories' => [
-                ApiProblemListener::class => function ($services) {
+                Listener\ApiProblemListener::class =>
+                /**
+                 * @param \Zend\ServiceManager\ServiceManager $services
+                 * @return Listener\ApiProblemListener
+                 */
+                function ($services) {
                     $config = [];
                     if ($services->has('config')) {
+                        /** @var array $config */
                         $config = $services->get('config');
                     }
 
@@ -67,13 +73,20 @@ class Module
 
                     return new Listener\ApiProblemListener($filter);
                 },
-                MetadataMap::class => function ($services) {
+                MetadataMap::class =>
+                /**
+                 * @param \Zend\ServiceManager\ServiceManager $services
+                 * @return MetadataMap
+                 */
+                function ($services) {
                     $config = [];
                     if ($services->has('config')) {
+                        /** @var array $config */
                         $config = $services->get('config');
                     }
 
                     if ($services->has('HydratorManager')) {
+                        /** @var HydratorPluginManager $hydrators */
                         $hydrators = $services->get('HydratorManager');
                     } else {
                         $hydrators = new HydratorPluginManager();
@@ -89,8 +102,15 @@ class Module
 
                     return new MetadataMap($map, $hydrators);
                 },
-                'PhlyRestfully\JsonRenderer' => function ($services) {
+                'PhlyRestfully\JsonRenderer' =>
+                /**
+                 * @param \Zend\ServiceManager\ServiceManager $services
+                 * @return View\RestfulJsonRenderer
+                 */
+                function ($services) {
+                    /** @var \Zend\View\HelperPluginManager $helpers */
                     $helpers  = $services->get('ViewHelperManager');
+                    /** @var array $config */
                     $config   = $services->get('config');
 
                     $displayExceptions = false;
@@ -106,7 +126,13 @@ class Module
 
                     return $renderer;
                 },
-                'PhlyRestfully\RestfulJsonStrategy' => function ($services) {
+                'PhlyRestfully\RestfulJsonStrategy' =>
+                /**
+                 * @param \Zend\ServiceManager\ServiceManager $services
+                 * @return View\RestfulJsonStrategy
+                 */
+                function ($services) {
+                    /** @var View\RestfulJsonRenderer $renderer */
                     $renderer = $services->get('PhlyRestfully\JsonRenderer');
                     return new View\RestfulJsonStrategy($renderer);
                 },
@@ -124,10 +150,19 @@ class Module
     public function getControllerPluginConfig()
     {
         return ['factories' => [
-            'HalLinks' => function ($plugins) {
+            'HalLinks' =>
+            /**
+             * @param \Zend\ServiceManager\ServiceLocatorAwareInterface $plugins
+             * @return Plugin\HalLinks
+             */
+            function ($plugins) {
                 $services = $plugins->getServiceLocator();
+                /** @var \Zend\View\HelperPluginManager $helpers */
                 $helpers  = $services->get('ViewHelperManager');
-                return $helpers->get('HalLinks');
+                /** @var Plugin\HalLinks $halLinks */
+                $halLinks = $helpers->get('HalLinks');
+
+                return $halLinks;
             },
         ]];
     }
@@ -140,12 +175,21 @@ class Module
     public function getViewHelperConfig()
     {
         return ['factories' => [
-            'HalLinks' => function ($helpers) {
+            'HalLinks' =>
+            /**
+             * @param \Zend\ServiceManager\AbstractPluginManager $helpers
+             * @return Plugin\HalLinks
+             */
+            function ($helpers) {
+                /** @var \Zend\View\Helper\ServerUrl $serverUrlHelper */
                 $serverUrlHelper = $helpers->get('ServerUrl');
+                /** @var \Zend\View\Helper\Url $urlHelper */
                 $urlHelper       = $helpers->get('Url');
 
                 $services        = $helpers->getServiceLocator();
+                /** @var array $config */
                 $config          = $services->get('config');
+                /** @var MetadataMap $metadataMap */
                 $metadataMap     = $services->get(MetadataMap::class);
                 $hydrators       = $metadataMap->getHydratorManager();
 
@@ -194,19 +238,38 @@ class Module
      * Attaches a render event.
      *
      * @param  \Zend\Mvc\MvcEvent $e
+     * @return void
      */
     public function onBootstrap($e)
     {
+        /** @var \Zend\Mvc\ApplicationInterface $app */
         $app      = $e->getTarget();
         $services = $app->getServiceManager();
         $events   = $app->getEventManager();
         $events->attach('render', [$this, 'onRender'], 100);
         $sharedEvents = $events->getSharedManager();
-        $sharedEvents->attach(ResourceController::class, 'dispatch', function ($e) use ($services) {
-            $eventManager = $e->getApplication()->getEventManager();
-            $eventManager->attach($services->get(ApiProblemListener::class));
-        }, 300);
-        $services->get('PhlyRestfully\ResourceParametersListener')->attachShared($sharedEvents);
+        if (!$sharedEvents) {
+            throw new \Exception('Could not retrieve shared event manager');
+        }
+        $sharedEvents->attach(
+            ResourceController::class,
+            'dispatch',
+            /**
+             * @param \Zend\Mvc\MvcEvent $e
+             * @return void
+             */
+            function ($e) use ($services) {
+                /** @var \Zend\EventManager\EventManager $eventManager */
+                $eventManager = $e->getApplication()->getEventManager();
+                /** @var Listener\ApiProblemListener $apiProblemListener */
+                $apiProblemListener = $services->get(Listener\ApiProblemListener::class);
+                $eventManager->attach($apiProblemListener);
+            },
+            300
+        );
+        /** @var \PhlyRestfully\Listener\ResourceParametersListener $paramListener */
+        $paramListener = $services->get('PhlyRestfully\ResourceParametersListener');
+        $paramListener->attachShared($sharedEvents);
     }
 
     /**
@@ -215,6 +278,7 @@ class Module
      * Attaches a rendering/response strategy to the View.
      *
      * @param  \Zend\Mvc\MvcEvent $e
+     * @return void
      */
     public function onRender($e)
     {
@@ -223,10 +287,14 @@ class Module
             return;
         }
 
+        /** @var \Zend\Mvc\ApplicationInterface $app */
         $app                 = $e->getTarget();
         $services            = $app->getServiceManager();
+        /** @var \Zend\View\View $view */
         $view                = $services->get('View');
+        /** @var View\RestfulJsonStrategy $restfulJsonStrategy */
         $restfulJsonStrategy = $services->get('PhlyRestfully\RestfulJsonStrategy');
+        /** @var \Zend\EventManager\EventManager $events */
         $events              = $view->getEventManager();
 
         // register at high priority, to "beat" normal json strategy registered

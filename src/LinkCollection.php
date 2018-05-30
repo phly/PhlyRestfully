@@ -82,7 +82,7 @@ class LinkCollection implements Countable, IteratorAggregate
      * Retrieve a link relation
      *
      * @param  string $relation
-     * @return Link|array
+     * @return Link|array|null
      */
     public function get($relation)
     {

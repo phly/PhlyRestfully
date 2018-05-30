@@ -1,0 +1,27 @@
+parameters:
+    ignoreErrors:
+        # Type-o in ZF2's docblock
+        - '#Call to method getTypeString\(\) on an unknown class Zend\\Http\\Header\\Accept\\FieldValuePArt\\AcceptFieldValuePart\.#'
+        # I think in this case an array won't be returned
+        - '#Array \(array<Zend\\Stdlib\\CallbackHandler>\) does not accept array\|Zend\\Stdlib\\CallbackHandler\.#'
+        # These can probably be fixed if static type-hints are ever added
+        - '#Casting to .+ something that.s already .+\.#'
+        # This is more of a defensive thing, docblocks only allow specific object type and string
+        - '#Call to function is_object\(\) will always evaluate to false\.#'
+        # Internal code never sets $identifierName to false, but does have a setter with no restrictions
+        - '#Strict comparison using !== between false and string will always evaluate to true\.#'
+        - '#Strict comparison using === between false and string will always evaluate to false\.#'
+        # This is a version branch, detected earlier
+        - '#Parameter \#2 \$listener of method Zend\\EventManager\\SharedEventManagerInterface::detach\(\) expects Zend\\Stdlib\\CallbackHandler, string given\.#'
+        # ZF2 docblocks aren't correct, does accept an array
+        - '#Parameter \#1 \$nameOrModel of method Zend\\View\\Renderer\\JsonRenderer::render\(\) expects string\|Zend\\View\\Model\\ModelInterface, array given\.#'
+        # There's a check earlier that checks if there's an ApiProblem (which checks if apiProblem is null), so won't be null here
+        - '#Parameter \#1 \$problem of method PhlyRestfully\\View\\RestfulJsonStrategy::getStatusCodeFromApiProblem\(\) expects PhlyRestfully\\ApiProblem, PhlyRestfully\\ApiProblem\|null given\.#'
+        # Other issues
+        - '#Parameter \#1 \$collection of class PhlyRestfully\\HalCollection constructor expects array\|Traversable, array\|object given\.#'
+        - '#Call to function count\(\) with argument type array\|Traversable will always result in number 1\.#'
+        - '#Parameter \#1 \$hydrator of method PhlyRestfully\\Plugin\\HalLinks::setDefaultHydrator\(\) expects Zend\\Hydrator\\HydratorInterface, object given\.#'
+        - '#Parameter \#1 \$collection of class PhlyRestfully\\HalCollection constructor expects array\|Traversable, object given\.#'
+        - '#Cannot call method setItemCountPerPage\(\) on array\|Traversable\.#'
+        - '#Cannot call method setCurrentPageNumber\(\) on array\|Traversable\.#'
+        - '#Parameter \#1 \$matches of method PhlyRestfully\\ResourceInterface::setRouteMatch\(\) expects Zend\\Mvc\\Router\\RouteMatch, Zend\\Mvc\\Router\\RouteMatch\|null given\.#'
