@@ -25,24 +25,24 @@
     ],
     "require": {
         "php": ">=5.6",
-        "zendframework/zend-eventmanager": "^2.5,<3.0.0",
+        "zendframework/zend-eventmanager": "^2.6",
         "zendframework/zend-json": "^2.5.0",
         "zendframework/zend-loader": "^2.5.0",
-        "zendframework/zend-mvc": "^2.5.0,<3.0.0",
+        "zendframework/zend-mvc": "^2.7.13",
         "zendframework/zend-paginator": "^2.5.0",
         "zendframework/zend-uri": "^2.5.0",
-        "zendframework/zend-view": "^2.5.0",
+        "zendframework/zend-view": "^2.7.0",
         "zendframework/zend-stdlib": "^2.5.0",
         "zendframework/zend-hydrator": "^1.1"
     },
     "require-dev": {
-        "phpunit/PHPUnit": "^5.0",
+        "friendsofphp/php-cs-fixer": "^2.10",
+        "phpunit/PHPUnit": "^5.7.11",
+        "vimeo/psalm": "1.1.4",
         "zendframework/zend-console": "^2.5",
         "zendframework/zend-http": "^2.5",
         "zendframework/zend-navigation": "^2.5",
-        "zendframework/zend-servicemanager": "^2.5,<3.0.0",
-        "friendsofphp/php-cs-fixer": "^2.10",
-        "vimeo/psalm": "1.1.4"
+        "zendframework/zend-servicemanager": "^2.5"
     },
     "suggest": {
         "zfr/zfr-cors": "zfr/zfr-cors provides CORS support"
