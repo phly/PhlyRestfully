@@ -17,7 +17,7 @@ use PhlyRestfully\Plugin\HalLinks;
 use PhlyRestfully\View\RestfulJsonModel;
 use PhlyRestfully\View\RestfulJsonRenderer;
 use PhlyRestfullyTest\TestAsset;
-use PHPUnit_Framework_TestCase as TestCase;
+use PHPUnit\Framework\TestCase as TestCase;
 use ReflectionObject;
 use Zend\Mvc\Router\Http\Segment;
 use Zend\Mvc\Router\Http\TreeRouteStack;

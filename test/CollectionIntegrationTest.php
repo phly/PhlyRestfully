@@ -14,7 +14,7 @@ use PhlyRestfully\Resource;
 use PhlyRestfully\ResourceController;
 use PhlyRestfully\View\RestfulJsonModel;
 use PhlyRestfully\View\RestfulJsonRenderer;
-use PHPUnit_Framework_TestCase as TestCase;
+use PHPUnit\Framework\TestCase as TestCase;
 use Zend\EventManager\SharedEventManager;
 use Zend\Http\PhpEnvironment\Request;
 use Zend\Http\PhpEnvironment\Response;

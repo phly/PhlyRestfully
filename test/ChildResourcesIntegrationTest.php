@@ -16,7 +16,7 @@ use PhlyRestfully\Resource;
 use PhlyRestfully\ResourceController;
 use PhlyRestfully\View\RestfulJsonModel;
 use PhlyRestfully\View\RestfulJsonRenderer;
-use PHPUnit_Framework_TestCase as TestCase;
+use PHPUnit\Framework\TestCase as TestCase;
 use ReflectionObject;
 use Zend\Http\Request;
 use Zend\Mvc\Controller\PluginManager as ControllerPluginManager;

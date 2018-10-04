@@ -10,7 +10,7 @@ namespace PhlyRestfullyTest;
 
 use PhlyRestfully\Link;
 use PhlyRestfully\LinkCollection;
-use PHPUnit_Framework_TestCase as TestCase;
+use PHPUnit\Framework\TestCase as TestCase;
 
 class LinkCollectionTest extends TestCase
 {

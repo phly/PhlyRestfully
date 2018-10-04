@@ -10,7 +10,7 @@ namespace PhlyRestfullyTest;
 
 use PhlyRestfully\Exception;
 use PhlyRestfully\Link;
-use PHPUnit_Framework_TestCase as TestCase;
+use PHPUnit\Framework\TestCase as TestCase;
 
 class LinkTest extends TestCase
 {
@@ -83,7 +83,7 @@ class LinkTest extends TestCase
         $link = new Link('describedby');
         $link->setRoute('api/docs');
 
-        $this->setExpectedException(Exception\DomainException::class);
+        $this->expectException(Exception\DomainException::class);
         $link->setUrl('http://example.com/api/docs.html');
     }
 
@@ -92,7 +92,7 @@ class LinkTest extends TestCase
         $link = new Link('describedby');
         $link->setUrl('http://example.com/api/docs.html');
 
-        $this->setExpectedException(Exception\DomainException::class);
+        $this->expectException(Exception\DomainException::class);
         $link->setRoute('api/docs');
     }
 

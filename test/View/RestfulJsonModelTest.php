@@ -12,7 +12,7 @@ use PhlyRestfully\ApiProblem;
 use PhlyRestfully\HalCollection;
 use PhlyRestfully\HalResource;
 use PhlyRestfully\View\RestfulJsonModel;
-use PHPUnit_Framework_TestCase as TestCase;
+use PHPUnit\Framework\TestCase as TestCase;
 use stdClass;
 
 /**

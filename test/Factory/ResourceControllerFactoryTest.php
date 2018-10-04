@@ -10,7 +10,7 @@ namespace PhlyRestfullyTest\Factory;
 
 use PhlyRestfully\ResourceController;
 use PhlyRestfully\Factory\ResourceControllerFactory;
-use PHPUnit_Framework_TestCase as TestCase;
+use PHPUnit\Framework\TestCase as TestCase;
 use Zend\EventManager\EventManager;
 use Zend\EventManager\SharedEventManager;
 use Zend\Mvc\Controller\ControllerManager;

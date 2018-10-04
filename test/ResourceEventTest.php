@@ -9,7 +9,7 @@
 namespace PhlyRestfullyTest;
 
 use PhlyRestfully\ResourceEvent;
-use PHPUnit_Framework_TestCase as TestCase;
+use PHPUnit\Framework\TestCase as TestCase;
 use Zend\Mvc\Router\RouteMatch;
 use Zend\Stdlib\Parameters;
 

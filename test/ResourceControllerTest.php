@@ -16,7 +16,7 @@ use PhlyRestfully\Plugin;
 use PhlyRestfully\Resource;
 use PhlyRestfully\ResourceController;
 use PhlyRestfully\View\RestfulJsonModel;
-use PHPUnit_Framework_TestCase as TestCase;
+use PHPUnit\Framework\TestCase as TestCase;
 use ReflectionObject;
 use stdClass;
 use Zend\EventManager\EventManager;
@@ -442,7 +442,7 @@ class ResourceControllerTest extends TestCase
     public function testOnDispatchRaisesDomainExceptionOnMissingResource()
     {
         $controller = new ResourceController();
-        $this->setExpectedException(Exception\DomainException::class, 'ResourceInterface');
+        $this->expectException(Exception\DomainException::class, 'ResourceInterface');
         $controller->onDispatch($this->event);
     }
 
@@ -450,7 +450,7 @@ class ResourceControllerTest extends TestCase
     {
         $controller = new ResourceController();
         $controller->setResource($this->resource);
-        $this->setExpectedException(Exception\DomainException::class, 'route');
+        $this->expectException(Exception\DomainException::class, 'route');
         $controller->onDispatch($this->event);
     }
 

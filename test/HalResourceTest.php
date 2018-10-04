@@ -11,7 +11,7 @@ namespace PhlyRestfullyTest;
 use PhlyRestfully\Exception;
 use PhlyRestfully\HalResource;
 use PhlyRestfully\LinkCollection;
-use PHPUnit_Framework_TestCase as TestCase;
+use PHPUnit\Framework\TestCase as TestCase;
 use stdClass;
 
 class HalResourceTest extends TestCase
@@ -35,7 +35,7 @@ class HalResourceTest extends TestCase
      */
     public function testConstructorRaisesExceptionForNonObjectNonArrayResource($resource)
     {
-        $this->setExpectedException(Exception\InvalidResourceException::class);
+        $this->expectException(Exception\InvalidResourceException::class);
         $hal = new HalResource($resource, 'id');
     }
 

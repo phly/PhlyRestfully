@@ -11,7 +11,7 @@ namespace PhlyRestfullyTest\Listener;
 use PhlyRestfully\Listener\ResourceParametersListener;
 use PhlyRestfully\Resource;
 use PhlyRestfully\ResourceController;
-use PHPUnit_Framework_TestCase as TestCase;
+use PHPUnit\Framework\TestCase as TestCase;
 use Zend\Http\PhpEnvironment\Request;
 use Zend\Mvc\MvcEvent;
 use Zend\Mvc\Router\RouteMatch;

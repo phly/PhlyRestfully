@@ -14,7 +14,7 @@ use PhlyRestfully\Exception;
 use PhlyRestfully\Resource;
 use PhlyRestfully\ResourceEvent;
 use PhlyRestfully\ResourceInterface;
-use PHPUnit_Framework_TestCase as TestCase;
+use PHPUnit\Framework\TestCase as TestCase;
 use stdClass;
 use Zend\EventManager\EventManager;
 use Zend\Mvc\Router\RouteMatch;
@@ -70,7 +70,7 @@ class ResourceTest extends TestCase
      */
     public function testCreateRaisesExceptionWithInvalidData($data)
     {
-        $this->setExpectedException(Exception\InvalidArgumentException::class);
+        $this->expectException(Exception\InvalidArgumentException::class);
         $this->resource->create($data);
     }
 
@@ -133,7 +133,7 @@ class ResourceTest extends TestCase
      */
     public function testPatchListListRaisesExceptionWithInvalidData($data)
     {
-        $this->setExpectedException(Exception\InvalidArgumentException::class);
+        $this->expectException(Exception\InvalidArgumentException::class);
         $this->resource->patchList($data);
     }
 
@@ -171,7 +171,7 @@ class ResourceTest extends TestCase
      */
     public function testUpdateRaisesExceptionWithInvalidData($data)
     {
-        $this->setExpectedException(Exception\InvalidArgumentException::class);
+        $this->expectException(Exception\InvalidArgumentException::class);
         $this->resource->update('foo', $data);
     }
 
@@ -209,7 +209,7 @@ class ResourceTest extends TestCase
      */
     public function testReplaceListRaisesExceptionWithInvalidData($data)
     {
-        $this->setExpectedException(Exception\InvalidArgumentException::class);
+        $this->expectException(Exception\InvalidArgumentException::class);
         $this->resource->replaceList($data);
     }
 
@@ -247,7 +247,7 @@ class ResourceTest extends TestCase
      */
     public function testPatchRaisesExceptionWithInvalidData($data)
     {
-        $this->setExpectedException(Exception\InvalidArgumentException::class);
+        $this->expectException(Exception\InvalidArgumentException::class);
         $this->resource->patch('foo', $data);
     }
 
@@ -322,7 +322,7 @@ class ResourceTest extends TestCase
      */
     public function testDeleteListRaisesInvalidArgumentExceptionForInvalidData($data)
     {
-        $this->setExpectedException(Exception\InvalidArgumentException::class, '::deleteList');
+        $this->expectException(Exception\InvalidArgumentException::class, '::deleteList');
         $this->resource->deleteList($data);
     }
 

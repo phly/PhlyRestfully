@@ -14,7 +14,7 @@ use PhlyRestfully\Link;
 use PhlyRestfully\MetadataMap;
 use PhlyRestfully\Plugin\HalLinks;
 use PhlyRestfully\ResourceController;
-use PHPUnit_Framework_TestCase as TestCase;
+use PHPUnit\Framework\TestCase as TestCase;
 use Zend\Http\Request;
 use Zend\Hydrator;
 use Zend\Mvc\Router\Http\TreeRouteStack;

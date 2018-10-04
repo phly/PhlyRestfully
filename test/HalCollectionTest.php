@@ -12,7 +12,7 @@ use PhlyRestfully\Exception;
 use PhlyRestfully\HalCollection;
 use PhlyRestfully\Link;
 use PhlyRestfully\LinkCollection;
-use PHPUnit_Framework_TestCase as TestCase;
+use PHPUnit\Framework\TestCase as TestCase;
 use stdClass;
 
 class HalCollectionTest extends TestCase
@@ -37,7 +37,7 @@ class HalCollectionTest extends TestCase
      */
     public function testConstructorRaisesExceptionForNonTraversableCollection($collection)
     {
-        $this->setExpectedException(Exception\InvalidCollectionException::class);
+        $this->expectException(Exception\InvalidCollectionException::class);
         $hal = new HalCollection($collection, 'collection/route', 'item/route');
     }
 

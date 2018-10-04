@@ -15,7 +15,7 @@ use PhlyRestfully\Link;
 use PhlyRestfully\View\RestfulJsonModel;
 use PhlyRestfully\View\RestfulJsonRenderer;
 use PhlyRestfully\View\RestfulJsonStrategy;
-use PHPUnit_Framework_TestCase as TestCase;
+use PHPUnit\Framework\TestCase as TestCase;
 use Zend\Http\Response;
 use Zend\View\Renderer\JsonRenderer;
 use Zend\View\ViewEvent;

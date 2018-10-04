@@ -37,7 +37,7 @@
     },
     "require-dev": {
         "friendsofphp/php-cs-fixer": "^2.10",
-        "phpunit/PHPUnit": "^5.7.11",
+        "phpunit/PHPUnit": "^5.7.11 || ^6.0 || ^7.0",
         "vimeo/psalm": "1.1.4",
         "zendframework/zend-console": "^2.5",
         "zendframework/zend-http": "^2.5",
