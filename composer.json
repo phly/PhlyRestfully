@@ -25,24 +25,25 @@
     ],
     "require": {
         "php": ">=5.6",
-        "zendframework/zend-eventmanager": "^2.6",
+        "zendframework/zend-eventmanager": "^3.0",
         "zendframework/zend-json": "^2.5.0|^3.0.0",
         "zendframework/zend-loader": "^2.5.0",
         "zendframework/zend-mvc": "^2.7.13",
         "zendframework/zend-paginator": "^2.5.0",
         "zendframework/zend-uri": "^2.5.0",
-        "zendframework/zend-view": "^2.7.0",
-        "zendframework/zend-stdlib": "^2.5.0",
-        "zendframework/zend-hydrator": "^1.1"
+        "zendframework/zend-view": "^2.11.4",
+        "zendframework/zend-stdlib": "^3.2.1",
+        "zendframework/zend-hydrator": "^2.4.2"
     },
     "require-dev": {
-        "friendsofphp/php-cs-fixer": "^2.10",
-        "phpunit/PHPUnit": "^5.7.11 || ^6.0 || ^7.0",
-        "vimeo/psalm": "1.1.4",
+        "friendsofphp/php-cs-fixer": "2.16.1",
+        "phpunit/phpunit": "^7.5.15",
+        "vimeo/psalm": "3.8.1",
         "zendframework/zend-console": "^2.5",
         "zendframework/zend-http": "^2.5",
         "zendframework/zend-navigation": "^2.5",
-        "zendframework/zend-servicemanager": "^2.5"
+        "zendframework/zend-servicemanager": "^3.0",
+        "phpstan/phpstan": "0.12.3"
     },
     "suggest": {
         "zfr/zfr-cors": "zfr/zfr-cors provides CORS support"
@@ -56,5 +57,9 @@
         "psr-4": {
             "PhlyRestfullyTest\\": "test/"
         }
+    },
+    "scripts": {
+        "phpstan": "phpstan analyse -c phpstan.neon --memory-limit=768M --no-progress --ansi",
+        "psalm": "psalm --show-info=false"
     }
 }

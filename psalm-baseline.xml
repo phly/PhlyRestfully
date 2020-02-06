@@ -1,0 +1,192 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<files psalm-version="3.8.1@8e54e3aa060fc490d86d0e2abbf62750516d40fd">
+  <file src="src/ApiProblem.php">
+    <RedundantCondition occurrences="2">
+      <code>null === $this-&gt;title</code>
+    </RedundantCondition>
+    <RedundantConditionGivenDocblockType occurrences="1">
+      <code>null !== $this-&gt;title</code>
+    </RedundantConditionGivenDocblockType>
+  </file>
+  <file src="src/Exception/DomainException.php">
+    <MissingConstructor occurrences="1">
+      <code>$describedBy</code>
+    </MissingConstructor>
+  </file>
+  <file src="src/Factory/ResourceControllerFactory.php">
+    <MoreSpecificImplementedParamType occurrences="2">
+      <code>$controllers</code>
+      <code>$controllers</code>
+    </MoreSpecificImplementedParamType>
+  </file>
+  <file src="src/HalCollection.php">
+    <DocblockTypeContradiction occurrences="10">
+      <code>gettype($collection)</code>
+      <code>is_array($options)</code>
+      <code>is_array($params)</code>
+      <code>is_int($page)</code>
+      <code>!is_int($page) &amp;&amp; !is_numeric($page)</code>
+      <code>is_int($size)</code>
+      <code>!is_int($size) &amp;&amp; !is_numeric($size)</code>
+      <code>is_array($options)</code>
+      <code>is_array($params)</code>
+      <code>$this-&gt;links instanceof LinkCollection</code>
+    </DocblockTypeContradiction>
+    <InvalidPropertyAssignmentValue occurrences="1">
+      <code>$collection</code>
+    </InvalidPropertyAssignmentValue>
+    <PropertyNotSetInConstructor occurrences="1">
+      <code>$resourceLinks</code>
+    </PropertyNotSetInConstructor>
+    <RedundantConditionGivenDocblockType occurrences="3">
+      <code>is_object($collection)</code>
+      <code>is_int($page)</code>
+      <code>is_int($size)</code>
+    </RedundantConditionGivenDocblockType>
+  </file>
+  <file src="src/HalResource.php">
+    <DocblockTypeContradiction occurrences="3">
+      <code>is_array($resource)</code>
+      <code>!is_object($resource) &amp;&amp; !is_array($resource)</code>
+      <code>$this-&gt;links instanceof LinkCollection</code>
+    </DocblockTypeContradiction>
+    <PropertyNotSetInConstructor occurrences="1">
+      <code>$links</code>
+    </PropertyNotSetInConstructor>
+  </file>
+  <file src="src/Link.php">
+    <DocblockTypeContradiction occurrences="2">
+      <code>is_array($options)</code>
+      <code>is_array($params)</code>
+    </DocblockTypeContradiction>
+    <PropertyNotSetInConstructor occurrences="2">
+      <code>$route</code>
+      <code>$url</code>
+    </PropertyNotSetInConstructor>
+  </file>
+  <file src="src/Metadata.php">
+    <DocblockTypeContradiction occurrences="1">
+      <code>null === $this-&gt;resourceRoute</code>
+    </DocblockTypeContradiction>
+    <PropertyNotSetInConstructor occurrences="5">
+      <code>$hydrator</code>
+      <code>$hydrators</code>
+      <code>$resourceRoute</code>
+      <code>$route</code>
+      <code>$url</code>
+    </PropertyNotSetInConstructor>
+    <RedundantConditionGivenDocblockType occurrences="5">
+      <code>null !== $this-&gt;hydrator</code>
+      <code>null !== $this-&gt;route</code>
+      <code>null !== $this-&gt;url</code>
+      <code>null !== $this-&gt;hydrators</code>
+      <code>is_string($hydrator)</code>
+    </RedundantConditionGivenDocblockType>
+  </file>
+  <file src="src/MetadataMap.php">
+    <DocblockTypeContradiction occurrences="1">
+      <code>null === $this-&gt;hydrators</code>
+    </DocblockTypeContradiction>
+    <PropertyNotSetInConstructor occurrences="1">
+      <code>$hydrators</code>
+    </PropertyNotSetInConstructor>
+  </file>
+  <file src="src/Plugin/HalLinks.php">
+    <DocblockTypeContradiction occurrences="5">
+      <code>$this-&gt;events</code>
+      <code>$this-&gt;metadataMap instanceof MetadataMap</code>
+      <code>is_object($hydrator)</code>
+      <code>gettype($hydrator)</code>
+      <code>false === $identifierName</code>
+    </DocblockTypeContradiction>
+    <PossiblyInvalidArgument occurrences="4">
+      <code>$resource</code>
+      <code>$eventParams['routeParams']</code>
+      <code>$eventParams['route']</code>
+      <code>$eventParams['routeOptions']</code>
+    </PossiblyInvalidArgument>
+    <PossiblyInvalidMethodCall occurrences="2">
+      <code>setItemCountPerPage</code>
+      <code>setCurrentPageNumber</code>
+    </PossiblyInvalidMethodCall>
+    <PossiblyNullArgument occurrences="1">
+      <code>$id</code>
+    </PossiblyNullArgument>
+    <PossiblyUndefinedMethod occurrences="3">
+      <code>setItemCountPerPage</code>
+      <code>setCurrentPageNumber</code>
+      <code>$halCollection-&gt;collection</code>
+    </PossiblyUndefinedMethod>
+    <PropertyNotSetInConstructor occurrences="6">
+      <code>$controller</code>
+      <code>$defaultHydrator</code>
+      <code>$events</code>
+      <code>$metadataMap</code>
+      <code>$serverUrlHelper</code>
+      <code>$urlHelper</code>
+    </PropertyNotSetInConstructor>
+    <RedundantConditionGivenDocblockType occurrences="4">
+      <code>is_string($hydrator)</code>
+      <code>$hydrator instanceof HydratorInterface</code>
+      <code>$this-&gt;defaultHydrator instanceof HydratorInterface</code>
+      <code>false !== $identifierName</code>
+    </RedundantConditionGivenDocblockType>
+  </file>
+  <file src="src/Resource.php">
+    <DocblockTypeContradiction occurrences="8">
+      <code>$this-&gt;events</code>
+      <code>is_object($data)</code>
+      <code>is_array($data)</code>
+      <code>is_object($data)</code>
+      <code>is_array($data)</code>
+      <code>is_object($value)</code>
+      <code>is_object($data)</code>
+    </DocblockTypeContradiction>
+    <ImplementedReturnTypeMismatch occurrences="4">
+      <code>bool|ApiProblem</code>
+      <code>bool|ApiProblem</code>
+      <code>ApiProblem|HalCollection|iterable&lt;array-key|mixed, mixed&gt;</code>
+      <code>$this</code>
+    </ImplementedReturnTypeMismatch>
+    <MissingConstructor occurrences="1">
+      <code>$events</code>
+    </MissingConstructor>
+  </file>
+  <file src="src/ResourceController.php">
+    <DocblockTypeContradiction occurrences="2">
+      <code>$this-&gt;resource === null</code>
+      <code>$this-&gt;resource</code>
+    </DocblockTypeContradiction>
+    <ImplementedReturnTypeMismatch occurrences="1">
+      <code>Response|ApiProblem|HalResource</code>
+    </ImplementedReturnTypeMismatch>
+    <MoreSpecificImplementedParamType occurrences="7">
+      <code>$data</code>
+      <code>$data</code>
+      <code>$id</code>
+      <code>$id</code>
+      <code>$id</code>
+      <code>$data</code>
+      <code>$request</code>
+    </MoreSpecificImplementedParamType>
+    <PropertyNotSetInConstructor occurrences="4">
+      <code>$pageSizeParam</code>
+      <code>$resource</code>
+      <code>$route</code>
+      <code>ResourceController</code>
+    </PropertyNotSetInConstructor>
+  </file>
+  <file src="src/ResourceEvent.php">
+    <PropertyNotSetInConstructor occurrences="1">
+      <code>ResourceEvent</code>
+    </PropertyNotSetInConstructor>
+  </file>
+  <file src="src/View/RestfulJsonRenderer.php">
+    <DocblockTypeContradiction occurrences="1">
+      <code>$this-&gt;helpers instanceof HelperPluginManager</code>
+    </DocblockTypeContradiction>
+    <MissingConstructor occurrences="1">
+      <code>$helpers</code>
+    </MissingConstructor>
+  </file>
+</files>

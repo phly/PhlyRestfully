@@ -19,9 +19,11 @@ use PhlyRestfully\View\RestfulJsonRenderer;
 use PHPUnit\Framework\TestCase as TestCase;
 use ReflectionObject;
 use Zend\Http\Request;
+use Zend\Hydrator\HydratorPluginManager;
 use Zend\Mvc\Controller\PluginManager as ControllerPluginManager;
 use Zend\Mvc\Router\Http\TreeRouteStack;
 use Zend\Mvc\Router\RouteMatch;
+use Zend\ServiceManager\ServiceManager;
 use Zend\View\HelperPluginManager;
 use Zend\View\Helper\ServerUrl as ServerUrlHelper;
 use Zend\View\Helper\Url as UrlHelper;
@@ -51,17 +53,22 @@ class ChildResourcesIntegrationTest extends TestCase
         $serverUrlHelper->setScheme('http');
         $serverUrlHelper->setHost('localhost.localdomain');
 
-        $linksHelper = new HalLinks();
+        $this->serviceManager = new ServiceManager();
+
+        $hydratorPluginManager = new HydratorPluginManager($this->serviceManager);
+        $this->serviceManager->setService('HydratorManager', $hydratorPluginManager);
+
+        $linksHelper = new HalLinks($hydratorPluginManager);
         $linksHelper->setUrlHelper($urlHelper);
         $linksHelper->setServerUrlHelper($serverUrlHelper);
 
-        $this->helpers = $helpers = new HelperPluginManager();
-        $helpers->setService('url', $urlHelper);
-        $helpers->setService('serverUrl', $serverUrlHelper);
-        $helpers->setService('halLinks', $linksHelper);
+        $this->helpers = $helpers = new HelperPluginManager($this->serviceManager);
+        $helpers->setService('Url', $urlHelper);
+        $helpers->setService('ServerUrl', $serverUrlHelper);
+        $helpers->setService('HalLinks', $linksHelper);
 
-        $this->plugins = $plugins = new ControllerPluginManager();
-        $plugins->setService('halLinks', $linksHelper);
+        $this->plugins = $plugins = new ControllerPluginManager($this->serviceManager);
+        $plugins->setService('HalLinks', $linksHelper);
     }
 
     public function setupRenderer()
@@ -70,6 +77,7 @@ class ChildResourcesIntegrationTest extends TestCase
             $this->setupHelpers();
         }
         $this->renderer = $renderer = new RestfulJsonRenderer();
+        $renderer->setServiceManager($this->serviceManager);
         $renderer->setHelperPluginManager($this->helpers);
     }
 
@@ -169,7 +177,7 @@ class ChildResourcesIntegrationTest extends TestCase
         $this->assertEquals('parent', $matches->getMatchedRouteName());
 
         // Emulate url helper factory and inject route matches
-        $this->helpers->get('url')->setRouteMatch($matches);
+        $this->helpers->get('Url')->setRouteMatch($matches);
 
         $parent = $this->setUpParentResource();
         $model  = new RestfulJsonModel();
@@ -195,7 +203,7 @@ class ChildResourcesIntegrationTest extends TestCase
         $this->assertEquals('parent/child', $matches->getMatchedRouteName());
 
         // Emulate url helper factory and inject route matches
-        $this->helpers->get('url')->setRouteMatch($matches);
+        $this->helpers->get('Url')->setRouteMatch($matches);
 
         $child = $this->setUpChildResource('luke', 'Luke Skywalker');
         $model = new RestfulJsonModel();
@@ -221,7 +229,7 @@ class ChildResourcesIntegrationTest extends TestCase
         $this->assertEquals('parent/child', $matches->getMatchedRouteName());
 
         // Emulate url helper factory and inject route matches
-        $this->helpers->get('url')->setRouteMatch($matches);
+        $this->helpers->get('Url')->setRouteMatch($matches);
 
         $collection = $this->setUpChildCollection();
         $model = new RestfulJsonModel();
@@ -236,7 +244,7 @@ class ChildResourcesIntegrationTest extends TestCase
 
         $this->assertObjectHasAttribute('_embedded', $test);
         $this->assertObjectHasAttribute('child', $test->_embedded);
-        $this->assertInternalType('array', $test->_embedded->child);
+        $this->assertIsArray($test->_embedded->child);
 
         foreach ($test->_embedded->child as $child) {
             $this->assertObjectHasAttribute('_links', $child);
@@ -276,7 +284,7 @@ class ChildResourcesIntegrationTest extends TestCase
         ];
         $this->router = $router = new TreeRouteStack();
         $router->addRoutes($routes);
-        $this->helpers->get('url')->setRouter($router);
+        $this->helpers->get('Url')->setRouter($router);
     }
 
     public function testChildResourceObjectIdentiferMapping()
@@ -293,7 +301,7 @@ class ChildResourcesIntegrationTest extends TestCase
         $this->assertEquals('parent/child', $matches->getMatchedRouteName());
 
         // Emulate url helper factory and inject route matches
-        $this->helpers->get('url')->setRouteMatch($matches);
+        $this->helpers->get('Url')->setRouteMatch($matches);
 
         $child = $this->setUpChildResource('luke', 'Luke Skywalker');
         $model = new RestfulJsonModel();
@@ -321,7 +329,7 @@ class ChildResourcesIntegrationTest extends TestCase
         $this->assertEquals('parent/child', $matches->getMatchedRouteName());
 
         // Emulate url helper factory and inject route matches
-        $this->helpers->get('url')->setRouteMatch($matches);
+        $this->helpers->get('Url')->setRouteMatch($matches);
 
         $collection = $this->setUpChildCollection();
         $model = new RestfulJsonModel();
@@ -336,7 +344,7 @@ class ChildResourcesIntegrationTest extends TestCase
 
         $this->assertObjectHasAttribute('_embedded', $test);
         $this->assertObjectHasAttribute('child', $test->_embedded);
-        $this->assertInternalType('array', $test->_embedded->child);
+        $this->assertIsArray($test->_embedded->child);
 
         foreach ($test->_embedded->child as $child) {
             $this->assertObjectHasAttribute('_links', $child);
@@ -378,7 +386,7 @@ class ChildResourcesIntegrationTest extends TestCase
         $this->assertEquals('parent/child', $matches->getMatchedRouteName());
 
         // Emulate url helper factory and inject route matches
-        $this->helpers->get('url')->setRouteMatch($matches);
+        $this->helpers->get('Url')->setRouteMatch($matches);
 
         // Ensure we matched an identifier!
         $id = $m->invoke($controller, $matches, $request);
@@ -429,7 +437,7 @@ class ChildResourcesIntegrationTest extends TestCase
         $this->assertEquals('parent/child', $matches->getMatchedRouteName());
 
         // Emulate url helper factory and inject route matches
-        $this->helpers->get('url')->setRouteMatch($matches);
+        $this->helpers->get('Url')->setRouteMatch($matches);
 
         $result = $controller->getList();
         $this->assertInstanceOf(HalCollection::class, $result);
@@ -447,7 +455,7 @@ class ChildResourcesIntegrationTest extends TestCase
 
         $this->assertObjectHasAttribute('_embedded', $test);
         $this->assertObjectHasAttribute('children', $test->_embedded);
-        $this->assertInternalType('array', $test->_embedded->children);
+        $this->assertIsArray($test->_embedded->children);
 
         foreach ($test->_embedded->children as $child) {
             $this->assertObjectHasAttribute('_links', $child);

@@ -1,0 +1,102 @@
+parameters:
+	ignoreErrors:
+		-
+			message: "#^Result of && is always false\\.$#"
+			count: 3
+			path: src/HalCollection.php
+
+		-
+			message: "#^Else branch is unreachable because ternary operator condition is always true\\.$#"
+			count: 5
+			path: src/HalCollection.php
+
+		-
+			message: "#^Result of && is always false\\.$#"
+			count: 1
+			path: src/HalResource.php
+
+		-
+			message: "#^Unsafe usage of new static\\(\\)\\.$#"
+			count: 1
+			path: src/Link.php
+
+		-
+			message: "#^Else branch is unreachable because ternary operator condition is always true\\.$#"
+			count: 2
+			path: src/Link.php
+
+		-
+			message: "#^Parameter \\#1 \\$listener of method Zend\\\\EventManager\\\\SharedEventManagerInterface\\:\\:detach\\(\\) expects callable\\(\\)\\: mixed, 'PhlyRestfully…' given\\.$#"
+			count: 1
+			path: src/Listener/ResourceParametersListener.php
+
+		-
+			message: "#^Parameter \\#1 \\$matches of method PhlyRestfully\\\\ResourceInterface\\:\\:setRouteMatch\\(\\) expects Zend\\\\Mvc\\\\Router\\\\RouteMatch, Zend\\\\Mvc\\\\Router\\\\RouteMatch\\|null given\\.$#"
+			count: 1
+			path: src/Listener/ResourceParametersListener.php
+
+		-
+			message: "#^Negated boolean expression is always false\\.$#"
+			count: 1
+			path: src/Plugin/HalLinks.php
+
+		-
+			message: "#^Call to function is_object\\(\\) with string will always evaluate to false\\.$#"
+			count: 1
+			path: src/Plugin/HalLinks.php
+
+		-
+			message: "#^Else branch is unreachable because ternary operator condition is always true\\.$#"
+			count: 1
+			path: src/Plugin/HalLinks.php
+
+		-
+			message: "#^Unreachable statement \\- code above always terminates\\.$#"
+			count: 1
+			path: src/Plugin/HalLinks.php
+
+		-
+			message: "#^Parameter \\#1 \\$collection of class PhlyRestfully\\\\HalCollection constructor expects array\\|Traversable, array\\|object given\\.$#"
+			count: 1
+			path: src/Plugin/HalLinks.php
+
+		-
+			message: "#^Parameter \\#1 \\$collection of class PhlyRestfully\\\\HalCollection constructor expects array\\|Traversable, object given\\.$#"
+			count: 1
+			path: src/Plugin/HalLinks.php
+
+		-
+			message: "#^Cannot call method setItemCountPerPage\\(\\) on array\\|Traversable\\.$#"
+			count: 1
+			path: src/Plugin/HalLinks.php
+
+		-
+			message: "#^Cannot call method setCurrentPageNumber\\(\\) on array\\|Traversable\\.$#"
+			count: 1
+			path: src/Plugin/HalLinks.php
+
+		-
+			message: "#^Parameter \\#1 \\$var of function count expects array\\|Countable, array\\|Traversable given\\.$#"
+			count: 1
+			path: src/Plugin/HalLinks.php
+
+		-
+			message: "#^Negated boolean expression is always false\\.$#"
+			count: 1
+			path: src/Resource.php
+
+		-
+			message: "#^Result of && is always false\\.$#"
+			count: 2
+			path: src/Resource.php
+
+		-
+			message: "#^Negated boolean expression is always false\\.$#"
+			count: 1
+			path: src/ResourceController.php
+
+		-
+			message: "#^Return type \\(PhlyRestfully\\\\ApiProblem\\|PhlyRestfully\\\\HalResource\\|Zend\\\\Http\\\\Response\\) of method PhlyRestfully\\\\ResourceController\\:\\:patch\\(\\) should be compatible with return type \\(array\\) of method Zend\\\\Mvc\\\\Controller\\\\AbstractRestfulController\\:\\:patch\\(\\)$#"
+			count: 1
+			path: src/ResourceController.php
+

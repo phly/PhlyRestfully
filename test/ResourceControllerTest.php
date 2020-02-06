@@ -22,6 +22,7 @@ use stdClass;
 use Zend\EventManager\EventManager;
 use Zend\EventManager\SharedEventManager;
 use Zend\Http;
+use Zend\Hydrator\HydratorPluginManager;
 use Zend\Mvc\Controller\PluginManager;
 use Zend\Mvc\MvcEvent;
 use Zend\Mvc\Router\Http\Segment;
@@ -29,6 +30,7 @@ use Zend\Mvc\Router\RouteMatch;
 use Zend\Mvc\Router\SimpleRouteStack;
 use Zend\Paginator\Adapter\ArrayAdapter as ArrayPaginator;
 use Zend\Paginator\Paginator;
+use Zend\ServiceManager\ServiceManager;
 use Zend\Stdlib\Parameters;
 use Zend\View\Helper\ServerUrl as ServerUrlHelper;
 use Zend\View\Helper\Url as UrlHelper;
@@ -52,7 +54,9 @@ class ResourceControllerTest extends TestCase
         $controller->setEvent($event);
         $controller->setRoute('resource');
 
-        $pluginManager = new PluginManager();
+        $serviceManager = new ServiceManager();
+
+        $pluginManager = new PluginManager($serviceManager);
         $controller->setPluginManager($pluginManager);
 
         $urlHelper = new UrlHelper();
@@ -62,7 +66,9 @@ class ResourceControllerTest extends TestCase
         $serverUrlHelper->setScheme('http');
         $serverUrlHelper->setHost('localhost.localdomain');
 
-        $linksHelper = new Plugin\HalLinks();
+        $hydratorPluginManager = new HydratorPluginManager($serviceManager);
+
+        $linksHelper = new Plugin\HalLinks($hydratorPluginManager);
         $linksHelper->setUrlHelper($urlHelper);
         $linksHelper->setServerUrlHelper($serverUrlHelper);
 
@@ -442,7 +448,8 @@ class ResourceControllerTest extends TestCase
     public function testOnDispatchRaisesDomainExceptionOnMissingResource()
     {
         $controller = new ResourceController();
-        $this->expectException(Exception\DomainException::class, 'ResourceInterface');
+        $this->expectException(Exception\DomainException::class);
+        $this->expectExceptionMessage('ResourceInterface');
         $controller->onDispatch($this->event);
     }
 
@@ -450,7 +457,8 @@ class ResourceControllerTest extends TestCase
     {
         $controller = new ResourceController();
         $controller->setResource($this->resource);
-        $this->expectException(Exception\DomainException::class, 'route');
+        $this->expectException(Exception\DomainException::class);
+        $this->expectExceptionMessage('route');
         $controller->onDispatch($this->event);
     }
 
@@ -529,9 +537,9 @@ class ResourceControllerTest extends TestCase
     public function testPassingIdentifierToConstructorAllowsListeningOnThatIdentifier()
     {
         $controller   = new ResourceController('MyNamespace\Controller\Foo');
-        $events       = new EventManager();
         $sharedEvents = new SharedEventManager();
-        $events->setSharedManager($sharedEvents);
+        $events       = new EventManager($sharedEvents);
+
         $controller->setEventManager($events);
 
         $test = new stdClass;
@@ -1027,10 +1035,11 @@ class ResourceControllerTest extends TestCase
     }
 
     /**
-     * @expectedException \PhlyRestfully\Exception\DomainException
      */
     public function testGetResourceThrowsExceptionOnMissingResource()
     {
+        $this->expectException(\PhlyRestfully\Exception\DomainException::class);
+
         $controller = new ResourceController();
         $controller->getResource();
     }

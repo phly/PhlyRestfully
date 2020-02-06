@@ -13,7 +13,7 @@ use Zend\EventManager\ListenerAggregateInterface;
 
 class Listener implements ListenerAggregateInterface
 {
-    public function attach(EventManagerInterface $events)
+    public function attach(EventManagerInterface $events, $priority = 1)
     {
     }
 

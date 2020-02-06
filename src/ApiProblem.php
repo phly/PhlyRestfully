@@ -152,7 +152,9 @@ class ApiProblem
 
         $this->httpStatus = $httpStatus;
         $this->detail     = $detail;
-        $this->title      = $title;
+        if ($title !== null) {
+            $this->title      = $title;
+        }
         if (null !== $describedBy) {
             $this->describedBy = $describedBy;
         }
@@ -197,6 +199,8 @@ class ApiProblem
         if ($this->detail instanceof \Exception) {
             return $this->detail;
         }
+
+        return null;
     }
 
     /**
@@ -330,7 +334,7 @@ class ApiProblem
     {
         if ($this->detail instanceof \Exception) {
             $e = $this->detail;
-            $httpStatus = $e->getCode();
+            $httpStatus = (int) $e->getCode();
             if (!empty($httpStatus)) {
                 return $httpStatus;
             } else {

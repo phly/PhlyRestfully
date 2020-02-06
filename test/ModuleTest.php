@@ -58,7 +58,7 @@ class ModuleTest extends TestCase
         $app->expects($this->once())
             ->method('getMvcEvent')
             ->will($this->returnValue($event));
-        $services->setService('application', $app);
+        $services->setService('Application', $app);
 
         $helpers = $services->get('ViewHelperManager');
         $helpersConfig = new Config($config['view_helpers']);
@@ -82,9 +82,9 @@ class ModuleTest extends TestCase
         ];
 
         $services = $this->setupServiceManager();
-        $config   = $services->get('Config');
+        $config   = $services->get('config');
         $services->setAllowOverride(true);
-        $services->setService('Config', ArrayUtils::merge($config, $options));
+        $services->setService('config', ArrayUtils::merge($config, $options));
 
         $helpers = $services->get('ViewHelperManager');
         $plugin  = $helpers->get('HalLinks');
@@ -107,9 +107,9 @@ class ModuleTest extends TestCase
         ];
 
         $services = $this->setupServiceManager();
-        $config   = $services->get('Config');
+        $config   = $services->get('config');
         $services->setAllowOverride(true);
-        $services->setService('Config', ArrayUtils::merge($config, $options));
+        $services->setService('config', ArrayUtils::merge($config, $options));
 
         $helpers = $services->get('ViewHelperManager');
         $plugin  = $helpers->get('HalLinks');
@@ -121,7 +121,7 @@ class ModuleTest extends TestCase
 
         $hydrators   = $plugin->getHydratorManager();
 
-        $this->assertInternalType('array', $hydratorMap);
+        $this->assertIsArray($hydratorMap);
 
         foreach ($options['phlyrestfully']['renderer']['hydrators'] as $class => $serviceName) {
             $key = strtolower($class);

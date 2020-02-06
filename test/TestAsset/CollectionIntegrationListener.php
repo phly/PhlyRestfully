@@ -17,7 +17,7 @@ class CollectionIntegrationListener implements ListenerAggregateInterface
 
     protected $listeners = [];
 
-    public function attach(EventManagerInterface $events)
+    public function attach(EventManagerInterface $events, $priority = 1)
     {
         $this->listeners[] = $events->attach('fetchAll', [$this, 'onFetchAll']);
     }
@@ -25,9 +25,8 @@ class CollectionIntegrationListener implements ListenerAggregateInterface
     public function detach(EventManagerInterface $events)
     {
         foreach ($this->listeners as $index => $listener) {
-            if ($events->detach($listener)) {
-                unset($this->listeners[$index]);
-            }
+            $events->detach($listener);
+            unset($this->listeners[$index]);
         }
     }
 

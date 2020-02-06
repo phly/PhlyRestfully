@@ -189,9 +189,15 @@ class Resource implements ResourceInterface
         /** @var \Zend\EventManager\EventManager $events */
         $events  = $this->getEventManager();
         $event   = $this->prepareEvent(__FUNCTION__, ['data' => $data]);
-        $results = $events->triggerEventUntil(function ($result) {
-            return $result instanceof ApiProblem;
-        }, $event);
+        $results = $events->triggerEventUntil(
+            /**
+             * @param object $result
+             */
+            function ($result): bool {
+                return $result instanceof ApiProblem;
+            },
+            $event
+        );
         $last    = $results->last();
         if (!is_array($last) && !is_object($last)) {
             return $data;
@@ -227,27 +233,40 @@ class Resource implements ResourceInterface
         }
 
         $original = $data;
-        array_walk($data, function ($value, $key) use (&$data) {
-            if (is_array($value)) {
-                $data[$key] = new ArrayObject($value);
-                return;
-            }
+        array_walk(
+            $data,
+            /**
+             * @param array|string $value
+             * @param string|int $key
+             */
+            function ($value, $key) use (&$data): void {
+                if (is_array($value)) {
+                    $data[$key] = new ArrayObject($value);
+                    return;
+                }
 
-            if (!is_object($value)) {
-                throw new Exception\InvalidArgumentException(sprintf(
-                    'Data provided to patchList must contain only arrays or objects; received "%s"',
-                    gettype($value)
-                ));
+                if (!is_object($value)) {
+                    throw new Exception\InvalidArgumentException(sprintf(
+                        'Data provided to patchList must contain only arrays or objects; received "%s"',
+                        gettype($value)
+                    ));
+                }
             }
-        });
+        );
 
         $data     = new ArrayObject($data);
         /** @var \Zend\EventManager\EventManager $events */
         $events   = $this->getEventManager();
         $event    = $this->prepareEvent(__FUNCTION__, ['data' => $data]);
-        $results  = $events->triggerEventUntil(function ($result) {
-            return $result instanceof ApiProblem;
-        }, $event);
+        $results  = $events->triggerEventUntil(
+            /**
+             * @param object $result
+             */
+            function ($result): bool {
+                return $result instanceof ApiProblem;
+            },
+            $event
+        );
         $last     = $results->last();
         if (!is_array($last) && !is_object($last)) {
             return $original;
@@ -287,9 +306,15 @@ class Resource implements ResourceInterface
         /** @var \Zend\EventManager\EventManager $events */
         $events  = $this->getEventManager();
         $event   = $this->prepareEvent(__FUNCTION__, compact('id', 'data'));
-        $results = $events->triggerEventUntil(function ($result) {
-            return $result instanceof ApiProblem;
-        }, $event);
+        $results = $events->triggerEventUntil(
+            /**
+             * @param object $result
+             */
+            function ($result): bool {
+                return $result instanceof ApiProblem;
+            },
+            $event
+        );
         $last    = $results->last();
         if (!is_array($last) && !is_object($last)) {
             return $data;
@@ -322,25 +347,38 @@ class Resource implements ResourceInterface
                 gettype($data)
             ));
         }
-        array_walk($data, function ($value, $key) use (&$data) {
-            if (is_array($value)) {
-                $data[$key] = (object) $value;
-                return;
-            }
+        array_walk(
+            $data,
+            /**
+             * @param array|object $value
+             * @param string|int $key
+             */
+            function ($value, $key) use (&$data): void {
+                if (is_array($value)) {
+                    $data[$key] = (object) $value;
+                    return;
+                }
 
-            if (!is_object($value)) {
-                throw new Exception\InvalidArgumentException(sprintf(
-                    'Data provided to replaceList must contain only arrays or objects; received "%s"',
-                    gettype($value)
-                ));
+                if (!is_object($value)) {
+                    throw new Exception\InvalidArgumentException(sprintf(
+                        'Data provided to replaceList must contain only arrays or objects; received "%s"',
+                        gettype($value)
+                    ));
+                }
             }
-        });
+        );
         /** @var \Zend\EventManager\EventManager $events */
         $events  = $this->getEventManager();
         $event   = $this->prepareEvent(__FUNCTION__, ['data' => $data]);
-        $results = $events->triggerEventUntil(function ($result) {
-            return $result instanceof ApiProblem;
-        }, $event);
+        $results = $events->triggerEventUntil(
+            /**
+             * @param object $result
+             */
+            function ($result): bool {
+                return $result instanceof ApiProblem;
+            },
+            $event
+        );
         $last    = $results->last();
         if (!is_array($last) && !is_object($last)) {
             return $data;
@@ -381,9 +419,15 @@ class Resource implements ResourceInterface
         /** @var \Zend\EventManager\EventManager $events */
         $events  = $this->getEventManager();
         $event   = $this->prepareEvent(__FUNCTION__, compact('id', 'data'));
-        $results = $events->triggerEventUntil(function ($result) {
-            return $result instanceof ApiProblem;
-        }, $event);
+        $results = $events->triggerEventUntil(
+            /**
+             * @param object $result
+             */
+            function ($result): bool {
+                return $result instanceof ApiProblem;
+            },
+            $event
+        );
         $last    = $results->last();
         if (!is_array($last) && !is_object($last)) {
             return $data;
@@ -406,9 +450,15 @@ class Resource implements ResourceInterface
         /** @var \Zend\EventManager\EventManager $events */
         $events  = $this->getEventManager();
         $event   = $this->prepareEvent(__FUNCTION__, ['id' => $id]);
-        $results = $events->triggerEventUntil(function ($result) {
-            return $result instanceof ApiProblem;
-        }, $event);
+        $results = $events->triggerEventUntil(
+            /**
+             * @param object $result
+             */
+            function ($result): bool {
+                return $result instanceof ApiProblem;
+            },
+            $event
+        );
         $last    = $results->last();
         if (!is_bool($last) && !$last instanceof ApiProblem) {
             return false;
@@ -419,7 +469,7 @@ class Resource implements ResourceInterface
     /**
      * Delete an existing collection of records
      *
-     * @param  null|array $data
+     * @param  null|array|Traversable $data
      * @return bool|ApiProblem
      */
     public function deleteList($data = null)
@@ -436,9 +486,15 @@ class Resource implements ResourceInterface
         /** @var \Zend\EventManager\EventManager $events */
         $events  = $this->getEventManager();
         $event   = $this->prepareEvent(__FUNCTION__, ['data' => $data]);
-        $results = $events->triggerEventUntil(function ($result) {
-            return $result instanceof ApiProblem;
-        }, $event);
+        $results = $events->triggerEventUntil(
+            /**
+             * @param object $result
+             */
+            function ($result): bool {
+                return $result instanceof ApiProblem;
+            },
+            $event
+        );
         $last    = $results->last();
         if (!is_bool($last) && !$last instanceof ApiProblem) {
             return false;
@@ -462,9 +518,15 @@ class Resource implements ResourceInterface
         /** @var \Zend\EventManager\EventManager $events */
         $events  = $this->getEventManager();
         $event   = $this->prepareEvent(__FUNCTION__, ['id' => $id]);
-        $results = $events->triggerEventUntil(function ($result) {
-            return $result instanceof ApiProblem;
-        }, $event);
+        $results = $events->triggerEventUntil(
+            /**
+             * @param object $result
+             */
+            function ($result): bool {
+                return $result instanceof ApiProblem;
+            },
+            $event
+        );
         $last    = $results->last();
         if (!is_array($last) && !is_object($last)) {
             return false;
@@ -483,7 +545,9 @@ class Resource implements ResourceInterface
      * which will allow performing paginated sets, and thus allow the view
      * layer to select the current page based on the query string or route.
      *
-     * @return array|Traversable|HalCollection|ApiProblem
+     * @return ApiProblem|HalCollection|iterable
+     *
+     * @psalm-return ApiProblem|HalCollection|iterable<array-key|mixed, mixed>
      */
     public function fetchAll()
     {
@@ -491,9 +555,15 @@ class Resource implements ResourceInterface
         $events  = $this->getEventManager();
         $params  = func_get_args();
         $event   = $this->prepareEvent(__FUNCTION__, $params);
-        $results = $events->triggerEventUntil(function ($result) {
-            return $result instanceof ApiProblem;
-        }, $event);
+        $results = $events->triggerEventUntil(
+            /**
+             * @param object $result
+             */
+            function ($result): bool {
+                return $result instanceof ApiProblem;
+            },
+            $event
+        );
         $last    = $results->last();
         if (!is_array($last)
             && !$last instanceof HalCollection
@@ -512,7 +582,7 @@ class Resource implements ResourceInterface
      * to a resource method, and passes them to the `prepareArgs` method of the
      * event manager.
      *
-     * @param  array $args
+     * @param  string $name
      * @return ResourceEvent
      */
     protected function prepareEvent($name, array $args)
@@ -530,7 +600,7 @@ class Resource implements ResourceInterface
      * by listeners and retrieved.
      *
      * @param  array $args
-     * @return ArrayObject
+     * @return ArrayObject|array
      */
     protected function prepareEventParams(array $args)
     {

@@ -18,6 +18,7 @@ use PHPUnit\Framework\TestCase as TestCase;
 use Zend\EventManager\SharedEventManager;
 use Zend\Http\PhpEnvironment\Request;
 use Zend\Http\PhpEnvironment\Response;
+use Zend\Hydrator\HydratorPluginManager;
 use Zend\Mvc\Controller\ControllerManager;
 use Zend\Mvc\Controller\PluginManager as ControllerPluginManager;
 use Zend\Mvc\MvcEvent;
@@ -33,7 +34,6 @@ use Zend\Uri;
 use Zend\View\HelperPluginManager;
 use Zend\View\Helper\ServerUrl as ServerUrlHelper;
 use Zend\View\Helper\Url as UrlHelper;
-use Zend\ServiceManager\Config;
 
 /**
  * @subpackage UnitTest
@@ -48,9 +48,6 @@ class CollectionIntegrationTest extends TestCase
 
     public function setUpHelpers()
     {
-        if (isset($this->helpers)) {
-            return;
-        }
         $this->setupRouter();
 
         $urlHelper = new UrlHelper();
@@ -60,29 +57,34 @@ class CollectionIntegrationTest extends TestCase
         $serverUrlHelper->setScheme('http');
         $serverUrlHelper->setHost('localhost.localdomain');
 
-        $this->linksHelper = $linksHelper = new HalLinks();
+        $this->serviceManager = $this->getServiceManager();
+
+        $hydratorPluginManager = new HydratorPluginManager($this->serviceManager);
+        $this->serviceManager->setService('HydratorManager', $hydratorPluginManager);
+
+        $this->linksHelper = $linksHelper = new HalLinks($hydratorPluginManager);
         $linksHelper->setUrlHelper($urlHelper);
         $linksHelper->setServerUrlHelper($serverUrlHelper);
 
-        $this->helpers = $helpers = new HelperPluginManager();
-        $helpers->setService('url', $urlHelper);
-        $helpers->setService('serverUrl', $serverUrlHelper);
-        $helpers->setService('halLinks', $linksHelper);
+        $plugins = $this->serviceManager->get('ControllerPluginManager');
+        $plugins->setService('HalLinks', $linksHelper);
+
+        $this->helpers = $helpers = new HelperPluginManager($this->serviceManager);
+        $helpers->setService('Url', $urlHelper);
+        $helpers->setService('ServerUrl', $serverUrlHelper);
+        $helpers->setService('HalLinks', $linksHelper);
     }
 
     public function setUpRenderer()
     {
         $this->setupHelpers();
         $this->renderer = $renderer = new RestfulJsonRenderer();
+        $renderer->setServiceManager($this->serviceManager);
         $renderer->setHelperPluginManager($this->helpers);
     }
 
     public function setUpRouter()
     {
-        if (isset($this->router)) {
-            return;
-        }
-
         $this->setUpRequest();
 
         $routes = [
@@ -124,10 +126,6 @@ class CollectionIntegrationTest extends TestCase
 
     public function setUpListeners()
     {
-        if (isset($this->listeners)) {
-            return;
-        }
-
         $this->listeners = new TestAsset\CollectionIntegrationListener();
         $this->listeners->setCollection($this->setUpCollection());
     }
@@ -139,7 +137,7 @@ class CollectionIntegrationTest extends TestCase
 
         $resource = new Resource();
         $events   = $resource->getEventManager();
-        $events->attach($this->listeners);
+        $this->listeners->attach($events);
 
         $controller = $this->controller = new ResourceController('Api\ResourceController');
         $controller->setResource($resource);
@@ -148,17 +146,13 @@ class CollectionIntegrationTest extends TestCase
         $controller->setRoute('resource');
         $controller->setEvent($this->getEvent());
 
-        $plugins = new ControllerPluginManager();
+        $plugins = new ControllerPluginManager($this->serviceManager);
         $plugins->setService('HalLinks', $this->linksHelper);
         $controller->setPluginManager($plugins);
     }
 
     public function setUpRequest()
     {
-        if (isset($this->request)) {
-            return;
-        }
-
         $uri = Uri\UriFactory::factory('http://localhost.localdomain/api/resource?query=foo&page=2');
 
         $request = $this->request = new Request();
@@ -174,9 +168,6 @@ class CollectionIntegrationTest extends TestCase
 
     public function setUpResponse()
     {
-        if (isset($this->response)) {
-            return;
-        }
         $this->response = new Response();
     }
 
@@ -189,46 +180,6 @@ class CollectionIntegrationTest extends TestCase
         $event->setRouter($this->router);
         $event->setRouteMatch($this->matches);
         return $event;
-    }
-
-    public function testCollectionLinksIncludeFullQueryString()
-    {
-        $this->controller->getEventManager()->attach('getList.post', function ($e) {
-            $request    = $e->getTarget()->getRequest();
-            $query = $request->getQuery('query', false);
-            if (!$query) {
-                return;
-            }
-
-            $collection = $e->getParam('collection');
-            $collection->setCollectionRouteOptions([
-                'query' => [
-                    'query' => $query,
-                ],
-            ]);
-        });
-        $result = $this->controller->dispatch($this->request, $this->response);
-        $this->assertInstanceOf(RestfulJsonModel::class, $result);
-
-        $json = $this->renderer->render($result);
-        $payload = json_decode($json, true);
-        $this->assertArrayHasKey('_links', $payload);
-        $links = $payload['_links'];
-        foreach ($links as $name => $link) {
-            $this->assertArrayHasKey('href', $link);
-            if ('first' !== $name) {
-                $this->assertContains(
-                    'page=',
-                    $link['href'],
-                    "Link $name ('{$link['href']}') is missing page query param"
-                );
-            }
-            $this->assertContains(
-                'query=foo',
-                $link['href'],
-                "Link $name ('{$link['href']}') is missing query query param"
-            );
-        }
     }
 
     public function getServiceManager()
@@ -261,24 +212,60 @@ class CollectionIntegrationTest extends TestCase
         $services->setShared('EventManager', false);
 
         $collection = $this->setUpCollection();
-        $services->addInitializer(function ($instance, $services) use ($collection) {
-            if (!$instance instanceof TestAsset\CollectionIntegrationListener) {
-                return;
-            }
-            $instance->setCollection($collection);
+        $services->addDelegator(TestAsset\CollectionIntegrationListener::class, function ($container, $name, $callback) use ($collection) {
+            $listener = $callback();
+            $listener->setCollection($collection);
+            return $listener;
         });
-
-        $controllers->setServiceLocator($services);
-
-        $plugins = $services->get('ControllerPluginManager');
-        $plugins->setService('HalLinks', $this->linksHelper);
 
         return $services;
     }
 
+    public function testCollectionLinksIncludeFullQueryString()
+    {
+        $this->controller->getEventManager()->attach('getList.post', function ($e) {
+            $request    = $e->getTarget()->getRequest();
+            $query = $request->getQuery('query', false);
+            if (!$query) {
+                return;
+            }
+
+            $collection = $e->getParam('collection');
+            $collection->setCollectionRouteOptions([
+                'query' => [
+                    'query' => $query,
+                ],
+            ]);
+        });
+        $result = $this->controller->dispatch($this->request, $this->response);
+        $this->assertInstanceOf(RestfulJsonModel::class, $result);
+
+        $json = $this->renderer->render($result);
+        $payload = json_decode($json, true);
+
+        $this->assertArrayHasKey('_links', $payload);
+        $links = $payload['_links'];
+        foreach ($links as $name => $link) {
+            $this->assertArrayHasKey('href', $link);
+            if ('first' !== $name) {
+                $this->assertContains(
+                    'page=',
+                    $link['href'],
+                    "Link $name ('{$link['href']}') is missing page query param"
+                );
+            }
+            $this->assertContains(
+                'query=foo',
+                $link['href'],
+                "Link $name ('{$link['href']}') is missing query query param"
+            );
+        }
+    }
+
     public function testFactoryEnabledListenerCreatesQueryStringWhitelist()
     {
-        $services = $this->getServiceManager();
+        $services = $this->serviceManager;
+
         $controller = $services->get('ControllerManager')->get('Api\ResourceController');
         $controller->setEvent($this->getEvent());
 
@@ -287,6 +274,7 @@ class CollectionIntegrationTest extends TestCase
 
         $json = $this->renderer->render($result);
         $payload = json_decode($json, true);
+
         $this->assertArrayHasKey('_links', $payload);
         $links = $payload['_links'];
         foreach ($links as $name => $link) {

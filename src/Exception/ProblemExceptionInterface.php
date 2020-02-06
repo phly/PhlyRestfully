@@ -13,7 +13,18 @@ namespace PhlyRestfully\Exception;
  */
 interface ProblemExceptionInterface
 {
+    /**
+     * @return array
+     */
     public function getAdditionalDetails();
+
+    /**
+     * @return string
+     */
     public function getDescribedBy();
+
+    /**
+     * @return string
+     */
     public function getTitle();
 }

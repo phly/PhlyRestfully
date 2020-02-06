@@ -322,7 +322,8 @@ class ResourceTest extends TestCase
      */
     public function testDeleteListRaisesInvalidArgumentExceptionForInvalidData($data)
     {
-        $this->expectException(Exception\InvalidArgumentException::class, '::deleteList');
+        $this->expectException(Exception\InvalidArgumentException::class);
+        $this->expectExceptionMessage('::deleteList');
         $this->resource->deleteList($data);
     }
 

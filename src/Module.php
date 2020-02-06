@@ -89,7 +89,7 @@ class Module
                         /** @var HydratorPluginManager $hydrators */
                         $hydrators = $services->get('HydratorManager');
                     } else {
-                        $hydrators = new HydratorPluginManager();
+                        $hydrators = new HydratorPluginManager($services);
                     }
 
                     $map = [];
@@ -121,6 +121,7 @@ class Module
                     }
 
                     $renderer = new View\RestfulJsonRenderer();
+                    $renderer->setServiceManager($services);
                     $renderer->setHelperPluginManager($helpers);
                     $renderer->setDisplayExceptions($displayExceptions);
 
@@ -152,11 +153,10 @@ class Module
         return ['factories' => [
             'HalLinks' =>
             /**
-             * @param \Zend\ServiceManager\ServiceLocatorAwareInterface $plugins
+             * @param \Zend\ServiceManager\ServiceLocatorInterface $services
              * @return Plugin\HalLinks
              */
-            function ($plugins) {
-                $services = $plugins->getServiceLocator();
+            function ($services) {
                 /** @var \Zend\View\HelperPluginManager $helpers */
                 $helpers  = $services->get('ViewHelperManager');
                 /** @var Plugin\HalLinks $halLinks */
@@ -177,16 +177,18 @@ class Module
         return ['factories' => [
             'HalLinks' =>
             /**
-             * @param \Zend\ServiceManager\AbstractPluginManager $helpers
+             * @param \Zend\ServiceManager\ServiceManager|\Zend\View\HelperPluginManager $helpers
              * @return Plugin\HalLinks
              */
             function ($helpers) {
+                $services = $helpers;
+                $helpers = $services->get('ViewHelperManager');
+
                 /** @var \Zend\View\Helper\ServerUrl $serverUrlHelper */
                 $serverUrlHelper = $helpers->get('ServerUrl');
                 /** @var \Zend\View\Helper\Url $urlHelper */
                 $urlHelper       = $helpers->get('Url');
 
-                $services        = $helpers->getServiceLocator();
                 /** @var array $config */
                 $config          = $services->get('config');
                 /** @var MetadataMap $metadataMap */
@@ -263,7 +265,7 @@ class Module
                 $eventManager = $e->getApplication()->getEventManager();
                 /** @var Listener\ApiProblemListener $apiProblemListener */
                 $apiProblemListener = $services->get(Listener\ApiProblemListener::class);
-                $eventManager->attach($apiProblemListener);
+                $apiProblemListener->attach($eventManager);
             },
             300
         );
@@ -299,6 +301,6 @@ class Module
 
         // register at high priority, to "beat" normal json strategy registered
         // via view manager
-        $events->attach($restfulJsonStrategy, 200);
+        $restfulJsonStrategy->attach($events, 200);
     }
 }

@@ -66,6 +66,7 @@ class RestfulJsonStrategy extends JsonStrategy
      * type based on the detection that occurred during renderer selection.
      *
      * @param  ViewEvent $e
+     * @return void
      */
     public function injectResponse(ViewEvent $e)
     {

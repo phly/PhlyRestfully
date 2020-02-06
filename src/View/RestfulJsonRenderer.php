@@ -9,13 +9,8 @@
 namespace PhlyRestfully\View;
 
 use PhlyRestfully\ApiProblem;
-use PhlyRestfully\HalCollection;
-use PhlyRestfully\HalResource;
-use PhlyRestfully\Link;
-use PhlyRestfully\LinkCollection;
 use PhlyRestfully\Plugin\HalLinks;
-use Zend\Paginator\Paginator;
-use Zend\Hydrator\HydratorInterface;
+use Zend\Hydrator\HydratorPluginManager;
 use Zend\View\HelperPluginManager;
 use Zend\View\Renderer\JsonRenderer;
 
@@ -32,6 +27,11 @@ class RestfulJsonRenderer extends JsonRenderer
      * @var ApiProblem|null
      */
     protected $apiProblem;
+
+    /**
+     * @var \Zend\ServiceManager\ServiceManager|null
+     */
+    protected $serviceManager = null;
 
     /**
      * Whether or not to render exception stack traces in API-Problem payloads
@@ -78,11 +78,20 @@ class RestfulJsonRenderer extends JsonRenderer
      * Set display_exceptions flag
      *
      * @param  bool $flag
-     * @return RestfulJsonRenderer
+     * @return $this
      */
     public function setDisplayExceptions($flag)
     {
         $this->displayExceptions = (bool) $flag;
+        return $this;
+    }
+
+    /**
+     * @return $this
+     */
+    public function setServiceManager(\Zend\ServiceManager\ServiceManager $serviceManager)
+    {
+        $this->serviceManager = $serviceManager;
         return $this;
     }
 
@@ -174,7 +183,18 @@ class RestfulJsonRenderer extends JsonRenderer
      */
     protected function injectHalLinksHelper(HelperPluginManager $helpers)
     {
-        $helper = new HalLinks();
+        if ($this->serviceManager !== null) {
+            if ($this->serviceManager->has('HydratorManager')) {
+                /** @var HydratorPluginManager $hydrators */
+                $hydrators = $this->serviceManager->get('HydratorManager');
+            } else {
+                $hydrators = new HydratorPluginManager($this->serviceManager);
+            }
+        } else {
+            $hydrators = null;
+        }
+
+        $helper = new HalLinks($hydrators);
         $helper->setView($this);
         /** @var \Zend\View\Helper\ServerUrl $serverUrlHelper */
         $serverUrlHelper = $helpers->get('ServerUrl');

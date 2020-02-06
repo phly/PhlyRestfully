@@ -8,10 +8,11 @@
 
 namespace PhlyRestfully\Factory;
 
+use Interop\Container\ContainerInterface;
 use PhlyRestfully\Resource;
 use PhlyRestfully\ResourceController;
 use Zend\EventManager\ListenerAggregateInterface;
-use Zend\ServiceManager\AbstractFactoryInterface;
+use Zend\ServiceManager\Factory\AbstractFactoryInterface;
 use Zend\ServiceManager\Exception\ServiceNotCreatedException;
 use Zend\ServiceManager\Exception\ServiceNotFoundException;
 use Zend\ServiceManager\ServiceLocatorInterface;
@@ -25,15 +26,13 @@ class ResourceControllerFactory implements AbstractFactoryInterface
     /**
      * Determine if we can create a service with name
      *
-     * @param \Zend\ServiceManager\AbstractPluginManager $controllers
-     * @param string                  $name
      * @param string                  $requestedName
      *
      * @return bool
      */
-    public function canCreateServiceWithName(ServiceLocatorInterface $controllers, $name, $requestedName)
+    public function canCreate(ContainerInterface $container, $requestedName)
     {
-        $services = $controllers->getServiceLocator();
+        $services = $container;
 
         if (!$services->has('config') || !$services->has('EventManager')) {
             // Config and EventManager are required
@@ -75,17 +74,15 @@ class ResourceControllerFactory implements AbstractFactoryInterface
     /**
      * Create service with name
      *
-     * @param \Zend\ServiceManager\AbstractPluginManager $controllers
-     * @param string                  $name
      * @param string                  $requestedName
      *
      * @return ResourceController
      *
      * @throws ServiceNotCreatedException if listener specified is not a ListenerAggregate
      */
-    public function createServiceWithName(ServiceLocatorInterface $controllers, $name, $requestedName)
+    public function __invoke(ContainerInterface $container, $requestedName, ?array $options = null)
     {
-        $services = $controllers->getServiceLocator();
+        $services = $container;
         /** @var array $config */
         $config   = $services->get('config');
         $config   = $config['phlyrestfully']['resources'][$requestedName];
@@ -115,7 +112,7 @@ class ResourceControllerFactory implements AbstractFactoryInterface
 
         /** @var \Zend\EventManager\EventManager $events */
         $events = $services->get('EventManager');
-        $events->attach($listener);
+        $listener->attach($events);
         $events->setIdentifiers($resourceIdentifiers);
 
         $resource = new Resource();

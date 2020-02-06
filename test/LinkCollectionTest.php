@@ -42,7 +42,7 @@ class LinkCollectionTest extends TestCase
 
         $this->assertTrue($this->links->has('order'));
         $orders = $this->links->get('order');
-        $this->assertInternalType('array', $orders);
+        $this->assertIsArray($orders);
         $this->assertContains($order1, $orders);
         $this->assertContains($order2, $orders);
     }

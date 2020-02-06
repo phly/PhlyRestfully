@@ -28,7 +28,6 @@ class ResourceControllerFactoryTest extends TestCase
         $this->factory     = $factory     = new ResourceControllerFactory();
 
         $controllers->addAbstractFactory($factory);
-        $controllers->setServiceLocator($services);
 
         $services->setService(ServiceLocatorInterface::class, $services);
         $services->setService('config', $this->getConfig());
@@ -65,10 +64,10 @@ class ResourceControllerFactoryTest extends TestCase
 
     public function testWillInstantiateAlternateResourceControllerWhenSpecified()
     {
-        $config = $this->services->get('Config');
+        $config = $this->services->get('config');
         $config['phlyrestfully']['resources']['ApiController']['controller_class'] = TestAsset\CustomController::class;
         $this->services->setAllowOverride(true);
-        $this->services->setService('Config', $config);
+        $this->services->setService('config', $config);
         $controller = $this->controllers->get('ApiController');
         $this->assertInstanceOf(TestAsset\CustomController::class, $controller);
     }

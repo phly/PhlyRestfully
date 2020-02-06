@@ -10,6 +10,13 @@ namespace PhlyRestfully;
 
 interface LinkCollectionAwareInterface
 {
+    /**
+     * @return self
+     */
     public function setLinks(LinkCollection $links);
+
+    /**
+     * @return LinkCollection
+     */
     public function getLinks();
 }

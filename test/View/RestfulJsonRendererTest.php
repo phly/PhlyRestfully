@@ -19,11 +19,13 @@ use PhlyRestfully\View\RestfulJsonRenderer;
 use PhlyRestfullyTest\TestAsset;
 use PHPUnit\Framework\TestCase as TestCase;
 use ReflectionObject;
+use Zend\Hydrator\HydratorPluginManager;
 use Zend\Mvc\Router\Http\Segment;
 use Zend\Mvc\Router\Http\TreeRouteStack;
 use Zend\Paginator\Adapter\ArrayAdapter;
 use Zend\Paginator\Paginator;
-use Zend\Stdlib\Hydrator;
+use Zend\ServiceManager\ServiceManager;
+use Zend\Hydrator;
 use Zend\View\HelperPluginManager;
 use Zend\View\Model\JsonModel;
 use Zend\View\Model\ViewModel;
@@ -36,6 +38,7 @@ class RestfulJsonRendererTest extends TestCase
     public function setUp()
     {
         $this->renderer = new RestfulJsonRenderer();
+        $this->serviceManager = new ServiceManager();
     }
 
     public function assertIsHalResource($resource)
@@ -126,13 +129,15 @@ class RestfulJsonRendererTest extends TestCase
         $this->resourceRoute = new Segment('/resource[/[:id]]');
         $this->router->addRoute('resource', $this->resourceRoute);
 
-        $this->helpers = $helpers  = new HelperPluginManager();
+        $hydratorPluginManager = new HydratorPluginManager($this->serviceManager);
+
+        $this->helpers = $helpers  = new HelperPluginManager($this->serviceManager);
         $serverUrl = $helpers->get('ServerUrl');
         $url       = $helpers->get('url');
         $url->setRouter($router);
         $serverUrl->setScheme('http');
         $serverUrl->setHost('localhost.localdomain');
-        $halLinks  = new HalLinks();
+        $halLinks  = new HalLinks($hydratorPluginManager);
         $halLinks->setServerUrlHelper($serverUrl);
         $halLinks->setUrlHelper($url);
         $helpers->setService('HalLinks', $halLinks);
@@ -262,8 +267,8 @@ class RestfulJsonRendererTest extends TestCase
         $this->assertObjectHasAttribute('_embedded', $test);
         $this->assertInstanceof('stdClass', $test->_embedded);
         $this->assertObjectHasAttribute('items', $test->_embedded);
-        $this->assertInternalType('array', $test->_embedded->items);
-        $this->assertEquals(100, count($test->_embedded->items));
+        $this->assertIsArray($test->_embedded->items);
+        $this->assertCount(100, $test->_embedded->items);
 
         foreach ($test->_embedded->items as $key => $item) {
             $id = $key + 1;
@@ -314,8 +319,8 @@ class RestfulJsonRendererTest extends TestCase
         $this->assertObjectHasAttribute('_embedded', $test);
         $this->assertInstanceof('stdClass', $test->_embedded);
         $this->assertObjectHasAttribute('items', $test->_embedded);
-        $this->assertInternalType('array', $test->_embedded->items);
-        $this->assertEquals(5, count($test->_embedded->items));
+        $this->assertIsArray($test->_embedded->items);
+        $this->assertCount(5, $test->_embedded->items);
 
         foreach ($test->_embedded->items as $key => $item) {
             $id = $key + 11;
@@ -651,8 +656,8 @@ class RestfulJsonRendererTest extends TestCase
         $this->assertObjectHasAttribute('_embedded', $test);
         $this->assertInstanceof('stdClass', $test->_embedded);
         $this->assertObjectHasAttribute('items', $test->_embedded);
-        $this->assertInternalType('array', $test->_embedded->items);
-        $this->assertEquals(100, count($test->_embedded->items));
+        $this->assertIsArray($test->_embedded->items);
+        $this->assertCount(100, $test->_embedded->items);
 
         foreach ($test->_embedded->items as $key => $item) {
             $id = $key + 1;
