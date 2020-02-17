@@ -43,7 +43,7 @@
         "zendframework/zend-http": "^2.5",
         "zendframework/zend-navigation": "^2.5",
         "zendframework/zend-servicemanager": "^3.0",
-        "phpstan/phpstan": "0.12.10"
+        "phpstan/phpstan": "0.12.11"
     },
     "suggest": {
         "zfr/zfr-cors": "zfr/zfr-cors provides CORS support"
