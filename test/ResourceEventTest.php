@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 /**
  * @link      https://github.com/weierophinney/PhlyRestfully for the canonical source repository
  * @copyright Copyright (c) 2013 Matthew Weier O'Phinney
@@ -10,12 +10,12 @@ namespace PhlyRestfullyTest;
 
 use PhlyRestfully\ResourceEvent;
 use PHPUnit\Framework\TestCase as TestCase;
-use Zend\Mvc\Router\RouteMatch;
-use Zend\Stdlib\Parameters;
+use Laminas\Mvc\Router\RouteMatch;
+use Laminas\Stdlib\Parameters;
 
 class ResourceEventTest extends TestCase
 {
-    public function setUp()
+    public function setUp(): void
     {
         $this->matches = new RouteMatch([
             'foo' => 'bar',
@@ -29,12 +29,12 @@ class ResourceEventTest extends TestCase
         $this->event = new ResourceEvent();
     }
 
-    public function testRouteMatchIsNullByDefault()
+    public function testRouteMatchIsNullByDefault(): void
     {
         $this->assertNull($this->event->getRouteMatch());
     }
 
-    public function testQueryParamsAreNullByDefault()
+    public function testQueryParamsAreNullByDefault(): void
     {
         $this->assertNull($this->event->getQueryParams());
     }
@@ -56,7 +56,7 @@ class ResourceEventTest extends TestCase
     /**
      * @depends testRouteMatchIsMutable
      */
-    public function testRouteMatchIsNullable(ResourceEvent $event)
+    public function testRouteMatchIsNullable(ResourceEvent $event): void
     {
         $event->setRouteMatch(null);
         $this->assertNull($event->getRouteMatch());
@@ -65,33 +65,33 @@ class ResourceEventTest extends TestCase
     /**
      * @depends testQueryParamsAreMutable
      */
-    public function testQueryParamsAreNullable(ResourceEvent $event)
+    public function testQueryParamsAreNullable(ResourceEvent $event): void
     {
         $event->setQueryParams(null);
         $this->assertNull($event->getQueryParams());
     }
 
-    public function testCanFetchIndividualRouteParameter()
+    public function testCanFetchIndividualRouteParameter(): void
     {
         $this->event->setRouteMatch($this->matches);
         $this->assertEquals('bar', $this->event->getRouteParam('foo'));
         $this->assertEquals('inga', $this->event->getRouteParam('baz'));
     }
 
-    public function testCanFetchIndividualQueryParameter()
+    public function testCanFetchIndividualQueryParameter(): void
     {
         $this->event->setQueryParams($this->query);
         $this->assertEquals('bar', $this->event->getQueryParam('foo'));
         $this->assertEquals('inga', $this->event->getQueryParam('baz'));
     }
 
-    public function testReturnsDefaultParameterWhenPullingUnknownRouteParameter()
+    public function testReturnsDefaultParameterWhenPullingUnknownRouteParameter(): void
     {
         $this->assertNull($this->event->getRouteParam('foo'));
         $this->assertEquals('bat', $this->event->getRouteParam('baz', 'bat'));
     }
 
-    public function testReturnsDefaultParameterWhenPullingUnknownQueryParameter()
+    public function testReturnsDefaultParameterWhenPullingUnknownQueryParameter(): void
     {
         $this->assertNull($this->event->getQueryParam('foo'));
         $this->assertEquals('bat', $this->event->getQueryParam('baz', 'bat'));

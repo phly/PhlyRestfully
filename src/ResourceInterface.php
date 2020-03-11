@@ -8,9 +8,9 @@
 
 namespace PhlyRestfully;
 
-use Zend\EventManager\EventManagerAwareInterface;
-use Zend\Stdlib\Parameters;
-use Zend\Mvc\Router\RouteMatch;
+use Laminas\EventManager\EventManagerAwareInterface;
+use Laminas\Stdlib\Parameters;
+use Laminas\Mvc\Router\RouteMatch;
 
 /**
  * Interface describing operations for a given resource.
@@ -128,7 +128,7 @@ interface ResourceInterface extends EventManagerAwareInterface
     /**
      * Fetch a collection of records
      *
-     * @return \Zend\Paginator\Paginator|ApiProblem
+     * @return \Laminas\Paginator\Paginator|ApiProblem
      */
     public function fetchAll();
 }

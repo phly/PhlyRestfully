@@ -12,7 +12,7 @@
     <interface namespace="PhlyRestfully" line="16" package="Default">
       <name>ResourceInterface</name>
       <full_name>\PhlyRestfully\ResourceInterface</full_name>
-      <extends>\Zend\EventManager\EventManagerAwareInterface</extends>
+      <extends>\Laminas\EventManager\EventManagerAwareInterface</extends>
       <docblock line="13">
         <description>Interface describing operations for a given resource.</description>
         <long-description></long-description>
@@ -270,8 +270,8 @@
         <docblock line="108">
           <description>Fetch a collection of records</description>
           <long-description></long-description>
-          <tag line="108" name="return" description="" type="\Zend\Paginator\Paginator">
-            <type by_reference="false">\Zend\Paginator\Paginator</type>
+          <tag line="108" name="return" description="" type="\Laminas\Paginator\Paginator">
+            <type by_reference="false">\Laminas\Paginator\Paginator</type>
           </tag>
         </docblock>
       </method>
@@ -556,8 +556,8 @@ without listeners to do the actual work.&lt;/p&gt;</long-description>
         <docblock line="63">
           <description></description>
           <long-description></long-description>
-          <tag line="63" name="param" description="" type="\Zend\Stdlib\Parameters" variable="$params">
-            <type by_reference="false">\Zend\Stdlib\Parameters</type>
+          <tag line="63" name="param" description="" type="\Laminas\Stdlib\Parameters" variable="$params">
+            <type by_reference="false">\Laminas\Stdlib\Parameters</type>
           </tag>
           <tag line="63" name="return" description="" type="self">
             <type by_reference="false">self</type>
@@ -566,7 +566,7 @@ without listeners to do the actual work.&lt;/p&gt;</long-description>
         <argument line="67">
           <name>$params</name>
           <default></default>
-          <type>\Zend\Stdlib\Parameters</type>
+          <type>\Laminas\Stdlib\Parameters</type>
         </argument>
       </method>
       <method final="false" abstract="false" static="false" visibility="public" namespace="PhlyRestfully" line="76" package="Default">
@@ -575,9 +575,9 @@ without listeners to do the actual work.&lt;/p&gt;</long-description>
         <docblock line="73">
           <description></description>
           <long-description></long-description>
-          <tag line="73" name="return" description="" type="null|\Zend\Stdlib\Parameters">
+          <tag line="73" name="return" description="" type="null|\Laminas\Stdlib\Parameters">
             <type by_reference="false">null</type>
-            <type by_reference="false">\Zend\Stdlib\Parameters</type>
+            <type by_reference="false">\Laminas\Stdlib\Parameters</type>
           </tag>
         </docblock>
       </method>
@@ -587,8 +587,8 @@ without listeners to do the actual work.&lt;/p&gt;</long-description>
         <docblock line="81">
           <description></description>
           <long-description></long-description>
-          <tag line="81" name="param" description="" type="\Zend\Mvc\Router\RouteMatch" variable="$matches">
-            <type by_reference="false">\Zend\Mvc\Router\RouteMatch</type>
+          <tag line="81" name="param" description="" type="\Laminas\Mvc\Router\RouteMatch" variable="$matches">
+            <type by_reference="false">\Laminas\Mvc\Router\RouteMatch</type>
           </tag>
           <tag line="81" name="return" description="" type="self">
             <type by_reference="false">self</type>
@@ -597,7 +597,7 @@ without listeners to do the actual work.&lt;/p&gt;</long-description>
         <argument line="85">
           <name>$matches</name>
           <default></default>
-          <type>\Zend\Mvc\Router\RouteMatch</type>
+          <type>\Laminas\Mvc\Router\RouteMatch</type>
         </argument>
       </method>
       <method final="false" abstract="false" static="false" visibility="public" namespace="PhlyRestfully" line="94" package="Default">
@@ -606,9 +606,9 @@ without listeners to do the actual work.&lt;/p&gt;</long-description>
         <docblock line="91">
           <description></description>
           <long-description></long-description>
-          <tag line="91" name="return" description="" type="null|\Zend\Mvc\Router\RouteMatch">
+          <tag line="91" name="return" description="" type="null|\Laminas\Mvc\Router\RouteMatch">
             <type by_reference="false">null</type>
-            <type by_reference="false">\Zend\Mvc\Router\RouteMatch</type>
+            <type by_reference="false">\Laminas\Mvc\Router\RouteMatch</type>
           </tag>
         </docblock>
       </method>
@@ -673,8 +673,8 @@ without listeners to do the actual work.&lt;/p&gt;</long-description>
           <description>Set event manager instance</description>
           <long-description>&lt;p&gt;Sets the event manager identifiers to the current class, this class, and
 the resource interface.&lt;/p&gt;</long-description>
-          <tag line="127" name="param" description="" type="\Zend\EventManager\EventManagerInterface" variable="$events">
-            <type by_reference="false">\Zend\EventManager\EventManagerInterface</type>
+          <tag line="127" name="param" description="" type="\Laminas\EventManager\EventManagerInterface" variable="$events">
+            <type by_reference="false">\Laminas\EventManager\EventManagerInterface</type>
           </tag>
           <tag line="127" name="return" description="" type="Resource">
             <type by_reference="false">Resource</type>
@@ -683,7 +683,7 @@ the resource interface.&lt;/p&gt;</long-description>
         <argument line="136">
           <name>$events</name>
           <default></default>
-          <type>\Zend\EventManager\EventManagerInterface</type>
+          <type>\Laminas\EventManager\EventManagerInterface</type>
         </argument>
       </method>
       <method final="false" abstract="false" static="false" visibility="public" namespace="PhlyRestfully" line="154" package="Default">
@@ -692,8 +692,8 @@ the resource interface.&lt;/p&gt;</long-description>
         <docblock line="147">
           <description>Retrieve event manager</description>
           <long-description>&lt;p&gt;Lazy-instantiates an EM instance if none provided.&lt;/p&gt;</long-description>
-          <tag line="147" name="return" description="" type="\Zend\EventManager\EventManagerInterface">
-            <type by_reference="false">\Zend\EventManager\EventManagerInterface</type>
+          <tag line="147" name="return" description="" type="\Laminas\EventManager\EventManagerInterface">
+            <type by_reference="false">\Laminas\EventManager\EventManagerInterface</type>
           </tag>
         </docblock>
       </method>
@@ -914,7 +914,7 @@ lookup failure.&lt;/p&gt;</long-description>
 listener will be returned, as long as it is an array or Traversable;
 otherwise, an empty array will be returned.&lt;/p&gt;
 
-&lt;p&gt;The recommendation is to return a \Zend\Paginator\Paginator instance,
+&lt;p&gt;The recommendation is to return a \Laminas\Paginator\Paginator instance,
 which will allow performing paginated sets, and thus allow the view
 layer to select the current page based on the query string or route.&lt;/p&gt;</long-description>
           <tag line="397" name="return" description="" type="array|\Traversable">
@@ -1327,9 +1327,9 @@ underscores.&lt;/p&gt;
         <docblock line="127">
           <description>Retrieve the hydrator to associate with this class, if any</description>
           <long-description></long-description>
-          <tag line="127" name="return" description="" type="null|\Zend\Hydrator\HydratorInterface">
+          <tag line="127" name="return" description="" type="null|\Laminas\Hydrator\HydratorInterface">
             <type by_reference="false">null</type>
-            <type by_reference="false">\Zend\Hydrator\HydratorInterface</type>
+            <type by_reference="false">\Laminas\Hydrator\HydratorInterface</type>
           </tag>
         </docblock>
       </method>
@@ -1452,9 +1452,9 @@ underscores.&lt;/p&gt;
         <docblock line="246">
           <description>Set the hydrator to use with this class</description>
           <long-description></long-description>
-          <tag line="246" name="param" description="" type="string|\Zend\Hydrator\HydratorInterface" variable="$hydrator">
+          <tag line="246" name="param" description="" type="string|\Laminas\Hydrator\HydratorInterface" variable="$hydrator">
             <type by_reference="false">string</type>
-            <type by_reference="false">\Zend\Hydrator\HydratorInterface</type>
+            <type by_reference="false">\Laminas\Hydrator\HydratorInterface</type>
           </tag>
           <tag line="246" name="return" description="" type="self">
             <type by_reference="false">self</type>
@@ -1752,7 +1752,7 @@ underscores.&lt;/p&gt;
     </docblock>
     <class final="false" abstract="false" namespace="PhlyRestfully\Factory" line="23" package="PhlyRestfully\Factory">
       <extends/>
-      <implements>\Zend\ServiceManager\AbstractFactoryInterface</implements>
+      <implements>\Laminas\ServiceManager\AbstractFactoryInterface</implements>
       <name>ResourceControllerFactory</name>
       <full_name>\PhlyRestfully\Factory\ResourceControllerFactory</full_name>
       <docblock line="19">
@@ -1766,8 +1766,8 @@ underscores.&lt;/p&gt;
         <docblock line="25">
           <description>Determine if we can create a service with name</description>
           <long-description></long-description>
-          <tag line="25" name="param" description="" type="\Zend\ServiceManager\ServiceLocatorInterface" variable="$controllers">
-            <type by_reference="false">\Zend\ServiceManager\ServiceLocatorInterface</type>
+          <tag line="25" name="param" description="" type="\Laminas\ServiceManager\ServiceLocatorInterface" variable="$controllers">
+            <type by_reference="false">\Laminas\ServiceManager\ServiceLocatorInterface</type>
           </tag>
           <tag line="25" name="param" description="" type="string" variable="$name">
             <type by_reference="false">string</type>
@@ -1782,7 +1782,7 @@ underscores.&lt;/p&gt;
         <argument line="33">
           <name>$controllers</name>
           <default></default>
-          <type>\Zend\ServiceManager\ServiceLocatorInterface</type>
+          <type>\Laminas\ServiceManager\ServiceLocatorInterface</type>
         </argument>
         <argument line="33">
           <name>$name</name>
@@ -1801,8 +1801,8 @@ underscores.&lt;/p&gt;
         <docblock line="73">
           <description>Create service with name</description>
           <long-description></long-description>
-          <tag line="73" name="param" description="" type="\Zend\ServiceManager\ServiceLocatorInterface" variable="$controllers">
-            <type by_reference="false">\Zend\ServiceManager\ServiceLocatorInterface</type>
+          <tag line="73" name="param" description="" type="\Laminas\ServiceManager\ServiceLocatorInterface" variable="$controllers">
+            <type by_reference="false">\Laminas\ServiceManager\ServiceLocatorInterface</type>
           </tag>
           <tag line="73" name="param" description="" type="string" variable="$name">
             <type by_reference="false">string</type>
@@ -1813,14 +1813,14 @@ underscores.&lt;/p&gt;
           <tag line="73" name="return" description="" type="\PhlyRestfully\ResourceController">
             <type by_reference="false">\PhlyRestfully\ResourceController</type>
           </tag>
-          <tag line="73" name="throws" description="if listener specified is not a ListenerAggregate" type="\Zend\ServiceManager\Exception\ServiceNotCreatedException">
-            <type by_reference="false">\Zend\ServiceManager\Exception\ServiceNotCreatedException</type>
+          <tag line="73" name="throws" description="if listener specified is not a ListenerAggregate" type="\Laminas\ServiceManager\Exception\ServiceNotCreatedException">
+            <type by_reference="false">\Laminas\ServiceManager\Exception\ServiceNotCreatedException</type>
           </tag>
         </docblock>
         <argument line="82">
           <name>$controllers</name>
           <default></default>
-          <type>\Zend\ServiceManager\ServiceLocatorInterface</type>
+          <type>\Laminas\ServiceManager\ServiceLocatorInterface</type>
         </argument>
         <argument line="82">
           <name>$name</name>
@@ -1848,7 +1848,7 @@ underscores.&lt;/p&gt;
       <tag line="2" name="package" description="PhlyRestfully"/>
     </docblock>
     <class final="false" abstract="false" namespace="PhlyRestfully\View" line="20" package="Default">
-      <extends>\Zend\View\Model\JsonModel</extends>
+      <extends>\Laminas\View\Model\JsonModel</extends>
       <name>RestfulJsonModel</name>
       <full_name>\PhlyRestfully\View\RestfulJsonModel</full_name>
       <docblock line="16">
@@ -1934,7 +1934,7 @@ in this Module.</description>
       <tag line="2" name="package" description="PhlyRestfully"/>
     </docblock>
     <class final="false" abstract="false" namespace="PhlyRestfully\View" line="25" package="Default">
-      <extends>\Zend\View\Strategy\JsonStrategy</extends>
+      <extends>\Laminas\View\Strategy\JsonStrategy</extends>
       <name>RestfulJsonStrategy</name>
       <full_name>\PhlyRestfully\View\RestfulJsonStrategy</full_name>
       <docblock line="14">
@@ -1964,8 +1964,8 @@ API-formatted response&lt;/li&gt;
         <docblock line="34">
           <description>Detect if we should use the RestfulJsonRenderer based on model type.</description>
           <long-description></long-description>
-          <tag line="34" name="param" description="" type="\Zend\View\ViewEvent" variable="$e">
-            <type by_reference="false">\Zend\View\ViewEvent</type>
+          <tag line="34" name="param" description="" type="\Laminas\View\ViewEvent" variable="$e">
+            <type by_reference="false">\Laminas\View\ViewEvent</type>
           </tag>
           <tag line="34" name="return" description="" type="null|\PhlyRestfully\View\RestfulJsonRenderer">
             <type by_reference="false">null</type>
@@ -1975,7 +1975,7 @@ API-formatted response&lt;/li&gt;
         <argument line="40">
           <name>$e</name>
           <default></default>
-          <type>\Zend\View\ViewEvent</type>
+          <type>\Laminas\View\ViewEvent</type>
         </argument>
       </method>
       <method final="false" abstract="false" static="false" visibility="public" namespace="PhlyRestfully\View" line="61" package="Default">
@@ -1985,14 +1985,14 @@ API-formatted response&lt;/li&gt;
           <description>Inject the response</description>
           <long-description>&lt;p&gt;Injects the response with the rendered content, and sets the content
 type based on the detection that occurred during renderer selection.&lt;/p&gt;</long-description>
-          <tag line="53" name="param" description="" type="\Zend\View\ViewEvent" variable="$e">
-            <type by_reference="false">\Zend\View\ViewEvent</type>
+          <tag line="53" name="param" description="" type="\Laminas\View\ViewEvent" variable="$e">
+            <type by_reference="false">\Laminas\View\ViewEvent</type>
           </tag>
         </docblock>
         <argument line="61">
           <name>$e</name>
           <default></default>
-          <type>\Zend\View\ViewEvent</type>
+          <type>\Laminas\View\ViewEvent</type>
         </argument>
       </method>
     </class>
@@ -2012,7 +2012,7 @@ type based on the detection that occurred during renderer selection.&lt;/p&gt;</
       <tag line="2" name="package" description="PhlyRestfully"/>
     </docblock>
     <class final="false" abstract="false" namespace="PhlyRestfully\View" line="29" package="Default">
-      <extends>\Zend\View\Renderer\JsonRenderer</extends>
+      <extends>\Laminas\View\Renderer\JsonRenderer</extends>
       <name>RestfulJsonRenderer</name>
       <full_name>\PhlyRestfully\View\RestfulJsonRenderer</full_name>
       <docblock line="22">
@@ -2029,14 +2029,14 @@ type based on the detection that occurred during renderer selection.&lt;/p&gt;</
         <docblock line="48">
           <description>Set helper plugin manager instance.</description>
           <long-description>&lt;p&gt;Also ensures that the 'HalLinks' helper is present.&lt;/p&gt;</long-description>
-          <tag line="48" name="param" description="" type="\Zend\View\HelperPluginManager" variable="$helpers">
-            <type by_reference="false">\Zend\View\HelperPluginManager</type>
+          <tag line="48" name="param" description="" type="\Laminas\View\HelperPluginManager" variable="$helpers">
+            <type by_reference="false">\Laminas\View\HelperPluginManager</type>
           </tag>
         </docblock>
         <argument line="55">
           <name>$helpers</name>
           <default></default>
-          <type>\Zend\View\HelperPluginManager</type>
+          <type>\Laminas\View\HelperPluginManager</type>
         </argument>
       </method>
       <method final="false" abstract="false" static="false" visibility="public" namespace="PhlyRestfully\View" line="68" package="Default">
@@ -2045,8 +2045,8 @@ type based on the detection that occurred during renderer selection.&lt;/p&gt;</
         <docblock line="63">
           <description>Lazy-loads a helper plugin manager if none available.</description>
           <long-description></long-description>
-          <tag line="63" name="return" description="" type="\Zend\View\HelperPluginManager">
-            <type by_reference="false">\Zend\View\HelperPluginManager</type>
+          <tag line="63" name="return" description="" type="\Laminas\View\HelperPluginManager">
+            <type by_reference="false">\Laminas\View\HelperPluginManager</type>
           </tag>
         </docblock>
       </method>
@@ -2155,10 +2155,10 @@ representation appropriate to the type.&lt;/p&gt;
         <docblock line="100">
           <description></description>
           <long-description></long-description>
-          <tag line="100" name="param" description="" type="array|\Traversable|\Zend\Paginator\Paginator" variable="$collection">
+          <tag line="100" name="param" description="" type="array|\Traversable|\Laminas\Paginator\Paginator" variable="$collection">
             <type by_reference="false">array</type>
             <type by_reference="false">\Traversable</type>
-            <type by_reference="false">\Zend\Paginator\Paginator</type>
+            <type by_reference="false">\Laminas\Paginator\Paginator</type>
           </tag>
           <tag line="100" name="param" description="" type="string" variable="$collectionRoute">
             <type by_reference="false">string</type>
@@ -2531,7 +2531,7 @@ representation appropriate to the type.&lt;/p&gt;
       <tag line="2" name="package" description="PhlyRestfully"/>
     </docblock>
     <class final="false" abstract="false" namespace="PhlyRestfully" line="37" package="Default">
-      <extends>\Zend\Mvc\Controller\AbstractRestfulController</extends>
+      <extends>\Laminas\Mvc\Controller\AbstractRestfulController</extends>
       <name>ResourceController</name>
       <full_name>\PhlyRestfully\ResourceController</full_name>
       <docblock line="16">
@@ -2757,8 +2757,8 @@ resource identifier</description>
 &lt;p&gt;When the dispatch is complete, it will check to see if an array was
 returned; if so, it will cast it to a view model using the
 AcceptableViewModelSelector plugin, and the $acceptCriteria property.&lt;/p&gt;</long-description>
-          <tag line="252" name="param" description="" type="\Zend\Mvc\MvcEvent" variable="$e">
-            <type by_reference="false">\Zend\Mvc\MvcEvent</type>
+          <tag line="252" name="param" description="" type="\Laminas\Mvc\MvcEvent" variable="$e">
+            <type by_reference="false">\Laminas\Mvc\MvcEvent</type>
           </tag>
           <tag line="252" name="return" description="" type="mixed">
             <type by_reference="false">mixed</type>
@@ -2770,7 +2770,7 @@ AcceptableViewModelSelector plugin, and the $acceptCriteria property.&lt;/p&gt;<
         <argument line="269">
           <name>$e</name>
           <default></default>
-          <type>\Zend\Mvc\MvcEvent</type>
+          <type>\Laminas\Mvc\MvcEvent</type>
         </argument>
       </method>
       <method final="false" abstract="false" static="false" visibility="public" namespace="PhlyRestfully" line="317" package="Default">
@@ -2782,8 +2782,8 @@ AcceptableViewModelSelector plugin, and the $acceptCriteria property.&lt;/p&gt;<
           <tag line="311" name="param" description="" type="array" variable="$data">
             <type by_reference="false">array</type>
           </tag>
-          <tag line="311" name="return" description="" type="\Zend\Http\Response|\PhlyRestfully\ApiProblem|\PhlyRestfully\HalResource">
-            <type by_reference="false">\Zend\Http\Response</type>
+          <tag line="311" name="return" description="" type="\Laminas\Http\Response|\PhlyRestfully\ApiProblem|\PhlyRestfully\HalResource">
+            <type by_reference="false">\Laminas\Http\Response</type>
             <type by_reference="false">\PhlyRestfully\ApiProblem</type>
             <type by_reference="false">\PhlyRestfully\HalResource</type>
           </tag>
@@ -2804,8 +2804,8 @@ AcceptableViewModelSelector plugin, and the $acceptCriteria property.&lt;/p&gt;<
             <type by_reference="false">int</type>
             <type by_reference="false">string</type>
           </tag>
-          <tag line="356" name="return" description="" type="\Zend\Http\Response|\PhlyRestfully\ApiProblem">
-            <type by_reference="false">\Zend\Http\Response</type>
+          <tag line="356" name="return" description="" type="\Laminas\Http\Response|\PhlyRestfully\ApiProblem">
+            <type by_reference="false">\Laminas\Http\Response</type>
             <type by_reference="false">\PhlyRestfully\ApiProblem</type>
           </tag>
         </docblock>
@@ -2829,8 +2829,8 @@ AcceptableViewModelSelector plugin, and the $acceptCriteria property.&lt;/p&gt;<
             <type by_reference="false">int</type>
             <type by_reference="false">string</type>
           </tag>
-          <tag line="427" name="return" description="" type="\Zend\Http\Response|\PhlyRestfully\ApiProblem|\PhlyRestfully\HalResource">
-            <type by_reference="false">\Zend\Http\Response</type>
+          <tag line="427" name="return" description="" type="\Laminas\Http\Response|\PhlyRestfully\ApiProblem|\PhlyRestfully\HalResource">
+            <type by_reference="false">\Laminas\Http\Response</type>
             <type by_reference="false">\PhlyRestfully\ApiProblem</type>
             <type by_reference="false">\PhlyRestfully\HalResource</type>
           </tag>
@@ -2847,8 +2847,8 @@ AcceptableViewModelSelector plugin, and the $acceptCriteria property.&lt;/p&gt;<
         <docblock line="467">
           <description>Return collection of resources</description>
           <long-description></long-description>
-          <tag line="467" name="return" description="" type="\Zend\Http\Response|\PhlyRestfully\HalCollection">
-            <type by_reference="false">\Zend\Http\Response</type>
+          <tag line="467" name="return" description="" type="\Laminas\Http\Response|\PhlyRestfully\HalCollection">
+            <type by_reference="false">\Laminas\Http\Response</type>
             <type by_reference="false">\PhlyRestfully\HalCollection</type>
           </tag>
         </docblock>
@@ -2863,8 +2863,8 @@ AcceptableViewModelSelector plugin, and the $acceptCriteria property.&lt;/p&gt;<
             <type by_reference="false">null</type>
             <type by_reference="false">mixed</type>
           </tag>
-          <tag line="506" name="return" description="" type="\Zend\Http\Response|\PhlyRestfully\ApiProblem|\PhlyRestfully\HalResource|\PhlyRestfully\HalCollection">
-            <type by_reference="false">\Zend\Http\Response</type>
+          <tag line="506" name="return" description="" type="\Laminas\Http\Response|\PhlyRestfully\ApiProblem|\PhlyRestfully\HalResource|\PhlyRestfully\HalCollection">
+            <type by_reference="false">\Laminas\Http\Response</type>
             <type by_reference="false">\PhlyRestfully\ApiProblem</type>
             <type by_reference="false">\PhlyRestfully\HalResource</type>
             <type by_reference="false">\PhlyRestfully\HalCollection</type>
@@ -2882,8 +2882,8 @@ AcceptableViewModelSelector plugin, and the $acceptCriteria property.&lt;/p&gt;<
         <docblock line="520">
           <description>Respond to OPTIONS request</description>
           <long-description>&lt;p&gt;Uses $options to set the Allow header line and return an empty response.&lt;/p&gt;</long-description>
-          <tag line="520" name="return" description="" type="\Zend\Http\Response">
-            <type by_reference="false">\Zend\Http\Response</type>
+          <tag line="520" name="return" description="" type="\Laminas\Http\Response">
+            <type by_reference="false">\Laminas\Http\Response</type>
           </tag>
         </docblock>
       </method>
@@ -2900,8 +2900,8 @@ AcceptableViewModelSelector plugin, and the $acceptCriteria property.&lt;/p&gt;<
           <tag line="556" name="param" description="" type="array" variable="$data">
             <type by_reference="false">array</type>
           </tag>
-          <tag line="556" name="return" description="" type="\Zend\Http\Response|\PhlyRestfully\ApiProblem|\PhlyRestfully\HalResource">
-            <type by_reference="false">\Zend\Http\Response</type>
+          <tag line="556" name="return" description="" type="\Laminas\Http\Response|\PhlyRestfully\ApiProblem|\PhlyRestfully\HalResource">
+            <type by_reference="false">\Laminas\Http\Response</type>
             <type by_reference="false">\PhlyRestfully\ApiProblem</type>
             <type by_reference="false">\PhlyRestfully\HalResource</type>
           </tag>
@@ -2930,8 +2930,8 @@ AcceptableViewModelSelector plugin, and the $acceptCriteria property.&lt;/p&gt;<
           <tag line="594" name="param" description="" type="array" variable="$data">
             <type by_reference="false">array</type>
           </tag>
-          <tag line="594" name="return" description="" type="\Zend\Http\Response|\PhlyRestfully\ApiProblem|\PhlyRestfully\HalResource">
-            <type by_reference="false">\Zend\Http\Response</type>
+          <tag line="594" name="return" description="" type="\Laminas\Http\Response|\PhlyRestfully\ApiProblem|\PhlyRestfully\HalResource">
+            <type by_reference="false">\Laminas\Http\Response</type>
             <type by_reference="false">\PhlyRestfully\ApiProblem</type>
             <type by_reference="false">\PhlyRestfully\HalResource</type>
           </tag>
@@ -2985,7 +2985,7 @@ AcceptableViewModelSelector plugin, and the $acceptCriteria property.&lt;/p&gt;<
     </docblock>
     <class final="false" abstract="false" namespace="PhlyRestfully\Listener" line="26" package="Default">
       <extends/>
-      <implements>\Zend\EventManager\ListenerAggregateInterface</implements>
+      <implements>\Laminas\EventManager\ListenerAggregateInterface</implements>
       <name>ApiProblemListener</name>
       <full_name>\PhlyRestfully\Listener\ApiProblemListener</full_name>
       <docblock line="18">
@@ -3017,14 +3017,14 @@ replaced with a RestfulJsonModel containing an API-Problem payload.&lt;/p&gt;</l
         <docblock line="54">
           <description></description>
           <long-description></long-description>
-          <tag line="54" name="param" description="" type="\Zend\EventManager\EventManagerInterface" variable="$events">
-            <type by_reference="false">\Zend\EventManager\EventManagerInterface</type>
+          <tag line="54" name="param" description="" type="\Laminas\EventManager\EventManagerInterface" variable="$events">
+            <type by_reference="false">\Laminas\EventManager\EventManagerInterface</type>
           </tag>
         </docblock>
         <argument line="57">
           <name>$events</name>
           <default></default>
-          <type>\Zend\EventManager\EventManagerInterface</type>
+          <type>\Laminas\EventManager\EventManagerInterface</type>
         </argument>
       </method>
       <method final="false" abstract="false" static="false" visibility="public" namespace="PhlyRestfully\Listener" line="65" package="Default">
@@ -3033,14 +3033,14 @@ replaced with a RestfulJsonModel containing an API-Problem payload.&lt;/p&gt;</l
         <docblock line="62">
           <description></description>
           <long-description></long-description>
-          <tag line="62" name="param" description="" type="\Zend\EventManager\EventManagerInterface" variable="$events">
-            <type by_reference="false">\Zend\EventManager\EventManagerInterface</type>
+          <tag line="62" name="param" description="" type="\Laminas\EventManager\EventManagerInterface" variable="$events">
+            <type by_reference="false">\Laminas\EventManager\EventManagerInterface</type>
           </tag>
         </docblock>
         <argument line="65">
           <name>$events</name>
           <default></default>
-          <type>\Zend\EventManager\EventManagerInterface</type>
+          <type>\Laminas\EventManager\EventManagerInterface</type>
         </argument>
       </method>
       <method final="false" abstract="false" static="true" visibility="public" namespace="PhlyRestfully\Listener" line="79" package="Default">
@@ -3049,14 +3049,14 @@ replaced with a RestfulJsonModel containing an API-Problem payload.&lt;/p&gt;</l
         <docblock line="74">
           <description>Listen to the render event</description>
           <long-description></long-description>
-          <tag line="74" name="param" description="" type="\Zend\Mvc\MvcEvent" variable="$e">
-            <type by_reference="false">\Zend\Mvc\MvcEvent</type>
+          <tag line="74" name="param" description="" type="\Laminas\Mvc\MvcEvent" variable="$e">
+            <type by_reference="false">\Laminas\Mvc\MvcEvent</type>
           </tag>
         </docblock>
         <argument line="79">
           <name>$e</name>
           <default></default>
-          <type>\Zend\Mvc\MvcEvent</type>
+          <type>\Laminas\Mvc\MvcEvent</type>
         </argument>
       </method>
     </class>
@@ -3078,8 +3078,8 @@ replaced with a RestfulJsonModel containing an API-Problem payload.&lt;/p&gt;</l
     </docblock>
     <class final="false" abstract="false" namespace="PhlyRestfully\Listener" line="18" package="Default">
       <extends/>
-      <implements>\Zend\EventManager\ListenerAggregateInterface</implements>
-      <implements>\Zend\EventManager\SharedListenerAggregateInterface</implements>
+      <implements>\Laminas\EventManager\ListenerAggregateInterface</implements>
+      <implements>\Laminas\EventManager\SharedListenerAggregateInterface</implements>
       <name>ResourceParametersListener</name>
       <full_name>\PhlyRestfully\Listener\ResourceParametersListener</full_name>
       <method final="false" abstract="false" static="false" visibility="public" namespace="PhlyRestfully\Listener" line="35" package="Default">
@@ -3088,14 +3088,14 @@ replaced with a RestfulJsonModel containing an API-Problem payload.&lt;/p&gt;</l
         <docblock line="32">
           <description></description>
           <long-description></long-description>
-          <tag line="32" name="param" description="" type="\Zend\EventManager\EventManagerInterface" variable="$events">
-            <type by_reference="false">\Zend\EventManager\EventManagerInterface</type>
+          <tag line="32" name="param" description="" type="\Laminas\EventManager\EventManagerInterface" variable="$events">
+            <type by_reference="false">\Laminas\EventManager\EventManagerInterface</type>
           </tag>
         </docblock>
         <argument line="35">
           <name>$events</name>
           <default></default>
-          <type>\Zend\EventManager\EventManagerInterface</type>
+          <type>\Laminas\EventManager\EventManagerInterface</type>
         </argument>
       </method>
       <method final="false" abstract="false" static="false" visibility="public" namespace="PhlyRestfully\Listener" line="43" package="Default">
@@ -3104,14 +3104,14 @@ replaced with a RestfulJsonModel containing an API-Problem payload.&lt;/p&gt;</l
         <docblock line="40">
           <description></description>
           <long-description></long-description>
-          <tag line="40" name="param" description="" type="\Zend\EventManager\EventManagerInterface" variable="$events">
-            <type by_reference="false">\Zend\EventManager\EventManagerInterface</type>
+          <tag line="40" name="param" description="" type="\Laminas\EventManager\EventManagerInterface" variable="$events">
+            <type by_reference="false">\Laminas\EventManager\EventManagerInterface</type>
           </tag>
         </docblock>
         <argument line="43">
           <name>$events</name>
           <default></default>
-          <type>\Zend\EventManager\EventManagerInterface</type>
+          <type>\Laminas\EventManager\EventManagerInterface</type>
         </argument>
       </method>
       <method final="false" abstract="false" static="false" visibility="public" namespace="PhlyRestfully\Listener" line="55" package="Default">
@@ -3120,14 +3120,14 @@ replaced with a RestfulJsonModel containing an API-Problem payload.&lt;/p&gt;</l
         <docblock line="52">
           <description></description>
           <long-description></long-description>
-          <tag line="52" name="param" description="" type="\Zend\EventManager\SharedEventManagerInterface" variable="$events">
-            <type by_reference="false">\Zend\EventManager\SharedEventManagerInterface</type>
+          <tag line="52" name="param" description="" type="\Laminas\EventManager\SharedEventManagerInterface" variable="$events">
+            <type by_reference="false">\Laminas\EventManager\SharedEventManagerInterface</type>
           </tag>
         </docblock>
         <argument line="55">
           <name>$events</name>
           <default></default>
-          <type>\Zend\EventManager\SharedEventManagerInterface</type>
+          <type>\Laminas\EventManager\SharedEventManagerInterface</type>
         </argument>
       </method>
       <method final="false" abstract="false" static="false" visibility="public" namespace="PhlyRestfully\Listener" line="63" package="Default">
@@ -3136,14 +3136,14 @@ replaced with a RestfulJsonModel containing an API-Problem payload.&lt;/p&gt;</l
         <docblock line="60">
           <description></description>
           <long-description></long-description>
-          <tag line="60" name="param" description="" type="\Zend\EventManager\SharedEventManagerInterface" variable="$events">
-            <type by_reference="false">\Zend\EventManager\SharedEventManagerInterface</type>
+          <tag line="60" name="param" description="" type="\Laminas\EventManager\SharedEventManagerInterface" variable="$events">
+            <type by_reference="false">\Laminas\EventManager\SharedEventManagerInterface</type>
           </tag>
         </docblock>
         <argument line="63">
           <name>$events</name>
           <default></default>
-          <type>\Zend\EventManager\SharedEventManagerInterface</type>
+          <type>\Laminas\EventManager\SharedEventManagerInterface</type>
         </argument>
       </method>
       <method final="false" abstract="false" static="false" visibility="public" namespace="PhlyRestfully\Listener" line="77" package="Default">
@@ -3152,14 +3152,14 @@ replaced with a RestfulJsonModel containing an API-Problem payload.&lt;/p&gt;</l
         <docblock line="72">
           <description>Listen to the dispatch event</description>
           <long-description></long-description>
-          <tag line="72" name="param" description="" type="\Zend\Mvc\MvcEvent" variable="$e">
-            <type by_reference="false">\Zend\Mvc\MvcEvent</type>
+          <tag line="72" name="param" description="" type="\Laminas\Mvc\MvcEvent" variable="$e">
+            <type by_reference="false">\Laminas\Mvc\MvcEvent</type>
           </tag>
         </docblock>
         <argument line="77">
           <name>$e</name>
           <default></default>
-          <type>\Zend\Mvc\MvcEvent</type>
+          <type>\Laminas\Mvc\MvcEvent</type>
         </argument>
       </method>
     </class>
@@ -3416,7 +3416,7 @@ replaced with a RestfulJsonModel containing an API-Problem payload.&lt;/p&gt;</l
       <tag line="2" name="package" description="PhlyRestfully"/>
     </docblock>
     <class final="false" abstract="false" namespace="PhlyRestfully" line="15" package="Default">
-      <extends>\Zend\EventManager\Event</extends>
+      <extends>\Laminas\EventManager\Event</extends>
       <name>ResourceEvent</name>
       <full_name>\PhlyRestfully\ResourceEvent</full_name>
       <method final="false" abstract="false" static="false" visibility="public" namespace="PhlyRestfully" line="31" package="Default">
@@ -3425,8 +3425,8 @@ replaced with a RestfulJsonModel containing an API-Problem payload.&lt;/p&gt;</l
         <docblock line="27">
           <description></description>
           <long-description></long-description>
-          <tag line="27" name="param" description="" type="\Zend\Stdlib\Parameters" variable="$params">
-            <type by_reference="false">\Zend\Stdlib\Parameters</type>
+          <tag line="27" name="param" description="" type="\Laminas\Stdlib\Parameters" variable="$params">
+            <type by_reference="false">\Laminas\Stdlib\Parameters</type>
           </tag>
           <tag line="27" name="return" description="" type="self">
             <type by_reference="false">self</type>
@@ -3435,7 +3435,7 @@ replaced with a RestfulJsonModel containing an API-Problem payload.&lt;/p&gt;</l
         <argument line="31">
           <name>$params</name>
           <default>null</default>
-          <type>\Zend\Stdlib\Parameters</type>
+          <type>\Laminas\Stdlib\Parameters</type>
         </argument>
       </method>
       <method final="false" abstract="false" static="false" visibility="public" namespace="PhlyRestfully" line="40" package="Default">
@@ -3444,9 +3444,9 @@ replaced with a RestfulJsonModel containing an API-Problem payload.&lt;/p&gt;</l
         <docblock line="37">
           <description></description>
           <long-description></long-description>
-          <tag line="37" name="return" description="" type="null|\Zend\Stdlib\Parameters">
+          <tag line="37" name="return" description="" type="null|\Laminas\Stdlib\Parameters">
             <type by_reference="false">null</type>
-            <type by_reference="false">\Zend\Stdlib\Parameters</type>
+            <type by_reference="false">\Laminas\Stdlib\Parameters</type>
           </tag>
         </docblock>
       </method>
@@ -3483,8 +3483,8 @@ replaced with a RestfulJsonModel containing an API-Problem payload.&lt;/p&gt;</l
         <docblock line="64">
           <description></description>
           <long-description></long-description>
-          <tag line="64" name="param" description="" type="\Zend\Mvc\Router\RouteMatch" variable="$matches">
-            <type by_reference="false">\Zend\Mvc\Router\RouteMatch</type>
+          <tag line="64" name="param" description="" type="\Laminas\Mvc\Router\RouteMatch" variable="$matches">
+            <type by_reference="false">\Laminas\Mvc\Router\RouteMatch</type>
           </tag>
           <tag line="64" name="return" description="" type="self">
             <type by_reference="false">self</type>
@@ -3493,7 +3493,7 @@ replaced with a RestfulJsonModel containing an API-Problem payload.&lt;/p&gt;</l
         <argument line="68">
           <name>$matches</name>
           <default>null</default>
-          <type>\Zend\Mvc\Router\RouteMatch</type>
+          <type>\Laminas\Mvc\Router\RouteMatch</type>
         </argument>
       </method>
       <method final="false" abstract="false" static="false" visibility="public" namespace="PhlyRestfully" line="77" package="Default">
@@ -3502,9 +3502,9 @@ replaced with a RestfulJsonModel containing an API-Problem payload.&lt;/p&gt;</l
         <docblock line="74">
           <description></description>
           <long-description></long-description>
-          <tag line="74" name="return" description="" type="null|\Zend\Mvc\Router\RouteMatch">
+          <tag line="74" name="return" description="" type="null|\Laminas\Mvc\Router\RouteMatch">
             <type by_reference="false">null</type>
-            <type by_reference="false">\Zend\Mvc\Router\RouteMatch</type>
+            <type by_reference="false">\Laminas\Mvc\Router\RouteMatch</type>
           </tag>
         </docblock>
       </method>
@@ -3557,9 +3557,9 @@ replaced with a RestfulJsonModel containing an API-Problem payload.&lt;/p&gt;</l
       <tag line="2" name="package" description="PhlyRestfully"/>
     </docblock>
     <class final="false" abstract="false" namespace="PhlyRestfully\Plugin" line="36" package="Default">
-      <extends>\Zend\View\Helper\AbstractHelper</extends>
-      <implements>\Zend\Mvc\Controller\Plugin\PluginInterface</implements>
-      <implements>\Zend\EventManager\EventManagerAwareInterface</implements>
+      <extends>\Laminas\View\Helper\AbstractHelper</extends>
+      <implements>\Laminas\Mvc\Controller\Plugin\PluginInterface</implements>
+      <implements>\Laminas\EventManager\EventManagerAwareInterface</implements>
       <name>HalLinks</name>
       <full_name>\PhlyRestfully\Plugin\HalLinks</full_name>
       <docblock line="33">
@@ -3572,14 +3572,14 @@ replaced with a RestfulJsonModel containing an API-Problem payload.&lt;/p&gt;</l
         <docblock line="79">
           <description></description>
           <long-description></long-description>
-          <tag line="79" name="param" description="" type="\Zend\Stdlib\DispatchableInterface" variable="$controller">
-            <type by_reference="false">\Zend\Stdlib\DispatchableInterface</type>
+          <tag line="79" name="param" description="" type="\Laminas\Stdlib\DispatchableInterface" variable="$controller">
+            <type by_reference="false">\Laminas\Stdlib\DispatchableInterface</type>
           </tag>
         </docblock>
         <argument line="82">
           <name>$controller</name>
           <default></default>
-          <type>\Zend\Stdlib\DispatchableInterface</type>
+          <type>\Laminas\Stdlib\DispatchableInterface</type>
         </argument>
       </method>
       <method final="false" abstract="false" static="false" visibility="public" namespace="PhlyRestfully\Plugin" line="90" package="Default">
@@ -3588,8 +3588,8 @@ replaced with a RestfulJsonModel containing an API-Problem payload.&lt;/p&gt;</l
         <docblock line="87">
           <description></description>
           <long-description></long-description>
-          <tag line="87" name="return" description="" type="\Zend\Stdlib\DispatchableInterface">
-            <type by_reference="false">\Zend\Stdlib\DispatchableInterface</type>
+          <tag line="87" name="return" description="" type="\Laminas\Stdlib\DispatchableInterface">
+            <type by_reference="false">\Laminas\Stdlib\DispatchableInterface</type>
           </tag>
         </docblock>
       </method>
@@ -3599,8 +3599,8 @@ replaced with a RestfulJsonModel containing an API-Problem payload.&lt;/p&gt;</l
         <docblock line="95">
           <description>Retrieve the event manager instance</description>
           <long-description>&lt;p&gt;Lazy-initializes one if none present.&lt;/p&gt;</long-description>
-          <tag line="95" name="return" description="" type="\Zend\EventManager\EventManagerInterface">
-            <type by_reference="false">\Zend\EventManager\EventManagerInterface</type>
+          <tag line="95" name="return" description="" type="\Laminas\EventManager\EventManagerInterface">
+            <type by_reference="false">\Laminas\EventManager\EventManagerInterface</type>
           </tag>
         </docblock>
       </method>
@@ -3610,14 +3610,14 @@ replaced with a RestfulJsonModel containing an API-Problem payload.&lt;/p&gt;</l
         <docblock line="110">
           <description>Set the event manager instance</description>
           <long-description></long-description>
-          <tag line="110" name="param" description="" type="\Zend\EventManager\EventManagerInterface" variable="$events">
-            <type by_reference="false">\Zend\EventManager\EventManagerInterface</type>
+          <tag line="110" name="param" description="" type="\Laminas\EventManager\EventManagerInterface" variable="$events">
+            <type by_reference="false">\Laminas\EventManager\EventManagerInterface</type>
           </tag>
         </docblock>
         <argument line="115">
           <name>$events</name>
           <default></default>
-          <type>\Zend\EventManager\EventManagerInterface</type>
+          <type>\Laminas\EventManager\EventManagerInterface</type>
         </argument>
       </method>
       <method final="false" abstract="false" static="false" visibility="public" namespace="PhlyRestfully\Plugin" line="158" package="Default">
@@ -3656,14 +3656,14 @@ replaced with a RestfulJsonModel containing an API-Problem payload.&lt;/p&gt;</l
         <docblock line="178">
           <description></description>
           <long-description></long-description>
-          <tag line="178" name="param" description="" type="\Zend\View\Helper\ServerUrl" variable="$helper">
-            <type by_reference="false">\Zend\View\Helper\ServerUrl</type>
+          <tag line="178" name="param" description="" type="\Laminas\View\Helper\ServerUrl" variable="$helper">
+            <type by_reference="false">\Laminas\View\Helper\ServerUrl</type>
           </tag>
         </docblock>
         <argument line="181">
           <name>$helper</name>
           <default></default>
-          <type>\Zend\View\Helper\ServerUrl</type>
+          <type>\Laminas\View\Helper\ServerUrl</type>
         </argument>
       </method>
       <method final="false" abstract="false" static="false" visibility="public" namespace="PhlyRestfully\Plugin" line="189" package="Default">
@@ -3672,14 +3672,14 @@ replaced with a RestfulJsonModel containing an API-Problem payload.&lt;/p&gt;</l
         <docblock line="186">
           <description></description>
           <long-description></long-description>
-          <tag line="186" name="param" description="" type="\Zend\View\Helper\Url" variable="$helper">
-            <type by_reference="false">\Zend\View\Helper\Url</type>
+          <tag line="186" name="param" description="" type="\Laminas\View\Helper\Url" variable="$helper">
+            <type by_reference="false">\Laminas\View\Helper\Url</type>
           </tag>
         </docblock>
         <argument line="189">
           <name>$helper</name>
           <default></default>
-          <type>\Zend\View\Helper\Url</type>
+          <type>\Laminas\View\Helper\Url</type>
         </argument>
       </method>
       <method final="false" abstract="false" static="false" visibility="public" namespace="PhlyRestfully\Plugin" line="201" package="Default">
@@ -3691,8 +3691,8 @@ replaced with a RestfulJsonModel containing an API-Problem payload.&lt;/p&gt;</l
           <tag line="194" name="param" description="" type="string" variable="$class">
             <type by_reference="false">string</type>
           </tag>
-          <tag line="194" name="param" description="" type="\Zend\Hydrator\HydratorInterface" variable="$hydrator">
-            <type by_reference="false">\Zend\Hydrator\HydratorInterface</type>
+          <tag line="194" name="param" description="" type="\Laminas\Hydrator\HydratorInterface" variable="$hydrator">
+            <type by_reference="false">\Laminas\Hydrator\HydratorInterface</type>
           </tag>
           <tag line="194" name="return" description="" type="\PhlyRestfully\Plugin\RestfulJsonRenderer">
             <type by_reference="false">\PhlyRestfully\Plugin\RestfulJsonRenderer</type>
@@ -3706,7 +3706,7 @@ replaced with a RestfulJsonModel containing an API-Problem payload.&lt;/p&gt;</l
         <argument line="201">
           <name>$hydrator</name>
           <default></default>
-          <type>\Zend\Hydrator\HydratorInterface</type>
+          <type>\Laminas\Hydrator\HydratorInterface</type>
         </argument>
       </method>
       <method final="false" abstract="false" static="false" visibility="public" namespace="PhlyRestfully\Plugin" line="213" package="Default">
@@ -3715,8 +3715,8 @@ replaced with a RestfulJsonModel containing an API-Problem payload.&lt;/p&gt;</l
         <docblock line="207">
           <description>Set the default hydrator to use if none specified for a class.</description>
           <long-description></long-description>
-          <tag line="207" name="param" description="" type="\Zend\Hydrator\HydratorInterface" variable="$hydrator">
-            <type by_reference="false">\Zend\Hydrator\HydratorInterface</type>
+          <tag line="207" name="param" description="" type="\Laminas\Hydrator\HydratorInterface" variable="$hydrator">
+            <type by_reference="false">\Laminas\Hydrator\HydratorInterface</type>
           </tag>
           <tag line="207" name="return" description="" type="\PhlyRestfully\Plugin\RestfulJsonRenderer">
             <type by_reference="false">\PhlyRestfully\Plugin\RestfulJsonRenderer</type>
@@ -3725,7 +3725,7 @@ replaced with a RestfulJsonModel containing an API-Problem payload.&lt;/p&gt;</l
         <argument line="213">
           <name>$hydrator</name>
           <default></default>
-          <type>\Zend\Hydrator\HydratorInterface</type>
+          <type>\Laminas\Hydrator\HydratorInterface</type>
         </argument>
       </method>
       <method final="false" abstract="false" static="false" visibility="public" namespace="PhlyRestfully\Plugin" line="229" package="Default">
@@ -3739,8 +3739,8 @@ Otherwise, a boolean false is returned.&lt;/p&gt;</long-description>
           <tag line="219" name="param" description="" type="object" variable="$resource">
             <type by_reference="false">object</type>
           </tag>
-          <tag line="219" name="return" description="" type="\Zend\Hydrator\HydratorInterface|false">
-            <type by_reference="false">\Zend\Hydrator\HydratorInterface</type>
+          <tag line="219" name="return" description="" type="\Laminas\Hydrator\HydratorInterface|false">
+            <type by_reference="false">\Laminas\Hydrator\HydratorInterface</type>
             <type by_reference="false">false</type>
           </tag>
         </docblock>

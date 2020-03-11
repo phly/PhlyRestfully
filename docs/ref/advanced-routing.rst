@@ -3,7 +3,7 @@
 Advanced Routing
 ================
 
-The recommended route for a resource is a ``Zend\Mvc\Router\Http\Segment``
+The recommended route for a resource is a ``Laminas\Mvc\Router\Http\Segment``
 route, with an identifier:
 
 .. code-block:: php

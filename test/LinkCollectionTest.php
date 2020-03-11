@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 /**
  * @link      https://github.com/weierophinney/PhlyRestfully for the canonical source repository
  * @copyright Copyright (c) 2013 Matthew Weier O'Phinney
@@ -14,12 +14,12 @@ use PHPUnit\Framework\TestCase as TestCase;
 
 class LinkCollectionTest extends TestCase
 {
-    public function setUp()
+    public function setUp(): void
     {
         $this->links = new LinkCollection();
     }
 
-    public function testCanAddDiscreteLinkRelations()
+    public function testCanAddDiscreteLinkRelations(): void
     {
         $describedby = new Link('describedby');
         $self = new Link('self');
@@ -32,7 +32,7 @@ class LinkCollectionTest extends TestCase
         $this->assertSame($self, $this->links->get('self'));
     }
 
-    public function testCanAddDuplicateLinkRelations()
+    public function testCanAddDuplicateLinkRelations(): void
     {
         $order1 = new Link('order');
         $order2 = new Link('order');
@@ -47,7 +47,7 @@ class LinkCollectionTest extends TestCase
         $this->assertContains($order2, $orders);
     }
 
-    public function testCanRemoveLinkRelations()
+    public function testCanRemoveLinkRelations(): void
     {
         $describedby = new Link('describedby');
         $this->links->add($describedby);
@@ -56,7 +56,7 @@ class LinkCollectionTest extends TestCase
         $this->assertFalse($this->links->has('describedby'));
     }
 
-    public function testCanOverwriteLinkRelations()
+    public function testCanOverwriteLinkRelations(): void
     {
         $order1 = new Link('order');
         $order2 = new Link('order');
@@ -69,7 +69,7 @@ class LinkCollectionTest extends TestCase
         $this->assertSame($order2, $orders);
     }
 
-    public function testCanIterateLinks()
+    public function testCanIterateLinks(): void
     {
         $describedby = new Link('describedby');
         $self = new Link('self');

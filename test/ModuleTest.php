@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 /**
  * @link      https://github.com/weierophinney/PhlyRestfully for the canonical source repository
  * @copyright Copyright (c) 2013 Matthew Weier O'Phinney
@@ -11,19 +11,19 @@ namespace PhlyRestfullyTest;
 use PhlyRestfully\Module;
 use PHPUnit\Framework\TestCase as TestCase;
 use ReflectionObject;
-use Zend\Hydrator;
-use Zend\Mvc\Application;
-use Zend\Mvc\MvcEvent;
-use Zend\Mvc\Router\RouteMatch;
-use Zend\Mvc\Router\RouteStackInterface;
-use Zend\Mvc\Service;
-use Zend\ServiceManager\Config;
-use Zend\ServiceManager\ServiceManager;
-use Zend\Stdlib\ArrayUtils;
+use Laminas\Hydrator;
+use Laminas\Mvc\Application;
+use Laminas\Mvc\MvcEvent;
+use Laminas\Mvc\Router\RouteMatch;
+use Laminas\Mvc\Router\RouteStackInterface;
+use Laminas\Mvc\Service;
+use Laminas\ServiceManager\Config;
+use Laminas\ServiceManager\ServiceManager;
+use Laminas\Stdlib\ArrayUtils;
 
 class ModuleTest extends TestCase
 {
-    public function setUp()
+    public function setUp(): void
     {
         $this->module = new Module;
     }
@@ -71,7 +71,7 @@ class ModuleTest extends TestCase
         return $services;
     }
 
-    public function testJsonRendererFactoryInjectsDefaultHydratorIfPresentInConfig()
+    public function testJsonRendererFactoryInjectsDefaultHydratorIfPresentInConfig(): void
     {
         $options = [
             'phlyrestfully' => [
@@ -91,7 +91,7 @@ class ModuleTest extends TestCase
         $this->assertAttributeInstanceOf(Hydrator\ObjectProperty::class, 'defaultHydrator', $plugin);
     }
 
-    public function testJsonRendererFactoryInjectsHydratorMappingsIfPresentInConfig()
+    public function testJsonRendererFactoryInjectsHydratorMappingsIfPresentInConfig(): void
     {
         $options = [
             'phlyrestfully' => [

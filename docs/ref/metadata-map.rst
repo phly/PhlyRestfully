@@ -59,7 +59,7 @@ Metadata options
 The following options are available for metadata maps:
 
 - **hydrator**: the fully qualified class name of a hydrator, or a service name
-  ``Zend\Hydrator\HydratorPluginManager`` recognizes,  to use to extract
+  ``Laminas\Hydrator\HydratorPluginManager`` recognizes,  to use to extract
   the resource. (**OPTIONAL**)
 - **identifier_name**: the resource parameter corresponding to the identifier;
   defaults to "id". (**OPTIONAL**)
@@ -94,7 +94,7 @@ easy to understand what types of objects the collection contains, and allows for
 domain-specific logic surrounding the collection.
 
 However, that poses some problems if you want to :ref:`paginate your collection
-<ref/collections-and-pagination>`, as instances of ``Zend\Paginator\Paginator``
+<ref/collections-and-pagination>`, as instances of ``Laminas\Paginator\Paginator``
 are identified by ``HalLinks`` when rendering collections in order to create
 appropriate relational links.
 
@@ -103,7 +103,7 @@ The solution to that is to create an empty extension of ``Paginator``:
 .. code-block:: php
     :linenos:
 
-    use Zend\Paginator\Paginator;
+    use Laminas\Paginator\Paginator;
 
     class Phones extends Paginator
     {

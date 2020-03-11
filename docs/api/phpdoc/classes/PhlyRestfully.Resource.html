@@ -193,7 +193,7 @@ lookup failure.</p></div>
 listener will be returned, as long as it is an array or Traversable;
 otherwise, an empty array will be returned.</p>
 
-<p>The recommendation is to return a \Zend\Paginator\Paginator instance,
+<p>The recommendation is to return a \Laminas\Paginator\Paginator instance,
 which will allow performing paginated sets, and thus allow the view
 layer to select the current page based on the query string or route.</p></div>
 <h3>Returns</h3>
@@ -204,12 +204,12 @@ layer to select the current page based on the query string or route.</p></div>
 </div>
 <a id="method_getEventManager"></a><div class="element clickable method public method_getEventManager" data-toggle="collapse" data-target=".method_getEventManager .collapse">
 <h2>Retrieve event manager</h2>
-<pre>getEventManager() : \Zend\EventManager\EventManagerInterface</pre>
+<pre>getEventManager() : \Laminas\EventManager\EventManagerInterface</pre>
 <div class="labels"></div>
 <div class="row collapse"><div class="detail-description">
 <div class="long_description"><p>Lazy-instantiates an EM instance if none provided.</p></div>
 <h3>Returns</h3>
-<div class="subelement response"><code>\Zend\EventManager\EventManagerInterface</code></div>
+<div class="subelement response"><code>\Laminas\EventManager\EventManagerInterface</code></div>
 </div></div>
 </div>
 <a id="method_getEventParam"></a><div class="element clickable method public method_getEventParam" data-toggle="collapse" data-target=".method_getEventParam .collapse">
@@ -245,26 +245,26 @@ layer to select the current page based on the query string or route.</p></div>
 <a id="method_getQueryParams"></a><div class="element clickable method public method_getQueryParams" data-toggle="collapse" data-target=".method_getQueryParams .collapse">
 <h2>getQueryParams()
         </h2>
-<pre>getQueryParams() : null | \Zend\Stdlib\Parameters</pre>
+<pre>getQueryParams() : null | \Laminas\Stdlib\Parameters</pre>
 <div class="labels"></div>
 <div class="row collapse"><div class="detail-description">
 <div class="long_description"></div>
 <h3>Returns</h3>
 <div class="subelement response">
-<code>null</code><code>\Zend\Stdlib\Parameters</code>
+<code>null</code><code>\Laminas\Stdlib\Parameters</code>
 </div>
 </div></div>
 </div>
 <a id="method_getRouteMatch"></a><div class="element clickable method public method_getRouteMatch" data-toggle="collapse" data-target=".method_getRouteMatch .collapse">
 <h2>getRouteMatch()
         </h2>
-<pre>getRouteMatch() : null | \Zend\Mvc\Router\RouteMatch</pre>
+<pre>getRouteMatch() : null | \Laminas\Mvc\Router\RouteMatch</pre>
 <div class="labels"></div>
 <div class="row collapse"><div class="detail-description">
 <div class="long_description"></div>
 <h3>Returns</h3>
 <div class="subelement response">
-<code>null</code><code>\Zend\Mvc\Router\RouteMatch</code>
+<code>null</code><code>\Laminas\Mvc\Router\RouteMatch</code>
 </div>
 </div></div>
 </div>
@@ -333,7 +333,7 @@ PhlyRestfully\Exception\UpdateException.</p></div>
 </div>
 <a id="method_setEventManager"></a><div class="element clickable method public method_setEventManager" data-toggle="collapse" data-target=".method_setEventManager .collapse">
 <h2>Set event manager instance</h2>
-<pre>setEventManager(\Zend\EventManager\EventManagerInterface $events) : Resource</pre>
+<pre>setEventManager(\Laminas\EventManager\EventManagerInterface $events) : Resource</pre>
 <div class="labels"></div>
 <div class="row collapse"><div class="detail-description">
 <div class="long_description"><p>Sets the event manager identifiers to the current class, this class, and
@@ -341,7 +341,7 @@ the resource interface.</p></div>
 <h3>Parameters</h3>
 <div class="subelement argument">
 <h4>$events</h4>
-<code>\Zend\EventManager\EventManagerInterface</code>
+<code>\Laminas\EventManager\EventManagerInterface</code>
 </div>
 <h3>Returns</h3>
 <div class="subelement response"><code>Resource</code></div>
@@ -389,7 +389,7 @@ the resource interface.</p></div>
 <a id="method_setQueryParams"></a><div class="element clickable method public method_setQueryParams" data-toggle="collapse" data-target=".method_setQueryParams .collapse">
 <h2>setQueryParams()
         </h2>
-<pre>setQueryParams(\Zend\Stdlib\Parameters $params) : <a href="../classes/PhlyRestfully.Resource.html">\PhlyRestfully\Resource</a></pre>
+<pre>setQueryParams(\Laminas\Stdlib\Parameters $params) : <a href="../classes/PhlyRestfully.Resource.html">\PhlyRestfully\Resource</a></pre>
 <div class="labels"></div>
 <div class="row collapse"><div class="detail-description">
 <div class="long_description"></div>
@@ -400,7 +400,7 @@ the resource interface.</p></div>
 <h3>Parameters</h3>
 <div class="subelement argument">
 <h4>$params</h4>
-<code>\Zend\Stdlib\Parameters</code>
+<code>\Laminas\Stdlib\Parameters</code>
 </div>
 <h3>Returns</h3>
 <div class="subelement response"><code><a href="../classes/PhlyRestfully.Resource.html">\PhlyRestfully\Resource</a></code></div>
@@ -409,7 +409,7 @@ the resource interface.</p></div>
 <a id="method_setRouteMatch"></a><div class="element clickable method public method_setRouteMatch" data-toggle="collapse" data-target=".method_setRouteMatch .collapse">
 <h2>setRouteMatch()
         </h2>
-<pre>setRouteMatch(\Zend\Mvc\Router\RouteMatch $matches) : <a href="../classes/PhlyRestfully.Resource.html">\PhlyRestfully\Resource</a></pre>
+<pre>setRouteMatch(\Laminas\Mvc\Router\RouteMatch $matches) : <a href="../classes/PhlyRestfully.Resource.html">\PhlyRestfully\Resource</a></pre>
 <div class="labels"></div>
 <div class="row collapse"><div class="detail-description">
 <div class="long_description"></div>
@@ -420,7 +420,7 @@ the resource interface.</p></div>
 <h3>Parameters</h3>
 <div class="subelement argument">
 <h4>$matches</h4>
-<code>\Zend\Mvc\Router\RouteMatch</code>
+<code>\Laminas\Mvc\Router\RouteMatch</code>
 </div>
 <h3>Returns</h3>
 <div class="subelement response"><code><a href="../classes/PhlyRestfully.Resource.html">\PhlyRestfully\Resource</a></code></div>

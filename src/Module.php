@@ -8,7 +8,7 @@
 
 namespace PhlyRestfully;
 
-use Zend\Hydrator\HydratorPluginManager;
+use Laminas\Hydrator\HydratorPluginManager;
 
 /**
  * ZF2 module
@@ -22,7 +22,7 @@ class Module
      */
     public function getAutoloaderConfig()
     {
-        return ['Zend\Loader\StandardAutoloader' => ['namespaces' => [
+        return ['Laminas\Loader\StandardAutoloader' => ['namespaces' => [
             __NAMESPACE__ => __DIR__,
         ]]];
     }
@@ -54,7 +54,7 @@ class Module
             'factories' => [
                 Listener\ApiProblemListener::class =>
                 /**
-                 * @param \Zend\ServiceManager\ServiceManager $services
+                 * @param \Laminas\ServiceManager\ServiceManager $services
                  * @return Listener\ApiProblemListener
                  */
                 function ($services) {
@@ -75,7 +75,7 @@ class Module
                 },
                 MetadataMap::class =>
                 /**
-                 * @param \Zend\ServiceManager\ServiceManager $services
+                 * @param \Laminas\ServiceManager\ServiceManager $services
                  * @return MetadataMap
                  */
                 function ($services) {
@@ -104,11 +104,11 @@ class Module
                 },
                 'PhlyRestfully\JsonRenderer' =>
                 /**
-                 * @param \Zend\ServiceManager\ServiceManager $services
+                 * @param \Laminas\ServiceManager\ServiceManager $services
                  * @return View\RestfulJsonRenderer
                  */
                 function ($services) {
-                    /** @var \Zend\View\HelperPluginManager $helpers */
+                    /** @var \Laminas\View\HelperPluginManager $helpers */
                     $helpers  = $services->get('ViewHelperManager');
                     /** @var array $config */
                     $config   = $services->get('config');
@@ -129,7 +129,7 @@ class Module
                 },
                 'PhlyRestfully\RestfulJsonStrategy' =>
                 /**
-                 * @param \Zend\ServiceManager\ServiceManager $services
+                 * @param \Laminas\ServiceManager\ServiceManager $services
                  * @return View\RestfulJsonStrategy
                  */
                 function ($services) {
@@ -153,11 +153,11 @@ class Module
         return ['factories' => [
             'HalLinks' =>
             /**
-             * @param \Zend\ServiceManager\ServiceLocatorInterface $services
+             * @param \Laminas\ServiceManager\ServiceLocatorInterface $services
              * @return Plugin\HalLinks
              */
             function ($services) {
-                /** @var \Zend\View\HelperPluginManager $helpers */
+                /** @var \Laminas\View\HelperPluginManager $helpers */
                 $helpers  = $services->get('ViewHelperManager');
                 /** @var Plugin\HalLinks $halLinks */
                 $halLinks = $helpers->get('HalLinks');
@@ -177,16 +177,16 @@ class Module
         return ['factories' => [
             'HalLinks' =>
             /**
-             * @param \Zend\ServiceManager\ServiceManager|\Zend\View\HelperPluginManager $helpers
+             * @param \Laminas\ServiceManager\ServiceManager|\Laminas\View\HelperPluginManager $helpers
              * @return Plugin\HalLinks
              */
             function ($helpers) {
                 $services = $helpers;
                 $helpers = $services->get('ViewHelperManager');
 
-                /** @var \Zend\View\Helper\ServerUrl $serverUrlHelper */
+                /** @var \Laminas\View\Helper\ServerUrl $serverUrlHelper */
                 $serverUrlHelper = $helpers->get('ServerUrl');
-                /** @var \Zend\View\Helper\Url $urlHelper */
+                /** @var \Laminas\View\Helper\Url $urlHelper */
                 $urlHelper       = $helpers->get('Url');
 
                 /** @var array $config */
@@ -239,12 +239,12 @@ class Module
      *
      * Attaches a render event.
      *
-     * @param  \Zend\Mvc\MvcEvent $e
+     * @param  \Laminas\Mvc\MvcEvent $e
      * @return void
      */
-    public function onBootstrap($e)
+    public function onBootstrap($e): void
     {
-        /** @var \Zend\Mvc\ApplicationInterface $app */
+        /** @var \Laminas\Mvc\ApplicationInterface $app */
         $app      = $e->getTarget();
         $services = $app->getServiceManager();
         $events   = $app->getEventManager();
@@ -257,11 +257,11 @@ class Module
             ResourceController::class,
             'dispatch',
             /**
-             * @param \Zend\Mvc\MvcEvent $e
+             * @param \Laminas\Mvc\MvcEvent $e
              * @return void
              */
-            function ($e) use ($services) {
-                /** @var \Zend\EventManager\EventManager $eventManager */
+            function ($e) use ($services): void {
+                /** @var \Laminas\EventManager\EventManager $eventManager */
                 $eventManager = $e->getApplication()->getEventManager();
                 /** @var Listener\ApiProblemListener $apiProblemListener */
                 $apiProblemListener = $services->get(Listener\ApiProblemListener::class);
@@ -279,24 +279,24 @@ class Module
      *
      * Attaches a rendering/response strategy to the View.
      *
-     * @param  \Zend\Mvc\MvcEvent $e
+     * @param  \Laminas\Mvc\MvcEvent $e
      * @return void
      */
-    public function onRender($e)
+    public function onRender($e): void
     {
         $result = $e->getResult();
         if (!$result instanceof View\RestfulJsonModel) {
             return;
         }
 
-        /** @var \Zend\Mvc\ApplicationInterface $app */
+        /** @var \Laminas\Mvc\ApplicationInterface $app */
         $app                 = $e->getTarget();
         $services            = $app->getServiceManager();
-        /** @var \Zend\View\View $view */
+        /** @var \Laminas\View\View $view */
         $view                = $services->get('View');
         /** @var View\RestfulJsonStrategy $restfulJsonStrategy */
         $restfulJsonStrategy = $services->get('PhlyRestfully\RestfulJsonStrategy');
-        /** @var \Zend\EventManager\EventManager $events */
+        /** @var \Laminas\EventManager\EventManager $events */
         $events              = $view->getEventManager();
 
         // register at high priority, to "beat" normal json strategy registered

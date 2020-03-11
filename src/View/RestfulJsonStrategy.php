@@ -9,8 +9,8 @@
 namespace PhlyRestfully\View;
 
 use PhlyRestfully\ApiProblem;
-use Zend\View\Strategy\JsonStrategy;
-use Zend\View\ViewEvent;
+use Laminas\View\Strategy\JsonStrategy;
+use Laminas\View\ViewEvent;
 
 /**
  * Extension of the JSON strategy to handle the RestfulJsonModel and provide
@@ -68,7 +68,7 @@ class RestfulJsonStrategy extends JsonStrategy
      * @param  ViewEvent $e
      * @return void
      */
-    public function injectResponse(ViewEvent $e)
+    public function injectResponse(ViewEvent $e): void
     {
         $renderer = $e->getRenderer();
         if ($renderer !== $this->renderer) {
@@ -84,7 +84,7 @@ class RestfulJsonStrategy extends JsonStrategy
 
         $model       = $e->getModel();
         $contentType = $this->contentType;
-        /** @var \Zend\Http\Response $response */
+        /** @var \Laminas\Http\Response $response */
         $response    = $e->getResponse();
 
         if ($this->renderer->isApiProblem()) {

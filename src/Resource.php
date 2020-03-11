@@ -9,10 +9,10 @@
 namespace PhlyRestfully;
 
 use Traversable;
-use Zend\EventManager\EventManager;
-use Zend\EventManager\EventManagerInterface;
-use Zend\Mvc\Router\RouteMatch;
-use Zend\Stdlib\Parameters;
+use Laminas\EventManager\EventManager;
+use Laminas\EventManager\EventManagerInterface;
+use Laminas\Mvc\Router\RouteMatch;
+use Laminas\Stdlib\Parameters;
 use ArrayObject;
 
 /**
@@ -186,7 +186,7 @@ class Resource implements ResourceInterface
             ));
         }
 
-        /** @var \Zend\EventManager\EventManager $events */
+        /** @var \Laminas\EventManager\EventManager $events */
         $events  = $this->getEventManager();
         $event   = $this->prepareEvent(__FUNCTION__, ['data' => $data]);
         $results = $events->triggerEventUntil(
@@ -255,7 +255,7 @@ class Resource implements ResourceInterface
         );
 
         $data     = new ArrayObject($data);
-        /** @var \Zend\EventManager\EventManager $events */
+        /** @var \Laminas\EventManager\EventManager $events */
         $events   = $this->getEventManager();
         $event    = $this->prepareEvent(__FUNCTION__, ['data' => $data]);
         $results  = $events->triggerEventUntil(
@@ -303,7 +303,7 @@ class Resource implements ResourceInterface
             ));
         }
 
-        /** @var \Zend\EventManager\EventManager $events */
+        /** @var \Laminas\EventManager\EventManager $events */
         $events  = $this->getEventManager();
         $event   = $this->prepareEvent(__FUNCTION__, compact('id', 'data'));
         $results = $events->triggerEventUntil(
@@ -367,7 +367,7 @@ class Resource implements ResourceInterface
                 }
             }
         );
-        /** @var \Zend\EventManager\EventManager $events */
+        /** @var \Laminas\EventManager\EventManager $events */
         $events  = $this->getEventManager();
         $event   = $this->prepareEvent(__FUNCTION__, ['data' => $data]);
         $results = $events->triggerEventUntil(
@@ -416,7 +416,7 @@ class Resource implements ResourceInterface
             ));
         }
 
-        /** @var \Zend\EventManager\EventManager $events */
+        /** @var \Laminas\EventManager\EventManager $events */
         $events  = $this->getEventManager();
         $event   = $this->prepareEvent(__FUNCTION__, compact('id', 'data'));
         $results = $events->triggerEventUntil(
@@ -447,7 +447,7 @@ class Resource implements ResourceInterface
      */
     public function delete($id)
     {
-        /** @var \Zend\EventManager\EventManager $events */
+        /** @var \Laminas\EventManager\EventManager $events */
         $events  = $this->getEventManager();
         $event   = $this->prepareEvent(__FUNCTION__, ['id' => $id]);
         $results = $events->triggerEventUntil(
@@ -483,7 +483,7 @@ class Resource implements ResourceInterface
                 gettype($data)
             ));
         }
-        /** @var \Zend\EventManager\EventManager $events */
+        /** @var \Laminas\EventManager\EventManager $events */
         $events  = $this->getEventManager();
         $event   = $this->prepareEvent(__FUNCTION__, ['data' => $data]);
         $results = $events->triggerEventUntil(
@@ -515,7 +515,7 @@ class Resource implements ResourceInterface
      */
     public function fetch($id)
     {
-        /** @var \Zend\EventManager\EventManager $events */
+        /** @var \Laminas\EventManager\EventManager $events */
         $events  = $this->getEventManager();
         $event   = $this->prepareEvent(__FUNCTION__, ['id' => $id]);
         $results = $events->triggerEventUntil(
@@ -541,7 +541,7 @@ class Resource implements ResourceInterface
      * listener will be returned, as long as it is an array or Traversable;
      * otherwise, an empty array will be returned.
      *
-     * The recommendation is to return a \Zend\Paginator\Paginator instance,
+     * The recommendation is to return a \Laminas\Paginator\Paginator instance,
      * which will allow performing paginated sets, and thus allow the view
      * layer to select the current page based on the query string or route.
      *
@@ -551,7 +551,7 @@ class Resource implements ResourceInterface
      */
     public function fetchAll()
     {
-        /** @var \Zend\EventManager\EventManager $events */
+        /** @var \Laminas\EventManager\EventManager $events */
         $events  = $this->getEventManager();
         $params  = func_get_args();
         $event   = $this->prepareEvent(__FUNCTION__, $params);
@@ -609,7 +609,7 @@ class Resource implements ResourceInterface
         if (empty($params)) {
             return $params;
         }
-        /** @var \Zend\EventManager\EventManager $events */
+        /** @var \Laminas\EventManager\EventManager $events */
         $events = $this->getEventManager();
 
         return $events->prepareArgs($params);

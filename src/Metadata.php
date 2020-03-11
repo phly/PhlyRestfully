@@ -8,8 +8,8 @@
 
 namespace PhlyRestfully;
 
-use Zend\Hydrator\HydratorInterface;
-use Zend\Hydrator\HydratorPluginManager;
+use Laminas\Hydrator\HydratorInterface;
+use Laminas\Hydrator\HydratorPluginManager;
 
 class Metadata
 {
@@ -297,7 +297,7 @@ class Metadata
                 $type = gettype($hydrator);
             }
             throw new Exception\InvalidArgumentException(sprintf(
-                'Hydrator class must implement Zend\Stdlib\Hydrator\Hydrator; received "%s"',
+                'Hydrator class must implement Laminas\Stdlib\Hydrator\Hydrator; received "%s"',
                 $type
             ));
         }

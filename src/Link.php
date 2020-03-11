@@ -9,9 +9,9 @@
 namespace PhlyRestfully;
 
 use Traversable;
-use Zend\Stdlib\ArrayUtils;
-use Zend\Uri\Exception as UriException;
-use Zend\Uri\UriFactory;
+use Laminas\Stdlib\ArrayUtils;
+use Laminas\Uri\Exception as UriException;
+use Laminas\Uri\UriFactory;
 
 /**
  * Object describing a link relation

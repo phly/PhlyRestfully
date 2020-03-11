@@ -36,8 +36,8 @@ you are using a previous version, you will need to manually implement the
     use PhlyRestfully\Exception\CreationException;
     use PhlyRestfully\Exception\DomainException;
     use PhlyRestfully\ResourceEvent;
-    use Zend\EventManager\AbstractListenerAggregate;
-    use Zend\EventManager\EventManagerInterface;
+    use Laminas\EventManager\AbstractListenerAggregate;
+    use Laminas\EventManager\EventManagerInterface;
 
     class PasteResourceListener extends AbstractListenerAggregate
     {
@@ -174,7 +174,7 @@ factory inside our ``Module`` class. The full module class is presented here.
         public function getAutoloaderConfig()
         {
             return array(
-                'Zend\Loader\StandardAutoloader' => array(
+                'Laminas\Loader\StandardAutoloader' => array(
                     'namespaces' => array(
                         __NAMESPACE__ => __DIR__ . '/src/' . __NAMESPACE__,
                     ),

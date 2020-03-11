@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 /**
  * @link      https://github.com/weierophinney/PhlyRestfully for the canonical source repository
  * @copyright Copyright (c) 2013 Matthew Weier O'Phinney
@@ -15,24 +15,24 @@ use PhlyRestfully\MetadataMap;
 use PhlyRestfully\Plugin\HalLinks;
 use PhlyRestfully\ResourceController;
 use PHPUnit\Framework\TestCase as TestCase;
-use Zend\Http\Request;
-use Zend\Hydrator;
-use Zend\Hydrator\HydratorPluginManager;
-use Zend\Mvc\Router\Http\TreeRouteStack;
-use Zend\Mvc\Router\RouteMatch;
-use Zend\Mvc\Router\Http\Segment;
-use Zend\Mvc\MvcEvent;
-use Zend\ServiceManager\ServiceManager;
-use Zend\Uri\Http;
-use Zend\View\Helper\Url as UrlHelper;
-use Zend\View\Helper\ServerUrl as ServerUrlHelper;
+use Laminas\Http\Request;
+use Laminas\Hydrator;
+use Laminas\Hydrator\HydratorPluginManager;
+use Laminas\Mvc\Router\Http\TreeRouteStack;
+use Laminas\Mvc\Router\RouteMatch;
+use Laminas\Mvc\Router\Http\Segment;
+use Laminas\Mvc\MvcEvent;
+use Laminas\ServiceManager\ServiceManager;
+use Laminas\Uri\Http;
+use Laminas\View\Helper\Url as UrlHelper;
+use Laminas\View\Helper\ServerUrl as ServerUrlHelper;
 
 /**
  * @subpackage UnitTest
  */
 class HalLinksTest extends TestCase
 {
-    public function setUp()
+    public function setUp(): void
     {
         $this->router = $router = new TreeRouteStack();
         $route = new Segment('/resource[/[:id]]');
@@ -115,7 +115,7 @@ class HalLinksTest extends TestCase
         $plugin->setServerUrlHelper($serverUrlHelper);
     }
 
-    public function assertRelationalLinkContains($match, $relation, $resource)
+    public function assertRelationalLinkContains($match, $relation, $resource): void
     {
         $this->assertIsArray($resource);
         $this->assertArrayHasKey('_links', $resource);
@@ -130,25 +130,25 @@ class HalLinksTest extends TestCase
         $this->assertContains($match, $href);
     }
 
-    public function testCreateLinkSkipServerUrlHelperIfSchemeExists()
+    public function testCreateLinkSkipServerUrlHelperIfSchemeExists(): void
     {
         $url = $this->plugin->createLink('hostname/resource');
         $this->assertEquals('http://localhost.localdomain/resource', $url);
     }
 
-    public function testLinkCreationWithoutIdCreatesFullyQualifiedLink()
+    public function testLinkCreationWithoutIdCreatesFullyQualifiedLink(): void
     {
         $url = $this->plugin->createLink('resource');
         $this->assertEquals('http://localhost.localdomain/resource', $url);
     }
 
-    public function testLinkCreationWithIdCreatesFullyQualifiedLink()
+    public function testLinkCreationWithIdCreatesFullyQualifiedLink(): void
     {
         $url = $this->plugin->createLink('resource', 123);
         $this->assertEquals('http://localhost.localdomain/resource/123', $url);
     }
 
-    public function testLinkCreationFromHalResource()
+    public function testLinkCreationFromHalResource(): void
     {
         $self = new Link('self');
         $self->setRoute('resource', ['id' => 123]);
@@ -159,8 +159,8 @@ class HalLinksTest extends TestCase
         $links = $this->plugin->fromResource($resource);
 
         $this->assertIsArray($links);
-        $this->assertArrayHasKey('self', $links, var_export($links, 1));
-        $this->assertArrayHasKey('describedby', $links, var_export($links, 1));
+        $this->assertArrayHasKey('self', $links, var_export($links, true));
+        $this->assertArrayHasKey('describedby', $links, var_export($links, true));
 
         $selfLink = $links['self'];
         $this->assertIsArray($selfLink);
@@ -173,7 +173,7 @@ class HalLinksTest extends TestCase
         $this->assertEquals('http://localhost.localdomain/help', $docsLink['href']);
     }
 
-    public function testRendersEmbeddedCollectionsInsideResources()
+    public function testRendersEmbeddedCollectionsInsideResources(): void
     {
         $collection = new HalCollection(
             [
@@ -209,7 +209,7 @@ class HalLinksTest extends TestCase
         }
     }
 
-    public function testRendersEmbeddedResourcesInsideResourcesBasedOnMetadataMap()
+    public function testRendersEmbeddedResourcesInsideResourcesBasedOnMetadataMap(): void
     {
         $object = new TestAsset\Resource('foo', 'Foo');
         $object->first_child  = new TestAsset\EmbeddedResource('bar', 'Bar');
@@ -255,7 +255,7 @@ class HalLinksTest extends TestCase
         $this->assertRelationalLinkContains('/embedded_custom/baz', 'self', $second);
     }
 
-    public function testRendersEmbeddedCollectionsInsideResourcesBasedOnMetadataMap()
+    public function testRendersEmbeddedCollectionsInsideResourcesBasedOnMetadataMap(): void
     {
         $collection = new TestAsset\Collection(
             [
@@ -303,7 +303,7 @@ class HalLinksTest extends TestCase
         }
     }
 
-    public function testRendersEmbeddedCollectionsInsideCollectionsBasedOnMetadataMap()
+    public function testRendersEmbeddedCollectionsInsideCollectionsBasedOnMetadataMap(): void
     {
         $childCollection = new TestAsset\Collection(
             [
@@ -360,7 +360,7 @@ class HalLinksTest extends TestCase
         }
     }
 
-    public function testWillNotAllowInjectingASelfRelationMultipleTimes()
+    public function testWillNotAllowInjectingASelfRelationMultipleTimes(): void
     {
         $resource = new HalResource([
             'id'  => 1,
@@ -385,7 +385,7 @@ class HalLinksTest extends TestCase
     /**
      * @group 71
      */
-    public function testRenderingEmbeddedHalResourceEmbedsResource()
+    public function testRenderingEmbeddedHalResourceEmbedsResource(): void
     {
         $embedded = new HalResource((object) ['id' => 'foo', 'name' => 'foo'], 'foo');
         $self = new Link('self');
@@ -410,7 +410,7 @@ class HalLinksTest extends TestCase
     /**
      * @group 71
      */
-    public function testRenderingCollectionRendersAllLinksInEmbeddedResources()
+    public function testRenderingCollectionRendersAllLinksInEmbeddedResources(): void
     {
         $embedded = new HalResource((object) ['id' => 'foo', 'name' => 'foo'], 'foo');
         $links = $embedded->getLinks();
@@ -442,7 +442,7 @@ class HalLinksTest extends TestCase
         $this->assertRelationalLinkContains('/users/foo/phones', 'phones', $user);
     }
 
-    public function testRenderingCollectionRendersAllLinksInEmbeddedArrayResourcesWithCustomIdentifier()
+    public function testRenderingCollectionRendersAllLinksInEmbeddedArrayResourcesWithCustomIdentifier(): void
     {
         $embedded = ['custom_id' => 'foo', 'name' => 'foo'];
 
@@ -469,7 +469,7 @@ class HalLinksTest extends TestCase
         $this->assertRelationalLinkContains('/embedded_custom/foo', 'self', $embeddedCustom);
     }
 
-    public function testResourcesFromCollectionCanUseHydratorSetInMetadataMap()
+    public function testResourcesFromCollectionCanUseHydratorSetInMetadataMap(): void
     {
         $object   = new TestAsset\ResourceWithProtectedProperties('foo', 'Foo');
         $resource = new HalResource($object, 'foo');
@@ -505,7 +505,7 @@ class HalLinksTest extends TestCase
     /**
      * @group 79
      */
-    public function testInjectsLinksFromMetadataWhenCreatingResource()
+    public function testInjectsLinksFromMetadataWhenCreatingResource(): void
     {
         $object = new TestAsset\Resource('foo', 'Foo');
         $resource = new HalResource($object, 'foo');
@@ -551,7 +551,7 @@ class HalLinksTest extends TestCase
     /**
      * @group 79
      */
-    public function testInjectsLinksFromMetadataWhenCreatingCollection()
+    public function testInjectsLinksFromMetadataWhenCreatingCollection(): void
     {
         $set = new TestAsset\Collection(
             [
@@ -592,7 +592,7 @@ class HalLinksTest extends TestCase
     /**
      * @group 79
      */
-    public function testRenderResourceTriggersEvent()
+    public function testRenderResourceTriggersEvent(): void
     {
         $resource = new HalResource(
             (object) [
@@ -605,7 +605,7 @@ class HalLinksTest extends TestCase
         $self->setRoute('hostname/users', ['id' => 'user']);
         $resource->getLinks()->add($self);
 
-        $this->plugin->getEventManager()->attach('renderResource', function ($e) {
+        $this->plugin->getEventManager()->attach('renderResource', function ($e): void {
             $resource = $e->getParam('resource');
             $resource->getLinks()->get('self')->setRouteParams(['id' => 'matthew']);
         });
@@ -617,7 +617,7 @@ class HalLinksTest extends TestCase
     /**
      * @group 79
      */
-    public function testRenderCollectionTriggersEvent()
+    public function testRenderCollectionTriggersEvent(): void
     {
         $collection = new HalCollection(
             [
@@ -632,7 +632,7 @@ class HalLinksTest extends TestCase
         $collection->getLinks()->add($self);
         $collection->setCollectionName('resources');
 
-        $this->plugin->getEventManager()->attach('renderCollection', function ($e) {
+        $this->plugin->getEventManager()->attach('renderCollection', function ($e): void {
             $collection = $e->getParam('collection');
             $collection->setAttributes(['injected' => true]);
         });
@@ -659,7 +659,7 @@ class HalLinksTest extends TestCase
     /**
      * @group 95
      */
-    public function testPassingFalseReuseParamsOptionShouldOmitMatchedParametersInGeneratedLink()
+    public function testPassingFalseReuseParamsOptionShouldOmitMatchedParametersInGeneratedLink(): void
     {
         $matches = $this->matchUrl('/resource/foo');
         $this->assertEquals('foo', $matches->getParam('id', false));

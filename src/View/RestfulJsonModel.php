@@ -11,7 +11,7 @@ namespace PhlyRestfully\View;
 use PhlyRestfully\ApiProblem;
 use PhlyRestfully\HalCollection;
 use PhlyRestfully\HalResource;
-use Zend\View\Model\JsonModel;
+use Laminas\View\Model\JsonModel;
 
 /**
  * Simple extension to facilitate the specialized JsonStrategy and JsonRenderer

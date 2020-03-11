@@ -107,7 +107,7 @@ API-formatted response</li>
 </div>
 <a id="method_injectResponse"></a><div class="element clickable method public method_injectResponse" data-toggle="collapse" data-target=".method_injectResponse .collapse">
 <h2>Inject the response</h2>
-<pre>injectResponse(\Zend\View\ViewEvent $e) </pre>
+<pre>injectResponse(\Laminas\View\ViewEvent $e) </pre>
 <div class="labels"></div>
 <div class="row collapse"><div class="detail-description">
 <div class="long_description"><p>Injects the response with the rendered content, and sets the content
@@ -115,20 +115,20 @@ type based on the detection that occurred during renderer selection.</p></div>
 <h3>Parameters</h3>
 <div class="subelement argument">
 <h4>$e</h4>
-<code>\Zend\View\ViewEvent</code>
+<code>\Laminas\View\ViewEvent</code>
 </div>
 </div></div>
 </div>
 <a id="method_selectRenderer"></a><div class="element clickable method public method_selectRenderer" data-toggle="collapse" data-target=".method_selectRenderer .collapse">
 <h2>Detect if we should use the RestfulJsonRenderer based on model type.</h2>
-<pre>selectRenderer(\Zend\View\ViewEvent $e) : null | <a href="../classes/PhlyRestfully.View.RestfulJsonRenderer.html">\PhlyRestfully\View\RestfulJsonRenderer</a></pre>
+<pre>selectRenderer(\Laminas\View\ViewEvent $e) : null | <a href="../classes/PhlyRestfully.View.RestfulJsonRenderer.html">\PhlyRestfully\View\RestfulJsonRenderer</a></pre>
 <div class="labels"></div>
 <div class="row collapse"><div class="detail-description">
 <div class="long_description"></div>
 <h3>Parameters</h3>
 <div class="subelement argument">
 <h4>$e</h4>
-<code>\Zend\View\ViewEvent</code>
+<code>\Laminas\View\ViewEvent</code>
 </div>
 <h3>Returns</h3>
 <div class="subelement response">

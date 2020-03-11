@@ -8,10 +8,10 @@
 
 namespace PhlyRestfully;
 
-use Zend\Http\Response;
-use Zend\Mvc\Controller\AbstractRestfulController;
-use Zend\Mvc\MvcEvent;
-use Zend\Paginator\Paginator;
+use Laminas\Http\Response;
+use Laminas\Mvc\Controller\AbstractRestfulController;
+use Laminas\Mvc\MvcEvent;
+use Laminas\Paginator\Paginator;
 
 /**
  * Controller for handling resources.
@@ -144,7 +144,7 @@ class ResourceController extends AbstractRestfulController
      * @param  array $criteria
      * @return void
      */
-    public function setAcceptCriteria(array $criteria)
+    public function setAcceptCriteria(array $criteria): void
     {
         $this->acceptCriteria = $criteria;
     }
@@ -155,7 +155,7 @@ class ResourceController extends AbstractRestfulController
      * @param  array $options
      * @return void
      */
-    public function setCollectionHttpOptions(array $options)
+    public function setCollectionHttpOptions(array $options): void
     {
         $this->collectionHttpOptions = $options;
     }
@@ -166,7 +166,7 @@ class ResourceController extends AbstractRestfulController
      * @param  string $name
      * @return void
      */
-    public function setCollectionName($name)
+    public function setCollectionName($name): void
     {
         $this->collectionName = (string) $name;
     }
@@ -177,7 +177,7 @@ class ResourceController extends AbstractRestfulController
      * @param  array $contentTypes
      * @return void
      */
-    public function setContentTypes(array $contentTypes)
+    public function setContentTypes(array $contentTypes): void
     {
         $this->contentTypes = $contentTypes;
     }
@@ -188,7 +188,7 @@ class ResourceController extends AbstractRestfulController
      * @param  int $count
      * @return void
      */
-    public function setPageSize($count)
+    public function setPageSize($count): void
     {
         $this->pageSize = (int) $count;
     }
@@ -199,7 +199,7 @@ class ResourceController extends AbstractRestfulController
      * @param string $param
      * @return void
      */
-    public function setPageSizeParam($param)
+    public function setPageSizeParam($param): void
     {
         $this->pageSizeParam = (string) $param;
     }
@@ -210,7 +210,7 @@ class ResourceController extends AbstractRestfulController
      * @param  ResourceInterface $resource
      * @return void
      */
-    public function setResource(ResourceInterface $resource)
+    public function setResource(ResourceInterface $resource): void
     {
         $this->resource = $resource;
     }
@@ -237,7 +237,7 @@ class ResourceController extends AbstractRestfulController
      * @param  array $options
      * @return void
      */
-    public function setResourceHttpOptions(array $options)
+    public function setResourceHttpOptions(array $options): void
     {
         $this->resourceHttpOptions = $options;
     }
@@ -248,7 +248,7 @@ class ResourceController extends AbstractRestfulController
      * @param  string $route
      * @return void
      */
-    public function setRoute($route)
+    public function setRoute($route): void
     {
         $this->route = $route;
     }
@@ -349,7 +349,7 @@ class ResourceController extends AbstractRestfulController
         $self = $resource->getLinks()->get('self');
         $self = $plugin->fromLink($self);
 
-        /** @var \Zend\Http\Response $response */
+        /** @var \Laminas\Http\Response $response */
         $response = $this->getResponse();
         $response->setStatusCode(201);
         $response->getHeaders()->addHeaderLine('Location', $self);
@@ -387,7 +387,7 @@ class ResourceController extends AbstractRestfulController
         }
 
         $plugin = $this->plugin('HalLinks');
-        /** @var \Zend\Http\Request $request */
+        /** @var \Laminas\Http\Request $request */
         $request = $this->getRequest();
         $collection = $plugin->createCollection($collection, $this->route);
         $collection->setCollectionRoute($this->route);
@@ -433,7 +433,7 @@ class ResourceController extends AbstractRestfulController
             return $result;
         }
 
-        /** @var \Zend\Http\Response $response */
+        /** @var \Laminas\Http\Response $response */
         $response = $this->getResponse();
         $response->setStatusCode(204);
 
@@ -444,7 +444,7 @@ class ResourceController extends AbstractRestfulController
 
     /**
      * @param array $data
-     * @return \Zend\Http\Response|ApiProblem
+     * @return \Laminas\Http\Response|ApiProblem
      */
     public function deleteList($data = [])
     {
@@ -469,7 +469,7 @@ class ResourceController extends AbstractRestfulController
             return $result;
         }
 
-        /** @var \Zend\Http\Response $response */
+        /** @var \Laminas\Http\Response $response */
         $response = $this->getResponse();
         $response->setStatusCode(204);
 
@@ -545,7 +545,7 @@ class ResourceController extends AbstractRestfulController
         }
 
         $plugin     = $this->plugin('HalLinks');
-        /** @var \Zend\Http\Request $request */
+        /** @var \Laminas\Http\Request $request */
         $request = $this->getRequest();
         $collection = $plugin->createCollection($collection, $this->route);
         $collection->setCollectionRoute($this->route);
@@ -602,7 +602,7 @@ class ResourceController extends AbstractRestfulController
              * @param string $method
              * @return void
              */
-            function (&$method) {
+            function (&$method): void {
                 $method = strtoupper($method);
             }
         );
@@ -610,7 +610,7 @@ class ResourceController extends AbstractRestfulController
         $events = $this->getEventManager();
         $events->trigger('options.pre', $this, ['options' => $options]);
 
-        /** @var \Zend\Http\Response $response */
+        /** @var \Laminas\Http\Response $response */
         $response = $this->getResponse();
         $response->setStatusCode(204);
         $headers  = $response->getHeaders();
@@ -723,7 +723,7 @@ class ResourceController extends AbstractRestfulController
         }
 
         $plugin = $this->plugin('HalLinks');
-        /** @var \Zend\Http\Request $request */
+        /** @var \Laminas\Http\Request $request */
         $request = $this->getRequest();
         $collection = $plugin->createCollection($collection, $this->route);
         $collection->setCollectionRoute($this->route);
@@ -743,8 +743,8 @@ class ResourceController extends AbstractRestfulController
      * Attempts to see if an identifier was passed in either the URI or the
      * query string, returning it if found. Otherwise, returns a boolean false.
      *
-     * @param  \Zend\Mvc\Router\RouteMatch $routeMatch
-     * @param  \Zend\Http\Request $request
+     * @param  \Laminas\Mvc\Router\RouteMatch $routeMatch
+     * @param  \Laminas\Http\Request $request
      * @return false|mixed
      */
     protected function getIdentifier($routeMatch, $request)
@@ -776,12 +776,12 @@ class ResourceController extends AbstractRestfulController
              * @param string $method
              * @return void
              */
-            function (&$method) {
+            function (&$method): void {
                 $method = strtoupper($method);
             }
         );
         $options = array_merge($this->resourceHttpOptions, ['OPTIONS', 'HEAD']);
-        /** @var \Zend\Http\Request $request */
+        /** @var \Laminas\Http\Request $request */
         $request = $this->getRequest();
         $method  = strtoupper($request->getMethod());
         if (!in_array($method, $options)) {
@@ -803,12 +803,12 @@ class ResourceController extends AbstractRestfulController
              * @param string $method
              * @return void
              */
-            function (&$method) {
+            function (&$method): void {
                 $method = strtoupper($method);
             }
         );
         $options = array_merge($this->collectionHttpOptions, ['OPTIONS', 'HEAD']);
-        /** @var \Zend\Http\Request $request */
+        /** @var \Laminas\Http\Request $request */
         $request = $this->getRequest();
         $method  = strtoupper($request->getMethod());
         if (!in_array($method, $options)) {
@@ -825,7 +825,7 @@ class ResourceController extends AbstractRestfulController
      */
     protected function createMethodNotAllowedResponse(array $options)
     {
-        /** @var \Zend\Http\Response $response */
+        /** @var \Laminas\Http\Response $response */
         $response = $this->getResponse();
         $response->setStatusCode(405);
         $headers = $response->getHeaders();

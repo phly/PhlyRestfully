@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 /**
  * @link      https://github.com/weierophinney/PhlyRestfully for the canonical source repository
  * @copyright Copyright (c) 2013 Matthew Weier O'Phinney
@@ -11,17 +11,17 @@ namespace PhlyRestfullyTest\Factory;
 use PhlyRestfully\ResourceController;
 use PhlyRestfully\Factory\ResourceControllerFactory;
 use PHPUnit\Framework\TestCase as TestCase;
-use Zend\EventManager\EventManager;
-use Zend\EventManager\SharedEventManager;
-use Zend\Mvc\Controller\ControllerManager;
-use Zend\Mvc\Service;
-use Zend\ServiceManager\ServiceLocatorInterface;
-use Zend\ServiceManager\ServiceManager;
-use Zend\ServiceManager\Config;
+use Laminas\EventManager\EventManager;
+use Laminas\EventManager\SharedEventManager;
+use Laminas\Mvc\Controller\ControllerManager;
+use Laminas\Mvc\Service;
+use Laminas\ServiceManager\ServiceLocatorInterface;
+use Laminas\ServiceManager\ServiceManager;
+use Laminas\ServiceManager\Config;
 
 class ResourceControllerFactoryTest extends TestCase
 {
-    public function setUp()
+    public function setUp(): void
     {
         $this->services    = $services    = new ServiceManager();
         $this->controllers = $controllers = new ControllerManager($this->services);
@@ -55,14 +55,14 @@ class ResourceControllerFactoryTest extends TestCase
     /**
      * @group fail
      */
-    public function testWillInstantiateListenerIfServiceNotFoundButClassExists()
+    public function testWillInstantiateListenerIfServiceNotFoundButClassExists(): void
     {
         $this->assertTrue($this->controllers->has('ApiController'));
         $controller = $this->controllers->get('ApiController');
         $this->assertInstanceOf(ResourceController::class, $controller);
     }
 
-    public function testWillInstantiateAlternateResourceControllerWhenSpecified()
+    public function testWillInstantiateAlternateResourceControllerWhenSpecified(): void
     {
         $config = $this->services->get('config');
         $config['phlyrestfully']['resources']['ApiController']['controller_class'] = TestAsset\CustomController::class;

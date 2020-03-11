@@ -170,7 +170,7 @@ useful for implementing logging, caching, authentication and authorization
 checks, etc.
 
 Note that the above configuration assumes that you are defining a
-``Zend\EventManager\ListenerAggregateInterface`` implementation to attach to the
+``Laminas\EventManager\ListenerAggregateInterface`` implementation to attach to the
 ``Resource``. This is a good practice anyways, as it keeps the logic
 encapsulated, and allows you to have stateful listeners -- which is particularly
 useful as most often you will consume a mapper or similar within your listeners

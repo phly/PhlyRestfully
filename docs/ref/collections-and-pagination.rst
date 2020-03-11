@@ -17,17 +17,17 @@ collection know when to stop).
 This gets tedious very quickly.
 
 Fortunately, PhlyRestfully can automate the process for you, assuming you are
-willing to use ``Zend\Paginator`` to help do some of the heavy lifting.
+willing to use ``Laminas\Paginator`` to help do some of the heavy lifting.
 
 Paginators
 ----------
 
-`Zend\Paginator <http://framework.zend.com/manual/2.2/en/modules/zend.paginator.introduction.html>`_
+`Laminas\Paginator <http://framework.zend.com/manual/2.2/en/modules/zend.paginator.introduction.html>`_
 is a general purpose component for paginating collections of data. It requires
 only that you specify the number of items per page of data, and the current
 page.
 
-The integration within PhlyRestfully for ``Zend\Paginator`` uses a "page" query
+The integration within PhlyRestfully for ``Laminas\Paginator`` uses a "page" query
 string variable to indicate the current page. You set the page size during
 configuration:
 
@@ -46,7 +46,7 @@ configuration:
         ),
     );
 
-All you need to do, then, is return a ``Zend\Paginator\Paginator`` instance from
+All you need to do, then, is return a ``Laminas\Paginator\Paginator`` instance from
 your resource listener (or an extension of that class), and PhlyRestfully will
 then generate appropriate relational links.
 

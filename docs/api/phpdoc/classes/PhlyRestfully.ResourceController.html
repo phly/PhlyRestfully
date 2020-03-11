@@ -147,7 +147,7 @@ instances of this controller to react to different sets of shared events.</p></d
 </div>
 <a id="method_create"></a><div class="element clickable method public method_create" data-toggle="collapse" data-target=".method_create .collapse">
 <h2>Create a new resource</h2>
-<pre>create(array $data) : \Zend\Http\Response | <a href="../classes/PhlyRestfully.ApiProblem.html">\PhlyRestfully\ApiProblem</a> | <a href="../classes/PhlyRestfully.HalResource.html">\PhlyRestfully\HalResource</a></pre>
+<pre>create(array $data) : \Laminas\Http\Response | <a href="../classes/PhlyRestfully.ApiProblem.html">\PhlyRestfully\ApiProblem</a> | <a href="../classes/PhlyRestfully.HalResource.html">\PhlyRestfully\HalResource</a></pre>
 <div class="labels"></div>
 <div class="row collapse"><div class="detail-description">
 <div class="long_description"></div>
@@ -158,13 +158,13 @@ instances of this controller to react to different sets of shared events.</p></d
 </div>
 <h3>Returns</h3>
 <div class="subelement response">
-<code>\Zend\Http\Response</code><code><a href="../classes/PhlyRestfully.ApiProblem.html">\PhlyRestfully\ApiProblem</a></code><code><a href="../classes/PhlyRestfully.HalResource.html">\PhlyRestfully\HalResource</a></code>
+<code>\Laminas\Http\Response</code><code><a href="../classes/PhlyRestfully.ApiProblem.html">\PhlyRestfully\ApiProblem</a></code><code><a href="../classes/PhlyRestfully.HalResource.html">\PhlyRestfully\HalResource</a></code>
 </div>
 </div></div>
 </div>
 <a id="method_delete"></a><div class="element clickable method public method_delete" data-toggle="collapse" data-target=".method_delete .collapse">
 <h2>Delete an existing resource</h2>
-<pre>delete(int | string $id) : \Zend\Http\Response | <a href="../classes/PhlyRestfully.ApiProblem.html">\PhlyRestfully\ApiProblem</a></pre>
+<pre>delete(int | string $id) : \Laminas\Http\Response | <a href="../classes/PhlyRestfully.ApiProblem.html">\PhlyRestfully\ApiProblem</a></pre>
 <div class="labels"></div>
 <div class="row collapse"><div class="detail-description">
 <div class="long_description"></div>
@@ -175,7 +175,7 @@ instances of this controller to react to different sets of shared events.</p></d
 </div>
 <h3>Returns</h3>
 <div class="subelement response">
-<code>\Zend\Http\Response</code><code><a href="../classes/PhlyRestfully.ApiProblem.html">\PhlyRestfully\ApiProblem</a></code>
+<code>\Laminas\Http\Response</code><code><a href="../classes/PhlyRestfully.ApiProblem.html">\PhlyRestfully\ApiProblem</a></code>
 </div>
 </div></div>
 </div>
@@ -188,7 +188,7 @@ instances of this controller to react to different sets of shared events.</p></d
 </div>
 <a id="method_get"></a><div class="element clickable method public method_get" data-toggle="collapse" data-target=".method_get .collapse">
 <h2>Return single resource</h2>
-<pre>get(int | string $id) : \Zend\Http\Response | <a href="../classes/PhlyRestfully.ApiProblem.html">\PhlyRestfully\ApiProblem</a> | <a href="../classes/PhlyRestfully.HalResource.html">\PhlyRestfully\HalResource</a></pre>
+<pre>get(int | string $id) : \Laminas\Http\Response | <a href="../classes/PhlyRestfully.ApiProblem.html">\PhlyRestfully\ApiProblem</a> | <a href="../classes/PhlyRestfully.HalResource.html">\PhlyRestfully\HalResource</a></pre>
 <div class="labels"></div>
 <div class="row collapse"><div class="detail-description">
 <div class="long_description"></div>
@@ -199,7 +199,7 @@ instances of this controller to react to different sets of shared events.</p></d
 </div>
 <h3>Returns</h3>
 <div class="subelement response">
-<code>\Zend\Http\Response</code><code><a href="../classes/PhlyRestfully.ApiProblem.html">\PhlyRestfully\ApiProblem</a></code><code><a href="../classes/PhlyRestfully.HalResource.html">\PhlyRestfully\HalResource</a></code>
+<code>\Laminas\Http\Response</code><code><a href="../classes/PhlyRestfully.ApiProblem.html">\PhlyRestfully\ApiProblem</a></code><code><a href="../classes/PhlyRestfully.HalResource.html">\PhlyRestfully\HalResource</a></code>
 </div>
 </div></div>
 </div>
@@ -216,13 +216,13 @@ instances of this controller to react to different sets of shared events.</p></d
 </div>
 <a id="method_getList"></a><div class="element clickable method public method_getList" data-toggle="collapse" data-target=".method_getList .collapse">
 <h2>Return collection of resources</h2>
-<pre>getList() : \Zend\Http\Response | <a href="../classes/PhlyRestfully.HalCollection.html">\PhlyRestfully\HalCollection</a></pre>
+<pre>getList() : \Laminas\Http\Response | <a href="../classes/PhlyRestfully.HalCollection.html">\PhlyRestfully\HalCollection</a></pre>
 <div class="labels"></div>
 <div class="row collapse"><div class="detail-description">
 <div class="long_description"></div>
 <h3>Returns</h3>
 <div class="subelement response">
-<code>\Zend\Http\Response</code><code><a href="../classes/PhlyRestfully.HalCollection.html">\PhlyRestfully\HalCollection</a></code>
+<code>\Laminas\Http\Response</code><code><a href="../classes/PhlyRestfully.HalCollection.html">\PhlyRestfully\HalCollection</a></code>
 </div>
 </div></div>
 </div>
@@ -243,7 +243,7 @@ instances of this controller to react to different sets of shared events.</p></d
 </div>
 <a id="method_head"></a><div class="element clickable method public method_head" data-toggle="collapse" data-target=".method_head .collapse">
 <h2>Retrieve HEAD metadata for the resource and/or collection</h2>
-<pre>head(null | mixed $id) : \Zend\Http\Response | <a href="../classes/PhlyRestfully.ApiProblem.html">\PhlyRestfully\ApiProblem</a> | <a href="../classes/PhlyRestfully.HalResource.html">\PhlyRestfully\HalResource</a> | <a href="../classes/PhlyRestfully.HalCollection.html">\PhlyRestfully\HalCollection</a></pre>
+<pre>head(null | mixed $id) : \Laminas\Http\Response | <a href="../classes/PhlyRestfully.ApiProblem.html">\PhlyRestfully\ApiProblem</a> | <a href="../classes/PhlyRestfully.HalResource.html">\PhlyRestfully\HalResource</a> | <a href="../classes/PhlyRestfully.HalCollection.html">\PhlyRestfully\HalCollection</a></pre>
 <div class="labels"></div>
 <div class="row collapse"><div class="detail-description">
 <div class="long_description"></div>
@@ -254,13 +254,13 @@ instances of this controller to react to different sets of shared events.</p></d
 </div>
 <h3>Returns</h3>
 <div class="subelement response">
-<code>\Zend\Http\Response</code><code><a href="../classes/PhlyRestfully.ApiProblem.html">\PhlyRestfully\ApiProblem</a></code><code><a href="../classes/PhlyRestfully.HalResource.html">\PhlyRestfully\HalResource</a></code><code><a href="../classes/PhlyRestfully.HalCollection.html">\PhlyRestfully\HalCollection</a></code>
+<code>\Laminas\Http\Response</code><code><a href="../classes/PhlyRestfully.ApiProblem.html">\PhlyRestfully\ApiProblem</a></code><code><a href="../classes/PhlyRestfully.HalResource.html">\PhlyRestfully\HalResource</a></code><code><a href="../classes/PhlyRestfully.HalCollection.html">\PhlyRestfully\HalCollection</a></code>
 </div>
 </div></div>
 </div>
 <a id="method_onDispatch"></a><div class="element clickable method public method_onDispatch" data-toggle="collapse" data-target=".method_onDispatch .collapse">
 <h2>Handle the dispatch event</h2>
-<pre>onDispatch(\Zend\Mvc\MvcEvent $e) : mixed</pre>
+<pre>onDispatch(\Laminas\Mvc\MvcEvent $e) : mixed</pre>
 <div class="labels"></div>
 <div class="row collapse"><div class="detail-description">
 <div class="long_description"><p>Does several "pre-flight" checks:
@@ -275,7 +275,7 @@ AcceptableViewModelSelector plugin, and the $acceptCriteria property.</p></div>
 <h3>Parameters</h3>
 <div class="subelement argument">
 <h4>$e</h4>
-<code>\Zend\Mvc\MvcEvent</code>
+<code>\Laminas\Mvc\MvcEvent</code>
 </div>
 <h3>Exceptions</h3>
 <table class="table table-bordered"><tr>
@@ -288,17 +288,17 @@ AcceptableViewModelSelector plugin, and the $acceptCriteria property.</p></div>
 </div>
 <a id="method_options"></a><div class="element clickable method public method_options" data-toggle="collapse" data-target=".method_options .collapse">
 <h2>Respond to OPTIONS request</h2>
-<pre>options() : \Zend\Http\Response</pre>
+<pre>options() : \Laminas\Http\Response</pre>
 <div class="labels"></div>
 <div class="row collapse"><div class="detail-description">
 <div class="long_description"><p>Uses $options to set the Allow header line and return an empty response.</p></div>
 <h3>Returns</h3>
-<div class="subelement response"><code>\Zend\Http\Response</code></div>
+<div class="subelement response"><code>\Laminas\Http\Response</code></div>
 </div></div>
 </div>
 <a id="method_patch"></a><div class="element clickable method public method_patch" data-toggle="collapse" data-target=".method_patch .collapse">
 <h2>Respond to the PATCH method (partial update of existing resource)</h2>
-<pre>patch(int | string $id, array $data) : \Zend\Http\Response | <a href="../classes/PhlyRestfully.ApiProblem.html">\PhlyRestfully\ApiProblem</a> | <a href="../classes/PhlyRestfully.HalResource.html">\PhlyRestfully\HalResource</a></pre>
+<pre>patch(int | string $id, array $data) : \Laminas\Http\Response | <a href="../classes/PhlyRestfully.ApiProblem.html">\PhlyRestfully\ApiProblem</a> | <a href="../classes/PhlyRestfully.HalResource.html">\PhlyRestfully\HalResource</a></pre>
 <div class="labels"></div>
 <div class="row collapse"><div class="detail-description">
 <div class="long_description"></div>
@@ -313,7 +313,7 @@ AcceptableViewModelSelector plugin, and the $acceptCriteria property.</p></div>
 </div>
 <h3>Returns</h3>
 <div class="subelement response">
-<code>\Zend\Http\Response</code><code><a href="../classes/PhlyRestfully.ApiProblem.html">\PhlyRestfully\ApiProblem</a></code><code><a href="../classes/PhlyRestfully.HalResource.html">\PhlyRestfully\HalResource</a></code>
+<code>\Laminas\Http\Response</code><code><a href="../classes/PhlyRestfully.ApiProblem.html">\PhlyRestfully\ApiProblem</a></code><code><a href="../classes/PhlyRestfully.HalResource.html">\PhlyRestfully\HalResource</a></code>
 </div>
 </div></div>
 </div>
@@ -452,7 +452,7 @@ resource identifier</h2>
 </div>
 <a id="method_update"></a><div class="element clickable method public method_update" data-toggle="collapse" data-target=".method_update .collapse">
 <h2>Update an existing resource</h2>
-<pre>update(int | string $id, array $data) : \Zend\Http\Response | <a href="../classes/PhlyRestfully.ApiProblem.html">\PhlyRestfully\ApiProblem</a> | <a href="../classes/PhlyRestfully.HalResource.html">\PhlyRestfully\HalResource</a></pre>
+<pre>update(int | string $id, array $data) : \Laminas\Http\Response | <a href="../classes/PhlyRestfully.ApiProblem.html">\PhlyRestfully\ApiProblem</a> | <a href="../classes/PhlyRestfully.HalResource.html">\PhlyRestfully\HalResource</a></pre>
 <div class="labels"></div>
 <div class="row collapse"><div class="detail-description">
 <div class="long_description"></div>
@@ -467,7 +467,7 @@ resource identifier</h2>
 </div>
 <h3>Returns</h3>
 <div class="subelement response">
-<code>\Zend\Http\Response</code><code><a href="../classes/PhlyRestfully.ApiProblem.html">\PhlyRestfully\ApiProblem</a></code><code><a href="../classes/PhlyRestfully.HalResource.html">\PhlyRestfully\HalResource</a></code>
+<code>\Laminas\Http\Response</code><code><a href="../classes/PhlyRestfully.ApiProblem.html">\PhlyRestfully\ApiProblem</a></code><code><a href="../classes/PhlyRestfully.HalResource.html">\PhlyRestfully\HalResource</a></code>
 </div>
 </div></div>
 </div>

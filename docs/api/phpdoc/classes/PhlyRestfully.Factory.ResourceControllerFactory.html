@@ -90,14 +90,14 @@
 <i class="icon-custom icon-method"></i> Methods</h3>
 <a id="method_canCreateServiceWithName"></a><div class="element clickable method public method_canCreateServiceWithName" data-toggle="collapse" data-target=".method_canCreateServiceWithName .collapse">
 <h2>Determine if we can create a service with name</h2>
-<pre>canCreateServiceWithName(\Zend\ServiceManager\ServiceLocatorInterface $controllers, string $name, string $requestedName) : bool</pre>
+<pre>canCreateServiceWithName(\Laminas\ServiceManager\ServiceLocatorInterface $controllers, string $name, string $requestedName) : bool</pre>
 <div class="labels"></div>
 <div class="row collapse"><div class="detail-description">
 <div class="long_description"></div>
 <h3>Parameters</h3>
 <div class="subelement argument">
 <h4>$controllers</h4>
-<code>\Zend\ServiceManager\ServiceLocatorInterface</code>
+<code>\Laminas\ServiceManager\ServiceLocatorInterface</code>
 </div>
 <div class="subelement argument">
 <h4>$name</h4>
@@ -113,14 +113,14 @@
 </div>
 <a id="method_createServiceWithName"></a><div class="element clickable method public method_createServiceWithName" data-toggle="collapse" data-target=".method_createServiceWithName .collapse">
 <h2>Create service with name</h2>
-<pre>createServiceWithName(\Zend\ServiceManager\ServiceLocatorInterface $controllers, string $name, string $requestedName) : <a href="../classes/PhlyRestfully.ResourceController.html">\PhlyRestfully\ResourceController</a></pre>
+<pre>createServiceWithName(\Laminas\ServiceManager\ServiceLocatorInterface $controllers, string $name, string $requestedName) : <a href="../classes/PhlyRestfully.ResourceController.html">\PhlyRestfully\ResourceController</a></pre>
 <div class="labels"></div>
 <div class="row collapse"><div class="detail-description">
 <div class="long_description"></div>
 <h3>Parameters</h3>
 <div class="subelement argument">
 <h4>$controllers</h4>
-<code>\Zend\ServiceManager\ServiceLocatorInterface</code>
+<code>\Laminas\ServiceManager\ServiceLocatorInterface</code>
 </div>
 <div class="subelement argument">
 <h4>$name</h4>
@@ -132,7 +132,7 @@
 </div>
 <h3>Exceptions</h3>
 <table class="table table-bordered"><tr>
-<th><code>\Zend\ServiceManager\Exception\ServiceNotCreatedException</code></th>
+<th><code>\Laminas\ServiceManager\Exception\ServiceNotCreatedException</code></th>
 <td>if listener specified is not a ListenerAggregate</td>
 </tr></table>
 <h3>Returns</h3>

@@ -53,7 +53,7 @@ Final release. Please use [Apigility](https://apigility.org) instead.
 ### Fixed
 
 - [#135](https://github.com/phly/PhlyRestfully/pull/135) updates all references
-  to `Zend\Stdlib\Hydrator` to instead use `Zend\Hydrator`.
+  to `Laminas\Stdlib\Hydrator` to instead use `Laminas\Hydrator`.
 - [#135](https://github.com/phly/PhlyRestfully/pull/135) updates all
   `trigger()` and `triggerUntil()` usage with forwards-compatible variants.
 - [#97](https://github.com/phly/PhlyRestfully/pull/97) fixes the identifier

@@ -11,11 +11,11 @@ namespace PhlyRestfully\Factory;
 use Interop\Container\ContainerInterface;
 use PhlyRestfully\Resource;
 use PhlyRestfully\ResourceController;
-use Zend\EventManager\ListenerAggregateInterface;
-use Zend\ServiceManager\Factory\AbstractFactoryInterface;
-use Zend\ServiceManager\Exception\ServiceNotCreatedException;
-use Zend\ServiceManager\Exception\ServiceNotFoundException;
-use Zend\ServiceManager\ServiceLocatorInterface;
+use Laminas\EventManager\ListenerAggregateInterface;
+use Laminas\ServiceManager\Factory\AbstractFactoryInterface;
+use Laminas\ServiceManager\Exception\ServiceNotCreatedException;
+use Laminas\ServiceManager\Exception\ServiceNotFoundException;
+use Laminas\ServiceManager\ServiceLocatorInterface;
 
 /**
  * Class ResourceControllerFactory
@@ -96,7 +96,7 @@ class ResourceControllerFactory implements AbstractFactoryInterface
         if (!$listener instanceof ListenerAggregateInterface) {
             throw new ServiceNotCreatedException(sprintf(
                 '%s expects that the "listener" reference a service that '
-                . 'implements Zend\EventManager\ListenerAggregateInterface; received %s',
+                . 'implements Laminas\EventManager\ListenerAggregateInterface; received %s',
                 __METHOD__,
                 (is_object($listener) ? get_class($listener) : gettype($listener))
             ));
@@ -110,7 +110,7 @@ class ResourceControllerFactory implements AbstractFactoryInterface
             $resourceIdentifiers = array_merge($resourceIdentifiers, $config['resource_identifiers']);
         }
 
-        /** @var \Zend\EventManager\EventManager $events */
+        /** @var \Laminas\EventManager\EventManager $events */
         $events = $services->get('EventManager');
         $listener->attach($events);
         $events->setIdentifiers($resourceIdentifiers);
@@ -123,11 +123,10 @@ class ResourceControllerFactory implements AbstractFactoryInterface
             $identifier = $config['identifier'];
         }
 
-        /** @var \Zend\EventManager\EventManagerInterface $events */
+        /** @var \Laminas\EventManager\EventManagerInterface $events */
         $events          = $services->get('EventManager');
-        $controllerClass = isset($config['controller_class'])
-            ? $config['controller_class']
-            : ResourceController::class;
+        $controllerClass = $config['controller_class']
+            ?? ResourceController::class;
         $controller      = new $controllerClass($identifier);
 
         if (!$controller instanceof ResourceController) {
@@ -153,7 +152,7 @@ class ResourceControllerFactory implements AbstractFactoryInterface
      *
      * @return void
      */
-    protected function setControllerOptions(array $config, ResourceController $controller)
+    protected function setControllerOptions(array $config, ResourceController $controller): void
     {
         foreach ($config as $option => $value) {
             switch ($option) {
@@ -184,13 +183,13 @@ class ResourceControllerFactory implements AbstractFactoryInterface
                     $controller->getEventManager()->attach(
                         'getList.post',
                         /**
-                         * @param \Zend\Mvc\MvcEvent $e
+                         * @param \Laminas\Mvc\MvcEvent $e
                          * @return void
                          */
-                        function ($e) use ($whitelist) {
-                            /** @var \Zend\Mvc\Controller\AbstractController $target */
+                        function ($e) use ($whitelist): void {
+                            /** @var \Laminas\Mvc\Controller\AbstractController $target */
                             $target = $e->getTarget();
-                            /** @var \Zend\Http\Request $request */
+                            /** @var \Laminas\Http\Request $request */
                             $request = $target->getRequest();
                             if (!method_exists($request, 'getQuery')) {
                                 return;

@@ -8,7 +8,7 @@
 
 namespace PhlyRestfully;
 
-use Zend\Hydrator\HydratorPluginManager;
+use Laminas\Hydrator\HydratorPluginManager;
 
 class MetadataMap
 {

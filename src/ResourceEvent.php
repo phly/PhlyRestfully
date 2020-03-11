@@ -8,9 +8,9 @@
 
 namespace PhlyRestfully;
 
-use Zend\EventManager\Event;
-use Zend\Mvc\Router\RouteMatch;
-use Zend\Stdlib\Parameters;
+use Laminas\EventManager\Event;
+use Laminas\Mvc\Router\RouteMatch;
+use Laminas\Stdlib\Parameters;
 
 class ResourceEvent extends Event
 {

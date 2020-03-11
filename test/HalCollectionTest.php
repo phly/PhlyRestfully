@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 /**
  * @link      https://github.com/weierophinney/PhlyRestfully for the canonical source repository
  * @copyright Copyright (c) 2013 Matthew Weier O'Phinney
@@ -35,13 +35,13 @@ class HalCollectionTest extends TestCase
     /**
      * @dataProvider invalidCollections
      */
-    public function testConstructorRaisesExceptionForNonTraversableCollection($collection)
+    public function testConstructorRaisesExceptionForNonTraversableCollection($collection): void
     {
         $this->expectException(Exception\InvalidCollectionException::class);
         $hal = new HalCollection($collection, 'collection/route', 'item/route');
     }
 
-    public function testPropertiesAreAccessibleFollowingConstruction()
+    public function testPropertiesAreAccessibleFollowingConstruction(): void
     {
         $hal = new HalCollection([], 'item/route', ['version' => 1], ['query' => 'format=json']);
         $this->assertEquals([], $hal->collection);
@@ -50,52 +50,52 @@ class HalCollectionTest extends TestCase
         $this->assertEquals(['query' => 'format=json'], $hal->resourceRouteOptions);
     }
 
-    public function testDefaultPageIsOne()
+    public function testDefaultPageIsOne(): void
     {
         $hal = new HalCollection([], 'item/route');
         $this->assertEquals(1, $hal->page);
     }
 
-    public function testPageIsMutable()
+    public function testPageIsMutable(): void
     {
         $hal = new HalCollection([], 'item/route');
         $hal->setPage(5);
         $this->assertEquals(5, $hal->page);
     }
 
-    public function testDefaultPageSizeIsThirty()
+    public function testDefaultPageSizeIsThirty(): void
     {
         $hal = new HalCollection([], 'item/route');
         $this->assertEquals(30, $hal->pageSize);
     }
 
-    public function testPageSizeIsMutable()
+    public function testPageSizeIsMutable(): void
     {
         $hal = new HalCollection([], 'item/route');
         $hal->setPageSize(3);
         $this->assertEquals(3, $hal->pageSize);
     }
 
-    public function testDefaultCollectionNameIsItems()
+    public function testDefaultCollectionNameIsItems(): void
     {
         $hal = new HalCollection([], 'item/route');
         $this->assertEquals('items', $hal->collectionName);
     }
 
-    public function testCollectionNameIsMutable()
+    public function testCollectionNameIsMutable(): void
     {
         $hal = new HalCollection([], 'item/route');
         $hal->setCollectionName('records');
         $this->assertEquals('records', $hal->collectionName);
     }
 
-    public function testDefaultAttributesAreEmpty()
+    public function testDefaultAttributesAreEmpty(): void
     {
         $hal = new HalCollection([], 'item/route');
         $this->assertEquals([], $hal->attributes);
     }
 
-    public function testAttributesAreMutable()
+    public function testAttributesAreMutable(): void
     {
         $hal = new HalCollection([], 'item/route');
         $attributes = [
@@ -106,13 +106,13 @@ class HalCollectionTest extends TestCase
         $this->assertEquals($attributes, $hal->attributes);
     }
 
-    public function testComposesLinkCollectionByDefault()
+    public function testComposesLinkCollectionByDefault(): void
     {
         $hal = new HalCollection([], 'item/route');
         $this->assertInstanceOf(LinkCollection::class, $hal->getLinks());
     }
 
-    public function testLinkCollectionMayBeInjected()
+    public function testLinkCollectionMayBeInjected(): void
     {
         $hal   = new HalCollection([], 'item/route');
         $links = new LinkCollection();
@@ -120,7 +120,7 @@ class HalCollectionTest extends TestCase
         $this->assertSame($links, $hal->getLinks());
     }
 
-    public function testAllowsSettingAdditionalResourceLinks()
+    public function testAllowsSettingAdditionalResourceLinks(): void
     {
         $links = new LinkCollection();
         $links->add(new Link('describedby'));

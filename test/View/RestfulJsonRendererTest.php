@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 /**
  * @link      https://github.com/weierophinney/PhlyRestfully for the canonical source repository
  * @copyright Copyright (c) 2013 Matthew Weier O'Phinney
@@ -19,29 +19,29 @@ use PhlyRestfully\View\RestfulJsonRenderer;
 use PhlyRestfullyTest\TestAsset;
 use PHPUnit\Framework\TestCase as TestCase;
 use ReflectionObject;
-use Zend\Hydrator\HydratorPluginManager;
-use Zend\Mvc\Router\Http\Segment;
-use Zend\Mvc\Router\Http\TreeRouteStack;
-use Zend\Paginator\Adapter\ArrayAdapter;
-use Zend\Paginator\Paginator;
-use Zend\ServiceManager\ServiceManager;
-use Zend\Hydrator;
-use Zend\View\HelperPluginManager;
-use Zend\View\Model\JsonModel;
-use Zend\View\Model\ViewModel;
+use Laminas\Hydrator\HydratorPluginManager;
+use Laminas\Mvc\Router\Http\Segment;
+use Laminas\Mvc\Router\Http\TreeRouteStack;
+use Laminas\Paginator\Adapter\ArrayAdapter;
+use Laminas\Paginator\Paginator;
+use Laminas\ServiceManager\ServiceManager;
+use Laminas\Hydrator;
+use Laminas\View\HelperPluginManager;
+use Laminas\View\Model\JsonModel;
+use Laminas\View\Model\ViewModel;
 
 /**
  * @subpackage UnitTest
  */
 class RestfulJsonRendererTest extends TestCase
 {
-    public function setUp()
+    public function setUp(): void
     {
         $this->renderer = new RestfulJsonRenderer();
         $this->serviceManager = new ServiceManager();
     }
 
-    public function assertIsHalResource($resource)
+    public function assertIsHalResource($resource): void
     {
         $this->assertInstanceOf('stdClass', $resource, 'Invalid HAL resource; not an object');
         $this->assertObjectHasAttribute('_links', $resource, 'Invalid HAL resource; does not contain links');
@@ -49,7 +49,7 @@ class RestfulJsonRendererTest extends TestCase
         $this->assertInstanceOf('stdClass', $links, 'Invalid HAL resource; links are not an object');
     }
 
-    public function assertHalResourceHasRelationalLink($relation, $resource)
+    public function assertHalResourceHasRelationalLink($relation, $resource): void
     {
         $this->assertIsHalResource($resource);
         $links = $resource->_links;
@@ -62,27 +62,27 @@ class RestfulJsonRendererTest extends TestCase
         $this->assertInstanceOf('stdClass', $link, sprintf('Relational links for "%s" are malformed', $relation));
     }
 
-    public function assertRelationalLinkContains($match, $relation, $resource)
+    public function assertRelationalLinkContains($match, $relation, $resource): void
     {
         $this->assertHalResourceHasRelationalLink($relation, $resource);
         $link = $resource->_links->{$relation};
         $this->assertObjectHasAttribute(
             'href',
             $link,
-            sprintf('%s relational link does not have an href attribute; received %s', $relation, var_export($link, 1))
+            sprintf('%s relational link does not have an href attribute; received %s', $relation, var_export($link, true))
         );
         $href = $link->href;
         $this->assertContains($match, $href);
     }
 
-    public function assertRelationalLinkEquals($match, $relation, $resource)
+    public function assertRelationalLinkEquals($match, $relation, $resource): void
     {
         $this->assertHalResourceHasRelationalLink($relation, $resource);
         $link = $resource->_links->{$relation};
         $this->assertObjectHasAttribute(
             'href',
             $link,
-            sprintf('%s relational link does not have an href attribute; received %s', $relation, var_export($link, 1))
+            sprintf('%s relational link does not have an href attribute; received %s', $relation, var_export($link, true))
         );
         $href = $link->href;
         $this->assertEquals($match, $href);
@@ -99,14 +99,14 @@ class RestfulJsonRendererTest extends TestCase
     /**
      * @dataProvider nonRestfulJsonModels
      */
-    public function testPassesNonRestfulJsonModelToParentToRender($model)
+    public function testPassesNonRestfulJsonModelToParentToRender($model): void
     {
         $payload = $this->renderer->render($model);
         $expected = json_encode(['foo' => 'bar']);
         $this->assertEquals($expected, $payload);
     }
 
-    public function testRendersApiProblemCorrectly()
+    public function testRendersApiProblemCorrectly(): void
     {
         $apiProblem = new ApiProblem(401, 'login error', 'http://status.dev/errors.md', 'Unauthorized');
         $model      = new RestfulJsonModel();
@@ -121,7 +121,7 @@ class RestfulJsonRendererTest extends TestCase
         $this->assertEquals($expected, json_decode($test, true));
     }
 
-    public function setUpHelpers()
+    public function setUpHelpers(): void
     {
         // need to setup routes
         // need to get a url and serverurl helper that have appropriate injections
@@ -145,7 +145,7 @@ class RestfulJsonRendererTest extends TestCase
         $this->renderer->setHelperPluginManager($helpers);
     }
 
-    public function testRendersHalResourceWithAssociatedLinks()
+    public function testRendersHalResourceWithAssociatedLinks(): void
     {
         $this->setUpHelpers();
 
@@ -167,7 +167,7 @@ class RestfulJsonRendererTest extends TestCase
         $this->assertEquals('bar', $test->foo);
     }
 
-    public function testCanRenderStdclassHalResource()
+    public function testCanRenderStdclassHalResource(): void
     {
         $this->setUpHelpers();
 
@@ -191,7 +191,7 @@ class RestfulJsonRendererTest extends TestCase
         $this->assertEquals('bar', $test->foo);
     }
 
-    public function testCanSerializeHydratableHalResource()
+    public function testCanSerializeHydratableHalResource(): void
     {
         $this->setUpHelpers();
         $this->helpers->get('HalLinks')->addHydrator(
@@ -215,7 +215,7 @@ class RestfulJsonRendererTest extends TestCase
         $this->assertEquals('bar', $test->foo);
     }
 
-    public function testUsesDefaultHydratorIfAvailable()
+    public function testUsesDefaultHydratorIfAvailable(): void
     {
         $this->setUpHelpers();
         $this->helpers->get('HalLinks')->setDefaultHydrator(
@@ -238,7 +238,7 @@ class RestfulJsonRendererTest extends TestCase
         $this->assertEquals('bar', $test->foo);
     }
 
-    public function testCanRenderNonPaginatedHalCollection()
+    public function testCanRenderNonPaginatedHalCollection(): void
     {
         $this->setUpHelpers();
 
@@ -274,14 +274,14 @@ class RestfulJsonRendererTest extends TestCase
             $id = $key + 1;
 
             $this->assertRelationalLinkEquals('http://localhost.localdomain/resource/' . $id, 'self', $item);
-            $this->assertObjectHasAttribute('id', $item, var_export($item, 1));
+            $this->assertObjectHasAttribute('id', $item, var_export($item, true));
             $this->assertEquals($id, $item->id);
             $this->assertObjectHasAttribute('foo', $item);
             $this->assertEquals('bar', $item->foo);
         }
     }
 
-    public function testCanRenderPaginatedHalCollection()
+    public function testCanRenderPaginatedHalCollection(): void
     {
         $this->setUpHelpers();
 
@@ -309,7 +309,7 @@ class RestfulJsonRendererTest extends TestCase
         $test       = $this->renderer->render($model);
         $test       = json_decode($test);
 
-        $this->assertInstanceof('stdClass', $test, var_export($test, 1));
+        $this->assertInstanceof('stdClass', $test, var_export($test, true));
         $this->assertRelationalLinkEquals('http://localhost.localdomain/resource?page=3', 'self', $test);
         $this->assertRelationalLinkEquals('http://localhost.localdomain/resource', 'first', $test);
         $this->assertRelationalLinkEquals('http://localhost.localdomain/resource?page=20', 'last', $test);
@@ -326,7 +326,7 @@ class RestfulJsonRendererTest extends TestCase
             $id = $key + 11;
 
             $this->assertRelationalLinkEquals('http://localhost.localdomain/resource/' . $id, 'self', $item);
-            $this->assertObjectHasAttribute('id', $item, var_export($item, 1));
+            $this->assertObjectHasAttribute('id', $item, var_export($item, true));
             $this->assertEquals($id, $item->id);
             $this->assertObjectHasAttribute('foo', $item);
             $this->assertEquals('bar', $item->foo);
@@ -344,7 +344,7 @@ class RestfulJsonRendererTest extends TestCase
     /**
      * @dataProvider invalidPages
      */
-    public function testRenderingPaginatedCollectionCanReturnApiProblemIfPageIsTooHighOrTooLow($page)
+    public function testRenderingPaginatedCollectionCanReturnApiProblemIfPageIsTooHighOrTooLow($page): void
     {
         $this->setUpHelpers();
 
@@ -371,7 +371,7 @@ class RestfulJsonRendererTest extends TestCase
         $test       = $this->renderer->render($model);
         $test       = json_decode($test);
 
-        $this->assertObjectHasAttribute('httpStatus', $test, var_export($test, 1));
+        $this->assertObjectHasAttribute('httpStatus', $test, var_export($test, true));
         $this->assertEquals(409, $test->httpStatus);
         $this->assertObjectHasAttribute('detail', $test);
         $this->assertEquals('Invalid page provided', $test->detail);
@@ -383,7 +383,7 @@ class RestfulJsonRendererTest extends TestCase
         $this->assertEquals(409, $problem['httpStatus']);
     }
 
-    public function testCanHintToApiProblemToRenderStackTrace()
+    public function testCanHintToApiProblemToRenderStackTrace(): void
     {
         $exception  = new \Exception('exception message', 500);
         $apiProblem = new ApiProblem(500, $exception);
@@ -395,7 +395,7 @@ class RestfulJsonRendererTest extends TestCase
         $this->assertContains($exception->getMessage() . "\n" . $exception->getTraceAsString(), $test['detail']);
     }
 
-    public function testRendersAttributesAsPartOfNonPaginatedHalCollection()
+    public function testRendersAttributesAsPartOfNonPaginatedHalCollection(): void
     {
         $this->setUpHelpers();
 
@@ -419,14 +419,14 @@ class RestfulJsonRendererTest extends TestCase
         $test       = $this->renderer->render($model);
         $test       = json_decode($test);
 
-        $this->assertInstanceof('stdClass', $test, var_export($test, 1));
-        $this->assertObjectHasAttribute('count', $test, var_export($test, 1));
+        $this->assertInstanceof('stdClass', $test, var_export($test, true));
+        $this->assertObjectHasAttribute('count', $test, var_export($test, true));
         $this->assertEquals(100, $test->count);
         $this->assertObjectHasAttribute('type', $test);
         $this->assertEquals('foo', $test->type);
     }
 
-    public function testRendersAttributeAsPartOfPaginatedCollectionResource()
+    public function testRendersAttributeAsPartOfPaginatedCollectionResource(): void
     {
         $this->setUpHelpers();
 
@@ -460,14 +460,14 @@ class RestfulJsonRendererTest extends TestCase
         $test       = $this->renderer->render($model);
         $test       = json_decode($test);
 
-        $this->assertInstanceof('stdClass', $test, var_export($test, 1));
-        $this->assertObjectHasAttribute('count', $test, var_export($test, 1));
+        $this->assertInstanceof('stdClass', $test, var_export($test, true));
+        $this->assertObjectHasAttribute('count', $test, var_export($test, true));
         $this->assertEquals(100, $test->count);
         $this->assertObjectHasAttribute('type', $test);
         $this->assertEquals('foo', $test->type);
     }
 
-    public function testCanRenderNestedHalResourcesAsEmbeddedResources()
+    public function testCanRenderNestedHalResourcesAsEmbeddedResources(): void
     {
         $this->setUpHelpers();
         $this->router->addRoute('user', new Segment('/user[/:id]'));
@@ -507,7 +507,7 @@ class RestfulJsonRendererTest extends TestCase
         }
     }
 
-    public function testRendersEmbeddedResourcesOfIndividualNonPaginatedCollectionResources()
+    public function testRendersEmbeddedResourcesOfIndividualNonPaginatedCollectionResources(): void
     {
         $this->setUpHelpers();
         $this->router->addRoute('user', new Segment('/user[/:id]'));
@@ -541,7 +541,7 @@ class RestfulJsonRendererTest extends TestCase
         $test  = $this->renderer->render($model);
         $test  = json_decode($test);
 
-        $this->assertInstanceof('stdClass', $test, var_export($test, 1));
+        $this->assertInstanceof('stdClass', $test, var_export($test, true));
         $collection = $test->_embedded->items;
         foreach ($collection as $item) {
             $this->assertObjectHasAttribute('_embedded', $item);
@@ -557,7 +557,7 @@ class RestfulJsonRendererTest extends TestCase
         }
     }
 
-    public function testRendersEmbeddedResourcesOfIndividualPaginatedCollectionResources()
+    public function testRendersEmbeddedResourcesOfIndividualPaginatedCollectionResources(): void
     {
         $this->setUpHelpers();
         $this->router->addRoute('user', new Segment('/user[/:id]'));
@@ -595,10 +595,10 @@ class RestfulJsonRendererTest extends TestCase
         $test       = $this->renderer->render($model);
         $test       = json_decode($test);
 
-        $this->assertInstanceof('stdClass', $test, var_export($test, 1));
+        $this->assertInstanceof('stdClass', $test, var_export($test, true));
         $collection = $test->_embedded->items;
         foreach ($collection as $item) {
-            $this->assertObjectHasAttribute('_embedded', $item, var_export($item, 1));
+            $this->assertObjectHasAttribute('_embedded', $item, var_export($item, true));
             $embedded = $item->_embedded;
             $this->assertObjectHasAttribute('user', $embedded);
             $user = $embedded->user;
@@ -611,7 +611,7 @@ class RestfulJsonRendererTest extends TestCase
         }
     }
 
-    public function testAllowsSpecifyingAlternateCallbackForReturningResourceId()
+    public function testAllowsSpecifyingAlternateCallbackForReturningResourceId(): void
     {
         $this->setUpHelpers();
 
@@ -650,7 +650,7 @@ class RestfulJsonRendererTest extends TestCase
         $test       = $this->renderer->render($model);
         $test       = json_decode($test);
 
-        $this->assertInstanceof('stdClass', $test, var_export($test, 1));
+        $this->assertInstanceof('stdClass', $test, var_export($test, true));
         $this->assertRelationalLinkEquals('http://localhost.localdomain/resource', 'self', $test);
 
         $this->assertObjectHasAttribute('_embedded', $test);
@@ -663,7 +663,7 @@ class RestfulJsonRendererTest extends TestCase
             $id = $key + 1;
 
             $this->assertRelationalLinkEquals('http://localhost.localdomain/resource/' . $id, 'self', $item);
-            $this->assertObjectHasAttribute('name', $item, var_export($item, 1));
+            $this->assertObjectHasAttribute('name', $item, var_export($item, true));
             $this->assertEquals($id, $item->name);
             $this->assertObjectHasAttribute('foo', $item);
             $this->assertEquals('bar', $item->foo);

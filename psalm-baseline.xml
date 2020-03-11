@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<files psalm-version="3.8.1@8e54e3aa060fc490d86d0e2abbf62750516d40fd">
+<files psalm-version="3.8.3@389af1bfc739bfdff3f9e3dc7bd6499aee51a831">
   <file src="src/ApiProblem.php">
     <RedundantCondition occurrences="2">
       <code>null === $this-&gt;title</code>
@@ -12,12 +12,6 @@
     <MissingConstructor occurrences="1">
       <code>$describedBy</code>
     </MissingConstructor>
-  </file>
-  <file src="src/Factory/ResourceControllerFactory.php">
-    <MoreSpecificImplementedParamType occurrences="2">
-      <code>$controllers</code>
-      <code>$controllers</code>
-    </MoreSpecificImplementedParamType>
   </file>
   <file src="src/HalCollection.php">
     <DocblockTypeContradiction occurrences="10">
@@ -38,10 +32,8 @@
     <PropertyNotSetInConstructor occurrences="1">
       <code>$resourceLinks</code>
     </PropertyNotSetInConstructor>
-    <RedundantConditionGivenDocblockType occurrences="3">
+    <RedundantConditionGivenDocblockType occurrences="1">
       <code>is_object($collection)</code>
-      <code>is_int($page)</code>
-      <code>is_int($size)</code>
     </RedundantConditionGivenDocblockType>
   </file>
   <file src="src/HalResource.php">
@@ -75,12 +67,11 @@
       <code>$route</code>
       <code>$url</code>
     </PropertyNotSetInConstructor>
-    <RedundantConditionGivenDocblockType occurrences="5">
+    <RedundantConditionGivenDocblockType occurrences="4">
       <code>null !== $this-&gt;hydrator</code>
       <code>null !== $this-&gt;route</code>
       <code>null !== $this-&gt;url</code>
       <code>null !== $this-&gt;hydrators</code>
-      <code>is_string($hydrator)</code>
     </RedundantConditionGivenDocblockType>
   </file>
   <file src="src/MetadataMap.php">
@@ -99,7 +90,8 @@
       <code>gettype($hydrator)</code>
       <code>false === $identifierName</code>
     </DocblockTypeContradiction>
-    <PossiblyInvalidArgument occurrences="4">
+    <PossiblyInvalidArgument occurrences="5">
+      <code>$collection</code>
       <code>$resource</code>
       <code>$eventParams['routeParams']</code>
       <code>$eventParams['route']</code>

@@ -3,7 +3,7 @@
 Hydrators
 =========
 
-``Zend\Stdlib\Hydrator`` offers a general-purpose solution for mapping arrays to
+``Laminas\Stdlib\Hydrator`` offers a general-purpose solution for mapping arrays to
 objects (hydration) and objects to arrays (extraction). In PhlyRestfully,
 hydrators are used during rendering for this second operation, extraction, so
 that resources may be represented via JSON.
@@ -66,7 +66,7 @@ Once you have the plugin, you can register class/hydrator pairs using the
     :linenos:
 
     // Instantiate the hydrator instance directly:
-    $hydrator = new \Zend\Stdlib\Hydrator\ClassMethods();
+    $hydrator = new \Laminas\Stdlib\Hydrator\ClassMethods();
 
     // Or pull it from the HydratorManager:
     $hydrators = $services->get('HydratorManager');
@@ -113,7 +113,7 @@ consider the following `config/autoload/phlyrestfully.global.php` file:
         ),
     );
 
-The above specifies ``Zend\Stdlib\Hydrator\ArraySerializable`` as the default
+The above specifies ``Laminas\Stdlib\Hydrator\ArraySerializable`` as the default
 hydrator, and maps the ``ObjectProperty`` hydrator to the ``Foo`` resource, and the
 ``Reflection`` hydrator to the ``Bar`` resource. Note that the short name for
 the hydrator is used; ``HalLinks`` composes the ``HydratorManager`` service by

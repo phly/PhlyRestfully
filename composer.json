@@ -1,6 +1,6 @@
 {
     "name": "diablomedia/phly-restfully",
-    "description": "ZF2 Module providing structure for RESTful resources",
+    "description": "Laminas Module providing structure for RESTful resources",
     "type": "library",
     "license": "BSD-2-Clause",
     "keywords": [
@@ -17,33 +17,29 @@
             "homepage": "http://mwop.net/"
         }
     ],
-    "repositories": [
-        {
-            "type": "composer",
-            "url": "https://packages.zendframework.com"
-        }
-    ],
     "require": {
-        "php": ">=5.6",
-        "zendframework/zend-eventmanager": "^3.0",
-        "zendframework/zend-json": "^2.5.0|^3.0.0",
-        "zendframework/zend-loader": "^2.5.0",
-        "zendframework/zend-mvc": "^2.7.13",
-        "zendframework/zend-paginator": "^2.5.0",
-        "zendframework/zend-uri": "^2.5.0",
-        "zendframework/zend-view": "^2.11.4",
-        "zendframework/zend-stdlib": "^3.2.1",
-        "zendframework/zend-hydrator": "^2.4.2"
+        "container-interop/container-interop": "^1.2",
+        "laminas/laminas-eventmanager": "^3.0",
+        "laminas/laminas-http": "^2.11",
+        "laminas/laminas-hydrator": "^2.4.2",
+        "laminas/laminas-json": "^2.5.0|^3.0.0",
+        "laminas/laminas-loader": "^2.5.0",
+        "laminas/laminas-mvc": "^2.7.13",
+        "laminas/laminas-paginator": "^2.5.0",
+        "laminas/laminas-servicemanager": "^3.4",
+        "laminas/laminas-stdlib": "^3.2.1",
+        "laminas/laminas-uri": "^2.5.0",
+        "laminas/laminas-view": "^2.11.4",
+        "php": ">=7.1"
     },
     "require-dev": {
         "friendsofphp/php-cs-fixer": "2.16.1",
+        "laminas/laminas-console": "^2.5",
+        "laminas/laminas-db": "^2.11",
+        "laminas/laminas-navigation": "^2.5",
+        "phpstan/phpstan": "0.12.9",
         "phpunit/phpunit": "^7.5.15",
-        "vimeo/psalm": "3.8.3",
-        "zendframework/zend-console": "^2.5",
-        "zendframework/zend-http": "^2.5",
-        "zendframework/zend-navigation": "^2.5",
-        "zendframework/zend-servicemanager": "^3.0",
-        "phpstan/phpstan": "0.12.14"
+        "vimeo/psalm": "3.8.3"
     },
     "suggest": {
         "zfr/zfr-cors": "zfr/zfr-cors provides CORS support"

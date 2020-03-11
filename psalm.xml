@@ -16,7 +16,7 @@
     <issueHandlers>
         <InvalidCatch>
             <errorLevel type="info">
-                <!-- All of the Zend\Uri exceptions extend InvalidArgumentException and implement this interface, so
+                <!-- All of the Laminas\Uri exceptions extend InvalidArgumentException and implement this interface, so
                 this is technically allowed -->
                 <file name="src/Link.php" />
             </errorLevel>
@@ -34,7 +34,7 @@
 
         <UndefinedClass>
             <errorLevel type="info">
-                <!-- type-o in Zend\Http\Header\AcceptAbstract docblock for match method -->
+                <!-- type-o in Laminas\Http\Header\AcceptAbstract docblock for match method -->
                 <file name="src/Listener/ApiProblemListener.php" />
             </errorLevel>
         </UndefinedClass>
@@ -42,7 +42,7 @@
         <TypeCoercion>
             <errorLevel type="info">
                 <!-- This one doesn't make any sense to me:
-                $this->collection expects 'array<mixed, mixed>|Traversable|Zend\Paginator\Paginator',  parent type 'array<mixed, mixed>|Traversable|Zend\Paginator\Paginator' provided -->
+                $this->collection expects 'array<mixed, mixed>|Traversable|Laminas\Paginator\Paginator',  parent type 'array<mixed, mixed>|Traversable|Laminas\Paginator\Paginator' provided -->
                 <file name="src/HalCollection.php" />
                 <!-- This comes from a config definition, could inline type it, but maybe hides an error -->
                 <file name="src/Module.php" />

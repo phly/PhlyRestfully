@@ -33,5 +33,5 @@ payload based on the object composed, and ensure the appropriate Content-Type
 header is used.
 
 If a ``PhlyRestfully\HalCollection`` is detected, and the renderer determines
-that it composes a ``Zend\Paginator\Paginator`` instance, the ``HalLinks``
+that it composes a ``Laminas\Paginator\Paginator`` instance, the ``HalLinks``
 plugin will also generate pagination relational links to render in the payload.

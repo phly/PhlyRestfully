@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 /**
  * @link      https://github.com/weierophinney/PhlyRestfully for the canonical source repository
  * @copyright Copyright (c) 2013 Matthew Weier O'Phinney
@@ -8,8 +8,8 @@
 
 namespace PhlyRestfullyTest\TestAsset;
 
-use Zend\EventManager\EventManagerInterface;
-use Zend\EventManager\ListenerAggregateInterface;
+use Laminas\EventManager\EventManagerInterface;
+use Laminas\EventManager\ListenerAggregateInterface;
 
 class CollectionIntegrationListener implements ListenerAggregateInterface
 {
@@ -17,12 +17,12 @@ class CollectionIntegrationListener implements ListenerAggregateInterface
 
     protected $listeners = [];
 
-    public function attach(EventManagerInterface $events, $priority = 1)
+    public function attach(EventManagerInterface $events, $priority = 1): void
     {
         $this->listeners[] = $events->attach('fetchAll', [$this, 'onFetchAll']);
     }
 
-    public function detach(EventManagerInterface $events)
+    public function detach(EventManagerInterface $events): void
     {
         foreach ($this->listeners as $index => $listener) {
             $events->detach($listener);
@@ -30,7 +30,7 @@ class CollectionIntegrationListener implements ListenerAggregateInterface
         }
     }
 
-    public function setCollection($collection)
+    public function setCollection($collection): void
     {
         $this->collection = $collection;
     }

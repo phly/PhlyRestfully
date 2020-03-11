@@ -26,12 +26,12 @@ parameters:
 			path: src/Link.php
 
 		-
-			message: "#^Parameter \\#1 \\$listener of method Zend\\\\EventManager\\\\SharedEventManagerInterface\\:\\:detach\\(\\) expects callable\\(\\)\\: mixed, 'PhlyRestfully…' given\\.$#"
+			message: "#^Parameter \\#1 \\$listener of method Laminas\\\\EventManager\\\\SharedEventManagerInterface\\:\\:detach\\(\\) expects callable\\(\\)\\: mixed, 'PhlyRestfully…' given\\.$#"
 			count: 1
 			path: src/Listener/ResourceParametersListener.php
 
 		-
-			message: "#^Parameter \\#1 \\$matches of method PhlyRestfully\\\\ResourceInterface\\:\\:setRouteMatch\\(\\) expects Zend\\\\Mvc\\\\Router\\\\RouteMatch, Zend\\\\Mvc\\\\Router\\\\RouteMatch\\|null given\\.$#"
+			message: "#^Parameter \\#1 \\$matches of method PhlyRestfully\\\\ResourceInterface\\:\\:setRouteMatch\\(\\) expects Laminas\\\\Mvc\\\\Router\\\\RouteMatch, Laminas\\\\Mvc\\\\Router\\\\RouteMatch\\|null given\\.$#"
 			count: 1
 			path: src/Listener/ResourceParametersListener.php
 
@@ -96,7 +96,7 @@ parameters:
 			path: src/ResourceController.php
 
 		-
-			message: "#^Return type \\(PhlyRestfully\\\\ApiProblem\\|PhlyRestfully\\\\HalResource\\|Zend\\\\Http\\\\Response\\) of method PhlyRestfully\\\\ResourceController\\:\\:patch\\(\\) should be compatible with return type \\(array\\) of method Zend\\\\Mvc\\\\Controller\\\\AbstractRestfulController\\:\\:patch\\(\\)$#"
+			message: "#^Return type \\(Laminas\\\\Http\\\\Response\\|PhlyRestfully\\\\ApiProblem\\|PhlyRestfully\\\\HalResource\\) of method PhlyRestfully\\\\ResourceController\\:\\:patch\\(\\) should be compatible with return type \\(array\\) of method Laminas\\\\Mvc\\\\Controller\\\\AbstractRestfulController\\:\\:patch\\(\\)$#"
 			count: 1
 			path: src/ResourceController.php
 

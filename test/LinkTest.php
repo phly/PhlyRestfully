@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 /**
  * @link      https://github.com/weierophinney/PhlyRestfully for the canonical source repository
  * @copyright Copyright (c) 2013 Matthew Weier O'Phinney
@@ -14,13 +14,13 @@ use PHPUnit\Framework\TestCase as TestCase;
 
 class LinkTest extends TestCase
 {
-    public function testConstructorTakesLinkRelationName()
+    public function testConstructorTakesLinkRelationName(): void
     {
         $link = new Link('describedby');
         $this->assertEquals('describedby', $link->getRelation());
     }
 
-    public function testCanSetLinkUrl()
+    public function testCanSetLinkUrl(): void
     {
         $url  = 'http://example.com/docs.html';
         $link = new Link('describedby');
@@ -28,7 +28,7 @@ class LinkTest extends TestCase
         $this->assertEquals($url, $link->getUrl());
     }
 
-    public function testCanSetLinkRoute()
+    public function testCanSetLinkRoute(): void
     {
         $route = 'api/docs';
         $link = new Link('describedby');
@@ -36,7 +36,7 @@ class LinkTest extends TestCase
         $this->assertEquals($route, $link->getRoute());
     }
 
-    public function testCanSetRouteParamsWhenSpecifyingRoute()
+    public function testCanSetRouteParamsWhenSpecifyingRoute(): void
     {
         $route  = 'api/docs';
         $params = ['version' => '1.1'];
@@ -46,7 +46,7 @@ class LinkTest extends TestCase
         $this->assertEquals($params, $link->getRouteParams());
     }
 
-    public function testCanSetRouteOptionsWhenSpecifyingRoute()
+    public function testCanSetRouteOptionsWhenSpecifyingRoute(): void
     {
         $route   = 'api/docs';
         $options = ['query' => 'version=1.1'];
@@ -56,7 +56,7 @@ class LinkTest extends TestCase
         $this->assertEquals($options, $link->getRouteOptions());
     }
 
-    public function testCanSetRouteParamsSeparately()
+    public function testCanSetRouteParamsSeparately(): void
     {
         $route  = 'api/docs';
         $params = ['version' => '1.1'];
@@ -67,7 +67,7 @@ class LinkTest extends TestCase
         $this->assertEquals($params, $link->getRouteParams());
     }
 
-    public function testCanSetRouteOptionsSeparately()
+    public function testCanSetRouteOptionsSeparately(): void
     {
         $route   = 'api/docs';
         $options = ['query' => 'version=1.1'];
@@ -78,7 +78,7 @@ class LinkTest extends TestCase
         $this->assertEquals($options, $link->getRouteOptions());
     }
 
-    public function testSettingUrlAfterSettingRouteRaisesException()
+    public function testSettingUrlAfterSettingRouteRaisesException(): void
     {
         $link = new Link('describedby');
         $link->setRoute('api/docs');
@@ -87,7 +87,7 @@ class LinkTest extends TestCase
         $link->setUrl('http://example.com/api/docs.html');
     }
 
-    public function testSettingRouteAfterSettingUrlRaisesException()
+    public function testSettingRouteAfterSettingUrlRaisesException(): void
     {
         $link = new Link('describedby');
         $link->setUrl('http://example.com/api/docs.html');
@@ -96,46 +96,46 @@ class LinkTest extends TestCase
         $link->setRoute('api/docs');
     }
 
-    public function testIsCompleteReturnsFalseIfNeitherUrlNorRouteIsSet()
+    public function testIsCompleteReturnsFalseIfNeitherUrlNorRouteIsSet(): void
     {
         $link = new Link('describedby');
         $this->assertFalse($link->isComplete());
     }
 
-    public function testHasUrlReturnsFalseWhenUrlIsNotSet()
+    public function testHasUrlReturnsFalseWhenUrlIsNotSet(): void
     {
         $link = new Link('describedby');
         $this->assertFalse($link->hasUrl());
     }
 
-    public function testHasUrlReturnsTrueWhenUrlIsSet()
+    public function testHasUrlReturnsTrueWhenUrlIsSet(): void
     {
         $link = new Link('describedby');
         $link->setUrl('http://example.com/api/docs.html');
         $this->assertTrue($link->hasUrl());
     }
 
-    public function testIsCompleteReturnsTrueWhenUrlIsSet()
+    public function testIsCompleteReturnsTrueWhenUrlIsSet(): void
     {
         $link = new Link('describedby');
         $link->setUrl('http://example.com/api/docs.html');
         $this->assertTrue($link->isComplete());
     }
 
-    public function testHasRouteReturnsFalseWhenRouteIsNotSet()
+    public function testHasRouteReturnsFalseWhenRouteIsNotSet(): void
     {
         $link = new Link('describedby');
         $this->assertFalse($link->hasRoute());
     }
 
-    public function testHasRouteReturnsTrueWhenRouteIsSet()
+    public function testHasRouteReturnsTrueWhenRouteIsSet(): void
     {
         $link = new Link('describedby');
         $link->setRoute('api/docs');
         $this->assertTrue($link->hasRoute());
     }
 
-    public function testIsCompleteReturnsTrueWhenRouteIsSet()
+    public function testIsCompleteReturnsTrueWhenRouteIsSet(): void
     {
         $link = new Link('describedby');
         $link->setRoute('api/docs');
@@ -145,7 +145,7 @@ class LinkTest extends TestCase
     /**
      * @group 79
      */
-    public function testFactoryCanGenerateLinkWithUrl()
+    public function testFactoryCanGenerateLinkWithUrl(): void
     {
         $rel  = 'describedby';
         $url  = 'http://example.com/docs.html';
@@ -161,7 +161,7 @@ class LinkTest extends TestCase
     /**
      * @group 79
      */
-    public function testFactoryCanGenerateLinkWithRouteInformation()
+    public function testFactoryCanGenerateLinkWithRouteInformation(): void
     {
         $rel     = 'describedby';
         $route   = 'api/docs';

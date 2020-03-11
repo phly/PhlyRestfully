@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 /**
  * @link      https://github.com/weierophinney/PhlyRestfully for the canonical source repository
  * @copyright Copyright (c) 2013 Matthew Weier O'Phinney
@@ -16,16 +16,16 @@ use PhlyRestfully\View\RestfulJsonModel;
 use PhlyRestfully\View\RestfulJsonRenderer;
 use PhlyRestfully\View\RestfulJsonStrategy;
 use PHPUnit\Framework\TestCase as TestCase;
-use Zend\Http\Response;
-use Zend\View\Renderer\JsonRenderer;
-use Zend\View\ViewEvent;
+use Laminas\Http\Response;
+use Laminas\View\Renderer\JsonRenderer;
+use Laminas\View\ViewEvent;
 
 /**
  * @subpackage UnitTest
  */
 class RestfulJsonStrategyTest extends TestCase
 {
-    public function setUp()
+    public function setUp(): void
     {
         $this->response = new Response;
         $this->event    = new ViewEvent;
@@ -35,26 +35,26 @@ class RestfulJsonStrategyTest extends TestCase
         $this->strategy = new RestfulJsonStrategy($this->renderer);
     }
 
-    public function testSelectRendererReturnsNullIfModelIsNotARestfulJsonModel()
+    public function testSelectRendererReturnsNullIfModelIsNotARestfulJsonModel(): void
     {
         $this->assertNull($this->strategy->selectRenderer($this->event));
     }
 
-    public function testSelectRendererReturnsRendererIfModelIsARestfulJsonModel()
+    public function testSelectRendererReturnsRendererIfModelIsARestfulJsonModel(): void
     {
         $model = new RestfulJsonModel();
         $this->event->setModel($model);
         $this->assertSame($this->renderer, $this->strategy->selectRenderer($this->event));
     }
 
-    public function testInjectResponseDoesNotSetContentTypeHeaderIfRendererDoesNotMatch()
+    public function testInjectResponseDoesNotSetContentTypeHeaderIfRendererDoesNotMatch(): void
     {
         $this->strategy->injectResponse($this->event);
         $headers = $this->response->getHeaders();
         $this->assertFalse($headers->has('Content-Type'));
     }
 
-    public function testInjectResponseDoesNotSetContentTypeHeaderIfResultIsNotString()
+    public function testInjectResponseDoesNotSetContentTypeHeaderIfResultIsNotString(): void
     {
         $this->event->setRenderer($this->renderer);
         $this->event->setResult(['foo']);
@@ -63,7 +63,7 @@ class RestfulJsonStrategyTest extends TestCase
         $this->assertFalse($headers->has('Content-Type'));
     }
 
-    public function testInjectResponseSetsContentTypeHeaderToDefaultIfNotProblemApiOrHalModel()
+    public function testInjectResponseSetsContentTypeHeaderToDefaultIfNotProblemApiOrHalModel(): void
     {
         $this->event->setRenderer($this->renderer);
         $this->event->setResult('{"foo":"bar"}');
@@ -74,7 +74,7 @@ class RestfulJsonStrategyTest extends TestCase
         $this->assertEquals('application/json', $header->getFieldValue());
     }
 
-    public function testInjectResponseSetsContentTypeHeaderToApiProblemForApiProblemModel()
+    public function testInjectResponseSetsContentTypeHeaderToApiProblemForApiProblemModel(): void
     {
         $problem = new ApiProblem(500, 'whatever', 'foo', 'bar');
         $model   = new RestfulJsonModel(['payload' => $problem]);
@@ -110,7 +110,7 @@ class RestfulJsonStrategyTest extends TestCase
     /**
      * @dataProvider halObjects
      */
-    public function testInjectResponseSetsContentTypeHeaderToHalForHalModel($hal)
+    public function testInjectResponseSetsContentTypeHeaderToHalForHalModel($hal): void
     {
         $model = new RestfulJsonModel(['payload' => $hal]);
 
@@ -138,7 +138,7 @@ class RestfulJsonStrategyTest extends TestCase
     /**
      * @dataProvider invalidStatusCodes
      */
-    public function testUsesStatusCode500ForAnyStatusCodesAbove599OrBelow100($status)
+    public function testUsesStatusCode500ForAnyStatusCodesAbove599OrBelow100($status): void
     {
         $problem = new ApiProblem($status, 'whatever');
         $model   = new RestfulJsonModel(['payload' => $problem]);

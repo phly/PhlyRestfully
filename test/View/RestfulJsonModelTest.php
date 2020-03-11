@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 /**
  * @link      https://github.com/weierophinney/PhlyRestfully for the canonical source repository
  * @copyright Copyright (c) 2013 Matthew Weier O'Phinney
@@ -20,17 +20,17 @@ use stdClass;
  */
 class RestfulJsonModelTest extends TestCase
 {
-    public function setUp()
+    public function setUp(): void
     {
         $this->model = new RestfulJsonModel;
     }
 
-    public function testPayloadIsNullByDefault()
+    public function testPayloadIsNullByDefault(): void
     {
         $this->assertNull($this->model->getPayload());
     }
 
-    public function testPayloadIsMutable()
+    public function testPayloadIsMutable(): void
     {
         $this->model->setPayload('foo');
         $this->assertEquals('foo', $this->model->getPayload());
@@ -63,13 +63,13 @@ class RestfulJsonModelTest extends TestCase
     /**
      * @dataProvider invalidApiProblemPayloads
      */
-    public function testIsApiProblemReturnsFalseForInvalidValues($payload)
+    public function testIsApiProblemReturnsFalseForInvalidValues($payload): void
     {
         $this->model->setPayload($payload);
         $this->assertFalse($this->model->isApiProblem());
     }
 
-    public function testIsApiProblemReturnsTrueForApiProblemPayload()
+    public function testIsApiProblemReturnsTrueForApiProblemPayload(): void
     {
         $problem = new ApiProblem(401, 'Unauthorized');
         $this->model->setPayload($problem);
@@ -87,13 +87,13 @@ class RestfulJsonModelTest extends TestCase
     /**
      * @dataProvider invalidHalCollectionPayloads
      */
-    public function testIsHalCollectionReturnsFalseForInvalidValues($payload)
+    public function testIsHalCollectionReturnsFalseForInvalidValues($payload): void
     {
         $this->model->setPayload($payload);
         $this->assertFalse($this->model->isHalCollection());
     }
 
-    public function testIsHalCollectionReturnsTrueForHalCollectionPayload()
+    public function testIsHalCollectionReturnsTrueForHalCollectionPayload(): void
     {
         $collection = new HalCollection([], 'item/route');
         $this->model->setPayload($collection);
@@ -111,13 +111,13 @@ class RestfulJsonModelTest extends TestCase
     /**
      * @dataProvider invalidHalResourcePayloads
      */
-    public function testIsHalResourceReturnsFalseForInvalidValues($payload)
+    public function testIsHalResourceReturnsFalseForInvalidValues($payload): void
     {
         $this->model->setPayload($payload);
         $this->assertFalse($this->model->isHalResource());
     }
 
-    public function testIsHalResourceReturnsTrueForHalResourcePayload()
+    public function testIsHalResourceReturnsTrueForHalResourcePayload(): void
     {
         $item = new HalResource([], 'id', 'route');
         $this->model->setPayload($item);

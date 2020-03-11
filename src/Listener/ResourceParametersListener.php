@@ -9,10 +9,10 @@
 namespace PhlyRestfully\Listener;
 
 use PhlyRestfully\ResourceController;
-use Zend\EventManager\EventManagerInterface;
-use Zend\EventManager\ListenerAggregateInterface;
-use Zend\EventManager\SharedEventManagerInterface;
-use Zend\Mvc\MvcEvent;
+use Laminas\EventManager\EventManagerInterface;
+use Laminas\EventManager\ListenerAggregateInterface;
+use Laminas\EventManager\SharedEventManagerInterface;
+use Laminas\Mvc\MvcEvent;
 
 class ResourceParametersListener implements ListenerAggregateInterface
 {
@@ -31,7 +31,7 @@ class ResourceParametersListener implements ListenerAggregateInterface
      * @param int $priority
      * @return void
      */
-    public function attach(EventManagerInterface $events, $priority = 1)
+    public function attach(EventManagerInterface $events, $priority = 1): void
     {
         $this->listeners[] = $events->attach('dispatch', [$this, 'onDispatch'], 100);
     }
@@ -40,7 +40,7 @@ class ResourceParametersListener implements ListenerAggregateInterface
      * @param EventManagerInterface $events
      * @return void
      */
-    public function detach(EventManagerInterface $events)
+    public function detach(EventManagerInterface $events): void
     {
         foreach ($this->listeners as $index => $listener) {
             $events->detach($listener);
@@ -53,7 +53,7 @@ class ResourceParametersListener implements ListenerAggregateInterface
      *
      * @return void
      */
-    public function attachShared(SharedEventManagerInterface $events)
+    public function attachShared(SharedEventManagerInterface $events): void
     {
         $this->sharedListeners[] = $events->attach(ResourceController::class, 'dispatch', [$this, 'onDispatch'], 100);
     }
@@ -63,7 +63,7 @@ class ResourceParametersListener implements ListenerAggregateInterface
      *
      * @return void
      */
-    public function detachShared(SharedEventManagerInterface $events)
+    public function detachShared(SharedEventManagerInterface $events): void
     {
         // Vary detachment based on zend-eventmanager version.
         $detach = method_exists($events, 'attachAggregate')
@@ -96,14 +96,14 @@ class ResourceParametersListener implements ListenerAggregateInterface
      *
      * @return void
      */
-    public function onDispatch(MvcEvent $e)
+    public function onDispatch(MvcEvent $e): void
     {
         $controller = $e->getTarget();
         if (!$controller instanceof ResourceController) {
             return;
         }
 
-        /** @var \Zend\Http\Request $request */
+        /** @var \Laminas\Http\Request $request */
         $request  = $e->getRequest();
         $query    = $request->getQuery();
         $matches  = $e->getRouteMatch();

@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 /**
  * @link      https://github.com/weierophinney/PhlyRestfully for the canonical source repository
  * @copyright Copyright (c) 2013 Matthew Weier O'Phinney
@@ -33,13 +33,13 @@ class HalResourceTest extends TestCase
     /**
      * @dataProvider invalidResources
      */
-    public function testConstructorRaisesExceptionForNonObjectNonArrayResource($resource)
+    public function testConstructorRaisesExceptionForNonObjectNonArrayResource($resource): void
     {
         $this->expectException(Exception\InvalidResourceException::class);
         $hal = new HalResource($resource, 'id');
     }
 
-    public function testPropertiesAreAccessibleAfterConstruction()
+    public function testPropertiesAreAccessibleAfterConstruction(): void
     {
         $resource = new stdClass;
         $hal      = new HalResource($resource, 'id');
@@ -47,14 +47,14 @@ class HalResourceTest extends TestCase
         $this->assertEquals('id', $hal->id);
     }
 
-    public function testComposesLinkCollectionByDefault()
+    public function testComposesLinkCollectionByDefault(): void
     {
         $resource = new stdClass;
         $hal      = new HalResource($resource, 'id', 'route', ['foo' => 'bar']);
         $this->assertInstanceOf(LinkCollection::class, $hal->getLinks());
     }
 
-    public function testLinkCollectionMayBeInjected()
+    public function testLinkCollectionMayBeInjected(): void
     {
         $resource = new stdClass;
         $hal      = new HalResource($resource, 'id', 'route', ['foo' => 'bar']);

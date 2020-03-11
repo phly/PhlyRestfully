@@ -9,14 +9,14 @@
 namespace PhlyRestfully;
 
 use Traversable;
-use Zend\Stdlib\ArrayUtils;
+use Laminas\Stdlib\ArrayUtils;
 
 /**
  * Model a collection for use with HAL payloads
  *
  * Provided by __get
  * @property array $attributes
- * @property array|Traversable|\Zend\Paginator\Paginator $collection
+ * @property array|Traversable|\Laminas\Paginator\Paginator $collection
  * @property string $collectionname
  * @property string $collection_name
  * @property string $collectionName
@@ -59,7 +59,7 @@ class HalCollection implements LinkCollectionAwareInterface
     protected $attributes = [];
 
     /**
-     * @var array|Traversable|\Zend\Paginator\Paginator
+     * @var array|Traversable|\Laminas\Paginator\Paginator
      */
     protected $collection;
 
@@ -133,7 +133,7 @@ class HalCollection implements LinkCollectionAwareInterface
     protected $resourceRouteParams = [];
 
     /**
-     * @param  array|Traversable|\Zend\Paginator\Paginator $collection
+     * @param  array|Traversable|\Laminas\Paginator\Paginator $collection
      * @param  string $resourceRoute
      * @param  array $resourceRouteParams
      * @param  array $resourceRouteOptions

@@ -18,19 +18,19 @@ use PhlyRestfully\LinkCollection;
 use PhlyRestfully\LinkCollectionAwareInterface;
 use PhlyRestfully\Metadata;
 use PhlyRestfully\MetadataMap;
-use Zend\EventManager\Event;
-use Zend\EventManager\EventManager;
-use Zend\EventManager\EventManagerAwareInterface;
-use Zend\EventManager\EventManagerInterface;
-use Zend\Mvc\Controller\Plugin\PluginInterface as ControllerPluginInterface;
-use Zend\Paginator\Paginator;
-use Zend\Stdlib\ArrayUtils;
-use Zend\Stdlib\DispatchableInterface;
-use Zend\Hydrator\HydratorInterface;
-use Zend\Hydrator\HydratorPluginManager;
-use Zend\View\Helper\AbstractHelper;
-use Zend\View\Helper\ServerUrl;
-use Zend\View\Helper\Url;
+use Laminas\EventManager\Event;
+use Laminas\EventManager\EventManager;
+use Laminas\EventManager\EventManagerAwareInterface;
+use Laminas\EventManager\EventManagerInterface;
+use Laminas\Mvc\Controller\Plugin\PluginInterface as ControllerPluginInterface;
+use Laminas\Paginator\Paginator;
+use Laminas\Stdlib\ArrayUtils;
+use Laminas\Stdlib\DispatchableInterface;
+use Laminas\Hydrator\HydratorInterface;
+use Laminas\Hydrator\HydratorPluginManager;
+use Laminas\View\Helper\AbstractHelper;
+use Laminas\View\Helper\ServerUrl;
+use Laminas\View\Helper\Url;
 
 /**
  * Generate links for use with HAL payloads
@@ -99,7 +99,7 @@ class HalLinks extends AbstractHelper implements
      * @param DispatchableInterface $controller
      * @return void
      */
-    public function setController(DispatchableInterface $controller)
+    public function setController(DispatchableInterface $controller): void
     {
         $this->controller = $controller;
     }
@@ -133,7 +133,7 @@ class HalLinks extends AbstractHelper implements
      * @param  EventManagerInterface $events
      * @return void
      */
-    public function setEventManager(EventManagerInterface $events)
+    public function setEventManager(EventManagerInterface $events): void
     {
         $events->setIdentifiers([
             __CLASS__,
@@ -144,7 +144,7 @@ class HalLinks extends AbstractHelper implements
         $events->attach(
             'getIdFromResource',
             /**
-             * @param \Zend\Mvc\MvcEvent $e
+             * @param \Laminas\Mvc\MvcEvent $e
              * @return mixed|false
              */
             function ($e) {
@@ -216,7 +216,7 @@ class HalLinks extends AbstractHelper implements
      * @param ServerUrl $helper
      * @return void
      */
-    public function setServerUrlHelper(ServerUrl $helper)
+    public function setServerUrlHelper(ServerUrl $helper): void
     {
         $this->serverUrlHelper = $helper;
     }
@@ -225,7 +225,7 @@ class HalLinks extends AbstractHelper implements
      * @param Url $helper
      * @return void
      */
-    public function setUrlHelper(Url $helper)
+    public function setUrlHelper(Url $helper): void
     {
         $this->urlHelper = $helper;
     }
@@ -419,7 +419,7 @@ class HalLinks extends AbstractHelper implements
             $params['id'] = $id;
         }
 
-        /** @var \Zend\EventManager\EventManager $events */
+        /** @var \Laminas\EventManager\EventManager $events */
         $events      = $this->getEventManager();
         $eventParams = $events->prepareArgs([
             'route'    => $route,
@@ -666,7 +666,7 @@ class HalLinks extends AbstractHelper implements
      * @param  string $identifier
      * @return void
      */
-    public function injectSelfLink(LinkCollectionAwareInterface $resource, $route, $identifier = 'id')
+    public function injectSelfLink(LinkCollectionAwareInterface $resource, $route, $identifier = 'id'): void
     {
         $self = new Link('self');
         $self->setRoute($route);
@@ -778,7 +778,7 @@ class HalLinks extends AbstractHelper implements
      * @param  HalResource $resource
      * @return void
      */
-    protected function extractEmbeddedHalResource(array &$parent, $key, HalResource $resource)
+    protected function extractEmbeddedHalResource(array &$parent, $key, HalResource $resource): void
     {
         $rendered = $this->renderResource($resource);
         if (!isset($parent['_embedded'])) {
@@ -800,7 +800,7 @@ class HalLinks extends AbstractHelper implements
      * @param  HalCollection $collection
      * @return void
      */
-    protected function extractEmbeddedHalCollection(array &$parent, $key, HalCollection $collection)
+    protected function extractEmbeddedHalCollection(array &$parent, $key, HalCollection $collection): void
     {
         $rendered = $this->extractCollection($collection);
         if (!isset($parent['_embedded'])) {
@@ -914,7 +914,7 @@ class HalLinks extends AbstractHelper implements
         }
 
         $event = new Event(__FUNCTION__, $this, $params);
-        /** @var \Zend\EventManager\EventManager $em */
+        /** @var \Laminas\EventManager\EventManager $em */
         $em = $this->getEventManager();
         $results = $em->triggerEventUntil(
             /**
@@ -987,7 +987,7 @@ class HalLinks extends AbstractHelper implements
      * @param  LinkCollection $links
      * @return void
      */
-    protected function marshalMetadataLinks(Metadata $metadata, LinkCollection $links)
+    protected function marshalMetadataLinks(Metadata $metadata, LinkCollection $links): void
     {
         foreach ($metadata->getLinks() as $linkData) {
             $link = Link::factory($linkData);
