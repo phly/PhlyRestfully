@@ -37,7 +37,7 @@
         "laminas/laminas-console": "^2.5",
         "laminas/laminas-db": "^2.11",
         "laminas/laminas-navigation": "^2.5",
-        "phpstan/phpstan": "0.12.9",
+        "phpstan/phpstan": "0.12.14",
         "phpunit/phpunit": "^7.5.15",
         "vimeo/psalm": "3.8.3"
     },
