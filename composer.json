@@ -33,7 +33,7 @@
         "php": ">=7.1"
     },
     "require-dev": {
-        "friendsofphp/php-cs-fixer": "2.16.2",
+        "friendsofphp/php-cs-fixer": "2.16.3",
         "laminas/laminas-console": "^2.5",
         "laminas/laminas-db": "^2.11",
         "laminas/laminas-navigation": "^2.5",
