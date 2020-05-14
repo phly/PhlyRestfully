@@ -1,6 +1,6 @@
 PhlyRestfully: ZF2 Module for JSON REST Services
 ================================================
-[![Build Status](https://travis-ci.org/diablomedia/PhlyRestfully.svg?branch=master)](https://travis-ci.org/diablomedia/PhlyRestfully) [![codecov](https://codecov.io/gh/diablomedia/PhlyRestfully/branch/master/graph/badge.svg)](https://codecov.io/gh/diablomedia/PhlyRestfully)
+[![Build Status](https://travis-ci.com/diablomedia/PhlyRestfully.svg?branch=master)](https://travis-ci.com/diablomedia/PhlyRestfully) [![codecov](https://codecov.io/gh/diablomedia/PhlyRestfully/branch/master/graph/badge.svg)](https://codecov.io/gh/diablomedia/PhlyRestfully)
 
 > ## ABANDONED
 >
