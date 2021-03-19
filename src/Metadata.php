@@ -320,12 +320,11 @@ class Metadata
     /**
      * Set the flag indicating collection status
      *
-     * @param  bool $flag
      * @return self
      */
-    public function setIsCollection($flag)
+    public function setIsCollection(bool $flag)
     {
-        $this->isCollection = (bool) $flag;
+        $this->isCollection = $flag;
         return $this;
     }
 

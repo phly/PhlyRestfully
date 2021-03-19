@@ -121,7 +121,7 @@ class ResourceController extends AbstractRestfulController
      *
      * @var string
      */
-    protected $route;
+    protected $route = '';
 
     /**
      * Constructor
@@ -163,12 +163,11 @@ class ResourceController extends AbstractRestfulController
     /**
      * Set the name to which to assign a collection in a HalCollection
      *
-     * @param  string $name
      * @return void
      */
-    public function setCollectionName($name): void
+    public function setCollectionName(string $name): void
     {
-        $this->collectionName = (string) $name;
+        $this->collectionName = $name;
     }
 
     /**
@@ -182,26 +181,29 @@ class ResourceController extends AbstractRestfulController
         $this->contentTypes = $contentTypes;
     }
 
+    public function getContentTypes(): array
+    {
+        return $this->contentTypes;
+    }
+
     /**
      * Set the default page size for paginated responses
      *
-     * @param  int $count
      * @return void
      */
-    public function setPageSize($count): void
+    public function setPageSize(int $count): void
     {
-        $this->pageSize = (int) $count;
+        $this->pageSize = $count;
     }
 
     /**
      * Set the page size parameter for paginated responses.
      *
-     * @param string $param
      * @return void
      */
-    public function setPageSizeParam($param): void
+    public function setPageSizeParam(string $param): void
     {
-        $this->pageSizeParam = (string) $param;
+        $this->pageSizeParam = $param;
     }
 
     /**

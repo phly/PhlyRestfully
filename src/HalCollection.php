@@ -226,24 +226,22 @@ class HalCollection implements LinkCollectionAwareInterface
     /**
      * Set the collection name (for use within the _embedded object)
      *
-     * @param  string $name
      * @return HalCollection
      */
-    public function setCollectionName($name)
+    public function setCollectionName(string $name)
     {
-        $this->collectionName = (string) $name;
+        $this->collectionName = $name;
         return $this;
     }
 
     /**
      * Set the collection route; used for generating pagination links
      *
-     * @param  string $route
      * @return HalCollection
      */
-    public function setCollectionRoute($route)
+    public function setCollectionRoute(string $route)
     {
-        $this->collectionRoute = (string) $route;
+        $this->collectionRoute = $route;
         return $this;
     }
 
@@ -296,12 +294,11 @@ class HalCollection implements LinkCollectionAwareInterface
     /**
      * Set the resource key that represents the identifier name
      *
-     * @param  string $name
      * @return self
      */
-    public function setIdentifierName($name)
+    public function setIdentifierName(string $name)
     {
-        $this->identifierName = (string) $name;
+        $this->identifierName = $name;
         return $this;
     }
 
@@ -320,20 +317,12 @@ class HalCollection implements LinkCollectionAwareInterface
     /**
      * Set current page
      *
-     * @param  int $page
      * @return HalCollection
      * @throws Exception\InvalidArgumentException for non-positive and/or non-integer values
      */
-    public function setPage($page)
+    public function setPage(int $page)
     {
-        if (!is_int($page) && !is_numeric($page)) {
-            throw new Exception\InvalidArgumentException(sprintf(
-                'Page must be an integer; received "%s"',
-                gettype($page)
-            ));
-        }
-
-        $page = (int) $page;
+        $page = $page;
         if ($page < 1) {
             throw new Exception\InvalidArgumentException(sprintf(
                 'Page must be a positive integer; received "%s"',
@@ -348,20 +337,12 @@ class HalCollection implements LinkCollectionAwareInterface
     /**
      * Set page size
      *
-     * @param  int $size
      * @return HalCollection
      * @throws Exception\InvalidArgumentException for non-positive and/or non-integer values
      */
-    public function setPageSize($size)
+    public function setPageSize(int $size)
     {
-        if (!is_int($size) && !is_numeric($size)) {
-            throw new Exception\InvalidArgumentException(sprintf(
-                'Page size must be an integer; received "%s"',
-                gettype($size)
-            ));
-        }
-
-        $size = (int) $size;
+        $size = $size;
         if ($size < 1) {
             throw new Exception\InvalidArgumentException(sprintf(
                 'size must be a positive integer; received "%s"',
@@ -388,12 +369,11 @@ class HalCollection implements LinkCollectionAwareInterface
     /**
      * Set the resource route
      *
-     * @param  string $route
      * @return HalCollection
      */
-    public function setResourceRoute($route)
+    public function setResourceRoute(string $route)
     {
-        $this->resourceRoute = (string) $route;
+        $this->resourceRoute = $route;
         return $this;
     }
 

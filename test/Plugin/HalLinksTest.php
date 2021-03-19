@@ -127,7 +127,7 @@ class HalLinksTest extends TestCase
         $this->assertArrayHasKey('href', $link);
         $href = $link['href'];
         $this->assertIsString($href);
-        $this->assertContains($match, $href);
+        $this->assertStringContainsString($match, $href);
     }
 
     public function testCreateLinkSkipServerUrlHelperIfSchemeExists(): void
@@ -611,7 +611,7 @@ class HalLinksTest extends TestCase
         });
 
         $rendered = $this->plugin->renderResource($resource);
-        $this->assertContains('/users/matthew', $rendered['_links']['self']['href']);
+        $this->assertStringContainsString('/users/matthew', $rendered['_links']['self']['href']);
     }
 
     /**

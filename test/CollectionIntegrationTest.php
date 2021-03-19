@@ -248,13 +248,13 @@ class CollectionIntegrationTest extends TestCase
         foreach ($links as $name => $link) {
             $this->assertArrayHasKey('href', $link);
             if ('first' !== $name) {
-                $this->assertContains(
+                $this->assertStringContainsString(
                     'page=',
                     $link['href'],
                     "Link $name ('{$link['href']}') is missing page query param"
                 );
             }
-            $this->assertContains(
+            $this->assertStringContainsString(
                 'query=foo',
                 $link['href'],
                 "Link $name ('{$link['href']}') is missing query query param"
@@ -280,13 +280,13 @@ class CollectionIntegrationTest extends TestCase
         foreach ($links as $name => $link) {
             $this->assertArrayHasKey('href', $link);
             if ('first' !== $name) {
-                $this->assertContains(
+                $this->assertStringContainsString(
                     'page=',
                     $link['href'],
                     "Link $name ('{$link['href']}') is missing page query param"
                 );
             }
-            $this->assertContains(
+            $this->assertStringContainsString(
                 'query=foo',
                 $link['href'],
                 "Link $name ('{$link['href']}') is missing query query param"

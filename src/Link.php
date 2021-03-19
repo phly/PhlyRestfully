@@ -47,11 +47,10 @@ class Link
      * Create a link relation
      *
      * @todo  filtering and/or validation of relation string
-     * @param string $relation
      */
-    public function __construct($relation)
+    public function __construct(string $relation)
     {
-        $this->relation = (string) $relation;
+        $this->relation = $relation;
     }
 
     /**
@@ -112,12 +111,11 @@ class Link
      *
      * If any params or options are passed, those will be passed to route assembly.
      *
-     * @param  string $route
      * @param  null|array|Traversable $params
      * @param  null|array|Traversable $options
      * @return self
      */
-    public function setRoute($route, $params = null, $options = null)
+    public function setRoute(string $route, $params = null, $options = null)
     {
         if ($this->hasUrl()) {
             throw new Exception\DomainException(sprintf(
@@ -126,7 +124,7 @@ class Link
             ));
         }
 
-        $this->route = (string) $route;
+        $this->route = $route;
         if ($params) {
             $this->setRouteParams($params);
         }

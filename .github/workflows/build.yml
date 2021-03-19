@@ -1,0 +1,75 @@
+name: Build
+on:
+    push:
+        branches:
+            - master
+    pull_request:
+        branches:
+            - master
+jobs:
+    build:
+        name: PHP ${{ matrix.php-versions }} ${{ matrix.composer-args }}
+        strategy:
+            fail-fast: false
+            matrix:
+                operating-system: [ubuntu-latest]
+                php-versions: ['7.3', '7.4']
+                composer-args: ['', '--prefer-lowest']
+                include:
+                    - operating-system: ubuntu-latest
+                      php-versions: '8.0'
+                      composer-args: '--ignore-platform-reqs --no-scripts'
+                    - operating-system: ubuntu-latest
+                      php-versions: '8.0'
+                      composer-args: '--prefer-lowest --ignore-platform-reqs --no-scripts'
+        runs-on: ${{ matrix.operating-system }}
+        steps:
+            - name: Checkout
+              uses: actions/checkout@v2.3.3
+            - name: Setup PHP
+              uses: shivammathur/setup-php@2.5.0
+              with:
+                  php-version: ${{ matrix.php-versions }}
+                  extensions: mbstring
+                  coverage: pcov
+                  tools: cs2pr
+            - name: Setup problem matchers for PHPUnit
+              run: echo "::add-matcher::${{ runner.tool_cache }}/phpunit.json"
+            - name: Get composer cache directory
+              id: composer-cache
+              run: echo "::set-output name=dir::$(composer config cache-files-dir)"
+            - name: Cache dependencies
+              uses: actions/cache@v2
+              with:
+                  path: ${{ steps.composer-cache.outputs.dir }}
+                  key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.json') }}
+                  restore-keys: ${{ runner.os }}-composer-
+            - name: Install Dependencies
+              run: |
+                  composer update --no-progress --no-suggest --prefer-stable --optimize-autoloader ${{ matrix.composer-args }}
+            - name: PHPStan
+              run: composer phpstan
+            - name: Psalm
+              run: composer psalm -- --output-format=checkstyle | cs2pr
+            - name: Code Style Check
+              run: composer style-check -- --format=checkstyle | cs2pr
+            - name: Test
+              run: composer test-with-coverage
+            - name: Upload Coverage
+              uses: codecov/codecov-action@v1
+              with:
+                  token: ${{ secrets.CODECOV_TOKEN }}
+                  files: ./clover.xml
+    merge-me:
+        name: Merge me!
+        needs:
+            - build
+        runs-on: ubuntu-latest
+        steps:
+            - name: Merge me!
+              uses: ridedott/merge-me-action@master
+              with:
+                  # This must be used as GitHub Actions token does not support
+                  # pushing to protected branches.
+                  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+                  GITHUB_LOGIN: 'dependabot[bot]'

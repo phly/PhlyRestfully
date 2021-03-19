@@ -269,6 +269,11 @@ class HalLinks extends AbstractHelper implements
         return $this;
     }
 
+    public function getDefaultHydrator(): HydratorInterface
+    {
+        return $this->defaultHydrator;
+    }
+
     /**
      * Retrieve a hydrator for a given resource
      *
@@ -594,12 +599,10 @@ class HalLinks extends AbstractHelper implements
      * Create a HalResource instance and inject it with a self relational link
      *
      * @param HalResource|array|object $resource
-     * @param string $route
-     * @param string $identifierName
      *
      * @return HalResource|ApiProblem
      */
-    public function createResource($resource, $route, $identifierName)
+    public function createResource($resource, string $route, string $identifierName)
     {
         $metadataMap = $this->getMetadataMap();
         if (is_object($resource) && $metadataMap->has($resource)) {
@@ -662,11 +665,9 @@ class HalLinks extends AbstractHelper implements
      * Inject a "self" relational link based on the route and identifier
      *
      * @param  LinkCollectionAwareInterface $resource
-     * @param  string $route
-     * @param  string $identifier
      * @return void
      */
-    public function injectSelfLink(LinkCollectionAwareInterface $resource, $route, $identifier = 'id'): void
+    public function injectSelfLink(LinkCollectionAwareInterface $resource, string $route, string $identifier = 'id'): void
     {
         $self = new Link('self');
         $self->setRoute($route);

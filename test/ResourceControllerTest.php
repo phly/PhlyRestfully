@@ -84,7 +84,7 @@ class ResourceControllerTest extends TestCase
         $this->assertInstanceOf(ApiProblem::class, $result);
         $problem = $result->toArray();
         $this->assertEquals($expectedHttpStatus, $problem['httpStatus']);
-        $this->assertContains($expectedDetail, $problem['detail']);
+        $this->assertStringContainsString($expectedDetail, $problem['detail']);
     }
 
     public function testCreateReturnsProblemResultOnCreationException(): void
@@ -579,7 +579,7 @@ class ResourceControllerTest extends TestCase
         $controller = new ResourceController();
         $controller->setContentTypes($types);
 
-        $this->assertAttributeEquals($types, 'contentTypes', $controller);
+        $this->assertEquals($types, $controller->getContentTypes());
     }
 
     public function testCreateUsesHalResourceReturnedByResource(): void

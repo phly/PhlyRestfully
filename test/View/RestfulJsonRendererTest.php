@@ -12,7 +12,6 @@ use PhlyRestfully\ApiProblem;
 use PhlyRestfully\HalCollection;
 use PhlyRestfully\HalResource;
 use PhlyRestfully\Link;
-use PhlyRestfully\MetadataMap;
 use PhlyRestfully\Plugin\HalLinks;
 use PhlyRestfully\View\RestfulJsonModel;
 use PhlyRestfully\View\RestfulJsonRenderer;
@@ -29,12 +28,23 @@ use Laminas\Hydrator;
 use Laminas\View\HelperPluginManager;
 use Laminas\View\Model\JsonModel;
 use Laminas\View\Model\ViewModel;
+use stdClass;
 
 /**
  * @subpackage UnitTest
  */
 class RestfulJsonRendererTest extends TestCase
 {
+    /**
+     * @var RestfulJsonRenderer
+     */
+    private $renderer;
+
+    /**
+     * @var ServiceManager
+     */
+    private $serviceManager;
+
     public function setUp(): void
     {
         $this->renderer = new RestfulJsonRenderer();
@@ -72,7 +82,7 @@ class RestfulJsonRendererTest extends TestCase
             sprintf('%s relational link does not have an href attribute; received %s', $relation, var_export($link, true))
         );
         $href = $link->href;
-        $this->assertContains($match, $href);
+        $this->assertStringContainsString($match, $href);
     }
 
     public function assertRelationalLinkEquals($match, $relation, $resource): void
@@ -392,7 +402,7 @@ class RestfulJsonRendererTest extends TestCase
         $this->renderer->setDisplayExceptions(true);
         $test = $this->renderer->render($model);
         $test = json_decode($test, true);
-        $this->assertContains($exception->getMessage() . "\n" . $exception->getTraceAsString(), $test['detail']);
+        $this->assertStringContainsString($exception->getMessage() . "\n" . $exception->getTraceAsString(), $test['detail']);
     }
 
     public function testRendersAttributesAsPartOfNonPaginatedHalCollection(): void
@@ -650,11 +660,11 @@ class RestfulJsonRendererTest extends TestCase
         $test       = $this->renderer->render($model);
         $test       = json_decode($test);
 
-        $this->assertInstanceof('stdClass', $test, var_export($test, true));
+        $this->assertInstanceof(stdClass::class, $test, var_export($test, true));
         $this->assertRelationalLinkEquals('http://localhost.localdomain/resource', 'self', $test);
 
         $this->assertObjectHasAttribute('_embedded', $test);
-        $this->assertInstanceof('stdClass', $test->_embedded);
+        $this->assertInstanceof(stdClass::class, $test->_embedded);
         $this->assertObjectHasAttribute('items', $test->_embedded);
         $this->assertIsArray($test->_embedded->items);
         $this->assertCount(100, $test->_embedded->items);

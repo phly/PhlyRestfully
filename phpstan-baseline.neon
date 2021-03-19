@@ -2,7 +2,7 @@ parameters:
 	ignoreErrors:
 		-
 			message: "#^Result of && is always false\\.$#"
-			count: 3
+			count: 1
 			path: src/HalCollection.php
 
 		-
@@ -26,7 +26,7 @@ parameters:
 			path: src/Link.php
 
 		-
-			message: "#^Parameter \\#1 \\$listener of method Laminas\\\\EventManager\\\\SharedEventManagerInterface\\:\\:detach\\(\\) expects callable\\(\\)\\: mixed, 'PhlyRestfully…' given\\.$#"
+			message: "#^Parameter \\#1 \\$listener of method Laminas\\\\EventManager\\\\SharedEventManagerInterface\\:\\:detach\\(\\) expects callable\\(\\)\\: mixed, 'PhlyRestfully\\\\\\\\ResourceController' given\\.$#"
 			count: 1
 			path: src/Listener/ResourceParametersListener.php
 
@@ -76,7 +76,7 @@ parameters:
 			path: src/Plugin/HalLinks.php
 
 		-
-			message: "#^Parameter \\#1 \\$var of function count expects array\\|Countable, array\\|Traversable given\\.$#"
+			message: "#^Parameter \\#1 \\$(var|value) of function count expects array\\|Countable, array\\|Traversable given\\.$#"
 			count: 1
 			path: src/Plugin/HalLinks.php
 

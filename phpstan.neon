@@ -5,9 +5,8 @@ parameters:
     paths:
         - ./src
     ignoreErrors:
-        # Type-o in Laminas's docblock
         -
-            message: '#Call to method getTypeString\(\) on an unknown class Laminas\\Http\\Header\\Accept\\FieldValuePArt\\AcceptFieldValuePart\.#'
+            message: '#Cannot call method getTypeString\(\) on Laminas\\Http\\Header\\Accept\\FieldValuePart\\AcceptFieldValuePart\|true\.#'
             path: ./src/Listener/ApiProblemListener.php
         # Internal code never sets $identifierName to false, but does have a setter with no restrictions
         -

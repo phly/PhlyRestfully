@@ -224,12 +224,11 @@ class ApiProblem
      * Set the flag indicating whether an exception detail should include a
      * stack trace and previous exception information.
      *
-     * @param  bool $flag
      * @return ApiProblem
      */
-    public function setDetailIncludesStackTrace($flag)
+    public function setDetailIncludesStackTrace(bool $flag)
     {
-        $this->detailIncludesStackTrace = (bool) $flag;
+        $this->detailIncludesStackTrace = $flag;
         return $this;
     }
 

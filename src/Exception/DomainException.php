@@ -15,7 +15,7 @@ class DomainException extends \DomainException implements
     /**
      * @var string
      */
-    protected $describedBy;
+    protected $describedBy = '';
 
     /**
      * @var array
@@ -25,7 +25,7 @@ class DomainException extends \DomainException implements
     /**
      * @var string
      */
-    protected $title;
+    protected $title = '';
 
     /**
      * @param array $details
@@ -38,22 +38,20 @@ class DomainException extends \DomainException implements
     }
 
     /**
-     * @param string $uri
      * @return self
      */
-    public function setDescribedBy($uri)
+    public function setDescribedBy(string $uri)
     {
-        $this->describedBy = (string) $uri;
+        $this->describedBy = $uri;
         return $this;
     }
 
     /**
-     * @param string $title
      * @return self
      */
-    public function setTitle($title)
+    public function setTitle(string $title)
     {
-        $this->title = (string) $title;
+        $this->title = $title;
         return $this;
     }
 

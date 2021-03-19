@@ -1,0 +1,17 @@
+# grumphp.yml
+grumphp:
+    tasks:
+        composer:
+            strict: true
+        composer_require_checker: ~
+        phpcsfixer2:
+            allow_risky: true
+            config: .php_cs
+        phpstan:
+            memory_limit: 768M
+        psalm:
+            show_info: false
+        phpunit:
+            metadata:
+                priority: 100
+            always_execute: true

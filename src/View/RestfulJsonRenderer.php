@@ -77,12 +77,11 @@ class RestfulJsonRenderer extends JsonRenderer
     /**
      * Set display_exceptions flag
      *
-     * @param  bool $flag
      * @return $this
      */
-    public function setDisplayExceptions($flag)
+    public function setDisplayExceptions(bool $flag)
     {
-        $this->displayExceptions = (bool) $flag;
+        $this->displayExceptions = $flag;
         return $this;
     }
 

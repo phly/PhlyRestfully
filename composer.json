@@ -20,26 +20,28 @@
     "require": {
         "container-interop/container-interop": "^1.2",
         "laminas/laminas-eventmanager": "^3.0",
-        "laminas/laminas-http": "^2.11",
+        "laminas/laminas-http": "^2.14",
         "laminas/laminas-hydrator": "^2.4.2",
         "laminas/laminas-json": "^2.5.0|^3.0.0",
         "laminas/laminas-loader": "^2.5.0",
-        "laminas/laminas-mvc": "^2.7.13",
+        "laminas/laminas-mvc": "^2.7.15",
         "laminas/laminas-paginator": "^2.5.0",
         "laminas/laminas-servicemanager": "^3.4",
         "laminas/laminas-stdlib": "^3.2.1",
         "laminas/laminas-uri": "^2.5.0",
         "laminas/laminas-view": "^2.11.4",
-        "php": ">=7.1"
+        "php": "^7.3 || ^8.0"
     },
     "require-dev": {
-        "friendsofphp/php-cs-fixer": "2.16.3",
         "laminas/laminas-console": "^2.5",
         "laminas/laminas-db": "^2.11",
         "laminas/laminas-navigation": "^2.5",
-        "phpstan/phpstan": "0.12.18",
-        "phpunit/phpunit": "^7.5.15",
-        "vimeo/psalm": "3.8.3"
+        "friendsofphp/php-cs-fixer": "2.18.3",
+        "phpunit/phpunit": "^8.5.15",
+        "vimeo/psalm": "4.6.4",
+        "phpstan/phpstan": "0.12.81",
+        "maglnet/composer-require-checker": "^2.0 || ^3.0",
+        "phpro/grumphp-shim": "^0.22.0 || ^1.1"
     },
     "suggest": {
         "zfr/zfr-cors": "zfr/zfr-cors provides CORS support"
@@ -55,7 +57,10 @@
         }
     },
     "scripts": {
-        "phpstan": "phpstan analyse -c phpstan.neon --memory-limit=768M --no-progress --ansi",
+        "test": "phpunit",
+        "test-with-coverage": "phpunit --coverage-clover=clover.xml",
+        "phpstan": "phpstan analyze -c phpstan.neon --no-progress --ansi --memory-limit=768M",
+        "style-check": "php-cs-fixer fix --dry-run -vv",
         "psalm": "psalm --show-info=false"
     }
 }

@@ -7,7 +7,7 @@
     errorBaseline="psalm-baseline.xml"
 >
     <projectFiles>
-        <directory name="./src" />
+        <directory name="src" />
         <ignoreFiles>
             <directory name="./vendor" />
         </ignoreFiles>
@@ -32,14 +32,7 @@
             </errorLevel>
         </InvalidArgument>
 
-        <UndefinedClass>
-            <errorLevel type="info">
-                <!-- type-o in Laminas\Http\Header\AcceptAbstract docblock for match method -->
-                <file name="src/Listener/ApiProblemListener.php" />
-            </errorLevel>
-        </UndefinedClass>
-
-        <TypeCoercion>
+        <PropertyTypeCoercion>
             <errorLevel type="info">
                 <!-- This one doesn't make any sense to me:
                 $this->collection expects 'array<mixed, mixed>|Traversable|Laminas\Paginator\Paginator',  parent type 'array<mixed, mixed>|Traversable|Laminas\Paginator\Paginator' provided -->
@@ -49,7 +42,7 @@
                 <!-- object most likely gets turned into a HalCollection, but isn't guaranteed in the code -->
                 <file name="src/Plugin/HalLinks.php" />
             </errorLevel>
-        </TypeCoercion>
+        </PropertyTypeCoercion>
 
         <PossiblyNullArgument>
             <errorLevel type="info">
