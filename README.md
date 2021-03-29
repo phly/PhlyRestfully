@@ -1,7 +1,7 @@
 # PhlyRestfully: ZF2 Module for JSON REST Services
 
 [![Build](https://github.com/diablomedia/PhlyRestfully/workflows/Build/badge.svg?event=push)](https://github.com/diablomedia/PhlyRestfully/actions?query=workflow%3ABuild+event%3Apush)
-[codecov](https://codecov.io/gh/diablomedia/PhlyRestfully/branch/master/graph/badge.svg)](https://codecov.io/gh/diablomedia/PhlyRestfully)
+[![codecov](https://codecov.io/gh/diablomedia/PhlyRestfully/branch/master/graph/badge.svg)](https://codecov.io/gh/diablomedia/PhlyRestfully)
 [![Latest Stable Version](https://poser.pugx.org/diablomedia/PhlyRestfully/v/stable)](https://packagist.org/packages/diablomedia/PhlyRestfully)
 [![Total Downloads](https://poser.pugx.org/diablomedia/PhlyRestfully/downloads)](https://packagist.org/packages/diablomedia/PhlyRestfully)
 [![Psalm Type coverage](https://shepherd.dev/github/diablomedia/PhlyRestfully/coverage.svg)](https://psalm.dev/)
