@@ -4,6 +4,8 @@
 [codecov](https://codecov.io/gh/diablomedia/PhlyRestfully/branch/master/graph/badge.svg)](https://codecov.io/gh/diablomedia/PhlyRestfully)
 [![Latest Stable Version](https://poser.pugx.org/diablomedia/PhlyRestfully/v/stable)](https://packagist.org/packages/diablomedia/PhlyRestfully)
 [![Total Downloads](https://poser.pugx.org/diablomedia/PhlyRestfully/downloads)](https://packagist.org/packages/diablomedia/PhlyRestfully)
+[![Psalm Type coverage](https://shepherd.dev/github/diablomedia/PhlyRestfully/coverage.svg)](https://psalm.dev/)
+[![Psalm level](https://shepherd.dev/github/diablomedia/PhlyRestfully/level.svg?)](https://psalm.dev/)
 
 > ## ABANDONED
 >
