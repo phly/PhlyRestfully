@@ -2,8 +2,8 @@
 
 [![Build](https://github.com/diablomedia/PhlyRestfully/workflows/Build/badge.svg?event=push)](https://github.com/diablomedia/PhlyRestfully/actions?query=workflow%3ABuild+event%3Apush)
 [![codecov](https://codecov.io/gh/diablomedia/PhlyRestfully/branch/master/graph/badge.svg)](https://codecov.io/gh/diablomedia/PhlyRestfully)
-[![Latest Stable Version](https://poser.pugx.org/diablomedia/phly-restfully/v/stable)](https://packagist.org/packages/diablomedia/PhlyRestfully)
-[![Total Downloads](https://poser.pugx.org/diablomedia/phly-restfully/downloads)](https://packagist.org/packages/diablomedia/PhlyRestfully)
+[![Latest Stable Version](https://poser.pugx.org/diablomedia/phly-restfully/v/stable)](https://packagist.org/packages/diablomedia/phly-restfully)
+[![Total Downloads](https://poser.pugx.org/diablomedia/phly-restfully/downloads)](https://packagist.org/packages/diablomedia/phly-restfully)
 [![Psalm Type coverage](https://shepherd.dev/github/diablomedia/PhlyRestfully/coverage.svg)](https://psalm.dev/)
 [![Psalm level](https://shepherd.dev/github/diablomedia/PhlyRestfully/level.svg?)](https://psalm.dev/)
 
