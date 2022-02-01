@@ -11,7 +11,7 @@ namespace PhlyRestfully;
 use Traversable;
 use Laminas\EventManager\EventManager;
 use Laminas\EventManager\EventManagerInterface;
-use Laminas\Mvc\Router\RouteMatch;
+use Laminas\Router\RouteMatch;
 use Laminas\Stdlib\Parameters;
 use ArrayObject;
 
@@ -130,17 +130,16 @@ class Resource implements ResourceInterface
      * Sets the event manager identifiers to the current class, this class, and
      * the resource interface.
      *
-     * @param  EventManagerInterface $events
      * @return $this
      */
-    public function setEventManager(EventManagerInterface $events)
+    public function setEventManager(EventManagerInterface $eventManager)
     {
-        $events->setIdentifiers([
+        $eventManager->setIdentifiers([
             get_class($this),
             __CLASS__,
             ResourceInterface::class,
         ]);
-        $this->events = $events;
+        $this->events = $eventManager;
         return $this;
     }
 

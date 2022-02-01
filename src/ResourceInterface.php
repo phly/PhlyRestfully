@@ -10,7 +10,7 @@ namespace PhlyRestfully;
 
 use Laminas\EventManager\EventManagerAwareInterface;
 use Laminas\Stdlib\Parameters;
-use Laminas\Mvc\Router\RouteMatch;
+use Laminas\Router\RouteMatch;
 
 /**
  * Interface describing operations for a given resource.

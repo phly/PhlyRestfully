@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<files psalm-version="4.6.4@97fe86c4e158b5a57c5150aa5055c38b5a809aab">
+<files psalm-version="4.19.0@a2ad69ae4f5ab1f7d225a8dc4e2ec2d9415ed599">
   <file src="src/ApiProblem.php">
     <RedundantCondition occurrences="1">
       <code>null === $this-&gt;title</code>
@@ -9,8 +9,7 @@
     </RedundantConditionGivenDocblockType>
   </file>
   <file src="src/HalCollection.php">
-    <DocblockTypeContradiction occurrences="6">
-      <code>$this-&gt;links instanceof LinkCollection</code>
+    <DocblockTypeContradiction occurrences="5">
       <code>gettype($collection)</code>
       <code>is_array($options)</code>
       <code>is_array($options)</code>
@@ -28,9 +27,8 @@
     </RedundantConditionGivenDocblockType>
   </file>
   <file src="src/HalResource.php">
-    <DocblockTypeContradiction occurrences="2">
+    <DocblockTypeContradiction occurrences="1">
       <code>!is_object($resource) &amp;&amp; !is_array($resource)</code>
-      <code>$this-&gt;links instanceof LinkCollection</code>
     </DocblockTypeContradiction>
     <PropertyNotSetInConstructor occurrences="1">
       <code>$links</code>
@@ -87,8 +85,8 @@
       <code>$object</code>
     </ArgumentTypeCoercion>
     <DocblockTypeContradiction occurrences="5">
+      <code>!$this-&gt;events</code>
       <code>$this-&gt;events</code>
-      <code>$this-&gt;metadataMap instanceof MetadataMap</code>
       <code>false === $identifierName</code>
       <code>gettype($hydrator)</code>
       <code>is_object($hydrator)</code>
@@ -124,10 +122,8 @@
     <RedundantCastGivenDocblockType occurrences="1">
       <code>(string) $hydrator</code>
     </RedundantCastGivenDocblockType>
-    <RedundantConditionGivenDocblockType occurrences="6">
+    <RedundantConditionGivenDocblockType occurrences="4">
       <code>$data[$identifierName]</code>
-      <code>$hydrator instanceof HydratorInterface</code>
-      <code>$this-&gt;defaultHydrator instanceof HydratorInterface</code>
       <code>false !== $identifierName</code>
       <code>is_string($hydrator)</code>
       <code>is_string($hydrator) ? $hydrator : gettype($hydrator)</code>
@@ -135,6 +131,7 @@
   </file>
   <file src="src/Resource.php">
     <DocblockTypeContradiction occurrences="8">
+      <code>!$this-&gt;events</code>
       <code>$this-&gt;events</code>
       <code>is_array($data)</code>
       <code>is_array($data)</code>
@@ -157,7 +154,8 @@
     </RedundantConditionGivenDocblockType>
   </file>
   <file src="src/ResourceController.php">
-    <DocblockTypeContradiction occurrences="2">
+    <DocblockTypeContradiction occurrences="3">
+      <code>!$this-&gt;resource</code>
       <code>$this-&gt;resource</code>
       <code>$this-&gt;resource === null</code>
     </DocblockTypeContradiction>
@@ -174,10 +172,9 @@
       <code>$id</code>
       <code>$request</code>
     </MoreSpecificImplementedParamType>
-    <PropertyNotSetInConstructor occurrences="8">
+    <PropertyNotSetInConstructor occurrences="7">
       <code>$pageSizeParam</code>
       <code>$resource</code>
-      <code>ResourceController</code>
       <code>ResourceController</code>
       <code>ResourceController</code>
       <code>ResourceController</code>
@@ -192,9 +189,6 @@
     </PropertyNotSetInConstructor>
   </file>
   <file src="src/View/RestfulJsonRenderer.php">
-    <DocblockTypeContradiction occurrences="1">
-      <code>$this-&gt;helpers instanceof HelperPluginManager</code>
-    </DocblockTypeContradiction>
     <MissingConstructor occurrences="1">
       <code>$helpers</code>
     </MissingConstructor>

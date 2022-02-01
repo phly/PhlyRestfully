@@ -130,11 +130,12 @@ class HalLinks extends AbstractHelper implements
     /**
      * Set the event manager instance
      *
-     * @param  EventManagerInterface $events
      * @return void
      */
-    public function setEventManager(EventManagerInterface $events): void
+    public function setEventManager(EventManagerInterface $eventManager): void
     {
+        $events = $eventManager;
+
         $events->setIdentifiers([
             __CLASS__,
             get_class($this),

@@ -21,8 +21,8 @@ use ReflectionObject;
 use Laminas\Http\Request;
 use Laminas\Hydrator\HydratorPluginManager;
 use Laminas\Mvc\Controller\PluginManager as ControllerPluginManager;
-use Laminas\Mvc\Router\Http\TreeRouteStack;
-use Laminas\Mvc\Router\RouteMatch;
+use Laminas\Router\Http\TreeRouteStack;
+use Laminas\Router\RouteMatch;
 use Laminas\ServiceManager\ServiceManager;
 use Laminas\View\HelperPluginManager;
 use Laminas\View\Helper\ServerUrl as ServerUrlHelper;
@@ -461,7 +461,7 @@ class ChildResourcesIntegrationTest extends TestCase
             $this->assertObjectHasAttribute('_links', $child);
             $this->assertObjectHasAttribute('self', $child->_links);
             $this->assertObjectHasAttribute('href', $child->_links->self);
-            $this->assertRegexp(
+            $this->assertMatchesRegularExpression(
                 '#^http://localhost.localdomain/api/parent/anakin/child/[^/]+$#',
                 $child->_links->self->href
             );

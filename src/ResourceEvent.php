@@ -9,7 +9,7 @@
 namespace PhlyRestfully;
 
 use Laminas\EventManager\Event;
-use Laminas\Mvc\Router\RouteMatch;
+use Laminas\Router\RouteMatch;
 use Laminas\Stdlib\Parameters;
 
 class ResourceEvent extends Event

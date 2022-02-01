@@ -31,7 +31,7 @@ parameters:
 			path: src/Listener/ResourceParametersListener.php
 
 		-
-			message: "#^Parameter \\#1 \\$matches of method PhlyRestfully\\\\ResourceInterface\\:\\:setRouteMatch\\(\\) expects Laminas\\\\Mvc\\\\Router\\\\RouteMatch, Laminas\\\\Mvc\\\\Router\\\\RouteMatch\\|null given\\.$#"
+			message: "#^Parameter \\#1 \\$matches of method PhlyRestfully\\\\ResourceInterface\\:\\:setRouteMatch\\(\\) expects Laminas\\\\Router\\\\RouteMatch, Laminas\\\\Router\\\\RouteMatch\\|null given\\.$#"
 			count: 1
 			path: src/Listener/ResourceParametersListener.php
 

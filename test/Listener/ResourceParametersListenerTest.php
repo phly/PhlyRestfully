@@ -14,7 +14,7 @@ use PhlyRestfully\ResourceController;
 use PHPUnit\Framework\TestCase as TestCase;
 use Laminas\Http\PhpEnvironment\Request;
 use Laminas\Mvc\MvcEvent;
-use Laminas\Mvc\Router\RouteMatch;
+use Laminas\Router\RouteMatch;
 use Laminas\Stdlib\Parameters;
 
 /**

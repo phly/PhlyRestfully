@@ -6,7 +6,7 @@ grumphp:
         composer_require_checker: ~
         phpcsfixer2:
             allow_risky: true
-            config: .php_cs
+            config: .php-cs-fixer.php
         phpstan:
             memory_limit: 768M
         psalm:

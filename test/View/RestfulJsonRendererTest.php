@@ -19,8 +19,8 @@ use PhlyRestfullyTest\TestAsset;
 use PHPUnit\Framework\TestCase as TestCase;
 use ReflectionObject;
 use Laminas\Hydrator\HydratorPluginManager;
-use Laminas\Mvc\Router\Http\Segment;
-use Laminas\Mvc\Router\Http\TreeRouteStack;
+use Laminas\Router\Http\Segment;
+use Laminas\Router\Http\TreeRouteStack;
 use Laminas\Paginator\Adapter\ArrayAdapter;
 use Laminas\Paginator\Paginator;
 use Laminas\ServiceManager\ServiceManager;
@@ -206,7 +206,7 @@ class RestfulJsonRendererTest extends TestCase
         $this->setUpHelpers();
         $this->helpers->get('HalLinks')->addHydrator(
             TestAsset\ArraySerializable::class,
-            new Hydrator\ArraySerializable()
+            new Hydrator\ArraySerializableHydrator()
         );
 
         $item  = new TestAsset\ArraySerializable();
@@ -229,7 +229,7 @@ class RestfulJsonRendererTest extends TestCase
     {
         $this->setUpHelpers();
         $this->helpers->get('HalLinks')->setDefaultHydrator(
-            new Hydrator\ArraySerializable()
+            new Hydrator\ArraySerializableHydrator()
         );
 
         $item  = new TestAsset\ArraySerializable();

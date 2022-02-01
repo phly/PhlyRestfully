@@ -745,7 +745,7 @@ class ResourceController extends AbstractRestfulController
      * Attempts to see if an identifier was passed in either the URI or the
      * query string, returning it if found. Otherwise, returns a boolean false.
      *
-     * @param  \Laminas\Mvc\Router\RouteMatch $routeMatch
+     * @param  \Laminas\Router\RouteMatch $routeMatch
      * @param  \Laminas\Http\Request $request
      * @return false|mixed
      */

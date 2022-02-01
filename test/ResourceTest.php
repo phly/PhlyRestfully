@@ -17,7 +17,7 @@ use PhlyRestfully\ResourceInterface;
 use PHPUnit\Framework\TestCase as TestCase;
 use stdClass;
 use Laminas\EventManager\EventManager;
-use Laminas\Mvc\Router\RouteMatch;
+use Laminas\Router\RouteMatch;
 use Laminas\Stdlib\ArrayObject;
 use Laminas\Stdlib\Parameters;
 

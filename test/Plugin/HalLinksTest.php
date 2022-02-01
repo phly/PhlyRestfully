@@ -18,9 +18,9 @@ use PHPUnit\Framework\TestCase as TestCase;
 use Laminas\Http\Request;
 use Laminas\Hydrator;
 use Laminas\Hydrator\HydratorPluginManager;
-use Laminas\Mvc\Router\Http\TreeRouteStack;
-use Laminas\Mvc\Router\RouteMatch;
-use Laminas\Mvc\Router\Http\Segment;
+use Laminas\Router\Http\TreeRouteStack;
+use Laminas\Router\RouteMatch;
+use Laminas\Router\Http\Segment;
 use Laminas\Mvc\MvcEvent;
 use Laminas\ServiceManager\ServiceManager;
 use Laminas\Uri\Http;
@@ -221,15 +221,15 @@ class HalLinksTest extends TestCase
 
         $metadata = new MetadataMap([
             TestAsset\Resource::class => [
-                'hydrator' => Hydrator\ObjectProperty::class,
+                'hydrator' => Hydrator\ObjectPropertyHydrator::class,
                 'route'    => 'hostname/resource',
             ],
             TestAsset\EmbeddedResource::class => [
-                'hydrator' => Hydrator\ObjectProperty::class,
+                'hydrator' => Hydrator\ObjectPropertyHydrator::class,
                 'route'    => 'hostname/embedded',
             ],
             TestAsset\EmbeddedResourceWithCustomIdentifier::class => [
-                'hydrator'        => Hydrator\ObjectProperty::class,
+                'hydrator'        => Hydrator\ObjectPropertyHydrator::class,
                 'route'           => 'hostname/embedded_custom',
                 'identifier_name' => 'custom_id',
             ],
@@ -322,7 +322,7 @@ class HalLinksTest extends TestCase
                 'resource_route' => 'hostname/embedded',
             ],
             TestAsset\Resource::class => [
-                'hydrator' => Hydrator\ObjectProperty::class,
+                'hydrator' => Hydrator\ObjectPropertyHydrator::class,
                 'route'    => 'hostname/resource',
             ],
         ], $this->hydratorPluginManager);
@@ -476,7 +476,7 @@ class HalLinksTest extends TestCase
 
         $metadata = new MetadataMap([
             TestAsset\ResourceWithProtectedProperties::class => [
-                'hydrator' => 'ArraySerializable',
+                'hydrator' => 'ArraySerializableHydrator',
                 'route'    => 'hostname/resource',
             ],
         ], $this->hydratorPluginManager);
@@ -512,7 +512,7 @@ class HalLinksTest extends TestCase
 
         $metadata = new MetadataMap([
             TestAsset\Resource::class => [
-                'hydrator' => Hydrator\ObjectProperty::class,
+                'hydrator' => Hydrator\ObjectPropertyHydrator::class,
                 'route'    => 'hostname/resource',
                 'links'    => [
                     [

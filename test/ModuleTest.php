@@ -14,8 +14,8 @@ use ReflectionObject;
 use Laminas\Hydrator;
 use Laminas\Mvc\Application;
 use Laminas\Mvc\MvcEvent;
-use Laminas\Mvc\Router\RouteMatch;
-use Laminas\Mvc\Router\RouteStackInterface;
+use Laminas\Router\RouteMatch;
+use Laminas\Router\RouteStackInterface;
 use Laminas\Mvc\Service;
 use Laminas\ServiceManager\Config;
 use Laminas\ServiceManager\ServiceManager;
@@ -76,7 +76,7 @@ class ModuleTest extends TestCase
         $options = [
             'phlyrestfully' => [
                 'renderer' => [
-                    'default_hydrator' => 'ObjectProperty',
+                    'default_hydrator' => 'ObjectPropertyHydrator',
                 ],
             ],
         ];
@@ -88,7 +88,7 @@ class ModuleTest extends TestCase
 
         $helpers = $services->get('ViewHelperManager');
         $plugin  = $helpers->get('HalLinks');
-        $this->assertInstanceOf(Hydrator\ObjectProperty::class, $plugin->getDefaultHydrator());
+        $this->assertInstanceOf(Hydrator\ObjectPropertyHydrator::class, $plugin->getDefaultHydrator());
     }
 
     public function testJsonRendererFactoryInjectsHydratorMappingsIfPresentInConfig(): void
